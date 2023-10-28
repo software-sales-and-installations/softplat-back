@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS products
     vendor_id       BIGINT                                  NOT NULL,
     seller_id       BIGINT                                  NOT NULL,
     CONSTRAINT pk_products PRIMARY KEY (id),
-    CONSTRAINT fk_image FOREIGN KEY (image_id) REFERENCES images (id),
+    CONSTRAINT fk_product_image FOREIGN KEY (image_id) REFERENCES images (id),
     CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories (id),
     CONSTRAINT fk_license FOREIGN KEY (license_id) REFERENCES licenses (id),
     CONSTRAINT fk_vendor FOREIGN KEY (vendor_id) REFERENCES vendors (id),
@@ -115,8 +115,8 @@ CREATE TABLE IF NOT EXISTS baskets
     quantity   INT                                     NOT NULL,
     price      FLOAT                                   NOT NULL,
     CONSTRAINT pk_basket PRIMARY KEY (id),
-    CONSTRAINT fk_buyer FOREIGN KEY (buyer_id) REFERENCES buyers (id),
-    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products (id)
+    CONSTRAINT fk_buyer FOREIGN KEY (buyer_id) REFERENCES buyers (id) on delete cascade,
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products (id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS orders
@@ -129,8 +129,8 @@ CREATE TABLE IF NOT EXISTS orders
     product_id      BIGINT                                  NOT NULL,
     quantity        INT                                     NOT NULL,
     CONSTRAINT pk_order PRIMARY KEY (id),
-    CONSTRAINT fk_buyer FOREIGN KEY (buyer_id) REFERENCES buyers (id),
-    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products (id)
+    CONSTRAINT fk_order_buyer FOREIGN KEY (buyer_id) REFERENCES buyers (id),
+    CONSTRAINT fk_order_product FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
 CREATE TABLE IF NOT EXISTS statistics
@@ -142,6 +142,6 @@ CREATE TABLE IF NOT EXISTS statistics
     quantity   INT                                     NOT NULL,
     amount     FLOAT                                   NOT NULL,
     CONSTRAINT pk_stats PRIMARY KEY (id),
-    CONSTRAINT fk_buyer FOREIGN KEY (buyer_id) REFERENCES buyers (id),
-    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES products (id)
+    CONSTRAINT fk_stats_buyer FOREIGN KEY (buyer_id) REFERENCES buyers (id),
+    CONSTRAINT fk_stats_product FOREIGN KEY (product_id) REFERENCES products (id)
 );
