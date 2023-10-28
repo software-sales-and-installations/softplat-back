@@ -23,7 +23,7 @@ public class Order {
     @DateTimeFormat
     @Column(name = "production_time")
     LocalDateTime productionTime;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "buyer_id")
     Buyer buyer;
     @ManyToOne
