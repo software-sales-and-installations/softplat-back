@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS buyers,sellers, admins, categories,licenses,vendors,countries,images,baskets,orders,statistics,products CASCADE;
+DROP TABLE IF EXISTS buyers,sellers,admins,categories,licenses,vendors,countries,images,baskets,orders,statistics,products, requisites CASCADE;
 
 CREATE TABLE IF NOT EXISTS buyers
 (
