@@ -18,7 +18,7 @@ public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "buyer_id")
     Buyer buyer;
     @ManyToOne
