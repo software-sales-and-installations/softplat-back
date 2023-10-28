@@ -1,4 +1,4 @@
-package ru.yandex.workshop.main.model.vendor;
+package ru.yandex.workshop.main.model.seller;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -12,16 +12,10 @@ import javax.persistence.*;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "vendors")
-public class Vendor {
+@Table(name = "requisites")
+public class BankRequisites {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String name;
-    String description;
-    @Column(name = "image_id")
-    Long imageId;
-    @OneToOne
-    @JoinColumn(name = "country_id")
-    Country country;
+    String account;
 }

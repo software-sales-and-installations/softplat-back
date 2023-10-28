@@ -1,4 +1,5 @@
 package ru.yandex.workshop.main.model.product;
 
-public class License {
+public enum License {
+    FREE, DEMO, LICENSE
 }
