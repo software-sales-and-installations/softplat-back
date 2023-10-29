@@ -24,6 +24,4 @@ public class ProductBasket {
     @JoinColumn(name = "product_id")
     Product product;
     Integer quantity;
-    //цена 1 единицы продукта
-    Float price;
 }

@@ -39,4 +39,5 @@ public class Product {
     Long sellerId;
     Float price;
     Boolean installation;
+    Integer quantity;
 }

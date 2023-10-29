@@ -25,6 +25,4 @@ public class Basket {
     @OneToMany
     @JoinColumn(name = "basket_id")
     List<ProductBasket> productsInBasket = new ArrayList<>();
-    //цена продуктов во всей корзине (без учета скидок)
-    Float price;
 }

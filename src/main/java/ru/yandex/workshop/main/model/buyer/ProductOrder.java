@@ -24,7 +24,7 @@ public class ProductOrder {
     @JoinColumn(name = "product_id")
     Product product;
     Integer quantity;
-    //стоимость 1 единицы продукта с учетом скидок
+    //стоимость 1 единицы продукта с учетом скидок/бонусов/промокодов/цены за установку
     @Column(name = "amount")
     Float productAmount;
 }
