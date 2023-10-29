@@ -21,7 +21,7 @@ public class Basket {
     @OneToOne
     @JoinColumn(name = "buyer_id")
     Buyer buyer;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "product_id")
     Product product;
     Integer quantity;
