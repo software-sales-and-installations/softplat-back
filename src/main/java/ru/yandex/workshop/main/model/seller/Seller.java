@@ -27,6 +27,7 @@ public class Seller {
     @DateTimeFormat
     @Column(name = "registration_time")
     LocalDateTime registrationTime;
-    @Column(name = "requisites_id")
-    Long requisitesId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "requisites_id")
+    BankRequisites requisites;
 }

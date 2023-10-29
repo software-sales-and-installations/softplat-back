@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.workshop.main.model.image.Image;
+import ru.yandex.workshop.main.model.vendor.Vendor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,12 +30,14 @@ public class Product {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
     Image image;
-    @Column(name = "category_id")
-    Long categoryId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    Category category;
     @Enumerated(EnumType.STRING)
     License license;
-    @Column(name = "vendor_id")
-    Long vendorId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vendor_id")
+    Vendor vendor;
     @Column(name = "seller_id")
     Long sellerId;
     Float price;
