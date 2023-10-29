@@ -142,8 +142,8 @@ CREATE TABLE IF NOT EXISTS product_order
     quantity   INT                                     NOT NULL,
     amount     FLOAT                                   NOT NULL,
     CONSTRAINT pk_product_order PRIMARY KEY (id),
-    CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES orders (id),
-    CONSTRAINT fk_product_order FOREIGN KEY (product_id) REFERENCES products (id)
+    CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES orders (id) on update cascade on delete cascade,
+    CONSTRAINT fk_product_order FOREIGN KEY (product_id) REFERENCES products (id) on update cascade on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS product_basket
@@ -153,6 +153,6 @@ CREATE TABLE IF NOT EXISTS product_basket
     product_id BIGINT                                  NOT NULL,
     quantity   INT                                     NOT NULL,
     CONSTRAINT pk_product_basket PRIMARY KEY (id),
-    CONSTRAINT fk_basket FOREIGN KEY (basket_id) REFERENCES baskets (id),
-    CONSTRAINT fk_product_basket FOREIGN KEY (product_id) REFERENCES products (id)
+    CONSTRAINT fk_basket FOREIGN KEY (basket_id) REFERENCES baskets (id) on update cascade on delete cascade,
+    CONSTRAINT fk_product_basket FOREIGN KEY (product_id) REFERENCES products (id) on update cascade on delete cascade
 );
