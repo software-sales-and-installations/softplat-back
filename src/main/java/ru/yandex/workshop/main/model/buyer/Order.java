@@ -3,10 +3,11 @@ package ru.yandex.workshop.main.model.buyer;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.yandex.workshop.main.model.product.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,9 +27,10 @@ public class Order {
     @OneToOne
     @JoinColumn(name = "buyer_id")
     Buyer buyer;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    Product product;
-    Integer quantity;
-    Float amount;
+    @OneToMany
+    @JoinColumn(name = "order_id")
+    List<ProductOrder> productsOrdered = new ArrayList<>();
+    //стоимость всего заказа
+    @Column(name = "amount")
+    Float orderAmount;
 }

@@ -2,10 +2,9 @@ package ru.yandex.workshop.main.model.buyer;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.workshop.main.model.product.Product;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,17 +13,17 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "baskets")
-public class Basket {
+@Table(name = "product_basket")
+public class ProductBasket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(name = "basket_id")
+    Long basketId;
     @OneToOne
-    @JoinColumn(name = "buyer_id")
-    Buyer buyer;
-    @OneToMany
-    @JoinColumn(name = "basket_id")
-    List<ProductBasket> productsInBasket = new ArrayList<>();
-    //цена продуктов во всей корзине (без учета скидок)
+    @JoinColumn(name = "product_id")
+    Product product;
+    Integer quantity;
+    //цена 1 единицы продукта
     Float price;
 }
