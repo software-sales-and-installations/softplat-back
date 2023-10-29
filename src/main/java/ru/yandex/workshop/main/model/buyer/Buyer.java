@@ -18,16 +18,16 @@ import java.time.LocalDateTime;
 public class Buyer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(unique = true)
-    String email;
+    private String email;
     @Column(name = "first_name")
-    String firstName;
+    private String firstName;
     @Column(name = "last_name")
-    String lastName;
+    private String lastName;
     @Column(name = "number")
-    String telephone;
+    private String telephone;
     @DateTimeFormat
     @Column(name = "registration_time")
-    LocalDateTime registrationTime;
+    private LocalDateTime registrationTime;
 }
