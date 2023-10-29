@@ -1,4 +1,4 @@
-merge into CATEGORIES (ID, NAME)
+insert into CATEGORIES (ID, NAME)
     values ( 1, 'Офисные' );
 merge into CATEGORIES (ID, NAME)
     values ( 2, 'Системные' );
