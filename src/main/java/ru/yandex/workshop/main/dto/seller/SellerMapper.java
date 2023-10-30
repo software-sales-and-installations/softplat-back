@@ -15,10 +15,12 @@ public interface SellerMapper {
     SellerForResponse sellerToSellerForResponse(Seller seller);
 
     default BankRequisitesDto requisitesToDto(BankRequisites requisites) {
+        if (requisites == null) return null;
         return new BankRequisitesDto(requisites.getAccount());
     }
 
     default BankRequisites requisitesDtoToRequisites(BankRequisitesDto requisites) {
+        if (requisites == null) return null;
         return new BankRequisites(null, requisites.getAccount());
     }
     //TODO ImageMapper

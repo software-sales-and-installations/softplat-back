@@ -17,10 +17,11 @@ import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.ClientErrorException;
 import ru.yandex.workshop.main.exception.UserNotFoundException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc

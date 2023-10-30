@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS sellers
     description       VARCHAR(500),
     number            VARCHAR(10)                            NOT NULL,
     registration_time TIMESTAMP WITHOUT TIME ZONE            NOT NULL,
-    image_id          BIGINT                                 NOT NULL,
+    image_id          BIGINT,
     requisites_id     BIGINT,
     CONSTRAINT pk_seller PRIMARY KEY (id),
     CONSTRAINT uq_seller_email UNIQUE (email),

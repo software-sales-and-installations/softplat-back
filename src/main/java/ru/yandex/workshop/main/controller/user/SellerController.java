@@ -1,6 +1,7 @@
 package ru.yandex.workshop.main.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
@@ -11,7 +12,6 @@ import ru.yandex.workshop.main.service.seller.SellerBankService;
 import ru.yandex.workshop.main.service.seller.SellerService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 
 @Validated
 @RestController
@@ -26,34 +26,34 @@ public class SellerController {
         this.bankService = bankService;
     }
 
-    @GetMapping("/account")
-    public SellerForResponse getSeller(String email) {
+    @GetMapping("/{email}")
+    public SellerForResponse getSeller(@PathVariable String email) {
         return sellerService.getSeller(email);
     }
 
     @PostMapping("/registration")
-    public SellerForResponse addSeller(@Valid SellerDto sellerDto) {
+    public SellerForResponse addSeller(@RequestBody @Valid SellerDto sellerDto) {
         return sellerService.addSeller(sellerDto);
     }
 
-    @PatchMapping("/account")
-    public SellerForResponse updateSeller(String email, @Valid SellerForUpdate sellerForUpdate) {
+    @PatchMapping("/account/{email}")
+    public SellerForResponse updateSeller(@PathVariable String email, @RequestBody @Valid SellerForUpdate sellerForUpdate) {
         return sellerService.updateSeller(email, sellerForUpdate);
     }
 
-    @GetMapping("/account/bank")
-    public BankRequisitesDto getRequisites(String email) {
+    @GetMapping("/account/bank/{email}")
+    public BankRequisitesDto getRequisites(@PathVariable String email) {
         return bankService.getRequisites(email);
     }
 
-    @PatchMapping("/account/bank")
-    public BankRequisitesDto updateRequisites(String email, @Pattern(regexp = "[0-9]{16}",
-            message = "Номер счета должен содержать 16 цифр 0-9") String requisites) {
+    @PatchMapping("/account/bank/{email}")
+    public BankRequisitesDto updateRequisites(@PathVariable String email, @RequestBody BankRequisitesDto requisites) {
         return bankService.updateRequisites(email, requisites);
     }
 
-    @DeleteMapping("/account/bank")
-    public void deleteRequisites(String email) {
+    @DeleteMapping("/account/bank/{email}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRequisites(@PathVariable String email) {
         bankService.deleteRequisites(email);
     }
 }
