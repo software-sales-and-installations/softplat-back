@@ -21,6 +21,6 @@ public class BuyerDto {
     @Size(min = 2, max = 20, message = "Длина фамилии должна быть от 2 до 20 символов")
     private String lastName;
     @NotBlank(message = "Необходимо указать номер телефона")
-    @Pattern(regexp = "\\+7[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
+    @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
     private String telephone;
 }

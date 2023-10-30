@@ -42,7 +42,7 @@ class BuyerControllerTest {
                 .firstName("Joe")
                 .lastName("Doe")
                 .email("joedoe@email.com")
-                .telephone("+70123456789")
+                .telephone("0123456789")
                 .build();
     }
 
@@ -64,7 +64,7 @@ class BuyerControllerTest {
         BuyerDto newBuyerDto = BuyerDto.builder()
                 .firstName("Foo")
                 .lastName("Bar")
-                .telephone("+70123456789")
+                .telephone("0123456789")
                 .email("joedoe@email.com")
                 .build();
 
@@ -107,7 +107,7 @@ class BuyerControllerTest {
         BuyerDto updateDto = BuyerDto.builder()
                 .firstName("Foo")
                 .lastName("Bar")
-                .telephone("+70123456789")
+                .telephone("0123456789")
                 .email("foobar@email.com")
                 .build();
         final long id = 1;
@@ -127,7 +127,7 @@ class BuyerControllerTest {
         BuyerDto updateDto = BuyerDto.builder()
                 .firstName("Foo")
                 .lastName("Bar")
-                .telephone("+70123456789")
+                .telephone("0123456789")
                 .email("foobar@email.com")
                 .build();
         final long id = 2;

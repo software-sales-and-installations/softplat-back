@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS buyers
     email             VARCHAR(30)                            NOT NULL,
     first_name        VARCHAR(20)                            NOT NULL,
     last_name         VARCHAR(20)                            NOT NULL,
-    number            VARCHAR(12)                            NOT NULL,
+    number            VARCHAR(10)                            NOT NULL,
     registration_time TIMESTAMP WITHOUT TIME ZONE,
     CONSTRAINT pk_buyer PRIMARY KEY (id),
     CONSTRAINT uq_buyer_email UNIQUE (email),
