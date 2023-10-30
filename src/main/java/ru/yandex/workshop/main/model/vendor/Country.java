@@ -1,22 +1,27 @@
 package ru.yandex.workshop.main.model.vendor;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import ru.yandex.workshop.main.exception.CountryNotFoundException;
 
-import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Optional;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Entity
-@Table(name = "countries")
-public class Country {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(unique = true)
-    private String name;
+public enum Country {
+    RUSSIA("Russia"),
+    CHINA("China"),
+    INDIA("India"),
+    UK("UK"),
+    USA("USA");
+
+    public final String label;
+
+    Country(String label) {
+        this.label = label;
+    }
+
+    public static Country findCountry(String name){
+        return Arrays.stream(values())
+                .filter(country -> country.label.equals(name))
+                .findFirst()
+                .orElseThrow(() -> new CountryNotFoundException("Данная страна не найдена"));
+    }
 }

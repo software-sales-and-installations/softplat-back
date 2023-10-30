@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.model.vendor;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.workshop.main.model.product.License;
 
 import javax.persistence.*;
 
@@ -21,7 +22,6 @@ public class Vendor {
     String description;
     @Column(name = "image_id")
     Long imageId;
-    @OneToOne
-    @JoinColumn(name = "country_id")
+    @Enumerated(EnumType.STRING)
     Country country;
 }
