@@ -1,6 +1,6 @@
 package ru.yandex.workshop.main.controller.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +15,12 @@ import javax.validation.Valid;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/seller")
 public class SellerController {
+
     private final SellerService sellerService;
     private final SellerBankService bankService;
-
-    @Autowired
-    public SellerController(SellerService sellerService, SellerBankService bankService) {
-        this.sellerService = sellerService;
-        this.bankService = bankService;
-    }
 
     @GetMapping("/{email}")
     public SellerForResponse getSeller(@PathVariable String email) {

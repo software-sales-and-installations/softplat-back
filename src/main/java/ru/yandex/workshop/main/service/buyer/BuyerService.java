@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.buyer.BuyerDto;
 import ru.yandex.workshop.main.dto.buyer.BuyerMapper;
 import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
-import ru.yandex.workshop.main.exception.ClientErrorException;
+import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.UserNotFoundException;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
@@ -45,7 +45,7 @@ public class BuyerService {
 
     private void checkIfUserExistsByEmail(String email) {
         if (buyerRepository.existsBuyerByEmail(email)) {
-            throw new ClientErrorException("Пользователь с email " + email + " уже существует.");
+            throw new DuplicateException("Пользователь с email " + email + " уже существует.");
         }
     }
 

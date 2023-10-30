@@ -59,7 +59,7 @@ class SellerControllerTest {
 
     @Test
     @SneakyThrows
-    void addNewSeller_whenEmailNotUnique_thenThrowClientErrorException() {
+    void addNewSeller_whenEmailNotUnique_thenThrowDuplicateException() {
         createSeller(sellerDto);
         SellerDto newSellerDto = SellerDto.builder()
                 .name("Bar")

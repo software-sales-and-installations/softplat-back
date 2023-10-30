@@ -1,7 +1,7 @@
 package ru.yandex.workshop.main.service.seller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +21,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class SellerService {
-    private final SellerRepository sellerRepository;
 
-    @Autowired
-    public SellerService(SellerRepository sellerRepository) {
-        this.sellerRepository = sellerRepository;
-    }
+    private final SellerRepository sellerRepository;
 
     //TODO add in any controller
     public List<SellerForResponse> getAllSellers() {
@@ -37,8 +34,7 @@ public class SellerService {
     }
 
     public SellerForResponse getSeller(String email) {
-        return SellerMapper.INSTANCE.sellerToSellerForResponse(sellerRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует")));
+        return SellerMapper.INSTANCE.sellerToSellerForResponse(getSellerFromDatabase(email));
     }
 
     @Transactional
@@ -54,8 +50,7 @@ public class SellerService {
 
     @Transactional
     public SellerForResponse updateSeller(String email, SellerForUpdate sellerForUpdate) {
-        Seller seller = sellerRepository.findByEmail(email).orElseThrow(
-                () -> new UserNotFoundException("Такого пользователя не существует"));
+        Seller seller = getSellerFromDatabase(email);
         if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
         if (sellerForUpdate.getDescription() != null) seller.setDescription(sellerForUpdate.getDescription());
         if (sellerForUpdate.getEmail() != null && sellerRepository.findByEmail(sellerForUpdate.getEmail()).isEmpty())
@@ -63,5 +58,10 @@ public class SellerService {
         //TODO save image
         if (sellerForUpdate.getPhone() != null) seller.setPhone(sellerForUpdate.getPhone());
         return SellerMapper.INSTANCE.sellerToSellerForResponse(sellerRepository.save(seller));
+    }
+
+    private Seller getSellerFromDatabase(String email) {
+        return sellerRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
     }
 }

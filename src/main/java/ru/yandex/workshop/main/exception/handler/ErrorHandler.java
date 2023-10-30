@@ -6,7 +6,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.yandex.workshop.main.exception.ClientErrorException;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.UserNotFoundException;
 
@@ -18,7 +17,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleClientErrorException(final ClientErrorException e) {
+    public ErrorResponse handleDuplicateException(final DuplicateException e) {
         e.printStackTrace();
         return new ErrorResponse(e.getMessage());
     }
@@ -39,12 +38,5 @@ public class ErrorHandler {
             details.add(error.getDefaultMessage());
         }
         return new ErrorResponse(details.toString());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleValidationErrors(final DuplicateException e) {
-        e.printStackTrace();
-        return new ErrorResponse(e.getMessage());
     }
 }
