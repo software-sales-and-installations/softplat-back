@@ -30,27 +30,27 @@ public class AdminVendorController {
 
     @PatchMapping(path = "/vendor/{vendorId}")
     public VendorResponseDto changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                           @RequestBody VendorDto vendorDto) {
-        log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
+                                              @RequestBody VendorDto vendorDto) {
+        log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
         return service.changeVendorById(vendorId, vendorDto);
     }
 
     @GetMapping(path = "/vendor")
-    public List<VendorResponseDto> findVendor(@RequestParam(name = "name", required = false) String name,
-                                              @RequestParam(name = "country", required = false) String country) {
-        log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
-        return service.findVendor(name, country);
+    public List<VendorResponseDto> findVendorAll(@RequestParam(name = "name", required = false) String name,
+                                                 @RequestParam(name = "country", required = false) String country) {
+        log.debug(LogMessage.TRY_ADMIN_GET_VENDOR.label);
+        return service.findVendorAll();
     }
 
     @GetMapping(path = "/vendor/{vendorId}")
     public VendorResponseDto findVendorById(@PathVariable(name = "vendorId") Long vendorId) {
-        log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
+        log.debug(LogMessage.TRY_ADMIN_GET_ID_VENDOR.label);
         return service.findVendorById(vendorId);
     }
 
     @DeleteMapping(path = "/vendor/{vendorId}")
     public void deleteVendor(@PathVariable(name = "vendorId") Long vendorId) {
-        log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
+        log.debug(LogMessage.TRY_ADMIN_DELETE_VENDOR.label);
         service.deleteVendor(vendorId);
     }
 
