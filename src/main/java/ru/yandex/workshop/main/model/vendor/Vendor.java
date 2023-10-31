@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "vendors")
+@Table(name = "vendor")
 public class Vendor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
