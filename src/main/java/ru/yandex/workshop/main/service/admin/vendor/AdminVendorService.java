@@ -10,7 +10,7 @@ public interface AdminVendorService {
 
     public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorDto);
 
-    List<VendorResponseDto> findVendor(String name, String country);
+    List<VendorResponseDto> findVendorAll();
 
     VendorResponseDto findVendorById(Long vendorId);
 
