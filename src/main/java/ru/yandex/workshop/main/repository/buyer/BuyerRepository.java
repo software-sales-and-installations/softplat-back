@@ -7,6 +7,4 @@ import ru.yandex.workshop.main.model.buyer.Buyer;
 @Repository
 public interface BuyerRepository extends JpaRepository<Buyer, Long> {
     boolean existsBuyerByEmail(String email);
-
-    boolean existsBuyerById(Long id);
 }
