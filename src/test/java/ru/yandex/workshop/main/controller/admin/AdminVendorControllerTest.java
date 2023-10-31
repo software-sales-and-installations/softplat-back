@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
-import ru.yandex.workshop.main.service.admin.vendor.AdminVendorService;
+import ru.yandex.workshop.main.service.admin.vendor.VendorService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -23,10 +23,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = AdminVendorController.class)
+@WebMvcTest(controllers = VendorController.class)
 class AdminVendorControllerTest {
     @MockBean
-    AdminVendorService service;
+    VendorService service;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -35,7 +35,6 @@ class AdminVendorControllerTest {
     static VendorDto vendorDto;
     static VendorResponseDto vendorResponseDto;
     static List<VendorResponseDto> vendorResponseDtoList;
-    static String path = "/admin/vendor";
 
     @BeforeAll
     static void assistant() {
@@ -49,7 +48,7 @@ class AdminVendorControllerTest {
         when(service.createVendor(any()))
                 .thenReturn(vendorResponseDto);
 
-        mvc.perform(post(path)
+        mvc.perform(post("/admin/vendor")
                         .content(mapper.writeValueAsString(vendorDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,7 +66,7 @@ class AdminVendorControllerTest {
         when(service.changeVendorById(anyLong(), any()))
                 .thenReturn(vendorResponseDto);
 
-        mvc.perform(patch(path + "/1")
+        mvc.perform(patch("/admin/vendor/1")
                         .content(mapper.writeValueAsString(vendorDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,7 +84,7 @@ class AdminVendorControllerTest {
         when(service.findVendorAll())
                 .thenReturn(vendorResponseDtoList);
 
-        mvc.perform(get(path)
+        mvc.perform(get("/vendor")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -98,7 +97,7 @@ class AdminVendorControllerTest {
         when(service.findVendorById(anyLong()))
                 .thenReturn(vendorResponseDto);
 
-        mvc.perform(get(path + "/1")
+        mvc.perform(get("/vendor/1")
                         .content(mapper.writeValueAsString(vendorDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +112,7 @@ class AdminVendorControllerTest {
 
     @Test
     void deleteVendor() throws Exception {
-        mvc.perform(delete(path + "/1")
+        mvc.perform(delete("/admin/vendor/1")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

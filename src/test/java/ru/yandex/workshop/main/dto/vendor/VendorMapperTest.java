@@ -6,12 +6,10 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
 import ru.yandex.workshop.main.model.vendor.Country;
-import ru.yandex.workshop.main.model.vendor.Vendor;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @JsonTest
 class VendorMapperTest {

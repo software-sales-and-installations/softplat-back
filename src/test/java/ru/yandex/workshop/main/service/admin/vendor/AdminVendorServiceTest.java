@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
+import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
@@ -28,20 +29,22 @@ import static org.hamcrest.Matchers.notNullValue;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class AdminVendorServiceTest {
     private final EntityManager em;
-    private final AdminVendorService service;
+    private final VendorService service;
 
-    VendorDto vendorDto;
+    VendorDto vendorDtoOne;
+    VendorDto vendorDtoTwo;
     VendorResponseDto vendorResponseDto;
-    VendorDto newVendorDto;
+    VendorUpdateDto newVendorUpdateDto;
     VendorResponseDto newVendorResponseDto;
 
     @BeforeEach
     void assistant() {
-        vendorDto = VendorDto.builder().name("test").description("test").imageId(1L).country(Country.RUSSIA).build();
-        newVendorDto = VendorDto.builder().name("newTest").description("newTest").imageId(1L).country(Country.USA).build();
+        vendorDtoOne = VendorDto.builder().name("testOne").description("testOne").imageId(1L).country(Country.RUSSIA).build();
+        vendorDtoTwo = VendorDto.builder().name("testTwo").description("testTwo").imageId(1L).country(Country.RUSSIA).build();
+        newVendorUpdateDto = VendorUpdateDto.builder().name("newTest").description("newTest").imageId(1L).country(Country.USA).build();
 
-        vendorResponseDto = service.createVendor(vendorDto);
-        newVendorResponseDto = service.createVendor(newVendorDto);
+        vendorResponseDto = service.createVendor(vendorDtoOne);
+        newVendorResponseDto = service.createVendor(vendorDtoTwo);
     }
 
     @Test
@@ -57,15 +60,15 @@ class AdminVendorServiceTest {
 
     @Test
     void changeVendorById() {
-        service.changeVendorById(vendorResponseDto.getId(), newVendorDto);
+        service.changeVendorById(vendorResponseDto.getId(), newVendorUpdateDto);
 
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v WHERE v.id = :vendorId", Vendor.class);
         Vendor vendor = query.setParameter("vendorId", vendorResponseDto.getId()).getSingleResult();
 
         MatcherAssert.assertThat(vendor.getId(), notNullValue());
-        MatcherAssert.assertThat(vendor.getDescription(), equalTo(newVendorResponseDto.getDescription()));
-        MatcherAssert.assertThat(vendor.getImageId(), equalTo(newVendorResponseDto.getImageId()));
-        MatcherAssert.assertThat(vendor.getCountry(), equalTo(newVendorResponseDto.getCountry()));
+        MatcherAssert.assertThat(vendor.getDescription(), equalTo(newVendorUpdateDto.getDescription()));
+        MatcherAssert.assertThat(vendor.getImageId(), equalTo(newVendorUpdateDto.getImageId()));
+        MatcherAssert.assertThat(vendor.getCountry(), equalTo(newVendorUpdateDto.getCountry()));
     }
 
     @Test
