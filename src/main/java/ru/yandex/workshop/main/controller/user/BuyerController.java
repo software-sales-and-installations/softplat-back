@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.buyer.BuyerDto;
 import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
+import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
 
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ public class BuyerController {
     private final BuyerService buyerService;
 
     @PostMapping
-    public BuyerResponseDto addNewBuyer(@RequestBody @Valid BuyerDto buyerDto) {
+    public BuyerResponseDto addNewBuyer(@RequestBody @Validated(New.class) BuyerDto buyerDto) {
         log.info("POST request for new buyer: {}", buyerDto);
         BuyerResponseDto response = buyerService.addNewBuyer(buyerDto);
         log.info("{}", response);
@@ -36,10 +37,8 @@ public class BuyerController {
     }
 
     @PatchMapping("/{buyerId}")
-    public BuyerResponseDto updateBuyerById(
-            @PathVariable(name = "buyerId") long buyerId,
-            @RequestBody @Valid BuyerDto buyerDto
-    ) {
+    public BuyerResponseDto updateBuyerById(@PathVariable(name = "buyerId") long buyerId,
+            @RequestBody @Valid BuyerDto buyerDto) {
         log.info("PATCH request for buyer with id {}: {}", buyerId, buyerDto);
         BuyerResponseDto response = buyerService.updateBuyer(buyerId, buyerDto);
         log.info("{}", response);
