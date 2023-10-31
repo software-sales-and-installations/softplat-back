@@ -8,7 +8,7 @@ import ru.yandex.workshop.main.model.seller.Seller;
 @Mapper
 public interface SellerMapper {
 
-    SellerMapper INSTANCE = Mappers.getMapper( SellerMapper.class );
+    SellerMapper INSTANCE = Mappers.getMapper(SellerMapper.class);
 
     Seller sellerDtoToSeller(SellerDto sellerDto);
 

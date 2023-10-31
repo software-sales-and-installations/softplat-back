@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "vendors")
+@Table(name = "vendor")
 public class Vendor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,7 +21,6 @@ public class Vendor {
     String description;
     @Column(name = "image_id")
     Long imageId;
-    @OneToOne
-    @JoinColumn(name = "country_id")
+    @Enumerated(EnumType.STRING)
     Country country;
 }
