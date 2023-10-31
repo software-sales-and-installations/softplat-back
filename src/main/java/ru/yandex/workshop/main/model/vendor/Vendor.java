@@ -2,7 +2,6 @@ package ru.yandex.workshop.main.model.vendor;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.yandex.workshop.main.model.product.License;
 
 import javax.persistence.*;
 

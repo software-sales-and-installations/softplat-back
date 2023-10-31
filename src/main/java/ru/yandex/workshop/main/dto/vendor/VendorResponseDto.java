@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.workshop.main.model.vendor.Country;
 
 @Data
 @Builder
@@ -13,5 +14,5 @@ public class VendorResponseDto {
     String name;
     String description;
     Long imageId;
-    String country;
+    Country country;
 }
