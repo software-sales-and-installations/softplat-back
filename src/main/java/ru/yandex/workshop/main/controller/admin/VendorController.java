@@ -2,42 +2,39 @@ package ru.yandex.workshop.main.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
+import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.message.LogMessage;
-import ru.yandex.workshop.main.service.admin.vendor.AdminVendorService;
+import ru.yandex.workshop.main.service.admin.vendor.VendorService;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/admin")
 @RequiredArgsConstructor
 @Slf4j
-public class AdminVendorController {
-    @Autowired
-    private AdminVendorService service;
+public class VendorController {
+    private final VendorService service;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "/vendor")
+    @PostMapping(path = "/admin/vendor")
     public VendorResponseDto createVendor(@RequestBody @Valid VendorDto vendorDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
         return service.createVendor(vendorDto);
     }
 
-    @PatchMapping(path = "/vendor/{vendorId}")
+    @PatchMapping(path = "/admin/vendor/{vendorId}")
     public VendorResponseDto changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                              @RequestBody VendorDto vendorDto) {
+                                              @RequestBody @Valid VendorUpdateDto vendorUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
-        return service.changeVendorById(vendorId, vendorDto);
+        return service.changeVendorById(vendorId, vendorUpdateDto);
     }
 
     @GetMapping(path = "/vendor")
-    public List<VendorResponseDto> findVendorAll(@RequestParam(name = "name", required = false) String name,
-                                                 @RequestParam(name = "country", required = false) String country) {
+    public List<VendorResponseDto> findVendorAll() {
         log.debug(LogMessage.TRY_ADMIN_GET_VENDOR.label);
         return service.findVendorAll();
     }
@@ -48,7 +45,8 @@ public class AdminVendorController {
         return service.findVendorById(vendorId);
     }
 
-    @DeleteMapping(path = "/vendor/{vendorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(path = "/admin/vendor/{vendorId}")
     public void deleteVendor(@PathVariable(name = "vendorId") Long vendorId) {
         log.debug(LogMessage.TRY_ADMIN_DELETE_VENDOR.label);
         service.deleteVendor(vendorId);
