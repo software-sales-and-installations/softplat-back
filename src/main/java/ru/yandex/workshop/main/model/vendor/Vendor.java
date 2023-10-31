@@ -21,7 +21,6 @@ public class Vendor {
     String description;
     @Column(name = "image_id")
     Long imageId;
-    @OneToOne
-    @JoinColumn(name = "country_id")
+    @Enumerated(EnumType.STRING)
     Country country;
 }

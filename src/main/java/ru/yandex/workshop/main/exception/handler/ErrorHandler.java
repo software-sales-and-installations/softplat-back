@@ -34,7 +34,7 @@ public class ErrorHandler {
     public ErrorResponse handleValidationErrors(final MethodArgumentNotValidException e) {
         e.printStackTrace();
         List<String> details = new ArrayList<>();
-        for(ObjectError error : e.getBindingResult().getAllErrors()) {
+        for (ObjectError error : e.getBindingResult().getAllErrors()) {
             details.add(error.getDefaultMessage());
         }
         return new ErrorResponse(details.toString());
