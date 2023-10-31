@@ -18,8 +18,6 @@ public class ProductBasket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name = "basket_id")
-    Long basketId;
     @OneToOne
     @JoinColumn(name = "product_id")
     Product product;
