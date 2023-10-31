@@ -14,13 +14,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.dto.buyer.BuyerDto;
 import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
-import ru.yandex.workshop.main.exception.ClientErrorException;
+import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.UserNotFoundException;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -59,7 +60,7 @@ class BuyerControllerTest {
 
     @Test
     @SneakyThrows
-    void addNewBuyer_whenEmailNotUnique_thenThrowClientErrorException() {
+    void addNewBuyer_whenEmailNotUnique_thenThrowDuplicateException() {
         createBuyer(buyerDto);
         BuyerDto newBuyerDto = BuyerDto.builder()
                 .firstName("Foo")
@@ -72,7 +73,7 @@ class BuyerControllerTest {
                         .content(objectMapper.writeValueAsString(newBuyerDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof ClientErrorException));
+                        instanceof DuplicateException));
     }
 
     @Test

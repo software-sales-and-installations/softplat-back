@@ -3,6 +3,7 @@ package ru.yandex.workshop.main.model.seller;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.yandex.workshop.main.model.image.Image;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,7 +12,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "sellers")
@@ -23,11 +23,15 @@ public class Seller {
     String email;
     String name;
     @Column(name = "number")
-    String telephone;
+    String phone;
+    String description;
     @DateTimeFormat
     @Column(name = "registration_time")
     LocalDateTime registrationTime;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requisites_id")
     BankRequisites requisites;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    Image image;
 }
