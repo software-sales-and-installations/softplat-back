@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "requisites")
+@Table(name = "requisite")
 public class BankRequisites {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

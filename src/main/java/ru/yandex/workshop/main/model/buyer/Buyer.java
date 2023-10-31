@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "buyers")
+@Table(name = "buyer")
 public class Buyer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
