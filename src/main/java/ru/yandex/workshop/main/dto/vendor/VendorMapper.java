@@ -5,6 +5,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
+import java.util.List;
+
 @Mapper
 public interface VendorMapper {
     VendorMapper INSTANCE = Mappers.getMapper(VendorMapper.class);
@@ -21,4 +23,11 @@ public interface VendorMapper {
     @Mapping(target = "imageId", source = "vendor.imageId") //TODO
     @Mapping(target = "country", source = "vendor.country")
     VendorResponseDto vendorToVendorResponseDto(Vendor vendor);
+
+    @Mapping(target = "id", source = "vendor.id")
+    @Mapping(target = "name", source = "vendor.name")
+    @Mapping(target = "description", source = "vendor.description")
+    @Mapping(target = "imageId", source = "vendor.imageId") //TODO
+    @Mapping(target = "country", source = "vendor.country")
+    List<VendorResponseDto> vendorToListVendorResponseDto(List<Vendor> vendor);
 }
