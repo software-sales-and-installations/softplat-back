@@ -8,7 +8,7 @@ import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.message.LogMessage;
-import ru.yandex.workshop.main.service.admin.vendor.VendorService;
+import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import javax.validation.Valid;
 import java.util.List;

@@ -38,7 +38,7 @@ public class BuyerController {
 
     @PatchMapping("/{buyerId}")
     public BuyerResponseDto updateBuyerById(@PathVariable(name = "buyerId") long buyerId,
-            @RequestBody @Valid BuyerDto buyerDto) {
+                                            @RequestBody @Valid BuyerDto buyerDto) {
         log.info("PATCH request for buyer with id {}: {}", buyerId, buyerDto);
         BuyerResponseDto response = buyerService.updateBuyer(buyerId, buyerDto);
         log.info("{}", response);
