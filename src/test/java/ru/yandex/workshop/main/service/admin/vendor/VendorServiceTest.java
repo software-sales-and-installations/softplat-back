@@ -11,8 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
+import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -27,7 +31,7 @@ import static org.hamcrest.Matchers.notNullValue;
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class AdminVendorServiceTest {
+class VendorServiceTest {
     private final EntityManager em;
     private final VendorService service;
 

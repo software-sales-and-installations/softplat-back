@@ -1,4 +1,4 @@
-package ru.yandex.workshop.main.service.admin.vendor;
+package ru.yandex.workshop.main.service.vendor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +8,7 @@ import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
-import ru.yandex.workshop.main.exception.VendorNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -61,7 +61,7 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public VendorResponseDto findVendorById(Long vendorId) {
         log.debug(LogMessage.ADMIN_GET_ID_VENDOR.label);
-        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.findById(vendorId).orElseThrow(() -> new VendorNotFoundException(ExceptionMessage.NOT_FOUND_VENDOR_EXCEPTION.label)));
+        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.findById(vendorId).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class VendorServiceImpl implements VendorService {
         repository.deleteById(vendorId);
     }
 
-    private Vendor availabilityVendor(Long vendorId){
-        return repository.findById(vendorId).orElseThrow(() -> new VendorNotFoundException(ExceptionMessage.NOT_FOUND_VENDOR_EXCEPTION.label));
+    private Vendor availabilityVendor(Long vendorId) {
+        return repository.findById(vendorId).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

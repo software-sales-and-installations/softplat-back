@@ -17,7 +17,7 @@ import ru.yandex.workshop.main.dto.seller.SellerDto;
 import ru.yandex.workshop.main.dto.seller.SellerForResponse;
 import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
 import ru.yandex.workshop.main.exception.DuplicateException;
-import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -95,7 +95,7 @@ class SellerControllerTest {
         mockMvc.perform(get("/seller/{email}", email)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof UserNotFoundException));
+                        instanceof EntityNotFoundException));
     }
 
     @Test
@@ -130,7 +130,7 @@ class SellerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof UserNotFoundException));
+                        instanceof EntityNotFoundException));
     }
 
     @Test

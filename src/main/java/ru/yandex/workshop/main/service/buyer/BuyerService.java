@@ -7,7 +7,8 @@ import ru.yandex.workshop.main.dto.buyer.BuyerDto;
 import ru.yandex.workshop.main.dto.buyer.BuyerMapper;
 import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
-import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 
@@ -45,13 +46,13 @@ public class BuyerService {
 
     private void checkIfUserExistsByEmail(String email) {
         if (buyerRepository.existsBuyerByEmail(email)) {
-            throw new DuplicateException("Пользователь с email " + email + " уже существует.");
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
         }
     }
 
     private Buyer getBuyerOrThrowExceptionIfNotFound(long id) {
         return buyerRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("Пользователь с id " + id + " не существует.")
+                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
         );
     }
 

@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
-import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.BankRepository;
@@ -20,7 +21,8 @@ public class SellerBankService {
 
     public BankRequisitesDto getRequisites(String email) {
         Seller seller = getSellerFromDatabase(email);
-        if (seller.getRequisites() == null) throw new UserNotFoundException("Банковские реквизиты отсутствуют");
+        if (seller.getRequisites() == null)
+            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         return new BankRequisitesDto(seller.getRequisites().getAccount());
     }
 
@@ -35,7 +37,8 @@ public class SellerBankService {
     @Transactional
     public void deleteRequisites(String email) {
         Seller seller = getSellerFromDatabase(email);
-        if (seller.getRequisites() == null) throw new UserNotFoundException("Банковские реквизиты отсутствуют");
+        if (seller.getRequisites() == null)
+            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         bankRepository.delete(seller.getRequisites());
         seller.setRequisites(null);
         sellerRepository.save(seller);
@@ -43,6 +46,6 @@ public class SellerBankService {
 
     private Seller getSellerFromDatabase(String email) {
         return sellerRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }
