@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
-import ru.yandex.workshop.main.model.buyer.ProductBasket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class BasketDto {
     private BuyerResponseDto buyerResponseDto;
-    private final List<ProductBasket> productsInBasket = new ArrayList<>();
+    private final List<ProductBasketDto> productsInBasket = new ArrayList<>();
 }

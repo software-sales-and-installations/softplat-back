@@ -7,9 +7,6 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 import ru.yandex.workshop.main.model.vendor.Country;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)

@@ -7,6 +7,7 @@ import ru.yandex.workshop.main.dto.basket.BasketDto;
 import ru.yandex.workshop.main.dto.basket.BasketMapper;
 import ru.yandex.workshop.main.exception.ProductNotFoundException;
 import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Basket;
 import ru.yandex.workshop.main.model.buyer.Buyer;
@@ -32,6 +33,7 @@ public class BasketService {
     @Transactional
     public BasketDto addProduct(Long userId, Long productId) { //TODO check quantity
         Product product = getProduct(productId);
+        if (product.getQuantity() == 0) throw new WrongConditionException("Товара нет в наличии.");
         Basket basket = getBasketByUserId(userId);
         if (basket.getProductsInBasket() == null) {
             ProductBasket productBasket = new ProductBasket(null, product, 1);
@@ -63,7 +65,7 @@ public class BasketService {
                 }
             }
         }
-        throw new NullPointerException("");
+        throw new WrongConditionException("");
     }
 
     public BasketDto getBasket(Long userId) {
@@ -72,14 +74,14 @@ public class BasketService {
 
     private Product getProduct(long id) {
         return productRepository.findById(id).orElseThrow(
-                () -> new ProductNotFoundException(ExceptionMessage.NOT_PRODUCT_PRODUCT_EXCEPTION.toString()));
+                () -> new ProductNotFoundException(ExceptionMessage.NOT_PRODUCT_PRODUCT_EXCEPTION.label));
     }
 
     private Basket getBasketByUserId(Long userId) {
         Optional<Basket> basket = basketRepository.findByBuyer_Id(userId);
         if (basket.isEmpty()) {
             Buyer buyer = buyerRepository.findById(userId).orElseThrow(
-                    () -> new UserNotFoundException(ExceptionMessage.NOT_FOUND_USER_EXCEPTION.toString()));
+                    () -> new UserNotFoundException(ExceptionMessage.NOT_FOUND_USER_EXCEPTION.label));
             return basketRepository.save(Basket.builder()
                     .buyer(buyer)
                     .build());

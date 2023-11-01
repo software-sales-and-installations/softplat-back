@@ -19,7 +19,8 @@ public interface BasketMapper {
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyer);
     }
 
-    default ProductBasketDto productBasketToDto(ProductBasket productBasket) {//TODO product mapper
+    default ProductBasketDto productBasketToDto(ProductBasket productBasket) {
+        //TODO product mapper
         if (productBasket == null) return null;
         return new ProductBasketDto(null, productBasket.getQuantity());
     }
