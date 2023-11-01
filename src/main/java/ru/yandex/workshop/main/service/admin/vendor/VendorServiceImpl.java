@@ -71,7 +71,7 @@ public class VendorServiceImpl implements VendorService {
         repository.deleteById(vendorId);
     }
 
-    private Vendor availabilityVendor(Long vendorId){
+    private Vendor availabilityVendor(Long vendorId) {
         return repository.findById(vendorId).orElseThrow(() -> new VendorNotFoundException(ExceptionMessage.NOT_FOUND_VENDOR_EXCEPTION.label));
     }
 }
