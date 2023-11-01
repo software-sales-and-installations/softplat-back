@@ -1,6 +1,7 @@
 package ru.yandex.workshop.main.service.buyer;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.basket.BasketDto;
@@ -9,6 +10,7 @@ import ru.yandex.workshop.main.exception.ProductNotFoundException;
 import ru.yandex.workshop.main.exception.UserNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.buyer.Basket;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.ProductBasket;
@@ -21,6 +23,7 @@ import ru.yandex.workshop.main.repository.product.ProductRepository;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class BasketService {
     private final ProductBasketRepository productBasketRepository;
 
     @Transactional
-    public BasketDto addProduct(Long userId, Long productId) { //TODO check quantity
+    public BasketDto addProduct(Long userId, Long productId) {
         Product product = getProduct(productId);
         if (product.getQuantity() == 0) throw new WrongConditionException("Товара нет в наличии.");
         Basket basket = getBasketByUserId(userId);
@@ -61,6 +64,7 @@ public class BasketService {
                     else {
                         productBasket.setQuantity(productBasket.getQuantity() - 1);
                     }
+                    log.info(LogMessage.DELETE_PRODUCT_FROM_BASKET.label, productId);
                     return BasketMapper.INSTANCE.basketToBasketDto(basketRepository.save(basket));
                 }
             }

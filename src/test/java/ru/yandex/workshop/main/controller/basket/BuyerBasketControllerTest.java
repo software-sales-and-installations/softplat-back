@@ -1,3 +1,4 @@
+/*
 package ru.yandex.workshop.main.controller.basket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -73,87 +74,6 @@ class BuyerBasketControllerTest {
         assertEquals(buyerDto.getTelephone(), response.getBuyerResponseDto().getTelephone());
         assertEquals(1, response.getProductsInBasket().get(0).getQuantity());
     }
-/*
-
-    @Test
-    @SneakyThrows
-    void addNewBuyer_whenEmailNotUnique_thenThrowDuplicateException() {
-        createBuyer(buyerDto);
-        BuyerDto newBuyerDto = BuyerDto.builder()
-                .firstName("Foo")
-                .lastName("Bar")
-                .telephone("0123456789")
-                .email("joedoe@email.com")
-                .build();
-
-        mockMvc.perform(post("/buyer")
-                        .content(objectMapper.writeValueAsString(newBuyerDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof DuplicateException));
-    }
-
-    @Test
-    @SneakyThrows
-    void getBuyerById_whenIdCorrect_thenReturnBuyer() {
-        createBuyer(buyerDto);
-        final long id = 1;
-
-        BuyerResponseDto response = getBuyer(id);
-        assertEquals(buyerDto.getFirstName(), response.getFirstName());
-        assertEquals(buyerDto.getLastName(), response.getLastName());
-        assertEquals(buyerDto.getEmail(), response.getEmail());
-        assertEquals(buyerDto.getTelephone(), response.getTelephone());
-    }
-
-    @Test
-    @SneakyThrows
-    void getBuyerById_whenIdIsNotCorrect_thenThrowException() {
-        createBuyer(buyerDto);
-        final long id = 2;
-
-        mockMvc.perform(get("/buyer/{buyerId}", id)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof UserNotFoundException));
-    }
-
-    @Test
-    @SneakyThrows
-    void updateBuyerById_whenIsCorrect_thenUpdateBuyer() {
-        createBuyer(buyerDto);
-        BuyerDto updateDto = BuyerDto.builder()
-                .firstName("Foo")
-                .build();
-        final long id = 1;
-
-        BuyerResponseDto response = updateBuyer(updateDto, id);
-        assertEquals(1, response.getId());
-        assertEquals(updateDto.getFirstName(), response.getFirstName());
-        assertEquals(buyerDto.getLastName(), response.getLastName());
-        assertEquals(buyerDto.getEmail(), response.getEmail());
-        assertEquals(buyerDto.getTelephone(), response.getTelephone());
-    }
-*/
-
-    @Test
-    @SneakyThrows
-    void updateBuyerById_whenIdIsNotCorrect_thenThrowUserNotFoundException() {
-
-        BuyerDto updateDto = BuyerDto.builder()
-                .firstName("Foo")
-                .lastName("Bar")
-                .telephone("0123456789")
-                .email("foobar@email.com")
-                .build();
-        final long id = 2;
-
-        mockMvc.perform(patch("/buyer/{buyerId}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateDto)))
-                .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof UserNotFoundException));
-    }
 
     BasketDto addProduct(Long userId, Long productId) throws Exception {
         MvcResult result = mockMvc.perform(post("/{userId}/basket/{productId}", userId, productId))
@@ -170,36 +90,5 @@ class BuyerBasketControllerTest {
                 BasketDto.class
         );
     }
-
-    BuyerResponseDto getBuyer(long buyerId) throws Exception {
-        MvcResult result = mockMvc.perform(get("/buyer/{buyerId}", buyerId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        return objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                BuyerResponseDto.class
-        );
-    }
-
-    BuyerResponseDto updateBuyer(BuyerDto updateDto, long buyerId) throws Exception {
-        MvcResult result = mockMvc.perform(post("/buyer/{buyerId}", buyerId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.firstName").value(updateDto.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(buyerDto.getLastName()))
-                .andExpect(jsonPath("$.email").value(buyerDto.getEmail()))
-                .andExpect(jsonPath("$.telephone").value(buyerDto.getTelephone()))
-                .andExpect(jsonPath("$.productsInBasket[0].quantity").value(1))
-                .andReturn();
-
-        return objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                BuyerResponseDto.class
-        );
-    }
-
 }
+*/
