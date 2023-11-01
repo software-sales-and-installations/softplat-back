@@ -15,3 +15,8 @@ Repository of the backend part of SoftPlat2048
 - ```feat```: Add user registration functionality
 - ```fix```: Resolve issue with login validation
 - ```docs```: Update README with installation instructions
+
+### Swagger Documentation
+After starting application:
+- http://localhost:8080/swagger-ui/#/
+- http://localhost:8080/v2/api-docs
