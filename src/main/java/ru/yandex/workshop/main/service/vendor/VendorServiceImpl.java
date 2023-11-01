@@ -53,14 +53,14 @@ public class VendorServiceImpl implements VendorService {
     @Transactional(readOnly = true)
     @Override
     public List<VendorResponseDto> findVendorAll() {
-        log.debug(LogMessage.ADMIN_GET_VENDOR.label);
+        log.debug(LogMessage.GET_VENDOR.label);
         return VendorMapper.INSTANCE.vendorToListVendorResponseDto(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     @Override
     public VendorResponseDto findVendorById(Long vendorId) {
-        log.debug(LogMessage.ADMIN_GET_ID_VENDOR.label);
+        log.debug(LogMessage.GET_ID_VENDOR.label);
         return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.findById(vendorId).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 

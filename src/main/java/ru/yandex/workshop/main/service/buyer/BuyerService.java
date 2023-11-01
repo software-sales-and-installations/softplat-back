@@ -1,6 +1,7 @@
 package ru.yandex.workshop.main.service.buyer;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.buyer.BuyerDto;
@@ -9,6 +10,7 @@ import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class BuyerService {
 
     private final BuyerRepository buyerRepository;
@@ -27,12 +30,14 @@ public class BuyerService {
         checkIfUserExistsByEmail(request.getEmail());
         request.setRegistrationTime(LocalDateTime.now());
         Buyer response = buyerRepository.save(request);
+        log.info(LogMessage.ADMIN_ADD_BUYER.label);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
     }
 
     @Transactional(readOnly = true)
     public BuyerResponseDto getBuyer(long buyerId) {
         Buyer response = getBuyerOrThrowExceptionIfNotFound(buyerId);
+        log.info(LogMessage.ADMIN_GET_BUYER.label, buyerId);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
     }
 
@@ -41,6 +46,7 @@ public class BuyerService {
         Buyer oldBuyer = getBuyerOrThrowExceptionIfNotFound(buyerId);
         Buyer updatedBuyer = updateBuyer(oldBuyer, updateDto);
         buyerRepository.save(updatedBuyer);
+        log.info(LogMessage.ADMIN_PATCH_BUYER.label, buyerId);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(updatedBuyer);
     }
 

@@ -1,4 +1,4 @@
-package ru.yandex.workshop.main.controller.admin;
+package ru.yandex.workshop.main.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +35,13 @@ public class VendorController {
 
     @GetMapping(path = "/vendor")
     public List<VendorResponseDto> findVendorAll() {
-        log.debug(LogMessage.TRY_ADMIN_GET_VENDOR.label);
+        log.debug(LogMessage.TRY_GET_VENDOR.label);
         return service.findVendorAll();
     }
 
     @GetMapping(path = "/vendor/{vendorId}")
     public VendorResponseDto findVendorById(@PathVariable(name = "vendorId") Long vendorId) {
-        log.debug(LogMessage.TRY_ADMIN_GET_ID_VENDOR.label);
+        log.debug(LogMessage.TRY_GET_ID_VENDOR.label);
         return service.findVendorById(vendorId);
     }
 
