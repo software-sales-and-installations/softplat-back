@@ -103,22 +103,19 @@ class BuyerControllerTest {
 
     @Test
     @SneakyThrows
-    void updateBuyerById_whenIdIsCorrect_thenUpdateBuyer() {
+    void updateBuyerById_whenIsCorrect_thenUpdateBuyer() {
         createBuyer(buyerDto);
         BuyerDto updateDto = BuyerDto.builder()
                 .firstName("Foo")
-                .lastName("Bar")
-                .telephone("0123456789")
-                .email("foobar@email.com")
                 .build();
         final long id = 1;
 
         BuyerResponseDto response = updateBuyer(updateDto, id);
         assertEquals(1, response.getId());
         assertEquals(updateDto.getFirstName(), response.getFirstName());
-        assertEquals(updateDto.getLastName(), response.getLastName());
-        assertEquals(updateDto.getEmail(), response.getEmail());
-        assertEquals(updateDto.getTelephone(), response.getTelephone());
+        assertEquals(buyerDto.getLastName(), response.getLastName());
+        assertEquals(buyerDto.getEmail(), response.getEmail());
+        assertEquals(buyerDto.getTelephone(), response.getTelephone());
     }
 
     @Test
@@ -177,9 +174,9 @@ class BuyerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.firstName").value(updateDto.getFirstName()))
-                .andExpect(jsonPath("$.lastName").value(updateDto.getLastName()))
-                .andExpect(jsonPath("$.email").value(updateDto.getEmail()))
-                .andExpect(jsonPath("$.telephone").value(updateDto.getTelephone()))
+                .andExpect(jsonPath("$.lastName").value(buyerDto.getLastName()))
+                .andExpect(jsonPath("$.email").value(buyerDto.getEmail()))
+                .andExpect(jsonPath("$.telephone").value(buyerDto.getTelephone()))
                 .andReturn();
 
         return objectMapper.readValue(
