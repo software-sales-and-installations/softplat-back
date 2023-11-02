@@ -5,7 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.json.JsonContent;
-import ru.yandex.workshop.main.main.model.vendor.Country;
+import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.model.vendor.Country;
 
 import java.io.IOException;
 

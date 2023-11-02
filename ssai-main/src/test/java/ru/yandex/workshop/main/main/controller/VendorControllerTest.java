@@ -8,10 +8,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.workshop.main.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.main.dto.vendor.VendorResponseDto;
-import ru.yandex.workshop.main.main.service.vendor.VendorService;
-import ru.yandex.workshop.main.main.model.vendor.Country;
+import ru.yandex.workshop.main.controller.VendorController;
+import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
+import ru.yandex.workshop.main.service.vendor.VendorService;
+import ru.yandex.workshop.main.model.vendor.Country;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
