@@ -23,7 +23,7 @@ public class BuyerController {
 
     @PostMapping
     public BuyerResponseDto addNewBuyer(@RequestBody @Validated(New.class) BuyerDto buyerDto) {
-        log.info(LogMessage.TRY_ADMIN_ADD_BUYER.label);
+        log.info(LogMessage.TRY_ADD_BUYER.label);
         BuyerResponseDto response = buyerService.addNewBuyer(buyerDto);
         log.info("{}", response);
         return response;
@@ -31,7 +31,7 @@ public class BuyerController {
 
     @GetMapping("/{buyerId}")
     public BuyerResponseDto getBuyerById(@PathVariable(name = "buyerId") long buyerId) {
-        log.info(LogMessage.TRY_ADMIN_GET_BUYER.label, buyerId);
+        log.info(LogMessage.TRY_GET_BUYER.label, buyerId);
         BuyerResponseDto response = buyerService.getBuyer(buyerId);
         log.info("{}", response);
         return response;
@@ -40,7 +40,7 @@ public class BuyerController {
     @PatchMapping("/{buyerId}")
     public BuyerResponseDto updateBuyerById(@PathVariable(name = "buyerId") long buyerId,
                                             @RequestBody @Valid BuyerDto buyerDto) {
-        log.info(LogMessage.TRY_ADMIN_PATCH_BUYER.label, buyerId);
+        log.info(LogMessage.TRY_PATCH_BUYER.label, buyerId);
         BuyerResponseDto response = buyerService.updateBuyer(buyerId, buyerDto);
         log.info("{}", response);
         return response;

@@ -27,19 +27,19 @@ public class SellerController {
 
     @GetMapping("/{email}")
     public SellerForResponse getSeller(@PathVariable String email) {
-        log.debug(LogMessage.TRY_ADMIN_GET_SELLER.label, email);
+        log.debug(LogMessage.TRY_GET_SELLER.label, email);
         return sellerService.getSeller(email);
     }
 
     @PostMapping("/registration")
     public SellerForResponse addSeller(@RequestBody @Valid SellerDto sellerDto) {
-        log.debug(LogMessage.TRY_ADMIN_ADD_SELLER.label);
+        log.debug(LogMessage.TRY_ADD_SELLER.label);
         return sellerService.addSeller(sellerDto);
     }
 
     @PatchMapping("/account/{email}")
     public SellerForResponse updateSeller(@PathVariable String email, @RequestBody @Valid SellerForUpdate sellerForUpdate) {
-        log.debug(LogMessage.TRY_ADMIN_PATCH_SELLER.label, email);
+        log.debug(LogMessage.TRY_PATCH_SELLER.label, email);
         return sellerService.updateSeller(email, sellerForUpdate);
     }
 

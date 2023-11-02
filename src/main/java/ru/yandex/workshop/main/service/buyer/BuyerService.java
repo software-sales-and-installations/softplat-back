@@ -30,14 +30,14 @@ public class BuyerService {
         checkIfUserExistsByEmail(request.getEmail());
         request.setRegistrationTime(LocalDateTime.now());
         Buyer response = buyerRepository.save(request);
-        log.info(LogMessage.ADMIN_ADD_BUYER.label);
+        log.info(LogMessage.ADD_BUYER.label);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
     }
 
     @Transactional(readOnly = true)
     public BuyerResponseDto getBuyer(long buyerId) {
         Buyer response = getBuyerOrThrowExceptionIfNotFound(buyerId);
-        log.info(LogMessage.ADMIN_GET_BUYER.label, buyerId);
+        log.info(LogMessage.GET_BUYER.label, buyerId);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
     }
 
@@ -46,7 +46,7 @@ public class BuyerService {
         Buyer oldBuyer = getBuyerOrThrowExceptionIfNotFound(buyerId);
         Buyer updatedBuyer = updateBuyer(oldBuyer, updateDto);
         buyerRepository.save(updatedBuyer);
-        log.info(LogMessage.ADMIN_PATCH_BUYER.label, buyerId);
+        log.info(LogMessage.PATCH_BUYER.label, buyerId);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(updatedBuyer);
     }
 
