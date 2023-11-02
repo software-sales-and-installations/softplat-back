@@ -6,11 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.basket.BasketDto;
 import ru.yandex.workshop.main.dto.basket.BasketMapper;
-import ru.yandex.workshop.main.exception.ProductNotFoundException;
-import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.buyer.Basket;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.ProductBasket;
@@ -56,7 +54,8 @@ public class BasketService {
 
     @Transactional
     public BasketDto removeProduct(Long userId, Long productId) { //TODO exception
-        Basket basket = basketRepository.findByBuyer_Id(userId).orElseThrow(() -> new NullPointerException(""));
+        Basket basket = basketRepository.findByBuyer_Id(userId).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
         if (basket.getProductsInBasket() != null) {
             for (ProductBasket productBasket : basket.getProductsInBasket()) {
                 if (productBasket.getProduct().getId().equals(productId)) {
@@ -64,12 +63,11 @@ public class BasketService {
                     else {
                         productBasket.setQuantity(productBasket.getQuantity() - 1);
                     }
-                    log.info(LogMessage.DELETE_PRODUCT_FROM_BASKET.label, productId);
                     return BasketMapper.INSTANCE.basketToBasketDto(basketRepository.save(basket));
                 }
             }
         }
-        throw new WrongConditionException("");
+        throw new WrongConditionException("Ошибка при удалении товара");
     }
 
     public BasketDto getBasket(Long userId) {
@@ -78,14 +76,14 @@ public class BasketService {
 
     private Product getProduct(long id) {
         return productRepository.findById(id).orElseThrow(
-                () -> new ProductNotFoundException(ExceptionMessage.NOT_PRODUCT_PRODUCT_EXCEPTION.label));
+                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
     private Basket getBasketByUserId(Long userId) {
         Optional<Basket> basket = basketRepository.findByBuyer_Id(userId);
         if (basket.isEmpty()) {
             Buyer buyer = buyerRepository.findById(userId).orElseThrow(
-                    () -> new UserNotFoundException(ExceptionMessage.NOT_FOUND_USER_EXCEPTION.label));
+                    () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
             return basketRepository.save(Basket.builder()
                     .buyer(buyer)
                     .build());
