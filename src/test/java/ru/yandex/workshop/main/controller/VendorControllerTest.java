@@ -1,4 +1,4 @@
-package ru.yandex.workshop.main.controller.admin;
+package ru.yandex.workshop.main.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
-import ru.yandex.workshop.main.service.admin.vendor.VendorService;
+import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = VendorController.class)
-class AdminVendorControllerTest {
+class VendorControllerTest {
     @MockBean
     VendorService service;
     @Autowired

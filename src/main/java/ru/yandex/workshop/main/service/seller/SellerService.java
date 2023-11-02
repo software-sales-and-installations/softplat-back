@@ -10,7 +10,8 @@ import ru.yandex.workshop.main.dto.seller.SellerForResponse;
 import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
 import ru.yandex.workshop.main.dto.seller.SellerMapper;
 import ru.yandex.workshop.main.exception.DuplicateException;
-import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 
@@ -44,7 +45,7 @@ public class SellerService {
         try {
             return SellerMapper.INSTANCE.sellerToSellerForResponse(sellerRepository.save(seller));
         } catch (Exception e) {
-            throw new DuplicateException("Пользователь с таким email уже существует");
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
         }
     }
 
@@ -63,6 +64,6 @@ public class SellerService {
 
     private Seller getSellerFromDatabase(String email) {
         return sellerRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Такого пользователя не существует"));
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

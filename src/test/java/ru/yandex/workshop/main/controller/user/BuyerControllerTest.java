@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.dto.buyer.BuyerDto;
 import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
-import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -98,7 +98,7 @@ class BuyerControllerTest {
         mockMvc.perform(get("/buyer/{buyerId}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof UserNotFoundException));
+                        instanceof EntityNotFoundException));
     }
 
     @Test
@@ -134,7 +134,7 @@ class BuyerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof UserNotFoundException));
+                        instanceof EntityNotFoundException));
     }
 
     BuyerResponseDto createBuyer(BuyerDto buyerDto) throws Exception {
