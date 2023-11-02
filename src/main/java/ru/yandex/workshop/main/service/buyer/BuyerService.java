@@ -1,13 +1,15 @@
 package ru.yandex.workshop.main.service.buyer;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.buyer.BuyerDto;
 import ru.yandex.workshop.main.dto.buyer.BuyerMapper;
 import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
-import ru.yandex.workshop.main.exception.UserNotFoundException;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class BuyerService {
 
     private final BuyerRepository buyerRepository;
@@ -45,13 +48,13 @@ public class BuyerService {
 
     private void checkIfUserExistsByEmail(String email) {
         if (buyerRepository.existsBuyerByEmail(email)) {
-            throw new DuplicateException("Пользователь с email " + email + " уже существует.");
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
         }
     }
 
     private Buyer getBuyerOrThrowExceptionIfNotFound(long id) {
         return buyerRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("Пользователь с id " + id + " не существует.")
+                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
         );
     }
 

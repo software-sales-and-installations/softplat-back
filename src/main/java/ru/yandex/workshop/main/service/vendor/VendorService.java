@@ -1,4 +1,4 @@
-package ru.yandex.workshop.main.service.admin.vendor;
+package ru.yandex.workshop.main.service.vendor;
 
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;

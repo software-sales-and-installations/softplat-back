@@ -1,2 +1,4 @@
-package ru.yandex.workshop.main.controller.basket;public class BuyerOrderController {
+package ru.yandex.workshop.main.controller.basket;
+
+public class BuyerOrderController {
 }
