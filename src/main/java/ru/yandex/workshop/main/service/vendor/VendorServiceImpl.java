@@ -10,7 +10,6 @@ import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
 
@@ -25,8 +24,10 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public VendorResponseDto createVendor(VendorDto vendorDto) {
-        log.debug(LogMessage.ADMIN_ADD_VENDOR.label);
-        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.save(VendorMapper.INSTANCE.vendorDtoToVendor(vendorDto)));
+        return VendorMapper.INSTANCE
+                .vendorToVendorResponseDto(repository
+                        .save(VendorMapper.INSTANCE
+                                .vendorDtoToVendor(vendorDto)));
     }
 
     @Override
@@ -46,32 +47,34 @@ public class VendorServiceImpl implements VendorService {
             oldVendor.setCountry(vendorUpdateDto.getCountry());
         }
 
-        log.debug(LogMessage.ADMIN_PATCH_VENDOR.label);
-        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.save(oldVendor));
+        return VendorMapper.INSTANCE
+                .vendorToVendorResponseDto(repository
+                        .save(oldVendor));
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<VendorResponseDto> findVendorAll() {
-        log.debug(LogMessage.GET_VENDOR.label);
-        return VendorMapper.INSTANCE.vendorToListVendorResponseDto(repository.findAll());
+        return VendorMapper.INSTANCE
+                .vendorToListVendorResponseDto(repository.findAll());
     }
 
     @Transactional(readOnly = true)
     @Override
     public VendorResponseDto findVendorById(Long vendorId) {
-        log.debug(LogMessage.GET_ID_VENDOR.label);
-        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.findById(vendorId).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
+        return VendorMapper.INSTANCE
+                .vendorToVendorResponseDto(repository.findById(vendorId)
+                        .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
     @Override
     public void deleteVendor(Long vendorId) {
         availabilityVendor(vendorId);
-        log.debug(LogMessage.ADMIN_DELETE_VENDOR.label);
         repository.deleteById(vendorId);
     }
 
     private Vendor availabilityVendor(Long vendorId) {
-        return repository.findById(vendorId).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        return repository.findById(vendorId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

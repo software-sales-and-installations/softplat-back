@@ -10,7 +10,6 @@ import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 
@@ -30,14 +29,12 @@ public class BuyerService {
         checkIfUserExistsByEmail(request.getEmail());
         request.setRegistrationTime(LocalDateTime.now());
         Buyer response = buyerRepository.save(request);
-        log.info(LogMessage.ADD_BUYER.label);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
     }
 
     @Transactional(readOnly = true)
     public BuyerResponseDto getBuyer(long buyerId) {
         Buyer response = getBuyerOrThrowExceptionIfNotFound(buyerId);
-        log.info(LogMessage.GET_BUYER.label, buyerId);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
     }
 
@@ -46,7 +43,6 @@ public class BuyerService {
         Buyer oldBuyer = getBuyerOrThrowExceptionIfNotFound(buyerId);
         Buyer updatedBuyer = updateBuyer(oldBuyer, updateDto);
         buyerRepository.save(updatedBuyer);
-        log.info(LogMessage.PATCH_BUYER.label, buyerId);
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(updatedBuyer);
     }
 
