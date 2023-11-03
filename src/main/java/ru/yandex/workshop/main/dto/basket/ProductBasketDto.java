@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.yandex.workshop.main.dto.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductDto;
 
 @AllArgsConstructor
 @NoArgsConstructor

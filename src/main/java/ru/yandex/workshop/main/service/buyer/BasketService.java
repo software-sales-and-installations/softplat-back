@@ -10,11 +10,9 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Basket;
-import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.ProductBasket;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
-import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
 
@@ -28,7 +26,6 @@ import java.util.Optional;
 public class BasketService {
     private final BasketRepository basketRepository;
     private final ProductRepository productRepository;
-    private final BuyerRepository buyerRepository;
     private final ProductBasketRepository productBasketRepository;
 
     @Transactional
@@ -53,14 +50,18 @@ public class BasketService {
     }
 
     @Transactional
-    public BasketDto removeProduct(Long userId, Long productId) { //TODO exception
-        Basket basket = basketRepository.findByBuyer_Id(userId).orElseThrow(
+    public BasketDto removeProduct(Long userId, Long productId) {
+        Basket basket = basketRepository.findByBuyerId(userId).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
         if (basket.getProductsInBasket() != null) {
-            for (ProductBasket productBasket : basket.getProductsInBasket()) {
+            for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
+                ProductBasket productBasket = basket.getProductsInBasket().get(i);
                 if (productBasket.getProduct().getId().equals(productId)) {
-                    if (productBasket.getQuantity() == 1) productBasketRepository.deleteById(productBasket.getId());
-                    else {
+                    if (productBasket.getQuantity() == 1) {
+                        productBasketRepository.deleteById(productBasket.getId());
+                        basket.getProductsInBasket().remove(i);
+                        if (basket.getProductsInBasket().size() == 0) basket.setProductsInBasket(null);
+                    } else {
                         productBasket.setQuantity(productBasket.getQuantity() - 1);
                     }
                     return BasketMapper.INSTANCE.basketToBasketDto(basketRepository.save(basket));
@@ -80,14 +81,9 @@ public class BasketService {
     }
 
     private Basket getBasketByUserId(Long userId) {
-        Optional<Basket> basket = basketRepository.findByBuyer_Id(userId);
-        if (basket.isEmpty()) {
-            Buyer buyer = buyerRepository.findById(userId).orElseThrow(
-                    () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-            return basketRepository.save(Basket.builder()
-                    .buyer(buyer)
-                    .build());
-        }
-        return basket.get();
+        Optional<Basket> basket = basketRepository.findByBuyerId(userId);
+        return basket.orElseGet(() -> basketRepository.save(Basket.builder()
+                .buyerId(userId)
+                .build()));
     }
 }

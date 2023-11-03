@@ -3,7 +3,6 @@ package ru.yandex.workshop.main.dto.basket;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.yandex.workshop.main.dto.buyer.BuyerResponseDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BasketDto {
-    private BuyerResponseDto buyerResponseDto;
+    private Long buyerId;
     private final List<ProductBasketDto> productsInBasket = new ArrayList<>();
 }

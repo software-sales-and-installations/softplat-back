@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface BasketRepository extends JpaRepository<Basket, Long> {
-    Optional<Basket> findByBuyer_Id(Long buyerId);
+    Optional<Basket> findByBuyerId(Long buyerId);
 }
