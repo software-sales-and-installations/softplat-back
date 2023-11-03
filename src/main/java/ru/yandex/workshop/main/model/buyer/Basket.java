@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.model.buyer;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.workshop.security.model.Buyer;
 
 import javax.persistence.*;
 import java.util.ArrayList;

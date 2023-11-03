@@ -3,6 +3,7 @@ package ru.yandex.workshop.main.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
@@ -19,6 +20,7 @@ import java.util.List;
 public class VendorController {
     private final VendorService service;
 
+    @PreAuthorize("hasAuthority('admin:write')") //пример использования ролей
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "/admin/vendor")
     public VendorResponseDto createVendor(@RequestBody @Valid VendorDto vendorDto) {
