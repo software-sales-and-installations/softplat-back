@@ -4,10 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.config.PageRequestOverride;
+import ru.yandex.workshop.main.dto.image.ImageDto;
+import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
@@ -18,6 +22,7 @@ import ru.yandex.workshop.main.repository.product.CategoryRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
+import ru.yandex.workshop.main.service.image.ImageService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,125 +38,120 @@ public class ProductService {
     private final SellerRepository sellerRepository;
     private final CategoryRepository categoryRepository;
     private final VendorRepository vendorRepository;
+    private final ImageService imageService;
 
-    public List<ProductDto> getProductsSeller(Long sellerId, int from, int size) {
+    public List<ProductResponseDto> getProductsSeller(Long sellerId, int from, int size) {
         getSellerFromDatabase(sellerId);
         PageRequestOverride pageRequest = PageRequestOverride.of(from, size);
+        // TODO у меня в Postman валится этот метод, Павел Михайлов, проверь пожалуйста
         return productRepository.findProductBySellerId(sellerId, pageRequest)
                 .stream()
-                .map(ProductMapper.INSTANCE::productToProductDto)
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public ProductDto getProductById(Long sellerId, Long productId) {
-        Seller seller = getSellerFromDatabase(sellerId);
+    public ProductResponseDto getProductById(Long sellerId, Long productId) {
+        checkSellerAccessRights(sellerId, productId);
         Product product = getProductFromDatabase(productId);
-        if (!product.getSeller().getId().equals(sellerId)) {
-            throw new EntityNotFoundException(String.format(
-                    "Продавец %s не может посмотреть чужой продукт!",
-                    seller.getName()));
-        }
-        return ProductMapper.INSTANCE.productToProductDto(product);
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
     @Transactional
-    public ProductDto createProduct(ProductDto productDto) {
+    public ProductResponseDto createProduct(ProductDto productDto) {
         Product product = ProductMapper.INSTANCE.productDtoToProduct(productDto);
-        getCategoryFromDatabase(product.getCategory().getId());
-        getVendorFromDatabase(product.getVendor().getId());
-        getSellerFromDatabase(product.getSeller().getId());
+        product.setCategory(getCategoryFromDatabase(product.getCategory().getId()));
+        product.setVendor(getVendorFromDatabase(product.getVendor().getId()));
+        product.setSeller(getSellerFromDatabase(product.getSeller().getId()));
+
         product.setProductStatus(ProductStatus.DRAFT);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
     @Transactional
-    public ProductDto updateProduct(Long sellerId, ProductForUpdate productForUpdate) {
-        Product product = getProductFromDatabase(productForUpdate.getId());
-        Seller seller = getSellerFromDatabase(sellerId);
-
-        if (!product.getSeller().getId().equals(sellerId)) {
-            throw new EntityNotFoundException(String.format(
-                    "Продавец %s не может корректировать чужой продукт!",
-                    seller.getName()));
+    public ProductResponseDto updateProduct(Long sellerId, Long productId, ProductDto productDto) {
+        checkSellerAccessRights(sellerId, productId);
+        Product product = getProductFromDatabase(productId);
+        if (productDto.getName() != null) {
+            product.setName(productDto.getName());
         }
-        if (productForUpdate.getName() != null) {
-            product.setName(productForUpdate.getName());
+        if (productDto.getDescription() != null) {
+            product.setDescription(productDto.getDescription());
         }
-        if (productForUpdate.getDescription() != null) {
-            product.setDescription(productForUpdate.getDescription());
+        if (productDto.getVersion() != null) {
+            product.setVersion(productDto.getVersion());
         }
-        if (productForUpdate.getVersion() != null) {
-            product.setVersion(productForUpdate.getVersion());
+        if (productDto.getCategory() != null) {
+            product.setCategory(Category.builder().id(productDto.getCategory()).build());
         }
-        if (productForUpdate.getImage() != null) {
-            //TODO сделайте что-нибудь с изображением)
+        if (productDto.getLicense() != null) {
+            product.setLicense(productDto.getLicense());
         }
-        if (productForUpdate.getCategory() != null) {
-            product.setCategory(productForUpdate.getCategory());
+        if (productDto.getVendor() != null) {
+            product.setVendor(Vendor.builder().id(productDto.getVendor()).build());
         }
-        if (productForUpdate.getLicense() != null) {
-            product.setLicense(productForUpdate.getLicense());
+        if (productDto.getPrice() != null) {
+            product.setPrice(productDto.getPrice());
         }
-        if (productForUpdate.getVendor() != null) {
-            product.setVendor(productForUpdate.getVendor());
+        if (productDto.getQuantity() != null) {
+            product.setQuantity(productDto.getQuantity());
         }
-        if (productForUpdate.getPrice() != null) {
-            product.setPrice(productForUpdate.getPrice());
+        if (productDto.getInstallation() != null) {
+            product.setInstallation(productDto.getInstallation());
         }
-        if (productForUpdate.getQuantity() != null) {
-            product.setQuantity(productForUpdate.getQuantity());
-        }
-        if (productForUpdate.getInstallation() != null) {
-            product.setInstallation(productForUpdate.getInstallation());
-        }
-        if (productForUpdate.getQuantity() > 0) {
+        if (productDto.getQuantity() != null && productDto.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
         product.setProductStatus(ProductStatus.DRAFT);
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
     @Transactional
-    public ProductDto updateStatusProductOnSent(Long sellerId, Long productId) {
-        Seller seller = getSellerFromDatabase(sellerId);
+    public ProductResponseDto createProductImage(Long sellerId, Long productId, MultipartFile file) {
+        checkSellerAccessRights(sellerId, productId);
         Product product = getProductFromDatabase(productId);
-
-        if (!product.getSeller().getId().equals(sellerId)) {
-            throw new EntityNotFoundException(String.format(
-                    "Продавец %s не может корректировать чужой продукт!",
-                    seller.getName()));
+        if (product.getImage() != null) {
+            imageService.deleteImageById(product.getImage().getId());
         }
-        product.setProductStatus(ProductStatus.SHIPPED);
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        ImageDto imageDto = imageService.addNewImage(file);
+        product.setImage(ImageMapper.INSTANCE.imageDtoToImage(imageDto));
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
-    public List<ProductDto> getAllProductsSeller(int from, int size) {
+    @Transactional
+    public ProductResponseDto updateStatusProductOnSent(Long sellerId, Long productId) {
+        checkSellerAccessRights(sellerId, productId);
+        Product product = getProductFromDatabase(productId);
+        product.setProductStatus(ProductStatus.SHIPPED);
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+    }
+
+    public List<ProductResponseDto> getAllProductsSeller(int from, int size) {
         return productRepository.findAllBy(PageRequestOverride.of(from, size))
                 .stream()
-                .map(ProductMapper.INSTANCE::productToProductDto)
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public ProductDto getProductByIdAdmin(Long productId) {
-        return ProductMapper.INSTANCE.productToProductDto(getProductFromDatabase(productId));
+    public ProductResponseDto getProductByIdAdmin(Long productId) {
+        return ProductMapper.INSTANCE.productToProductResponseDto(getProductFromDatabase(productId));
     }
 
     @Transactional
-    public ProductDto updateStatusProductOnPublished(Long productId) {
+    public ProductResponseDto updateStatusProductOnPublished(Long productId) {
         Product product = getProductFromDatabase(productId);
         product.setProductStatus(ProductStatus.PUBLISHED);
         product.setProductionTime(LocalDateTime.now());
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
     @Transactional
-    public ProductDto updateStatusProductOnRejected(Long productId) {
+    public ProductResponseDto updateStatusProductOnRejected(Long productId) {
         Product product = getProductFromDatabase(productId);
         product.setProductStatus(ProductStatus.REJECTED);
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
     @Transactional
@@ -178,6 +178,17 @@ public class ProductService {
     private Seller getSellerFromDatabase(Long sellerId) {
         return sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new EntityNotFoundException("Такого пользователя не существует"));
+    }
+
+    private void checkSellerAccessRights(Long sellerId, Long productId) {
+        Product product = getProductFromDatabase(productId);
+        Seller seller = getSellerFromDatabase(sellerId);
+
+        if (!product.getSeller().getId().equals(sellerId)) {
+            throw new AccessDenialException(String.format(
+                    "Продавец %s не может корректировать чужой продукт!",
+                    seller.getName()));
+        }
     }
 }
 

@@ -20,10 +20,11 @@ public class Image {
     private Long id;
     private String name;
     @Column(name = "size")
-    private Float size;
+    private Long size;
     @Column(name = "type")
     private String contentType;
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
+    @Column(name = "data")
     private byte[] bytes;
 }

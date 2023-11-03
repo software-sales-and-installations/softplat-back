@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.workshop.main.dto.product.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.service.product.ProductService;
 
 import javax.validation.constraints.Min;
@@ -22,7 +22,7 @@ public class AdminProductController {
     private final ProductService productService;
 
     @GetMapping(path = "/products")
-    public List<ProductDto> getAllProductsSeller(
+    public List<ProductResponseDto> getAllProductsSeller(
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
             @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
         log.info("URL: " +
@@ -32,7 +32,7 @@ public class AdminProductController {
     }
 
     @GetMapping(path = "/{sellerId}/products")
-    public List<ProductDto> getProductsSeller(
+    public List<ProductResponseDto> getProductsSeller(
             @PathVariable @Min(1) Long sellerId,
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
             @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
@@ -43,7 +43,7 @@ public class AdminProductController {
     }
 
     @GetMapping(path = "/product/{productId}")
-    public ProductDto getProductByIdAdmin(
+    public ProductResponseDto getProductByIdAdmin(
             @PathVariable @Min(1) Long productId) {
         log.info("URL: " +
                 URL_ADMIN
@@ -52,7 +52,7 @@ public class AdminProductController {
     }
 
     @PatchMapping(path = "/product/{productId}/published")
-    public ProductDto updateStatusProductOnPublished(
+    public ProductResponseDto updateStatusProductOnPublished(
             @PathVariable @Min(1) Long productId) {
         log.info("URL: " +
                 URL_ADMIN
@@ -62,7 +62,7 @@ public class AdminProductController {
     }
 
     @PatchMapping(path = "/product/{productId}/rejected")
-    public ProductDto updateStatusProductOnRejected(
+    public ProductResponseDto updateStatusProductOnRejected(
             @PathVariable @Min(1) Long productId) {
         log.info("URL: " +
                 URL_ADMIN

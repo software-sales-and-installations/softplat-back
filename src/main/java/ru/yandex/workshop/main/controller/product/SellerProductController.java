@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductForUpdate;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.product.ProductService;
 
 import javax.validation.Valid;
@@ -24,7 +26,7 @@ public class SellerProductController {
     private final ProductService productService;
 
     @GetMapping(path = "/{sellerId}/products")
-    public List<ProductDto> getProductsSeller(
+    public List<ProductResponseDto> getProductsSeller(
             @PathVariable @Min(1) Long sellerId,
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
             @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
@@ -35,7 +37,7 @@ public class SellerProductController {
     }
 
     @GetMapping(path = "/{sellerId}/product/{productId}")
-    public ProductDto getProductById(
+    public ProductResponseDto getProductById(
             @PathVariable @Min(1) Long sellerId,
             @PathVariable @Min(1) Long productId) {
         log.info("URL: " +
@@ -45,7 +47,7 @@ public class SellerProductController {
     }
 
     @PostMapping(path = "/product")
-    public ProductDto createProduct(
+    public ProductResponseDto createProduct(
             @RequestBody @Valid ProductDto productDto) {
         log.info("URL: " +
                 URL_SELLER
@@ -53,18 +55,27 @@ public class SellerProductController {
         return productService.createProduct(productDto);
     }
 
-    @PatchMapping(path = "/{sellerId}/product")
-    public ProductDto updateProduct(
+    @PostMapping(path = "/{sellerId}/product/{productId}/image")
+    public ProductResponseDto createProductImage(@PathVariable @Min(1) Long sellerId,
+                                         @PathVariable @Min(1) Long productId,
+                                         @RequestParam(value = "image") MultipartFile image) {
+        log.info(LogMessage.TRY_SELLER_ADD_PRODUCT_IMAGE.label);
+        return productService.createProductImage(sellerId, productId, image);
+    }
+
+    @PatchMapping(path = "/{sellerId}/product/{productId}")
+    public ProductResponseDto updateProduct(
             @PathVariable @Min(1) Long sellerId,
-            @RequestBody @Valid ProductForUpdate productForUpdate) {
+            @PathVariable @Min(1) Long productId,
+            @RequestBody @Valid ProductDto productDto) {
         log.info("URL: " +
                 URL_SELLER
                 + "/{sellerId}/product. PatchMapping/Редактирование товара/updateProduct");
-        return productService.updateProduct(sellerId, productForUpdate);
+        return productService.updateProduct(sellerId, productId, productDto);
     }
 
     @PatchMapping(path = "/{sellerId}/product/{productId}/send")
-    public ProductDto updateStatusProductOnSent(
+    public ProductResponseDto updateStatusProductOnSent(
             @PathVariable @Min(1) Long sellerId,
             @PathVariable @Min(1) Long productId) {
         log.info("URL: " +

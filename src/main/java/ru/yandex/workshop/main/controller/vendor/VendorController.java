@@ -1,9 +1,10 @@
-package ru.yandex.workshop.main.controller;
+package ru.yandex.workshop.main.controller.vendor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
@@ -11,6 +12,7 @@ import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,6 +26,13 @@ public class VendorController {
     public VendorResponseDto createVendor(@RequestBody @Valid VendorDto vendorDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
         return service.createVendor(vendorDto);
+    }
+
+    @PostMapping(path = "admin/vendor/{vendorId}/image")
+    public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
+                                               @RequestParam(value = "image") MultipartFile image) throws IOException {
+        log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR_IMAGE.label);
+        return service.addVendorImage(vendorId, image);
     }
 
     @PatchMapping(path = "/admin/vendor/{vendorId}")
