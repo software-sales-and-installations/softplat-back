@@ -21,8 +21,6 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDto {
 
-    Long id;
-
     @NotBlank(message = "Необходимо указать имя продукта")
     @Pattern(message = "Неверные символы в названии товара",
             regexp = "^[а-яА-Яa-zA-Z0-9\\s№-]+$")
@@ -42,19 +40,26 @@ public class ProductDto {
     @PastOrPresent
     LocalDateTime productionTime;
 
+    @NotNull(message = "Необходимо добавить изображение продукта")
     Image image;
 
+    @NotNull(message = "Необходимо указать категорию продукта")
     Category category;
 
+    @NotNull(message = "Необходимо указать лицензию продукта")
     License license;
 
+    @NotNull(message = "Необходимо указать производителя продукта")
     Vendor vendor;
 
+    @NotNull(message = "Необходимо указать продавца продукта")
     Seller seller;
 
+    @NotNull(message = "Необходимо указать стоимость продукта")
     @PositiveOrZero
     Float price;
 
+    @NotNull(message = "Необходимо указать количество продукта")
     @PositiveOrZero
     Integer quantity;
 
