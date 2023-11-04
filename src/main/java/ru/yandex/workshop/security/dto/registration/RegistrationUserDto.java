@@ -1,19 +1,20 @@
-package ru.yandex.workshop.security.dto;
+package ru.yandex.workshop.security.dto.registration;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
 import ru.yandex.workshop.security.model.Role;
+import ru.yandex.workshop.security.model.Status;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegistrationUserDto {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
@@ -24,9 +25,11 @@ public class RegistrationUserDto {
     String name;
     @NotBlank(message = "Необходимо указать номер телефона")
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
-    String number;
+    String phone;
     String password;
     String confirmPassword;
     @NotNull(message = "Необходимо выбрать роль пользователя: покупатель/продавец")
     Role role;
+    @Builder.Default
+    Status status = Status.ACTIVE;
 }

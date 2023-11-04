@@ -10,7 +10,7 @@ import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.seller.SellerBankService;
 import ru.yandex.workshop.security.dto.response.SellerResponseDto;
-import ru.yandex.workshop.security.service.user.SellerService;
+import ru.yandex.workshop.security.service.SellerDetailsServiceImpl;
 
 import javax.validation.Valid;
 
@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @Slf4j
 public class SellerController {
 
-    private final SellerService sellerService;
+    private final SellerDetailsServiceImpl sellerService;
     private final SellerBankService bankService;
 
     @GetMapping("/{email}")

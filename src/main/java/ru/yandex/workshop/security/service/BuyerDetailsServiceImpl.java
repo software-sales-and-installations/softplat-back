@@ -1,4 +1,4 @@
-package ru.yandex.workshop.security.service.user;
+package ru.yandex.workshop.security.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.security.dto.RegistrationUserDto;
+import ru.yandex.workshop.security.dto.UserSecurity;
+import ru.yandex.workshop.security.dto.registration.RegistrationUserDto;
 import ru.yandex.workshop.security.dto.response.BuyerResponseDto;
 import ru.yandex.workshop.security.dto.user.BuyerDto;
 import ru.yandex.workshop.security.mapper.BuyerMapper;
-import ru.yandex.workshop.security.model.Buyer;
+import ru.yandex.workshop.security.model.user.Buyer;
 import ru.yandex.workshop.security.repository.BuyerRepository;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class BuyerService implements UserDetailsService {
+public class BuyerDetailsServiceImpl implements UserDetailsService {
 
     private final BuyerRepository buyerRepository;
     private PasswordEncoder passwordEncoder;
@@ -39,50 +40,25 @@ public class BuyerService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Buyer buyer = getBuyerOrThrowExceptionIfNotFound(email);
-        return BuyerResponseDto.fromUser(buyer);
+        Buyer buyer = getSecurityBuyer(email);
+        return UserSecurity.fromUser(buyer);
     }
 
     @Transactional
     public BuyerResponseDto addNewBuyer(RegistrationUserDto registrationUserDto) {
         checkIfUserExistsByEmail(registrationUserDto.getEmail());
-        Buyer buyer = Buyer.builder()
-                .email(registrationUserDto.getEmail())
-                .name(registrationUserDto.getName())
-                .password(passwordEncoder.encode(registrationUserDto.getPassword()))
-                .registrationTime(LocalDateTime.now())
-                .role(registrationUserDto.getRole()).build();
-        Buyer response = buyerRepository.save(buyer);
-        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
-    }
 
-    @Transactional(readOnly = true)
-    public BuyerResponseDto getBuyer(String email) {
-        Buyer response = getBuyerOrThrowExceptionIfNotFound(email);
-        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(response);
+        Buyer buyer = BuyerMapper.INSTANCE.buyerDtoToBuyer(registrationUserDto);
+        buyer.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
+        buyer.setRegistrationTime(LocalDateTime.now());
+
+        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository.save(buyer));
     }
 
     @Transactional
     public BuyerResponseDto updateBuyer(String email, BuyerDto updateDto) {
-        Buyer oldBuyer = getBuyerOrThrowExceptionIfNotFound(email);
-        Buyer updatedBuyer = updateBuyer(oldBuyer, updateDto);
-        buyerRepository.save(updatedBuyer);
-        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(updatedBuyer);
-    }
+        Buyer oldBuyer = getSecurityBuyer(email);
 
-    private void checkIfUserExistsByEmail(String email) {
-        if (buyerRepository.existsBuyerByEmail(email)) {
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
-        }
-    }
-
-    private Buyer getBuyerOrThrowExceptionIfNotFound(String email) {
-        return buyerRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
-        );
-    }
-
-    private Buyer updateBuyer(Buyer oldBuyer, BuyerDto updateDto) {
         if (updateDto.getName() != null) {
             oldBuyer.setName(updateDto.getName());
         }
@@ -90,9 +66,29 @@ public class BuyerService implements UserDetailsService {
             checkIfUserExistsByEmail(updateDto.getEmail());
             oldBuyer.setEmail(updateDto.getEmail());
         }
-        if (updateDto.getTelephone() != null) {
-            oldBuyer.setTelephone(updateDto.getTelephone());
+        if (updateDto.getPhone() != null) {
+            oldBuyer.setPhone(updateDto.getPhone());
         }
-        return oldBuyer;
+
+        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository.save(oldBuyer));
+    }
+
+    @Transactional(readOnly = true)
+    public BuyerResponseDto getBuyer(String email) {
+        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
+    }
+
+    private Buyer getSecurityBuyer(String email) {
+        return buyerRepository
+                .findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    }
+
+    private void checkIfUserExistsByEmail(String email) {
+        if (buyerRepository.findByEmail(email).isPresent()) {
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
+        }
     }
 }

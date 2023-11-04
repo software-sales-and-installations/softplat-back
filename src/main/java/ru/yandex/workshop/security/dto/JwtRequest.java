@@ -1,17 +1,16 @@
 package ru.yandex.workshop.security.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import ru.yandex.workshop.security.model.Role;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtRequest {
-    private String email;
-    private String password;
-    private Role role;
+    String email;
+    String password;
+    Role role;
 }

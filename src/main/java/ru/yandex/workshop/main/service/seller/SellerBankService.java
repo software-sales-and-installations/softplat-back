@@ -8,7 +8,7 @@ import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
-import ru.yandex.workshop.security.model.Seller;
+import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.main.repository.seller.BankRepository;
 import ru.yandex.workshop.security.repository.SellerRepository;
 

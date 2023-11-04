@@ -23,5 +23,5 @@ public class BuyerDto {
     private String name;
     @NotBlank(groups = {New.class}, message = "Необходимо указать номер телефона")
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
-    private String telephone;
+    private String phone;
 }

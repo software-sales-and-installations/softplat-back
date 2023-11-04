@@ -1,4 +1,4 @@
-package ru.yandex.workshop.security.service.user;
+package ru.yandex.workshop.security.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.security.dto.RegistrationUserDto;
+import ru.yandex.workshop.security.dto.UserSecurity;
+import ru.yandex.workshop.security.dto.registration.RegistrationAdminDto;
 import ru.yandex.workshop.security.dto.response.AdminResponseDto;
 import ru.yandex.workshop.security.mapper.AdminMapper;
-import ru.yandex.workshop.security.model.Admin;
+import ru.yandex.workshop.security.model.user.Admin;
 import ru.yandex.workshop.security.repository.AdminRepository;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class AdminService implements UserDetailsService {
+public class AdminDetailsServiceImpl implements UserDetailsService {
     private final AdminRepository adminRepository;
     private PasswordEncoder passwordEncoder;
 
@@ -39,24 +40,18 @@ public class AdminService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Admin admin = getAdminFromDatabase(email);
-        return AdminResponseDto.fromUser(admin);
+        Admin admin = getSecurityAdmin(email);
+        return UserSecurity.fromUser(admin);
     }
 
     @Transactional
-    public AdminResponseDto addAdmin(RegistrationUserDto registrationUserDto) {
-        getAdminFromDatabase(registrationUserDto.getEmail());
-        Admin admin = Admin.builder()
-                .email(registrationUserDto.getEmail())
-                .password(passwordEncoder.encode(registrationUserDto.getPassword()))
-                .name(registrationUserDto.getName())
-                .role(registrationUserDto.getRole())
-                .build();
-        try {
-            return AdminMapper.INSTANCE.adminToAdminResponseDto(adminRepository.save(admin));
-        } catch (Exception e) {
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
-        }
+    public AdminResponseDto addAdmin(RegistrationAdminDto registrationAdminDto) {
+        checkIfUserExistsByEmail(registrationAdminDto.getEmail());
+
+        Admin admin = AdminMapper.INSTANCE.adminDtoToAdmin(registrationAdminDto);
+        admin.setPassword(passwordEncoder.encode(registrationAdminDto.getPassword()));
+
+        return AdminMapper.INSTANCE.adminToAdminResponseDto(adminRepository.save(admin));
     }
 
 //    TODO
@@ -64,21 +59,29 @@ public class AdminService implements UserDetailsService {
 //    public SellerResponseDto updateAdmin(String email, Admin AdminDto) {
 //    }
 
-    public List<AdminResponseDto> getAllSellers() {
+    @Transactional(readOnly = true)
+    public List<AdminResponseDto> getAllAdmins() {
         return adminRepository.findAll(Pageable.ofSize(10)).stream()//TODO common custom pagination
                 .map(AdminMapper.INSTANCE::adminToAdminResponseDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public AdminResponseDto getAdmin(String email) {
         return AdminMapper.INSTANCE.adminToAdminResponseDto(adminRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
-    private Admin getAdminFromDatabase(String email) {
-        return adminRepository.findByEmail(email)
+    private Admin getSecurityAdmin(String email) {
+        return adminRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
+    private void checkIfUserExistsByEmail(String email) {
+        if (adminRepository.findByEmail(email).isPresent()) {
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
+        }
+    }
 }

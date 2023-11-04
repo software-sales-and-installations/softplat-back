@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.security.dto.response.BuyerResponseDto;
 import ru.yandex.workshop.security.dto.user.BuyerDto;
-import ru.yandex.workshop.security.service.user.BuyerService;
+import ru.yandex.workshop.security.service.BuyerDetailsServiceImpl;
 
 import javax.validation.Valid;
 
@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @RequestMapping("/buyer")
 public class BuyerController {
 
-    private final BuyerService buyerService;
+    private final BuyerDetailsServiceImpl buyerService;
 
     @GetMapping("/{emailBuyer}")
     public BuyerResponseDto getBuyerById(@PathVariable(name = "emailBuyer") String emailBuyer) {

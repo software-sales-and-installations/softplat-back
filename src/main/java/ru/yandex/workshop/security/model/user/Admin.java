@@ -1,7 +1,9 @@
-package ru.yandex.workshop.security.model;
+package ru.yandex.workshop.security.model.user;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.workshop.security.model.Role;
+import ru.yandex.workshop.security.model.Status;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -21,8 +23,10 @@ public class Admin {
     @Column(unique = true)
     String email;
     String name;
-    @Enumerated(EnumType.STRING)
-    Role role;
     @NotBlank
     String password;
+    @Enumerated(EnumType.STRING)
+    Role role;
+    @Enumerated(EnumType.STRING)
+    Status status;
 }
