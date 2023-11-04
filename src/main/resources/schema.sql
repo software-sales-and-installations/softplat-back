@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS seller
     requisites_id     BIGINT,
     password          VARCHAR(255)                           NOT NULL,
     role              VARCHAR(20)                            NOT NULL,
+    status varchar,
     CONSTRAINT pk_seller PRIMARY KEY (id),
     CONSTRAINT uq_seller_email UNIQUE (email),
     CONSTRAINT uq_seller_number UNIQUE (number),
@@ -57,6 +58,7 @@ CREATE TABLE IF NOT EXISTS admin
     name  VARCHAR(254)                            NOT NULL,
     password          VARCHAR(255)                           NOT NULL,
     role              VARCHAR(20)                            NOT NULL,
+    status VARCHAR  NOT NULL,
     CONSTRAINT pk_admin PRIMARY KEY (id),
     CONSTRAINT uq_admin_email UNIQUE (email)
 );

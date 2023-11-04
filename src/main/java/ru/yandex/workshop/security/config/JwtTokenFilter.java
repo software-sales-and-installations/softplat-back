@@ -6,9 +6,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
-import ru.yandex.workshop.security.service.AdminDetailsServiceImpl;
-import ru.yandex.workshop.security.service.BuyerDetailsServiceImpl;
-import ru.yandex.workshop.security.service.SellerDetailsServiceImpl;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

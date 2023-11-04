@@ -25,13 +25,13 @@ public class AuthService {
 
         switch (registrationUserDto.getRole()) {
             case SELLER:
-                if (sellerService.getSeller(registrationUserDto.getEmail()) != null) {
+                if (sellerService.checkIfUserExistsByEmail(registrationUserDto.getEmail())) {
                     throw new WrongRegException("Пользователь с указанным логином уже существует");
                 } else {
                     return ResponseEntity.of(Optional.ofNullable(sellerService.addSeller(registrationUserDto)));
                 }
             case BUYER:
-                if (buyerService.getBuyer(registrationUserDto.getEmail()) != null) {
+                if (buyerService.checkIfUserExistsByEmail(registrationUserDto.getEmail())) {
                     throw new WrongRegException("Пользователь с указанным логином уже существует");
                 } else {
                     return ResponseEntity.of(Optional.ofNullable(buyerService.addNewBuyer(registrationUserDto)));

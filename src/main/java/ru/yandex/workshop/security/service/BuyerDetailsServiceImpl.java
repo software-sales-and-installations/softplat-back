@@ -18,6 +18,7 @@ import ru.yandex.workshop.security.dto.registration.RegistrationUserDto;
 import ru.yandex.workshop.security.dto.response.BuyerResponseDto;
 import ru.yandex.workshop.security.dto.user.BuyerDto;
 import ru.yandex.workshop.security.mapper.BuyerMapper;
+import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.user.Buyer;
 import ru.yandex.workshop.security.repository.BuyerRepository;
 
@@ -46,11 +47,13 @@ public class BuyerDetailsServiceImpl implements UserDetailsService {
 
     @Transactional
     public BuyerResponseDto addNewBuyer(RegistrationUserDto registrationUserDto) {
-        checkIfUserExistsByEmail(registrationUserDto.getEmail());
+        if (checkIfUserExistsByEmail(registrationUserDto.getEmail()))
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + registrationUserDto.getEmail());
 
         Buyer buyer = BuyerMapper.INSTANCE.buyerDtoToBuyer(registrationUserDto);
         buyer.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
         buyer.setRegistrationTime(LocalDateTime.now());
+        buyer.setStatus(Status.ACTIVE);
 
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository.save(buyer));
     }
@@ -63,7 +66,8 @@ public class BuyerDetailsServiceImpl implements UserDetailsService {
             oldBuyer.setName(updateDto.getName());
         }
         if (updateDto.getEmail() != null) {
-            checkIfUserExistsByEmail(updateDto.getEmail());
+            if (checkIfUserExistsByEmail(updateDto.getEmail()))
+                throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + updateDto.getEmail());
             oldBuyer.setEmail(updateDto.getEmail());
         }
         if (updateDto.getPhone() != null) {
@@ -73,22 +77,19 @@ public class BuyerDetailsServiceImpl implements UserDetailsService {
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository.save(oldBuyer));
     }
 
-    @Transactional(readOnly = true)
     public BuyerResponseDto getBuyer(String email) {
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
-    private Buyer getSecurityBuyer(String email) {
+    public Buyer getSecurityBuyer(String email) {
         return buyerRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private void checkIfUserExistsByEmail(String email) {
-        if (buyerRepository.findByEmail(email).isPresent()) {
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
-        }
+    public boolean checkIfUserExistsByEmail(String email) {
+        return buyerRepository.findByEmail(email).isPresent();
     }
 }

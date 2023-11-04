@@ -19,6 +19,7 @@ import ru.yandex.workshop.security.dto.UserSecurity;
 import ru.yandex.workshop.security.dto.registration.RegistrationUserDto;
 import ru.yandex.workshop.security.dto.response.SellerResponseDto;
 import ru.yandex.workshop.security.mapper.SellerMapper;
+import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.security.repository.SellerRepository;
 
@@ -49,11 +50,13 @@ public class SellerDetailsServiceImpl implements UserDetailsService {
 
     @Transactional
     public SellerResponseDto addSeller(RegistrationUserDto registrationUserDto) {
-        checkIfUserExistsByEmail(registrationUserDto.getEmail());
+        if (checkIfUserExistsByEmail(registrationUserDto.getEmail()))
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + registrationUserDto.getEmail());
 
         Seller seller = SellerMapper.INSTANCE.sellerDtoToSeller(registrationUserDto);
         seller.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
         seller.setRegistrationTime(LocalDateTime.now());
+        seller.setStatus(Status.ACTIVE);
 
         return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository.save(seller));
     }
@@ -64,8 +67,11 @@ public class SellerDetailsServiceImpl implements UserDetailsService {
 
         if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
         if (sellerForUpdate.getDescription() != null) seller.setDescription(sellerForUpdate.getDescription());
-        if (sellerForUpdate.getEmail() != null && !sellerRepository.findByEmail(sellerForUpdate.getEmail()).isPresent())
+        if (sellerForUpdate.getEmail() != null) {
+            if (checkIfUserExistsByEmail(sellerForUpdate.getEmail()))
+                throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + sellerForUpdate.getEmail());
             seller.setEmail(sellerForUpdate.getEmail());
+        }
         //TODO save image
         if (sellerForUpdate.getPhone() != null) seller.setPhone(sellerForUpdate.getPhone());
 
@@ -80,10 +86,8 @@ public class SellerDetailsServiceImpl implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     public SellerResponseDto getSeller(String email) {
-        return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository
-                .findByEmail(email)
+        return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
@@ -92,9 +96,7 @@ public class SellerDetailsServiceImpl implements UserDetailsService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private void checkIfUserExistsByEmail(String email) {
-        if (sellerRepository.findByEmail(email).isPresent()) {
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
-        }
+    public boolean checkIfUserExistsByEmail(String email) {
+        return  (sellerRepository.findByEmail(email).isPresent());
     }
 }
