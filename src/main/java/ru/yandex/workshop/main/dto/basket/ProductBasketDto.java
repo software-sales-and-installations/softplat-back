@@ -13,4 +13,5 @@ import ru.yandex.workshop.main.dto.product.ProductDto;
 public class ProductBasketDto {
     private ProductDto productDto;
     private Integer quantity;
+    private Boolean installation;
 }

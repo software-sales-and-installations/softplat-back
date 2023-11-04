@@ -124,7 +124,8 @@ class ProductServiceTest {
                 5,
                 true,
                 DRAFT,
-                true);
+                true,
+                10.00F);
 
         productForUpdate = new ProductForUpdate(
                 "Name product 2",
@@ -140,7 +141,8 @@ class ProductServiceTest {
                 0,
                 false,
                 DRAFT,
-                false);
+                false,
+                10.00F);
 
         productDto = ProductMapper.INSTANCE.productToProductDto(product);
         productResponseDto = ProductMapper.INSTANCE.productToProductResponseDto(product);
@@ -198,6 +200,7 @@ class ProductServiceTest {
         assertEquals(product.getPrice(), productDtoGet.getPrice());
         assertEquals(product.getQuantity(), productDtoGet.getQuantity());
         assertEquals(product.getPrice(), productDtoGet.getPrice());
+        assertEquals(product.getInstallationPrice(), productDtoGet.getInstallationPrice());
     }
 
     @Test
@@ -225,6 +228,7 @@ class ProductServiceTest {
         assertEquals(product.getPrice(), productDtoSave.getPrice());
         assertEquals(product.getQuantity(), productDtoSave.getQuantity());
         assertEquals(product.getPrice(), productDtoSave.getPrice());
+        assertEquals(product.getInstallationPrice(), productDtoSave.getInstallationPrice());
     }
 
     @Test
@@ -258,6 +262,7 @@ class ProductServiceTest {
         assertEquals(product.getPrice(), productDtoUpdate.getPrice());
         assertEquals(product.getQuantity(), productDtoUpdate.getQuantity());
         assertEquals(product.getPrice(), productDtoUpdate.getPrice());
+        assertEquals(product.getInstallationPrice(), productDtoUpdate.getInstallationPrice());
     }
 
     @Test
@@ -319,6 +324,7 @@ class ProductServiceTest {
         assertEquals(product.getPrice(), productByIdAdmin.getPrice());
         assertEquals(product.getQuantity(), productByIdAdmin.getQuantity());
         assertEquals(product.getPrice(), productByIdAdmin.getPrice());
+        assertEquals(product.getInstallationPrice(), productByIdAdmin.getInstallationPrice());
     }
 
     @Test

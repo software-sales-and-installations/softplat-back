@@ -14,15 +14,17 @@ public class BuyerBasketController {
     private final BasketService basketService;
 
     @PostMapping("/{userId}/basket/{productId}")
-    public BasketDto addProductInBasket(@PathVariable Long userId, @PathVariable Long productId) {
+    public BasketDto addProductInBasket(@PathVariable Long userId, @PathVariable Long productId,
+                                        @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_ADD_PRODUCT_IN_BASKET.label, productId);
-        return basketService.addProduct(userId, productId);
+        return basketService.addProduct(userId, productId, installation);
     }
 
     @DeleteMapping("/{userId}/basket/{productId}")
-    public BasketDto removeProductFromBasket(@PathVariable Long userId, @PathVariable Long productId) {
+    public BasketDto removeProductFromBasket(@PathVariable Long userId, @PathVariable Long productId,
+                                             @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_DELETE_PRODUCT_FROM_BASKET.label, productId);
-        return basketService.removeProduct(userId, productId);
+        return basketService.removeProduct(userId, productId, installation);
     }
 
     @GetMapping("/{userId}/basket")

@@ -18,8 +18,9 @@ public class ProductBasket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
     Product product;
     Integer quantity;
+    Boolean installation;
 }

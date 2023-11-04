@@ -68,4 +68,6 @@ public class ProductDto {
     ProductStatus productStatus;
 
     Boolean productAvailability;
+
+    Float installationPrice;
 }

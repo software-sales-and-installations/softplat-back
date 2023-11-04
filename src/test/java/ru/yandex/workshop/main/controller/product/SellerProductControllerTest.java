@@ -114,7 +114,8 @@ class SellerProductControllerTest {
                 5,
                 true,
                 DRAFT,
-                true);
+                true,
+                10.00F);
 
 
         productForUpdate = new ProductForUpdate(
@@ -131,7 +132,8 @@ class SellerProductControllerTest {
                 0,
                 false,
                 DRAFT,
-                false);
+                false,
+                null);
 
         productDto = new ProductResponseDto(
                 1L,
@@ -148,7 +150,8 @@ class SellerProductControllerTest {
                 5,
                 true,
                 DRAFT,
-                true);
+                true,
+                10.00F);
 
         productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product), productDto);
     }
@@ -186,37 +189,38 @@ class SellerProductControllerTest {
                         .param("sellerId", "1")
                         .param("productId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(productDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(productDto.getDescription().toString())))
-                .andExpect(jsonPath("$.version", is(productDto.getVersion().toString())))
+                .andExpect(jsonPath("$.name", is(productDto.getName())))
+                .andExpect(jsonPath("$.description", is(productDto.getDescription())))
+                .andExpect(jsonPath("$.version", is(productDto.getVersion())))
                 .andExpect(jsonPath("$.image.id", is(productDto.getImage().getId()), Long.class))
-                .andExpect(jsonPath("$.image.name", is(productDto.getImage().getName().toString())))
+                .andExpect(jsonPath("$.image.name", is(productDto.getImage().getName())))
                 .andExpect(jsonPath("$.image.size", is(productDto.getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.image.contentType", is(productDto.getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.image.contentType", is(productDto.getImage().getContentType())))
                 //TODO - добавить проверку bytes
                 .andExpect(jsonPath("$.category.id", is(productDto.getCategory().getId()), Long.class))
-                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName().toString())))
+                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName())))
                 .andExpect(jsonPath("$.license", is(productDto.getLicense().toString())))
                 .andExpect(jsonPath("$.vendor.id", is(productDto.getVendor().getId()), Long.class))
-                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName().toString())))
-                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription().toString())))
+                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName())))
+                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription())))
                 .andExpect(jsonPath("$.vendor.imageId", is(productDto.getVendor().getImageId()), Long.class))
                 .andExpect(jsonPath("$.vendor.country", is(productDto.getVendor().getCountry().toString())))
                 .andExpect(jsonPath("$.seller.id", is(productDto.getSeller().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail().toString())))
-                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName().toString())))
-                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone().toString())))
-                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription().toString())))
+                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail())))
+                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName())))
+                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone())))
+                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription())))
                 .andExpect(jsonPath("$.seller.requisites.id", is(productDto.getSeller().getRequisites().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount().toString())))
-                .andExpect(jsonPath("$.seller.image.name", is(productDto.getSeller().getImage().getName().toString())))
+                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount())))
+                .andExpect(jsonPath("$.seller.image.name", is(productDto.getSeller().getImage().getName())))
                 .andExpect(jsonPath("$.seller.image.size", is(productDto.getSeller().getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.seller.image.contentType", is(productDto.getSeller().getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.seller.image.contentType", is(productDto.getSeller().getImage().getContentType())))
                 .andExpect(jsonPath("$.price", is(productDto.getPrice()), Float.class))
                 .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
                 .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))
                 .andExpect(jsonPath("$.productStatus", is(productDto.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class));
+                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class))
+                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
     }
 
     @Test
@@ -233,37 +237,38 @@ class SellerProductControllerTest {
                         .header("X-Share-Product-Id", product.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(productDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(productDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(productDto.getDescription().toString())))
-                .andExpect(jsonPath("$.version", is(productDto.getVersion().toString())))
+                .andExpect(jsonPath("$.name", is(productDto.getName())))
+                .andExpect(jsonPath("$.description", is(productDto.getDescription())))
+                .andExpect(jsonPath("$.version", is(productDto.getVersion())))
                 .andExpect(jsonPath("$.image.id", is(productDto.getImage().getId()), Long.class))
-                .andExpect(jsonPath("$.image.name", is(productDto.getImage().getName().toString())))
+                .andExpect(jsonPath("$.image.name", is(productDto.getImage().getName())))
                 .andExpect(jsonPath("$.image.size", is(productDto.getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.image.contentType", is(productDto.getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.image.contentType", is(productDto.getImage().getContentType())))
                 //TODO - добавить проверку bytes
                 .andExpect(jsonPath("$.category.id", is(productDto.getCategory().getId()), Long.class))
-                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName().toString())))
+                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName())))
                 .andExpect(jsonPath("$.license", is(productDto.getLicense().toString())))
                 .andExpect(jsonPath("$.vendor.id", is(productDto.getVendor().getId()), Long.class))
-                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName().toString())))
-                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription().toString())))
+                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName())))
+                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription())))
                 .andExpect(jsonPath("$.vendor.imageId", is(productDto.getVendor().getImageId()), Long.class))
                 .andExpect(jsonPath("$.vendor.country", is(productDto.getVendor().getCountry().toString())))
                 .andExpect(jsonPath("$.seller.id", is(productDto.getSeller().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail().toString())))
-                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName().toString())))
-                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone().toString())))
-                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription().toString())))
+                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail())))
+                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName())))
+                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone())))
+                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription())))
                 .andExpect(jsonPath("$.seller.requisites.id", is(productDto.getSeller().getRequisites().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount().toString())))
-                .andExpect(jsonPath("$.seller.image.name", is(productDto.getSeller().getImage().getName().toString())))
+                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount())))
+                .andExpect(jsonPath("$.seller.image.name", is(productDto.getSeller().getImage().getName())))
                 .andExpect(jsonPath("$.seller.image.size", is(productDto.getSeller().getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.seller.image.contentType", is(productDto.getSeller().getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.seller.image.contentType", is(productDto.getSeller().getImage().getContentType())))
                 .andExpect(jsonPath("$.price", is(productDto.getPrice()), Float.class))
                 .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
                 .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))
                 .andExpect(jsonPath("$.productStatus", is(productDto.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class));
+                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class))
+                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
     }
 
     @Test
@@ -286,32 +291,32 @@ class SellerProductControllerTest {
                         .param("productForUpdate", "productForUpdate")
                         .param("productId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(productDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(productDto.getDescription().toString())))
-                .andExpect(jsonPath("$.version", is(productDto.getVersion().toString())))
+                .andExpect(jsonPath("$.name", is(productDto.getName())))
+                .andExpect(jsonPath("$.description", is(productDto.getDescription())))
+                .andExpect(jsonPath("$.version", is(productDto.getVersion())))
                 .andExpect(jsonPath("$.image.id", is(productDto.getImage().getId()), Long.class))
-                .andExpect(jsonPath("$.image.name", is(productDto.getImage().getName().toString())))
+                .andExpect(jsonPath("$.image.name", is(productDto.getImage().getName())))
                 .andExpect(jsonPath("$.image.size", is(productDto.getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.image.contentType", is(productDto.getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.image.contentType", is(productDto.getImage().getContentType())))
                 //TODO - добавить проверку bytes
                 .andExpect(jsonPath("$.category.id", is(productDto.getCategory().getId()), Long.class))
-                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName().toString())))
+                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName())))
                 .andExpect(jsonPath("$.license", is(productDto.getLicense().toString())))
                 .andExpect(jsonPath("$.vendor.id", is(productDto.getVendor().getId()), Long.class))
-                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName().toString())))
-                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription().toString())))
+                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName())))
+                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription())))
                 .andExpect(jsonPath("$.vendor.imageId", is(productDto.getVendor().getImageId()), Long.class))
                 .andExpect(jsonPath("$.vendor.country", is(productDto.getVendor().getCountry().toString())))
                 .andExpect(jsonPath("$.seller.id", is(productDto.getSeller().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail().toString())))
-                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName().toString())))
-                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone().toString())))
-                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription().toString())))
+                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail())))
+                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName())))
+                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone())))
+                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription())))
                 .andExpect(jsonPath("$.seller.requisites.id", is(productDto.getSeller().getRequisites().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount().toString())))
-                .andExpect(jsonPath("$.seller.image.name", is(productDto.getSeller().getImage().getName().toString())))
+                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount())))
+                .andExpect(jsonPath("$.seller.image.name", is(productDto.getSeller().getImage().getName())))
                 .andExpect(jsonPath("$.seller.image.size", is(productDto.getSeller().getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.seller.image.contentType", is(productDto.getSeller().getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.seller.image.contentType", is(productDto.getSeller().getImage().getContentType())))
                 .andExpect(jsonPath("$.price", is(productDto.getPrice()), Float.class))
                 .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
                 .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))

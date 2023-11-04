@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS product
     vendor_id       BIGINT                                  NOT NULL,
     seller_id       BIGINT                                  NOT NULL,
     price           FLOAT                                   NOT NULL,
+    installation_price FLOAT,
     quantity        INT                                     NOT NULL,
     installation    BOOLEAN DEFAULT 'FALSE'                 NOT NULL,
     CONSTRAINT pk_product PRIMARY KEY (id),
@@ -145,6 +146,7 @@ CREATE TABLE IF NOT EXISTS product_basket
     basket_id   BIGINT                                 NOT NULL,
     product_id BIGINT                                  NOT NULL,
     quantity   INT                                     NOT NULL,
+    installation boolean DEFAULT 'FALSE'               NOT NULL,
     CONSTRAINT pk_product_basket PRIMARY KEY (id),
     CONSTRAINT fk_basket FOREIGN KEY (basket_id) REFERENCES basket (id) on update cascade on delete cascade,
     CONSTRAINT fk_product_basket FOREIGN KEY (product_id) REFERENCES product (id) on update cascade on delete cascade

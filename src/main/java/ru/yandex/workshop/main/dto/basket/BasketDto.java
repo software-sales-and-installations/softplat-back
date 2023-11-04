@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BasketDto {
+    private Long id;
     private Long buyerId;
     private final List<ProductBasketDto> productsInBasket = new ArrayList<>();
 }

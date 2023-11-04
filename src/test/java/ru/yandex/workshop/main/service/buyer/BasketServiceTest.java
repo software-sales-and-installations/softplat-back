@@ -109,20 +109,6 @@ class BasketServiceTest {
                 .build();
     }
 
-    /*@Test
-    @SneakyThrows
-    void addProductInBasketTest_whenOK_returnBasket() {
-
-
-
-        BasketDto response = basketService.addProduct(buyer.getId(), product.getId());
-        assertEquals(buyerDto.getFirstName(), response.getBuyerResponseDto().getFirstName());
-        assertEquals(buyerDto.getLastName(), response.getBuyerResponseDto().getLastName());
-        assertEquals(buyerDto.getEmail(), response.getBuyerResponseDto().getEmail());
-        assertEquals(buyerDto.getTelephone(), response.getBuyerResponseDto().getTelephone());
-        assertEquals(1, response.getProductsInBasket().get(0).getQuantity());
-    }*/
-
     @Test
     @SneakyThrows
     void getBasketTest_whenEmpty_returnNewBasket() {
@@ -146,7 +132,7 @@ class BasketServiceTest {
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(1L, 1L, null)));
         when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L, null));
 
-        basketService.addProduct(1L, 2L);
+        basketService.addProduct(1L, 2L, false);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -155,6 +141,7 @@ class BasketServiceTest {
         assertEquals(1L, response.getBuyerId());
         assertEquals(product.getId(), response.getProductsInBasket().get(0).getProduct().getId());
         assertEquals(1, response.getProductsInBasket().get(0).getQuantity());
+        assertEquals(false, response.getProductsInBasket().get(0).getInstallation());
     }
 
     @Test
@@ -162,11 +149,11 @@ class BasketServiceTest {
     void addProductTest_whenHaveSameProduct_returnBasketDto() {
         when(productRepository.findById(2L)).thenReturn(Optional.ofNullable(product));
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
-                1L, 1L, List.of(new ProductBasket(1L, product, 1)))));
+                1L, 1L, List.of(new ProductBasket(1L, product, 1, true)))));
         when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L,
-                List.of(new ProductBasket(1L, product, 2))));
+                List.of(new ProductBasket(1L, product, 2, true))));
 
-        basketService.addProduct(1L, 2L);
+        basketService.addProduct(1L, 2L, true);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -175,19 +162,46 @@ class BasketServiceTest {
         assertEquals(1L, response.getBuyerId());
         assertEquals(product.getId(), response.getProductsInBasket().get(0).getProduct().getId());
         assertEquals(2, response.getProductsInBasket().get(0).getQuantity());
+        assertEquals(true, response.getProductsInBasket().get(0).getInstallation());
+    }
+
+    @Test
+    @SneakyThrows
+    void addProductTest_whenHaveSameProductWithoutInstallation_returnBasketDto() {
+        List<ProductBasket> productBaskets = new ArrayList<>();
+        productBaskets.add(new ProductBasket(1L, product, 1, true));
+
+        when(productRepository.findById(2L)).thenReturn(Optional.ofNullable(product));
+        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
+                1L, 1L, productBaskets)));
+        when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L,
+                List.of(new ProductBasket(1L, product, 1, true))),
+                new ProductBasket(2L, product, 1, false));
+
+        basketService.addProduct(1L, 2L, false);
+
+        verify(basketRepository).save(argumentCaptor.capture());
+
+        Basket response = argumentCaptor.getValue();
+
+        assertEquals(1L, response.getBuyerId());
+        assertEquals(2, response.getProductsInBasket().size());
+        assertEquals(product.getId(), response.getProductsInBasket().get(1).getProduct().getId());
+        assertEquals(1, response.getProductsInBasket().get(1).getQuantity());
+        assertEquals(false, response.getProductsInBasket().get(1).getInstallation());
     }
 
     @Test
     @SneakyThrows
     void removeProductTest_whenHaveOneProduct_returnBasketDtoWithEmptyProductBaskets() {
         List<ProductBasket> productBaskets = new ArrayList<>();
-        productBaskets.add(new ProductBasket(2L, product, 1));
+        productBaskets.add(new ProductBasket(1L, product, 1, true));
 
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
                 1L, 1L, productBaskets)));
         when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L, new ArrayList<>()));
 
-        basketService.removeProduct(1L, 2L);
+        basketService.removeProduct(1L, 2L, true);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -201,14 +215,14 @@ class BasketServiceTest {
     @SneakyThrows
     void removeProductTest_whenHaveManyProducts_returnBasketDto() {
         List<ProductBasket> productBaskets = new ArrayList<>();
-        productBaskets.add(new ProductBasket(2L, product, 2));
+        productBaskets.add(new ProductBasket(2L, product, 2, true));
 
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
                 1L, 1L, productBaskets)));
         when(basketRepository.save(any())).thenReturn(new Basket(
-                1L, 1L, List.of(new ProductBasket(2L, product, 1))));
+                1L, 1L, List.of(new ProductBasket(2L, product, 1, true))));
 
-        basketService.removeProduct(1L, 2L);
+        basketService.removeProduct(1L, 2L, true);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -217,5 +231,6 @@ class BasketServiceTest {
         assertEquals(1L, response.getBuyerId());
         assertEquals(product.getId(), response.getProductsInBasket().get(0).getProduct().getId());
         assertEquals(1, response.getProductsInBasket().get(0).getQuantity());
+        assertEquals(true, response.getProductsInBasket().get(0).getInstallation());
     }
 }

@@ -10,6 +10,7 @@ import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
@@ -57,6 +58,8 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(ProductDto productDto) {
+        if (productDto.getInstallation() && productDto.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо ввести цену устанвоки");
         Product product = ProductMapper.INSTANCE.productDtoToProduct(productDto);
         getCategoryFromDatabase(product.getCategory().getId());
         getVendorFromDatabase(product.getVendor().getId());
@@ -79,6 +82,8 @@ public class ProductService {
                     "Продавец %s не может корректировать чужой продукт!",
                     seller.getName()));
         }
+        if (productForUpdate.getInstallation() && productForUpdate.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо ввести цену устанвоки");
         if (productForUpdate.getName() != null) {
             product.setName(productForUpdate.getName());
         }
@@ -109,7 +114,10 @@ public class ProductService {
         if (productForUpdate.getInstallation() != null) {
             product.setInstallation(productForUpdate.getInstallation());
         }
-        if (productForUpdate.getQuantity() > 0) {
+        if (productForUpdate.getInstallationPrice() != null) {
+            product.setInstallationPrice(productForUpdate.getInstallationPrice());
+        }
+        if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
         product.setProductStatus(ProductStatus.DRAFT);

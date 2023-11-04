@@ -29,34 +29,38 @@ public class BasketService {
     private final ProductBasketRepository productBasketRepository;
 
     @Transactional
-    public BasketDto addProduct(Long userId, Long productId) {
+    public BasketDto addProduct(Long userId, Long productId, Boolean installation) {
         Product product = getProduct(productId);
+        if (!product.getInstallation() && installation)
+            throw new WrongConditionException("Для товара не предусмотрена установка.");
         if (product.getQuantity() == 0) throw new WrongConditionException("Товара нет в наличии.");
         Basket basket = getBasketByUserId(userId);
         if (basket.getProductsInBasket() == null) {
-            ProductBasket productBasket = new ProductBasket(null, product, 1);
+            ProductBasket productBasket = new ProductBasket(null, product, 1, installation);
             basket.setProductsInBasket(List.of(productBasket));
             return BasketMapper.INSTANCE.basketToBasketDto(basketRepository.save(basket));
         }
         for (ProductBasket productBasket : basket.getProductsInBasket()) {
-            if (productBasket.getProduct().getId().equals(product.getId())) {
+            if (productBasket.getProduct().getId().equals(product.getId()) &&
+                    productBasket.getProduct().getInstallation().equals(installation)) {
                 productBasket.setQuantity(productBasket.getQuantity() + 1);
                 return BasketMapper.INSTANCE.basketToBasketDto(basketRepository.save(basket));
             }
         }
-        ProductBasket productBasket = new ProductBasket(null, product, 1);
+        ProductBasket productBasket = new ProductBasket(null, product, 1, installation);
         basket.getProductsInBasket().add(productBasket);
         return BasketMapper.INSTANCE.basketToBasketDto(basketRepository.save(basket));
     }
 
     @Transactional
-    public BasketDto removeProduct(Long userId, Long productId) {
+    public BasketDto removeProduct(Long userId, Long productId, Boolean installation) {
         Basket basket = basketRepository.findByBuyerId(userId).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
         if (basket.getProductsInBasket() != null) {
             for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
                 ProductBasket productBasket = basket.getProductsInBasket().get(i);
-                if (productBasket.getProduct().getId().equals(productId)) {
+                if (productBasket.getProduct().getId().equals(productId) &&
+                        productBasket.getProduct().getInstallation().equals(installation)) {
                     if (productBasket.getQuantity() == 1) {
                         productBasketRepository.deleteById(productBasket.getId());
                         basket.getProductsInBasket().remove(i);

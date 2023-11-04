@@ -113,7 +113,8 @@ class AdminProductControllerTest {
                 5,
                 true,
                 DRAFT,
-                true);
+                true,
+                10.00F);
 
         productDto = new ProductResponseDto(
                 1L,
@@ -130,7 +131,8 @@ class AdminProductControllerTest {
                 5,
                 true,
                 DRAFT,
-                true);
+                true,
+                10.00F);
 
         productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product), productDto);
     }
@@ -214,7 +216,8 @@ class AdminProductControllerTest {
                 .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
                 .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))
                 .andExpect(jsonPath("$.productStatus", is(productDto.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class));
+                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class))
+                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
     }
 
     @Test

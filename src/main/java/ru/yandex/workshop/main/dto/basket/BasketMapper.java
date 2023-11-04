@@ -15,6 +15,6 @@ public interface BasketMapper {
 
     default ProductBasketDto productBasketToDto(ProductBasket productBasket) {
         return new ProductBasketDto(ProductMapper.INSTANCE.productToProductDto(productBasket.getProduct()),
-                productBasket.getQuantity());
+                productBasket.getQuantity(), productBasket.getInstallation());
     }
 }

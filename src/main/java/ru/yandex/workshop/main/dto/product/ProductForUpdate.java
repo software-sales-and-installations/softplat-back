@@ -61,4 +61,6 @@ public class ProductForUpdate {
     ProductStatus productStatus;
 
     Boolean productAvailability;
+
+    Float installationPrice;
 }
