@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SellerForResponse {
+    Long id;
     String email;
     String name;
     String phone;

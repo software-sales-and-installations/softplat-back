@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
-import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -31,7 +30,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public VendorResponseDto changeVendorById(Long vendorId, VendorUpdateDto vendorUpdateDto) {
+    public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
         Vendor oldVendor = availabilityVendor(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
