@@ -25,11 +25,6 @@ public interface ProductMapper {
     @Mapping(target = "seller", expression = "java(mapSellerIdToSeller(productDto))")
     Product productDtoToProduct(ProductDto productDto);
 
-//    @Mapping(target = "imageResponseDto", expression = "java(mapImageToImageResponseDto(product))")
-//    ProductDto productToProductDto(Product product);
-
-//    ProductForUpdate productToProductForUpdate(Product product);
-
     @Mapping(target = "image", expression = "java(mapImageToImageResponseDto(product))")
     @Mapping(target = "vendor", expression = "java(mapVendorToVendorResponseDto(product))")
     @Mapping(target = "seller", expression = "java(mapSellerToSellerResponseDto(product))")

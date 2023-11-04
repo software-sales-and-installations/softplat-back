@@ -18,7 +18,18 @@ public enum LogMessage {
     TRY_GET_VENDOR("Попытка получения списка вендоров."),
     TRY_GET_ID_VENDOR("Попытка получения вендора по id: {}."),
     TRY_ADMIN_DELETE_VENDOR("Попытка удаления вендора по id: {}."),
-    IMAGE_UPLOADING_ERROR("Ошибка при загрузке изображения");
+    IMAGE_UPLOADING_ERROR("Ошибка при загрузке изображения"),
+    TRY_GET_ALL_PRODUCTS_SELLER("Попытка получения всех продуктов продавцов."),
+    TRY_GET_PRODUCTS_ADMIN("Попытка получения админом всех продуктов продавца (URL/admin) по id: {}."),
+    TRY_GET_PRODUCTS_BY_ID_ADMIN("Попытка получения продукта по id: {}."),
+    TRY_UPDATE_STATUS_PRODUCT_ON_PUBLISHED("Попытка установки статуса 'PUBLISHED' продукту id: {}."),
+    TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED("Попытка установки статуса 'REJECTED' продукту id: {}."),
+    TRY_DELETE_PRODUCT_ADMIN("Попытка удаления продукта по id: {}."),
+    TRY_GET_PRODUCTS_SELLER("Попытка получения всех своих продуктов продавцом (URL/seller) id: {}."),
+    TRY_GET_PRODUCT_BY_ID("Попытка получения продукта id: {} продавца id: {}."),
+    TRY_CREATE_PRODUCT("Попытка создать продукт: {}."),
+    TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавца id: {}: {}"),
+    TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}.");
 
     public final String label;
 

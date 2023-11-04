@@ -30,9 +30,7 @@ public class SellerProductController {
             @PathVariable @Min(1) Long sellerId,
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
             @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
-        log.info("URL: " +
-                URL_SELLER
-                + "/{sellerId}/products. GetMapping/Получить все товары продавца/getProductsSeller");
+        log.debug(LogMessage.TRY_GET_PRODUCTS_SELLER.label, sellerId);
         return productService.getProductsSeller(sellerId, from, size);
     }
 
@@ -40,18 +38,14 @@ public class SellerProductController {
     public ProductResponseDto getProductById(
             @PathVariable @Min(1) Long sellerId,
             @PathVariable @Min(1) Long productId) {
-        log.info("URL: " +
-                URL_SELLER
-                + "/{sellerId}/product/{productId}. GetMapping/Получить товар продавца по id/getProductSellerById");
+        log.debug(LogMessage.TRY_GET_PRODUCT_BY_ID.label, sellerId, productId);
         return productService.getProductById(sellerId, productId);
     }
 
     @PostMapping(path = "/product")
     public ProductResponseDto createProduct(
             @RequestBody @Valid ProductDto productDto) {
-        log.info("URL: " +
-                URL_SELLER
-                + "/{sellerId}/product. PostMapping/Создание товара/createProduct");
+        log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         return productService.createProduct(productDto);
     }
 
@@ -68,9 +62,7 @@ public class SellerProductController {
             @PathVariable @Min(1) Long sellerId,
             @PathVariable @Min(1) Long productId,
             @RequestBody @Valid ProductDto productDto) {
-        log.info("URL: " +
-                URL_SELLER
-                + "/{sellerId}/product. PatchMapping/Редактирование товара/updateProduct");
+        log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, sellerId, productDto);
         return productService.updateProduct(sellerId, productId, productDto);
     }
 
@@ -78,10 +70,7 @@ public class SellerProductController {
     public ProductResponseDto updateStatusProductOnSent(
             @PathVariable @Min(1) Long sellerId,
             @PathVariable @Min(1) Long productId) {
-        log.info("URL: " +
-                URL_SELLER
-                + "/{sellerId}/product{productId}/send. " +
-                "PatchMapping/Изменение статуса товара на отправленно/updateStatusProductOnSent");
+        log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_SENT.label, productId, sellerId);
         return productService.updateStatusProductOnSent(sellerId, productId);
     }
 }

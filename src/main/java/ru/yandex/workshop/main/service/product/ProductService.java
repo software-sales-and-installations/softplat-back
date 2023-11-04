@@ -67,7 +67,8 @@ public class ProductService {
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
-        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+        productRepository.save(product);
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
     @Transactional
@@ -105,7 +106,8 @@ public class ProductService {
             product.setProductAvailability(true);
         }
         product.setProductStatus(ProductStatus.DRAFT);
-        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+        productRepository.save(product);
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
     @Transactional
