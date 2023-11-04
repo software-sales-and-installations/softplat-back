@@ -1,8 +1,15 @@
 package ru.yandex.workshop.main.model.product;
 
 public enum ProductStatus {
-    DRAFT, //черновик
-    SHIPPED, //отправлено
-    REJECTED, // ОТКЛОНЕНО
-    PUBLISHED //ОПУБЛИКОВАНО
+    DRAFT("Черновик"),
+    SHIPPED("Отправлено"),
+    REJECTED("Отклонено"),
+    PUBLISHED("Опубликовано"),
+    USA("USA");
+
+    public final String label;
+
+    ProductStatus(String label) {
+        this.label = label;
+    }
 }

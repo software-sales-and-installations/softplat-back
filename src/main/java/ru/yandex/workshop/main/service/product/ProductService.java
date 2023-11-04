@@ -8,6 +8,7 @@ import ru.yandex.workshop.main.config.PageRequestOverride;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
@@ -34,16 +35,16 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final VendorRepository vendorRepository;
 
-    public List<ProductDto> getProductsSeller(Long sellerId, int from, int size) {
+    public List<ProductResponseDto> getProductsSeller(Long sellerId, int from, int size) {
         getSellerFromDatabase(sellerId);
         PageRequestOverride pageRequest = PageRequestOverride.of(from, size);
         return productRepository.findProductBySellerId(sellerId, pageRequest)
                 .stream()
-                .map(ProductMapper.INSTANCE::productToProductDto)
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public ProductDto getProductById(Long sellerId, Long productId) {
+    public ProductResponseDto getProductById(Long sellerId, Long productId) {
         Seller seller = getSellerFromDatabase(sellerId);
         Product product = getProductFromDatabase(productId);
         if (!product.getSeller().getId().equals(sellerId)) {
@@ -51,11 +52,11 @@ public class ProductService {
                     "Продавец %s не может посмотреть чужой продукт!",
                     seller.getName()));
         }
-        return ProductMapper.INSTANCE.productToProductDto(product);
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
     @Transactional
-    public ProductDto createProduct(ProductDto productDto) {
+    public ProductResponseDto createProduct(ProductDto productDto) {
         Product product = ProductMapper.INSTANCE.productDtoToProduct(productDto);
         getCategoryFromDatabase(product.getCategory().getId());
         getVendorFromDatabase(product.getVendor().getId());
@@ -64,12 +65,13 @@ public class ProductService {
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        productRepository.save(product);
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
     @Transactional
-    public ProductDto updateProduct(Long sellerId, ProductForUpdate productForUpdate) {
-        Product product = getProductFromDatabase(productForUpdate.getId());
+    public ProductResponseDto updateProduct(Long sellerId, Long productId, ProductForUpdate productForUpdate) {
+        Product product = getProductFromDatabase(productId);
         Seller seller = getSellerFromDatabase(sellerId);
 
         if (!product.getSeller().getId().equals(sellerId)) {
@@ -111,11 +113,12 @@ public class ProductService {
             product.setProductAvailability(true);
         }
         product.setProductStatus(ProductStatus.DRAFT);
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        productRepository.save(product);
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
     @Transactional
-    public ProductDto updateStatusProductOnSent(Long sellerId, Long productId) {
+    public ProductResponseDto updateStatusProductOnSent(Long sellerId, Long productId) {
         Seller seller = getSellerFromDatabase(sellerId);
         Product product = getProductFromDatabase(productId);
 
@@ -125,33 +128,33 @@ public class ProductService {
                     seller.getName()));
         }
         product.setProductStatus(ProductStatus.SHIPPED);
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
-    public List<ProductDto> getAllProductsSeller(int from, int size) {
+    public List<ProductResponseDto> getAllProductsSeller(int from, int size) {
         return productRepository.findAllBy(PageRequestOverride.of(from, size))
                 .stream()
-                .map(ProductMapper.INSTANCE::productToProductDto)
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public ProductDto getProductByIdAdmin(Long productId) {
-        return ProductMapper.INSTANCE.productToProductDto(getProductFromDatabase(productId));
+    public ProductResponseDto getProductByIdAdmin(Long productId) {
+        return ProductMapper.INSTANCE.productToProductResponseDto(getProductFromDatabase(productId));
     }
 
     @Transactional
-    public ProductDto updateStatusProductOnPublished(Long productId) {
+    public ProductResponseDto updateStatusProductOnPublished(Long productId) {
         Product product = getProductFromDatabase(productId);
         product.setProductStatus(ProductStatus.PUBLISHED);
         product.setProductionTime(LocalDateTime.now());
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
     @Transactional
-    public ProductDto updateStatusProductOnRejected(Long productId) {
+    public ProductResponseDto updateStatusProductOnRejected(Long productId) {
         Product product = getProductFromDatabase(productId);
         product.setProductStatus(ProductStatus.REJECTED);
-        return ProductMapper.INSTANCE.productToProductDto(productRepository.save(product));
+        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
     @Transactional

@@ -24,8 +24,6 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductForUpdate {
 
-    Long id;
-
     @Pattern(message = "Неверные символы в названии товара",
             regexp = "^[а-яА-Яa-zA-Z0-9\\s№-]+$")
     @Size(min = 2, max = 255, message = "Длина названия продукта должна быть от 2 до 255 символов")
