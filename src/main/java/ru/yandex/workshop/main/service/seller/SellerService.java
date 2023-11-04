@@ -55,7 +55,6 @@ public class SellerService {
         if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
         if (sellerForUpdate.getDescription() != null) seller.setDescription(sellerForUpdate.getDescription());
         if (sellerForUpdate.getEmail() != null && !sellerRepository.findByEmail(sellerForUpdate.getEmail()).isPresent())
-//        if (sellerForUpdate.getEmail() != null && sellerRepository.findByEmail(sellerForUpdate.getEmail()).isEmpty())
             seller.setEmail(sellerForUpdate.getEmail());
         //TODO save image
         if (sellerForUpdate.getPhone() != null) seller.setPhone(sellerForUpdate.getPhone());
