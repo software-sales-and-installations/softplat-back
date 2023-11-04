@@ -9,8 +9,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
@@ -48,7 +48,7 @@ class AdminProductControllerTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     static Product product;
-    static ProductDto productDto;
+    static ProductResponseDto productDto;
     static Vendor vendor;
     static Seller seller;
     static Image image;
@@ -57,7 +57,7 @@ class AdminProductControllerTest {
     static LocalDateTime time;
     static String foramttedString;
 
-    static List<ProductDto> productDtoList;
+    static List<ProductResponseDto> productDtoList;
 
     @BeforeAll
     static void beforeEach() {
@@ -115,7 +115,7 @@ class AdminProductControllerTest {
                 DRAFT,
                 true);
 
-        productDto = new ProductDto(
+        productDto = new ProductResponseDto(
                 1L,
                 "Name product",
                 "Description product",
@@ -132,7 +132,7 @@ class AdminProductControllerTest {
                 DRAFT,
                 true);
 
-        productDtoList = List.of(ProductMapper.INSTANCE.productToProductDto(product), productDto);
+        productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product), productDto);
     }
 
     @Test
@@ -221,7 +221,7 @@ class AdminProductControllerTest {
     @DisplayName("Вызов метода updateStatusProductOnPublishedTest: обновление статуса товара на 'PUBLISHED'")
     void updateStatusProductOnPublishedTest() throws Exception {
         product.setProductStatus(ProductStatus.PUBLISHED);
-        ProductDto productDtoUpdate = ProductMapper.INSTANCE.productToProductDto(product);
+        ProductResponseDto productDtoUpdate = ProductMapper.INSTANCE.productToProductResponseDto(product);
         productDtoUpdate.setProductStatus(ProductStatus.PUBLISHED);
         when(productService
                 .updateStatusProductOnPublished(anyLong()))
@@ -240,7 +240,7 @@ class AdminProductControllerTest {
     @DisplayName("Вызов метода updateStatusProductOnRejectedTest: обновление статуса товара на 'REJECTED'")
     void updateStatusProductOnRejectedTest() throws Exception {
         product.setProductStatus(ProductStatus.REJECTED);
-        ProductDto productDtoUpdate = ProductMapper.INSTANCE.productToProductDto(product);
+        ProductResponseDto productDtoUpdate = ProductMapper.INSTANCE.productToProductResponseDto(product);
         productDtoUpdate.setProductStatus(ProductStatus.REJECTED);
         when(productService
                 .updateStatusProductOnRejected(anyLong()))

@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
@@ -48,7 +49,8 @@ class SellerProductControllerTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     static Product product;
-    static ProductDto productDto;
+    static ProductResponseDto productDto;
+    static ProductForUpdate productForUpdate;
     static Vendor vendor;
     static Seller seller;
     static Image image;
@@ -56,8 +58,7 @@ class SellerProductControllerTest {
     static BankRequisites bankRequisites;
     static LocalDateTime time;
     static String foramttedString;
-
-    static List<ProductDto> productDtoList;
+    static List<ProductResponseDto> productDtoList;
 
     @BeforeAll
     static void beforeEach() {
@@ -115,7 +116,24 @@ class SellerProductControllerTest {
                 DRAFT,
                 true);
 
-        productDto = new ProductDto(
+
+        productForUpdate = new ProductForUpdate(
+                "Name product 2",
+                "Description product 2",
+                "2.0.0.5",
+                time,
+                image,
+                category,
+                License.LICENSE,
+                vendor,
+                seller,
+                10.421F,
+                0,
+                false,
+                DRAFT,
+                false);
+
+        productDto = new ProductResponseDto(
                 1L,
                 "Name product",
                 "Description product",
@@ -132,7 +150,7 @@ class SellerProductControllerTest {
                 DRAFT,
                 true);
 
-        productDtoList = List.of(ProductMapper.INSTANCE.productToProductDto(product), productDto);
+        productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product), productDto);
     }
 
     @Test
@@ -168,7 +186,6 @@ class SellerProductControllerTest {
                         .param("sellerId", "1")
                         .param("productId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(productDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(productDto.getName().toString())))
                 .andExpect(jsonPath("$.description", is(productDto.getDescription().toString())))
                 .andExpect(jsonPath("$.version", is(productDto.getVersion().toString())))
@@ -209,11 +226,11 @@ class SellerProductControllerTest {
                 .createProduct(any()))
                 .thenReturn(productDto);
         mockMvc.perform(post("/seller/product")
-                        .content(mapper.writeValueAsString(productDto))
+                        .content(mapper.writeValueAsString(product))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .header("X-Share-Product-Id", productDto.getId()))
+                        .header("X-Share-Product-Id", product.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(productDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(productDto.getName().toString())))
@@ -252,58 +269,61 @@ class SellerProductControllerTest {
     @Test
     @DisplayName("Вызов метода updateProductTest: обновление продукта")
     void updateProductTest() throws Exception {
-        ProductForUpdate productForUpdate = ProductMapper.INSTANCE.productToProductForUpdate(product);
-
+        ProductDto productDtoSave = ProductMapper.INSTANCE.productToProductDto(product);
         when(productService
-                .updateProduct(anyLong(), any()))
+                .createProduct(productDtoSave))
                 .thenReturn(productDto);
-        mockMvc.perform(patch("/seller/1/product")
-                        .content(mapper.writeValueAsString(productForUpdate))
+        when(productService
+                .updateProduct(anyLong(), anyLong(), any()))
+                .thenReturn(productDto);
+        mockMvc.perform(patch("/seller/1/product/1")
+                        .content(mapper.writeValueAsString(product))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .header("X-Share-Product-Id", productForUpdate.getId())
-                        .param("sellerId", "1"))
+                        .header("X-Share-Product-Id", product.getId())
+                        .param("sellerId", "1")
+                        .param("productForUpdate", "productForUpdate")
+                        .param("productId", "1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(productForUpdate.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(productForUpdate.getName().toString())))
-                .andExpect(jsonPath("$.description", is(productForUpdate.getDescription().toString())))
-                .andExpect(jsonPath("$.version", is(productForUpdate.getVersion().toString())))
-                .andExpect(jsonPath("$.image.id", is(productForUpdate.getImage().getId()), Long.class))
-                .andExpect(jsonPath("$.image.name", is(productForUpdate.getImage().getName().toString())))
-                .andExpect(jsonPath("$.image.size", is(productForUpdate.getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.image.contentType", is(productForUpdate.getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.name", is(productDto.getName().toString())))
+                .andExpect(jsonPath("$.description", is(productDto.getDescription().toString())))
+                .andExpect(jsonPath("$.version", is(productDto.getVersion().toString())))
+                .andExpect(jsonPath("$.image.id", is(productDto.getImage().getId()), Long.class))
+                .andExpect(jsonPath("$.image.name", is(productDto.getImage().getName().toString())))
+                .andExpect(jsonPath("$.image.size", is(productDto.getImage().getSize()), Float.class))
+                .andExpect(jsonPath("$.image.contentType", is(productDto.getImage().getContentType().toString())))
                 //TODO - добавить проверку bytes
-                .andExpect(jsonPath("$.category.id", is(productForUpdate.getCategory().getId()), Long.class))
-                .andExpect(jsonPath("$.category.name", is(productForUpdate.getCategory().getName().toString())))
-                .andExpect(jsonPath("$.license", is(productForUpdate.getLicense().toString())))
-                .andExpect(jsonPath("$.vendor.id", is(productForUpdate.getVendor().getId()), Long.class))
-                .andExpect(jsonPath("$.vendor.name", is(productForUpdate.getVendor().getName().toString())))
-                .andExpect(jsonPath("$.vendor.description", is(productForUpdate.getVendor().getDescription().toString())))
-                .andExpect(jsonPath("$.vendor.imageId", is(productForUpdate.getVendor().getImageId()), Long.class))
-                .andExpect(jsonPath("$.vendor.country", is(productForUpdate.getVendor().getCountry().toString())))
-                .andExpect(jsonPath("$.seller.id", is(productForUpdate.getSeller().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.email", is(productForUpdate.getSeller().getEmail().toString())))
-                .andExpect(jsonPath("$.seller.name", is(productForUpdate.getSeller().getName().toString())))
-                .andExpect(jsonPath("$.seller.phone", is(productForUpdate.getSeller().getPhone().toString())))
-                .andExpect(jsonPath("$.seller.description", is(productForUpdate.getSeller().getDescription().toString())))
-                .andExpect(jsonPath("$.seller.requisites.id", is(productForUpdate.getSeller().getRequisites().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.requisites.account", is(productForUpdate.getSeller().getRequisites().getAccount().toString())))
-                .andExpect(jsonPath("$.seller.image.name", is(productForUpdate.getSeller().getImage().getName().toString())))
-                .andExpect(jsonPath("$.seller.image.size", is(productForUpdate.getSeller().getImage().getSize()), Float.class))
-                .andExpect(jsonPath("$.seller.image.contentType", is(productForUpdate.getSeller().getImage().getContentType().toString())))
-                .andExpect(jsonPath("$.price", is(productForUpdate.getPrice()), Float.class))
-                .andExpect(jsonPath("$.quantity", is(productForUpdate.getQuantity()), Integer.class))
-                .andExpect(jsonPath("$.installation", is(productForUpdate.getInstallation()), Boolean.class))
-                .andExpect(jsonPath("$.productStatus", is(productForUpdate.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productForUpdate.getProductAvailability()), Boolean.class));
+                .andExpect(jsonPath("$.category.id", is(productDto.getCategory().getId()), Long.class))
+                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName().toString())))
+                .andExpect(jsonPath("$.license", is(productDto.getLicense().toString())))
+                .andExpect(jsonPath("$.vendor.id", is(productDto.getVendor().getId()), Long.class))
+                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName().toString())))
+                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription().toString())))
+                .andExpect(jsonPath("$.vendor.imageId", is(productDto.getVendor().getImageId()), Long.class))
+                .andExpect(jsonPath("$.vendor.country", is(productDto.getVendor().getCountry().toString())))
+                .andExpect(jsonPath("$.seller.id", is(productDto.getSeller().getId()), Long.class))
+                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail().toString())))
+                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName().toString())))
+                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone().toString())))
+                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription().toString())))
+                .andExpect(jsonPath("$.seller.requisites.id", is(productDto.getSeller().getRequisites().getId()), Long.class))
+                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount().toString())))
+                .andExpect(jsonPath("$.seller.image.name", is(productDto.getSeller().getImage().getName().toString())))
+                .andExpect(jsonPath("$.seller.image.size", is(productDto.getSeller().getImage().getSize()), Float.class))
+                .andExpect(jsonPath("$.seller.image.contentType", is(productDto.getSeller().getImage().getContentType().toString())))
+                .andExpect(jsonPath("$.price", is(productDto.getPrice()), Float.class))
+                .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
+                .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))
+                .andExpect(jsonPath("$.productStatus", is(productDto.getProductStatus().toString())))
+                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class));
     }
 
     @Test
     @DisplayName("Вызов метода updateStatusProductOnSentTest: обновление статуса товара на 'SHIPPED'")
     void updateStatusProductOnSentTest() throws Exception {
         product.setProductStatus(ProductStatus.SHIPPED);
-        ProductDto productDtoUpdate = ProductMapper.INSTANCE.productToProductDto(product);
+        ProductResponseDto productDtoUpdate = ProductMapper.INSTANCE.productToProductResponseDto(product);
         productDtoUpdate.setProductStatus(ProductStatus.SHIPPED);
         when(productService
                 .updateStatusProductOnSent(anyLong(), anyLong()))

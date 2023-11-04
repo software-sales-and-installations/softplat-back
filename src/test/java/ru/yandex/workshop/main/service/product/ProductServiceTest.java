@@ -8,6 +8,7 @@ import ru.yandex.workshop.main.config.PageRequestOverride;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
@@ -47,6 +48,7 @@ class ProductServiceTest {
     private PageRequestOverride pageRequest;
     static Product product;
     static ProductDto productDto;
+    static ProductResponseDto productResponseDto;
     static ProductForUpdate productForUpdate;
     static Vendor vendor;
     static Seller seller;
@@ -125,7 +127,6 @@ class ProductServiceTest {
                 true);
 
         productForUpdate = new ProductForUpdate(
-                1L,
                 "Name product 2",
                 "Description product 2",
                 "2.0.0.5",
@@ -142,6 +143,7 @@ class ProductServiceTest {
                 false);
 
         productDto = ProductMapper.INSTANCE.productToProductDto(product);
+        productResponseDto = ProductMapper.INSTANCE.productToProductResponseDto(product);
 
         when(categoryRepository.save(category))
                 .then(invocation -> invocation.getArgument(0));
@@ -165,7 +167,7 @@ class ProductServiceTest {
                         product.getSeller().getId(),
                         pageRequest))
                 .thenReturn(Collections.singletonList(product));
-        final List<ProductDto> productDtoList = productService
+        final List<ProductResponseDto> productDtoList = productService
                 .getProductsSeller(
                         product.getSeller().getId(),
                         0,
@@ -213,7 +215,7 @@ class ProductServiceTest {
         when(productRepository
                 .save(product))
                 .thenReturn(product);
-        var productDtoSave = productService.createProduct(ProductMapper.INSTANCE.productToProductDto(product));
+        ProductResponseDto productDtoSave = productService.createProduct(ProductMapper.INSTANCE.productToProductDto(product));
         assertNotNull(productDtoSave);
         assertEquals(product.getName(), productDtoSave.getName());
         assertEquals(product.getDescription(), productDtoSave.getDescription());
@@ -243,7 +245,9 @@ class ProductServiceTest {
         product.setInstallation(productForUpdate.getInstallation());
         product.setProductAvailability(productForUpdate.getProductAvailability());
 
-        var productDtoUpdate = productService.updateProduct(seller.getId(),
+        var productDtoUpdate = productService.updateProduct(
+                seller.getId(),
+                product.getId(),
                 productForUpdate);
         assertNotNull(productDtoUpdate);
         assertEquals(product.getName(), productDtoUpdate.getName());
@@ -285,7 +289,7 @@ class ProductServiceTest {
 
         when(productRepository.findAllBy(pageRequest))
                 .thenReturn(Collections.singletonList(product));
-        final List<ProductDto> productDtoList = productService
+        final List<ProductResponseDto> productDtoList = productService
                 .getAllProductsSeller(
                         0,
                         20);
