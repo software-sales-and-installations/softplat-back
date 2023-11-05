@@ -8,8 +8,8 @@ import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
-import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.main.repository.seller.BankRepository;
+import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.security.repository.SellerRepository;
 
 @Service
@@ -21,8 +21,9 @@ public class SellerBankService {
     private final SellerRepository sellerRepository;
     private final BankRepository bankRepository;
 
-    public BankRequisitesDto getRequisites(String email) {
-        Seller seller = getSellerFromDatabase(email);
+    public BankRequisitesDto getRequisites(Long userId) {
+        Seller seller = sellerRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
         if (seller.getRequisites() == null)
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         return new BankRequisitesDto(seller.getRequisites().getAccount());

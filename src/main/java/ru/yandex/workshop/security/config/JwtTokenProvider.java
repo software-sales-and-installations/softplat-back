@@ -66,15 +66,15 @@ public class JwtTokenProvider {
 
     public Authentication getAuthentication(String token) {
 
-        if (adminDetailsService.loadUserByUsername(getUsername(token)) != null) {
+        if (adminDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
             UserDetails userDetails = adminDetailsService.loadUserByUsername(getUsername(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 
-        } else if (sellerDetailsService.loadUserByUsername(getUsername(token)) != null) {
+        } else if (sellerDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
             UserDetails userDetails = sellerDetailsService.loadUserByUsername(getUsername(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 
-        } else if (buyerDetailsService.loadUserByUsername(getUsername(token)) != null) {
+        } else if (buyerDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
             UserDetails userDetails = buyerDetailsService.loadUserByUsername(getUsername(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 

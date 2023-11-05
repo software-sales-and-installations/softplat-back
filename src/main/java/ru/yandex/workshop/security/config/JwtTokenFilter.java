@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+import ru.yandex.workshop.security.exception.UnauthorizedException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,7 +34,7 @@ public class JwtTokenFilter extends GenericFilterBean {
                 }
             }
         } catch (RuntimeException e) {
-            throw new RuntimeException("что то с токеном");
+            throw new UnauthorizedException("Невалидный токен");
         }
 
         filterChain.doFilter(servletRequest, servletResponse);

@@ -78,16 +78,14 @@ public class SellerDetailsServiceImpl implements UserDetailsService {
         return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository.save(seller));
     }
 
-
-    //TODO add in any controller
     public List<SellerResponseDto> getAllSellers() {
         return sellerRepository.findAll(Pageable.ofSize(10)).stream()//TODO common custom pagination
                 .map(SellerMapper.INSTANCE::sellerToSellerResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public SellerResponseDto getSeller(String email) {
-        return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository.findByEmail(email)
+    public SellerResponseDto getSeller(Long userId) {
+        return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 

@@ -47,7 +47,7 @@ public class AuthService {
             throw new WrongRegException("Пароли не совпадают");
         }
 
-        if (adminService.getAdmin(registrationAdminDto.getEmail()) != null) {
+        if (adminService.getAdminDto(registrationAdminDto.getEmail()) != null) {
             throw new WrongRegException("Пользователь с указанным логином уже существует");
         } else {
             return ResponseEntity.of(Optional.ofNullable(adminService.addAdmin(registrationAdminDto)));

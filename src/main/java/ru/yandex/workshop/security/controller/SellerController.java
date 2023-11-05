@@ -3,6 +3,7 @@ package ru.yandex.workshop.security.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
@@ -13,6 +14,8 @@ import ru.yandex.workshop.security.dto.response.SellerResponseDto;
 import ru.yandex.workshop.security.service.SellerDetailsServiceImpl;
 
 import javax.validation.Valid;
+import java.security.Principal;
+import java.util.List;
 
 @Validated
 @RestController
@@ -24,34 +27,43 @@ public class SellerController {
     private final SellerDetailsServiceImpl sellerService;
     private final SellerBankService bankService;
 
-    @GetMapping("/{email}")
-    public SellerResponseDto getSeller(@PathVariable String email) {
-        log.debug(LogMessage.TRY_GET_SELLER.label, email);
-        return sellerService.getSeller(email);
+    @GetMapping
+    public List<SellerResponseDto> getAllSellers() {
+        log.debug(LogMessage.TRY_GET_SELLER.label);
+        return sellerService.getAllSellers();
     }
 
-    @PatchMapping("/account/{email}")
-    public SellerResponseDto updateSeller(@PathVariable String email, @RequestBody @Valid SellerForUpdate sellerForUpdate) {
-        log.debug(LogMessage.TRY_PATCH_SELLER.label, email);
-        return sellerService.updateSeller(email, sellerForUpdate);
+    @GetMapping("/{userId}")
+    public SellerResponseDto getSeller(@PathVariable Long userId) {
+        log.debug(LogMessage.TRY_GET_SELLER.label, userId);
+        return sellerService.getSeller(userId);
     }
 
-    @GetMapping("/account/bank/{email}")
-    public BankRequisitesDto getRequisites(@PathVariable String email) {
-        log.debug(LogMessage.TRY_SELLER_GET_REQUISITES.label, email);
-        return bankService.getRequisites(email);
+    @PreAuthorize("hasAuthority('seller:write')")
+    @PatchMapping
+    public SellerResponseDto updateSeller(Principal principal, @RequestBody @Valid SellerForUpdate sellerForUpdate) {
+        log.debug(LogMessage.TRY_PATCH_SELLER.label, principal.getName());
+        return sellerService.updateSeller(principal.getName(), sellerForUpdate);
     }
 
-    @PatchMapping("/account/bank/{email}")
-    public BankRequisitesDto updateRequisites(@PathVariable String email, @RequestBody BankRequisitesDto requisites) {
-        log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, email);
-        return bankService.updateRequisites(email, requisites);
+    @GetMapping("/bank/{userId}")
+    public BankRequisitesDto getRequisites(@PathVariable Long userId) {
+        log.debug(LogMessage.TRY_SELLER_GET_REQUISITES.label, userId);
+        return bankService.getRequisites(userId);
     }
 
-    @DeleteMapping("/account/bank/{email}")
+    @PreAuthorize("hasAuthority('seller:write')")
+    @PatchMapping("/bank")
+    public BankRequisitesDto updateRequisites(Principal principal, @RequestBody BankRequisitesDto requisites) {
+        log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, principal.getName());
+        return bankService.updateRequisites(principal.getName(), requisites);
+    }
+
+    @PreAuthorize("hasAuthority('seller:write')")
+    @DeleteMapping("/bank")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteRequisites(@PathVariable String email) {
-        log.debug(LogMessage.TRY_SELLER_DELETE_REQUISITES.label, email);
-        bankService.deleteRequisites(email);
+    public void deleteRequisites(Principal principal) {
+        log.debug(LogMessage.TRY_SELLER_DELETE_REQUISITES.label, principal.getName());
+        bankService.deleteRequisites(principal.getName());
     }
 }

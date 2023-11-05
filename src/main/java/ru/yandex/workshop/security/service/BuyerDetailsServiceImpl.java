@@ -77,9 +77,8 @@ public class BuyerDetailsServiceImpl implements UserDetailsService {
         return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository.save(oldBuyer));
     }
 
-    public BuyerResponseDto getBuyer(String email) {
-        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository
-                .findByEmail(email)
+    public BuyerResponseDto getBuyer(Long userId) {
+        return BuyerMapper.INSTANCE.buyerToBuyerResponseDto(buyerRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 

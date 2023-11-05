@@ -40,13 +40,14 @@ public class AdminDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Admin admin = getSecurityAdmin(email);
+        Admin admin = getAdmin(email);
         return UserSecurity.fromUser(admin);
     }
 
     @Transactional
     public AdminResponseDto addAdmin(RegistrationAdminDto registrationAdminDto) {
-        checkIfUserExistsByEmail(registrationAdminDto.getEmail());
+        if (checkIfUserExistsByEmail(registrationAdminDto.getEmail()))
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
 
         Admin admin = AdminMapper.INSTANCE.adminDtoToAdmin(registrationAdminDto);
         admin.setPassword(passwordEncoder.encode(registrationAdminDto.getPassword()));
@@ -54,34 +55,23 @@ public class AdminDetailsServiceImpl implements UserDetailsService {
         return AdminMapper.INSTANCE.adminToAdminResponseDto(adminRepository.save(admin));
     }
 
-//    TODO
-//    @Transactional
-//    public SellerResponseDto updateAdmin(String email, Admin AdminDto) {
-//    }
-
-    @Transactional(readOnly = true)
-    public List<AdminResponseDto> getAllAdmins() {
+    public List<AdminResponseDto> getAllAdmins() { //TODO delete?
         return adminRepository.findAll(Pageable.ofSize(10)).stream()//TODO common custom pagination
                 .map(AdminMapper.INSTANCE::adminToAdminResponseDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public AdminResponseDto getAdmin(String email) {
-        return AdminMapper.INSTANCE.adminToAdminResponseDto(adminRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
+    public AdminResponseDto getAdminDto(String email) {
+        return AdminMapper.INSTANCE.adminToAdminResponseDto(getAdmin(email));
     }
 
-    private Admin getSecurityAdmin(String email) {
+    private Admin getAdmin(String email) {
         return adminRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private void checkIfUserExistsByEmail(String email) {
-        if (adminRepository.findByEmail(email).isPresent()) {
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + email);
-        }
+    public boolean checkIfUserExistsByEmail(String email) {
+        return adminRepository.findByEmail(email).isPresent();
     }
 }
