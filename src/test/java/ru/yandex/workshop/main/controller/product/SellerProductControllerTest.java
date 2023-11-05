@@ -101,6 +101,7 @@ class SellerProductControllerTest {
         productId = 1L;
         product = Product.builder()
                 .id(productId)
+                .name("Product name")
                 .description("Description product")
                 .version("2.0.0.1")
                 .productionTime(time)
@@ -117,6 +118,7 @@ class SellerProductControllerTest {
 
         productResponseDto = ProductResponseDto.builder()
                 .id(productId)
+                .name("Product name")
                 .description("Description product")
                 .version("2.0.0.1")
                 .productionTime(time)
@@ -132,9 +134,9 @@ class SellerProductControllerTest {
                 .build();
 
         productDto = ProductDto.builder()
+                .name("Product name")
                 .description("Description product")
                 .version("2.0.0.1")
-                .productionTime(time)
                 .category(categoryId)
                 .license(License.LICENSE)
                 .vendor(vendorId)

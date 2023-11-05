@@ -123,6 +123,15 @@ public class ProductService {
     }
 
     @Transactional
+    public void deleteProductImage(Long sellerId, Long productId) {
+        checkSellerAccessRights(sellerId, productId);
+        Product product = getProductFromDatabase(productId);
+        if (product.getImage() != null) {
+            imageService.deleteImageById(product.getImage().getId());
+        }
+    }
+
+    @Transactional
     public ProductResponseDto updateStatusProductOnSent(Long sellerId, Long productId) {
         checkSellerAccessRights(sellerId, productId);
         Product product = getProductFromDatabase(productId);

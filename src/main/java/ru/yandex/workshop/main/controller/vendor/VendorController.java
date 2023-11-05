@@ -12,7 +12,6 @@ import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -30,9 +29,15 @@ public class VendorController {
 
     @PostMapping(path = "admin/vendor/{vendorId}/image")
     public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
-                                               @RequestParam(value = "image") MultipartFile image) throws IOException {
+                                               @RequestParam(value = "image") MultipartFile image) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR_IMAGE.label);
         return service.addVendorImage(vendorId, image);
+    }
+
+    @DeleteMapping(path = "admin/vendor/{vendorId}/image")
+    public void deleteVendorImage(@PathVariable(name = "vendorId") Long vendorId) {
+        log.debug(LogMessage.TRY_ADMIN_DElETE_VENDOR_IMAGE.label);
+        service.deleteVendorImage(vendorId);
     }
 
     @PatchMapping(path = "/admin/vendor/{vendorId}")

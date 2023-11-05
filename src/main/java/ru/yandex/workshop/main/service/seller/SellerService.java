@@ -66,6 +66,14 @@ public class SellerService {
     }
 
     @Transactional
+    public void deleteSellerImage(String email) {
+        Seller seller = getSellerFromDatabase(email);
+        if (seller.getImage() != null) {
+            imageService.deleteImageById(seller.getImage().getId());
+        }
+    }
+
+    @Transactional
     public SellerResponseDto updateSeller(String email, SellerUpdateDto sellerUpdateDto) {
         Seller seller = getSellerFromDatabase(email);
         if (sellerUpdateDto.getName() != null) seller.setName(sellerUpdateDto.getName());

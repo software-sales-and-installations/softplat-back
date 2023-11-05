@@ -26,7 +26,6 @@ import ru.yandex.workshop.main.model.product.License;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -64,7 +63,6 @@ class ImageControllerTest {
                 .name("Product name")
                 .description("Description product")
                 .version("2.0.0.1")
-                .productionTime(LocalDateTime.now().minusYears(1))
                 .category(categoryId)
                 .license(License.LICENSE)
                 .vendor(vendorId)

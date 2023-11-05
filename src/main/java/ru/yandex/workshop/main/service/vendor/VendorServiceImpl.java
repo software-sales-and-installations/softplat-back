@@ -85,6 +85,14 @@ public class VendorServiceImpl implements VendorService {
         return VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor);
     }
 
+    @Override
+    public void deleteVendorImage(Long vendorId) {
+        Vendor vendor = getVendorByIdOrThrowException(vendorId);
+        if (vendor.getImage() != null) {
+            imageService.deleteImageById(vendor.getImage().getId());
+        }
+    }
+
     private Vendor getVendorByIdOrThrowException(Long vendorId) {
         return vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));

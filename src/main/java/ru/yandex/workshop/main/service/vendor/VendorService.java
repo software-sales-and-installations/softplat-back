@@ -19,4 +19,6 @@ public interface VendorService {
     void deleteVendor(Long vendorId);
 
     VendorResponseDto addVendorImage(Long vendorId, MultipartFile file);
+
+    void deleteVendorImage(Long vendorId);
 }

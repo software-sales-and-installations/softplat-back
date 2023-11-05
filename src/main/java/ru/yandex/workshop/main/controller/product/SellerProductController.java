@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.product.ProductService;
 
@@ -44,7 +45,7 @@ public class SellerProductController {
 
     @PostMapping(path = "/product")
     public ProductResponseDto createProduct(
-            @RequestBody @Valid ProductDto productDto) {
+            @RequestBody @Validated(New.class) ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         return productService.createProduct(productDto);
     }
@@ -55,6 +56,13 @@ public class SellerProductController {
                                          @RequestParam(value = "image") MultipartFile image) {
         log.info(LogMessage.TRY_SELLER_ADD_PRODUCT_IMAGE.label);
         return productService.createProductImage(sellerId, productId, image);
+    }
+
+    @DeleteMapping(path = "/{sellerId}/product/{productId}/image")
+    public void deleteProductImage(@PathVariable @Min(1) Long sellerId,
+                                   @PathVariable @Min(1) Long productId) {
+        log.info(LogMessage.TRY_ADMIN_DElETE_VENDOR_IMAGE.label);
+        productService.deleteProductImage(sellerId, productId);
     }
 
     @PatchMapping(path = "/{sellerId}/product/{productId}")

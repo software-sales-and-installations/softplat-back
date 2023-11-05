@@ -52,6 +52,12 @@ public class SellerController {
         return sellerService.addSellerImage(email, image);
     }
 
+    @DeleteMapping("/account/{email}/image")
+    public void deleteSellerImage(@PathVariable String email) {
+        log.debug(LogMessage.TRY_DELETE_SELLER_IMAGE.label);
+        sellerService.deleteSellerImage(email);
+    }
+
     @GetMapping("/account/bank/{email}")
     public BankRequisitesDto getRequisites(@PathVariable String email) {
         log.debug(LogMessage.TRY_SELLER_GET_REQUISITES.label, email);

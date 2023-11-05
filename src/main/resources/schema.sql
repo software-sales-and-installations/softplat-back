@@ -43,8 +43,8 @@ CREATE TABLE IF NOT EXISTS seller
     CONSTRAINT pk_seller PRIMARY KEY (id),
     CONSTRAINT uq_seller_email UNIQUE (email),
     CONSTRAINT uq_seller_number UNIQUE (number),
-    CONSTRAINT fk_seller_image FOREIGN KEY (image_id) REFERENCES image (id),
-    CONSTRAINT fk_requisites FOREIGN KEY (requisites_id) REFERENCES requisite (id)
+    CONSTRAINT fk_seller_image FOREIGN KEY (image_id) REFERENCES image (id) on delete cascade,
+    CONSTRAINT fk_requisites FOREIGN KEY (requisites_id) REFERENCES requisite (id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS admin
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS vendor
     image_id    BIGINT,
     country     VARCHAR(20)                             NOT NULL,
     CONSTRAINT pk_vendor PRIMARY KEY (id),
-    CONSTRAINT fk_image FOREIGN KEY (image_id) REFERENCES image (id)
+    CONSTRAINT fk_image FOREIGN KEY (image_id) REFERENCES image (id) on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS product
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS product
     status          VARCHAR(30)                             NOT NULL,
     availability    BOOLEAN DEFAULT 'TRUE'                  NOT NULL,
     CONSTRAINT pk_product PRIMARY KEY (id),
-    CONSTRAINT fk_product_image FOREIGN KEY (image_id) REFERENCES image (id),
+    CONSTRAINT fk_product_image FOREIGN KEY (image_id) REFERENCES image (id) on delete cascade,
     CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category (id),
     CONSTRAINT fk_vendor FOREIGN KEY (vendor_id) REFERENCES vendor (id),
     CONSTRAINT fk_seller FOREIGN KEY (seller_id) REFERENCES seller (id)

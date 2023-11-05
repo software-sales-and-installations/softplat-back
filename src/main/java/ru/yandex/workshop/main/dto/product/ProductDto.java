@@ -1,14 +1,11 @@
 package ru.yandex.workshop.main.dto.product;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.model.product.License;
 
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -30,29 +27,24 @@ public class ProductDto {
     @Size(min = 2, max = 30, message = "Длина наименования версии продукта должна быть от 2 до 30 символов")
     String version;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @PastOrPresent
-    LocalDateTime productionTime;
-
-    @NotBlank(groups = {New.class}, message = "Необходимо указать категорию продукта.")
+    @NotNull(groups = {New.class}, message = "Необходимо указать категорию продукта.")
     Long category;
 
-    @NotBlank(groups = {New.class}, message = "Необходимо указать тип лицензии.")
+    @NotNull(groups = {New.class}, message = "Необходимо указать тип лицензии.")
     License license;
 
-    @NotBlank(groups = {New.class}, message = "Необходимо указать вендора продукта.")
+    @NotNull(groups = {New.class}, message = "Необходимо указать вендора продукта.")
     Long vendor;
 
-    @NotBlank(groups = {New.class}, message = "Необходимо указать продавца продукта.")
+    @NotNull(groups = {New.class}, message = "Необходимо указать продавца продукта.")
     Long seller;
 
     @PositiveOrZero
-    @NotBlank(groups = {New.class}, message = "Необходимо указать цену продукта.")
+    @NotNull(groups = {New.class}, message = "Необходимо указать цену продукта.")
     Float price;
 
     @PositiveOrZero
-    @NotBlank(groups = {New.class}, message = "Необходимо указать количество продукта.")
+    @NotNull(groups = {New.class}, message = "Необходимо указать количество продукта.")
     Integer quantity;
 
     Boolean installation;

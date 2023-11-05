@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -32,9 +31,6 @@ class ProductMapperTest {
 
     @Test
     void testItemDto() throws IOException {
-        DateTimeFormatter aFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String foramttedString = time.format(aFormatter);
-
         Category category = Category
                 .builder()
                 .id(1L)
@@ -80,7 +76,6 @@ class ProductMapperTest {
                 .name("product")
                 .description("description product")
                 .version("22")
-                .productionTime(time)
                 .category(category.getId())
                 .license(License.LICENSE)
                 .vendor(vendor.getId())
@@ -95,7 +90,6 @@ class ProductMapperTest {
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("product");
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("description product");
         assertThat(result).extractingJsonPathStringValue("$.version").isEqualTo("22");
-        assertThat(result).extractingJsonPathStringValue("$.productionTime").isEqualTo(foramttedString);
         assertThat(result).extractingJsonPathNumberValue("$.category").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.license").isEqualTo(License.LICENSE.toString());
         assertThat(result).extractingJsonPathNumberValue("$.seller").isEqualTo(1);
