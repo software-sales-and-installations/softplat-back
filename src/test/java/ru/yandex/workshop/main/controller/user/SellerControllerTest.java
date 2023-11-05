@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
 import ru.yandex.workshop.main.dto.seller.SellerDto;
-import ru.yandex.workshop.main.dto.seller.SellerForResponse;
-import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
+import ru.yandex.workshop.main.dto.seller.SellerResponseDto;
+import ru.yandex.workshop.main.dto.seller.SellerUpdateDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 
@@ -51,7 +51,7 @@ class SellerControllerTest {
     @Test
     @SneakyThrows
     void addNewSeller_whenCorrect_thenReturnNewSeller() {
-        SellerForResponse response = createSeller(sellerDto);
+        SellerResponseDto response = createSeller(sellerDto);
         assertEquals(sellerDto.getName(), response.getName());
         assertEquals(sellerDto.getEmail(), response.getEmail());
         assertEquals(sellerDto.getPhone(), response.getPhone());
@@ -80,7 +80,7 @@ class SellerControllerTest {
         createSeller(sellerDto);
         String email = "joedoe@email.com";
 
-        SellerForResponse response = getSeller(email);
+        SellerResponseDto response = getSeller(email);
         assertEquals(sellerDto.getName(), response.getName());
         assertEquals(sellerDto.getEmail(), response.getEmail());
         assertEquals(sellerDto.getPhone(), response.getPhone());
@@ -102,14 +102,14 @@ class SellerControllerTest {
     @SneakyThrows
     void updateSellerByEmail_whenEmailIsCorrect_thenUpdateSeller() {
         createSeller(sellerDto);
-        SellerForUpdate updateDto = SellerForUpdate.builder()
+        SellerUpdateDto updateDto = SellerUpdateDto.builder()
                 .name("Bar")
                 .phone("0123456789")
                 .email("foobar@email.com")
                 .build();
         String email = "joedoe@email.com";
 
-        SellerForResponse response = updateSeller(email, updateDto);
+        SellerResponseDto response = updateSeller(email, updateDto);
         assertEquals(updateDto.getName(), response.getName());
         assertEquals(updateDto.getEmail(), response.getEmail());
         assertEquals(updateDto.getPhone(), response.getPhone());
@@ -173,7 +173,7 @@ class SellerControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    SellerForResponse createSeller(SellerDto sellerDto) throws Exception {
+    SellerResponseDto createSeller(SellerDto sellerDto) throws Exception {
         MvcResult result = mockMvc.perform(post("/seller/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sellerDto)))
@@ -185,11 +185,11 @@ class SellerControllerTest {
 
         return objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                SellerForResponse.class
+                SellerResponseDto.class
         );
     }
 
-    SellerForResponse getSeller(String email) throws Exception {
+    SellerResponseDto getSeller(String email) throws Exception {
         MvcResult result = mockMvc.perform(get("/seller/{email}", email)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -197,11 +197,11 @@ class SellerControllerTest {
 
         return objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                SellerForResponse.class
+                SellerResponseDto.class
         );
     }
 
-    SellerForResponse updateSeller(String email, SellerForUpdate updateDto) throws Exception {
+    SellerResponseDto updateSeller(String email, SellerUpdateDto updateDto) throws Exception {
         MvcResult result = mockMvc.perform(patch("/seller/account/{email}", email)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
@@ -213,7 +213,7 @@ class SellerControllerTest {
 
         return objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                SellerForResponse.class
+                SellerResponseDto.class
         );
     }
 

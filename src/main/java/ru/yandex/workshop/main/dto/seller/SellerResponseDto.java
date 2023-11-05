@@ -2,7 +2,7 @@ package ru.yandex.workshop.main.dto.seller;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.yandex.workshop.main.dto.ImageDto;
+import ru.yandex.workshop.main.dto.image.ImageResponseDto;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class SellerForResponse {
+public class SellerResponseDto {
     Long id;
     String email;
     String name;
@@ -20,5 +20,5 @@ public class SellerForResponse {
     LocalDateTime registrationTime;
     BankRequisitesDto requisites;
     String description;
-    ImageDto imageDto;
+    ImageResponseDto imageResponseDto;
 }

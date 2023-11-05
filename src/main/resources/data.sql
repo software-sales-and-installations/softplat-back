@@ -15,15 +15,15 @@ values (7, 'Интернет');
 insert into CATEGORY (ID, NAME)
 values (8, 'ERM и CRM');
 
-insert into VENDOR (name, description, image_id, country)
+insert into VENDOR (name, description, country)
 values ('Adobe',
         'Приложения от компании Adobe позволяют работать с векторной и растровой графикой, а также с видео и музыкой. На данной странице собраны самые популярные и доступные программы Adobe с ключами активации последних версий, а также версии Repack.',
-        1, 'USA');
-insert into VENDOR (name, description, image_id, country)
-values ('Microsoft Corporation',
+        'USA');
+insert into VENDOR (name, description, country)
+values ('Microsoft',
         'Продукты компании включают операционные системы, приложения для повышения производительности различных устройств, серверные приложения, бизнес-решения, настольные компьютеры и инструменты управления серверами, средства разработки программного обеспечения и видеоигры.',
-        2, 'USA');
-insert into VENDOR (name, description, image_id, country)
+        'USA');
+insert into VENDOR (name, description, country)
 values ('Kaspersky',
         'Международная компания, специализирующаяся на разработке систем защиты от компьютерных вирусов, спама, хакерских атак и прочих киберугроз.',
-        3, 'RUSSIA');
+        'RUSSIA');

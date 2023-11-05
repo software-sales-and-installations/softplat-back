@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.product.ProductService;
 
@@ -44,18 +45,33 @@ public class SellerProductController {
 
     @PostMapping(path = "/product")
     public ProductResponseDto createProduct(
-            @RequestBody @Valid ProductDto productDto) {
+            @RequestBody @Validated(New.class) ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         return productService.createProduct(productDto);
+    }
+
+    @PostMapping(path = "/{sellerId}/product/{productId}/image")
+    public ProductResponseDto createProductImage(@PathVariable @Min(1) Long sellerId,
+                                         @PathVariable @Min(1) Long productId,
+                                         @RequestParam(value = "image") MultipartFile image) {
+        log.info(LogMessage.TRY_SELLER_ADD_PRODUCT_IMAGE.label);
+        return productService.createProductImage(sellerId, productId, image);
+    }
+
+    @DeleteMapping(path = "/{sellerId}/product/{productId}/image")
+    public void deleteProductImage(@PathVariable @Min(1) Long sellerId,
+                                   @PathVariable @Min(1) Long productId) {
+        log.info(LogMessage.TRY_ADMIN_DElETE_VENDOR_IMAGE.label);
+        productService.deleteProductImage(sellerId, productId);
     }
 
     @PatchMapping(path = "/{sellerId}/product/{productId}")
     public ProductResponseDto updateProduct(
             @PathVariable @Min(1) Long sellerId,
             @PathVariable @Min(1) Long productId,
-            @RequestBody @Valid ProductForUpdate productForUpdate) {
-        log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, sellerId, productForUpdate);
-        return productService.updateProduct(sellerId, productId, productForUpdate);
+            @RequestBody @Valid ProductDto productDto) {
+        log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, sellerId, productDto);
+        return productService.updateProduct(sellerId, productId, productDto);
     }
 
     @PatchMapping(path = "/{sellerId}/product/{productId}/send")

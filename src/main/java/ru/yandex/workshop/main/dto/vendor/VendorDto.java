@@ -21,7 +21,7 @@ public class VendorDto {
     @NotBlank(groups = {New.class}, message = "Необходимо указать описание")
     @Length(min = 2, max = 500, message = "Длина имени должна быть от 2 до 500 символов")
     String description;
-    Long imageId; //TODO
+    @NotNull
     @NotNull(groups = {New.class}, message = "Необходимо выбрать страну")
     Country country;
 }
