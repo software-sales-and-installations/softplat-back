@@ -11,6 +11,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @Getter
 public class BankRequisitesDto {
+    Long id;
     @Pattern(regexp = "[0-9]{16}", message = "Номер счета должен содержать 16 цифр 0-9")
     @NotBlank
     private String account;

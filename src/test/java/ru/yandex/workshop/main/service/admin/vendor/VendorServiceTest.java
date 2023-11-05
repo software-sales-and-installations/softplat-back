@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
-import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.service.vendor.VendorService;
@@ -35,14 +34,14 @@ class VendorServiceTest {
     VendorDto vendorDtoOne;
     VendorDto vendorDtoTwo;
     VendorResponseDto vendorResponseDto;
-    VendorUpdateDto newVendorUpdateDto;
+    VendorDto newVendorUpdateDto;
     VendorResponseDto newVendorResponseDto;
 
     @BeforeEach
     void assistant() {
         vendorDtoOne = VendorDto.builder().name("testOne").description("testOne").country(Country.RUSSIA).build();
         vendorDtoTwo = VendorDto.builder().name("testTwo").description("testTwo").country(Country.RUSSIA).build();
-        newVendorUpdateDto = VendorUpdateDto.builder().name("newTest").description("newTest").imageId(1L).country(Country.USA).build();
+        newVendorUpdateDto = VendorDto.builder().name("newTest").description("newTest").country(Country.USA).build();
 
         vendorResponseDto = service.createVendor(vendorDtoOne);
         newVendorResponseDto = service.createVendor(vendorDtoTwo);
@@ -76,7 +75,7 @@ class VendorServiceTest {
         List<Vendor> vendorList = query.getResultList();
 
         MatcherAssert.assertThat(vendorList, notNullValue());
-        MatcherAssert.assertThat(vendorList.size(), equalTo(10));
+        MatcherAssert.assertThat(vendorList.size(), equalTo(5));
     }
 
     @Test
@@ -97,6 +96,6 @@ class VendorServiceTest {
         List<Vendor> vendorList = query.getResultList();
 
         MatcherAssert.assertThat(vendorList, notNullValue());
-        MatcherAssert.assertThat(vendorList.size(), equalTo(9));
+        MatcherAssert.assertThat(vendorList.size(), equalTo(4));
     }
 }

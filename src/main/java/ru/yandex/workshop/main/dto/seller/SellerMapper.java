@@ -21,12 +21,7 @@ public interface SellerMapper {
 
     default BankRequisitesDto requisitesToDto(BankRequisites requisites) {
         if (requisites == null) return null;
-        return new BankRequisitesDto(requisites.getAccount());
-    }
-
-    default BankRequisites requisitesDtoToRequisites(BankRequisitesDto requisites) {
-        if (requisites == null) return null;
-        return new BankRequisites(null, requisites.getAccount());
+        return new BankRequisitesDto(requisites.getId(), requisites.getAccount());
     }
 
     default ImageResponseDto mapImageToImageResponseDto(Seller seller) {

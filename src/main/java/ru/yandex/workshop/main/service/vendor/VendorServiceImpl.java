@@ -10,7 +10,6 @@ import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
-import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -30,12 +29,14 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public VendorResponseDto createVendor(VendorDto vendorDto) {
-        Vendor vendor = VendorMapper.INSTANCE.vendorDtoToVendor(vendorDto);
-        return VendorMapper.INSTANCE.vendorToVendorResponseDto(vendorRepository.save(vendor));
+        return VendorMapper.INSTANCE
+                .vendorToVendorResponseDto(vendorRepository
+                        .save(VendorMapper.INSTANCE
+                                .vendorDtoToVendor(vendorDto)));
     }
 
     @Override
-    public VendorResponseDto changeVendorById(Long vendorId, VendorUpdateDto vendorUpdateDto) {
+    public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
         Vendor oldVendor = getVendorByIdOrThrowException(vendorId);
 
         if (vendorUpdateDto.getName() != null) {

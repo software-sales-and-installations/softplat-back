@@ -107,13 +107,4 @@ class VendorControllerTest {
                 .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
-
-//    @Test
-//    void deleteVendor() throws Exception {
-//        mvc.perform(delete("/admin/vendor/1")
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//    }
 }
