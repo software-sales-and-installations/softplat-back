@@ -4,8 +4,7 @@ public enum ProductStatus {
     DRAFT("Черновик"),
     SHIPPED("Отправлено"),
     REJECTED("Отклонено"),
-    PUBLISHED("Опубликовано"),
-    USA("USA");
+    PUBLISHED("Опубликовано");
 
     public final String label;
 

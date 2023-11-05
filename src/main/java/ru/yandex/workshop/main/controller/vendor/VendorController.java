@@ -1,4 +1,4 @@
-package ru.yandex.workshop.main.controller;
+package ru.yandex.workshop.main.controller.vendor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

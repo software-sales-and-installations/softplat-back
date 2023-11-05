@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
@@ -78,8 +78,8 @@ public class SellerDetailsServiceImpl implements UserDetailsService {
         return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository.save(seller));
     }
 
-    public List<SellerResponseDto> getAllSellers() {
-        return sellerRepository.findAll(Pageable.ofSize(10)).stream()//TODO common custom pagination
+    public List<SellerResponseDto> getAllSellers(int from, int size) {
+        return sellerRepository.findAll(PageRequestOverride.of(from, size)).stream()
                 .map(SellerMapper.INSTANCE::sellerToSellerResponseDto)
                 .collect(Collectors.toList());
     }

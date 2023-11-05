@@ -1,4 +1,4 @@
-package ru.yandex.workshop.main.config;
+package ru.yandex.workshop.configuration;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

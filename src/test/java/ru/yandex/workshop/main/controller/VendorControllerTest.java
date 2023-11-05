@@ -1,6 +1,7 @@
 package ru.yandex.workshop.main.controller;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import ru.yandex.workshop.main.controller.vendor.VendorController;
 
 @WebMvcTest(controllers = VendorController.class)
 class VendorControllerTest {

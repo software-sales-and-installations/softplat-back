@@ -6,8 +6,8 @@ import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Vendor;
+import ru.yandex.workshop.security.model.user.Seller;
 
 import java.time.LocalDateTime;
 

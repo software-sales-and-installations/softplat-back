@@ -14,6 +14,7 @@ import ru.yandex.workshop.security.dto.response.SellerResponseDto;
 import ru.yandex.workshop.security.service.SellerDetailsServiceImpl;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.security.Principal;
 import java.util.List;
 
@@ -28,9 +29,10 @@ public class SellerController {
     private final SellerBankService bankService;
 
     @GetMapping
-    public List<SellerResponseDto> getAllSellers() {
-        log.debug(LogMessage.TRY_GET_SELLER.label);
-        return sellerService.getAllSellers();
+    public List<SellerResponseDto> getAllSellers(@RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+                                                 @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
+        log.debug(LogMessage.TRY_GET_All_SELLERS.label);
+        return sellerService.getAllSellers(from, size);
     }
 
     @GetMapping("/{userId}")

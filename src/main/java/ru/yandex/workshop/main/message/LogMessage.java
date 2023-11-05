@@ -1,10 +1,8 @@
 package ru.yandex.workshop.main.message;
 
 public enum LogMessage {
-    TRY_ADD_BUYER("Попытка добавления нового покупателя."),
     TRY_PATCH_BUYER("Попытка изменения покупателя по email: {}"),
     TRY_GET_BUYER("Попытка получения покупателя по id: {}"),
-    TRY_ADD_SELLER("Попытка добавления нового продавца."),
     TRY_PATCH_SELLER("Попытка изменения продавца по email: {}"),
     TRY_GET_SELLER("Попытка получения продавца по id: {}"),
     TRY_GET_All_SELLERS("Попытка получения списка продавцов"),
@@ -17,16 +15,13 @@ public enum LogMessage {
     TRY_GET_ID_VENDOR("Попытка получения вендора по id: {}."),
     TRY_ADMIN_DELETE_VENDOR("Попытка удаления вендора по id: {}."),
     TRY_GET_ADMIN("Попытка получения админа по email: {}"),
-    TRY_GET_ALL_PRODUCTS_SELLER("Попытка получения всех продуктов продавцов."),
-    TRY_GET_PRODUCTS_ADMIN("Попытка получения админом всех продуктов продавца (URL/admin) по id: {}."),
-    TRY_GET_PRODUCTS_BY_ID_ADMIN("Попытка получения продукта по id: {}."),
     TRY_UPDATE_STATUS_PRODUCT_ON_PUBLISHED("Попытка установки статуса 'PUBLISHED' продукту id: {}."),
     TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED("Попытка установки статуса 'REJECTED' продукту id: {}."),
     TRY_DELETE_PRODUCT_ADMIN("Попытка удаления продукта по id: {}."),
-    TRY_GET_PRODUCTS_SELLER("Попытка получения всех своих продуктов продавцом (URL/seller) id: {}."),
+    TRY_GET_PRODUCTS_OF_SELLER("Попытка получения всех своих продуктов продавца с id: {}."),
     TRY_GET_PRODUCT_BY_ID("Попытка получения продукта id: {} продавца id: {}."),
     TRY_CREATE_PRODUCT("Попытка создать продукт: {}."),
-    TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавца id: {}: {}"),
+    TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавцом email: {}: {}"),
     TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}.");
 
     public final String label;

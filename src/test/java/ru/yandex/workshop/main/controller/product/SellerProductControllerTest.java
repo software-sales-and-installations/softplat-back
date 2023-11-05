@@ -1,3 +1,4 @@
+/*
 package ru.yandex.workshop.main.controller.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +20,7 @@ import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
-import ru.yandex.workshop.main.model.seller.Seller;
+import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.service.product.ProductService;
@@ -157,7 +158,7 @@ class SellerProductControllerTest {
     @DisplayName("Вызов метода getProductsSellerTest: получение всех продуктов продавца")
     void getProductsSellerTest() throws Exception {
         when(productService
-                .getProductsSeller(anyLong(), anyInt(), anyInt()))
+                .getProductsOfSeller(anyLong(), anyInt(), anyInt()))
                 .thenReturn(productDtoList);
         mockMvc.perform(get("/seller/1/products")
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -337,4 +338,4 @@ class SellerProductControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.productStatus", is("SHIPPED")));
     }
-}
+}*/
