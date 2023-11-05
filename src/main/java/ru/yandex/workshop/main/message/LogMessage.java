@@ -25,7 +25,12 @@ public enum LogMessage {
     TRY_GET_PRODUCT_BY_ID("Попытка получения продукта id: {} продавца id: {}."),
     TRY_CREATE_PRODUCT("Попытка создать продукт: {}."),
     TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавца id: {}: {}"),
-    TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}.");
+    TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}."),
+    TRY_ADMIN_ADD_CATEGORY("Попытка добавить категорию."),
+    TRY_ADMIN_PATCH_CATEGORY("Попытка изменения категории."),
+    TRY_GET_CATEGORY("Попытка получения списка категорий."),
+    TRY_GET_ID_CATEGORY("Попытка получения категории по id: {}."),
+    TRY_ADMIN_DELETE_CATEGORY("Попытка удаления категории по id: {}.");
 
     public final String label;
 
