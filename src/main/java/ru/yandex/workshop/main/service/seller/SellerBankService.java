@@ -25,7 +25,7 @@ public class SellerBankService {
         Seller seller = getSellerFromDatabase(email);
         if (seller.getRequisites() == null)
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
-        return new BankRequisitesDto(seller.getRequisites().getAccount());
+        return new BankRequisitesDto(seller.getRequisites().getId(), seller.getRequisites().getAccount());
     }
 
     @Transactional
@@ -33,7 +33,7 @@ public class SellerBankService {
         Seller seller = getSellerFromDatabase(email);
         seller.setRequisites(bankRepository.save(new BankRequisites(null, requisites.getAccount())));
         sellerRepository.save(seller);
-        return new BankRequisitesDto(seller.getRequisites().getAccount());
+        return new BankRequisitesDto(seller.getRequisites().getId(), seller.getRequisites().getAccount());
     }
 
     @Transactional

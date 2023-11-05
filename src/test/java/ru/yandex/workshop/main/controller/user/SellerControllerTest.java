@@ -137,7 +137,7 @@ class SellerControllerTest {
     @SneakyThrows
     void addRequisites_whenOk_returnRequisites() {
         createSeller(sellerDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
+        BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
         String email = "joedoe@email.com";
 
         BankRequisitesDto response = addRequisites(email, requisitesDto);
@@ -148,10 +148,10 @@ class SellerControllerTest {
     @SneakyThrows
     void updateRequisites_whenOk_returnRequisites() {
         createSeller(sellerDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
+        BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
         String email = "joedoe@email.com";
         addRequisites(email, requisitesDto);
-        BankRequisitesDto newRequisitesDto = new BankRequisitesDto("1111111111111111");
+        BankRequisitesDto newRequisitesDto = new BankRequisitesDto(null, "1111111111111111");
 
         mockMvc.perform(patch("/seller/account/bank/{email}", email)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -165,7 +165,7 @@ class SellerControllerTest {
     @SneakyThrows
     void deleteRequisites_whenOk() {
         createSeller(sellerDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
+        BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
         addRequisites(sellerDto.getEmail(), requisitesDto);
 
         mockMvc.perform(delete("/seller/account/bank/{email}", sellerDto.getEmail())

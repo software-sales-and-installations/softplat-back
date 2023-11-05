@@ -55,8 +55,8 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
                 .andExpect(jsonPath("$.imageId", is(vendorResponseDto.getImageId()), Long.class))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
@@ -73,8 +73,8 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
                 .andExpect(jsonPath("$.imageId", is(vendorResponseDto.getImageId()), Long.class))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
@@ -104,18 +104,9 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
                 .andExpect(jsonPath("$.imageId", is(vendorResponseDto.getImageId()), Long.class))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
-
-//    @Test
-//    void deleteVendor() throws Exception {
-//        mvc.perform(delete("/admin/vendor/1")
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//    }
 }
