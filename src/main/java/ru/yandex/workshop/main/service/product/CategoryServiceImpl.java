@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.category.CategoryDto;
 import ru.yandex.workshop.main.dto.category.CategoryMapper;
-import ru.yandex.workshop.main.dto.category.CategoryResponseDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Category;
@@ -23,37 +22,37 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public CategoryResponseDto createCategory(CategoryDto categoryDto) {
+    public CategoryDto createCategory(CategoryDto categoryDto) {
         return CategoryMapper.INSTANCE
-                .categoryToCategoryResponseDto(repository
+                .categoryToCategoryDto(repository
                         .save(CategoryMapper.INSTANCE
                                 .categoryDtoToCategory(categoryDto)));
     }
 
     @Transactional
     @Override
-    public CategoryResponseDto changeCategoryById(Long catId, CategoryDto categoryDto) {
+    public CategoryDto changeCategoryById(Long catId, CategoryDto categoryDto) {
         Category oldCategory = availabilityCategory(catId);
 
-        if (categoryDto.getName() != null) oldCategory.setName(categoryDto.getName());
-
-        return CategoryMapper.INSTANCE.categoryToCategoryResponseDto(repository.save(oldCategory));
+        return CategoryMapper.INSTANCE.categoryToCategoryDto(repository.save(oldCategory));
     }
 
-    public List<CategoryResponseDto> findCategoryAll() {
+    public List<CategoryDto> findCategoryAll() {
         return repository.findAll(Pageable.ofSize(10)).stream()
-                .map(CategoryMapper.INSTANCE::categoryToCategoryResponseDto)
+                .map(CategoryMapper.INSTANCE::categoryToCategoryDto)
                 .collect(Collectors.toList());
     }
 
-    public CategoryResponseDto findCategoryById(Long catId) {
-        return CategoryMapper.INSTANCE.categoryToCategoryResponseDto(
-                repository.findById(catId)
-                        .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
+    public CategoryDto findCategoryById(Long catId) {
+        return CategoryMapper.INSTANCE.categoryToCategoryDto(
+                availabilityCategory(catId));
     }
 
+    @Transactional
     @Override
     public void deleteCategory(Long catId) {
+        availabilityCategory(catId);
+
         repository.deleteById(catId);
     }
 

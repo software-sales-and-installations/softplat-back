@@ -8,8 +8,8 @@ import ru.yandex.workshop.main.model.product.Category;
 public interface CategoryMapper {
     CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
-    CategoryResponseDto categoryToCategoryResponseDto(Category category);
-
     Category categoryDtoToCategory(CategoryDto categoryDto);
+
+    CategoryDto categoryToCategoryDto(Category category);
 
 }
