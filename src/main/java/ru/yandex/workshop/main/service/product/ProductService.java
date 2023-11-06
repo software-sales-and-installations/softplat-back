@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.config.PageRequestOverride;
+import ru.yandex.workshop.main.dto.image.ImageDto;
+import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.model.product.Category;
@@ -20,6 +23,7 @@ import ru.yandex.workshop.main.repository.product.CategoryRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
+import ru.yandex.workshop.main.service.image.ImageService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,10 +39,12 @@ public class ProductService {
     private final SellerRepository sellerRepository;
     private final CategoryRepository categoryRepository;
     private final VendorRepository vendorRepository;
+    private final ImageService imageService;
 
     public List<ProductResponseDto> getProductsSeller(Long sellerId, int from, int size) {
         getSellerFromDatabase(sellerId);
         PageRequestOverride pageRequest = PageRequestOverride.of(from, size);
+        // TODO у меня в Postman валится этот метод, Павел Михайлов, проверь пожалуйста
         return productRepository.findProductBySellerId(sellerId, pageRequest)
                 .stream()
                 .map(ProductMapper.INSTANCE::productToProductResponseDto)
@@ -46,13 +52,8 @@ public class ProductService {
     }
 
     public ProductResponseDto getProductById(Long sellerId, Long productId) {
-        Seller seller = getSellerFromDatabase(sellerId);
+        checkSellerAccessRights(sellerId, productId);
         Product product = getProductFromDatabase(productId);
-        if (!product.getSeller().getId().equals(sellerId)) {
-            throw new EntityNotFoundException(String.format(
-                    "Продавец %s не может посмотреть чужой продукт!",
-                    seller.getName()));
-        }
         return ProductMapper.INSTANCE.productToProductResponseDto(product);
     }
 
@@ -61,9 +62,10 @@ public class ProductService {
         if (productDto.getInstallation() && productDto.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо ввести цену устанвоки");
         Product product = ProductMapper.INSTANCE.productDtoToProduct(productDto);
-        getCategoryFromDatabase(product.getCategory().getId());
-        getVendorFromDatabase(product.getVendor().getId());
-        getSellerFromDatabase(product.getSeller().getId());
+        product.setCategory(getCategoryFromDatabase(product.getCategory().getId()));
+        product.setVendor(getVendorFromDatabase(product.getVendor().getId()));
+        product.setSeller(getSellerFromDatabase(product.getSeller().getId()));
+
         product.setProductStatus(ProductStatus.DRAFT);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
@@ -73,68 +75,77 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto updateProduct(Long sellerId, Long productId, ProductForUpdate productForUpdate) {
+    public ProductResponseDto updateProduct(Long sellerId, Long productId, ProductDto productDto) {
+        checkSellerAccessRights(sellerId, productId);
         Product product = getProductFromDatabase(productId);
-        Seller seller = getSellerFromDatabase(sellerId);
-
-        if (!product.getSeller().getId().equals(sellerId)) {
-            throw new EntityNotFoundException(String.format(
-                    "Продавец %s не может корректировать чужой продукт!",
-                    seller.getName()));
-        }
-        if (productForUpdate.getInstallation() && productForUpdate.getInstallationPrice() == null)
+        if (productDto.getInstallation() && productDto.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо ввести цену устанвоки");
-        if (productForUpdate.getName() != null) {
-            product.setName(productForUpdate.getName());
+        if (productDto.getName() != null) {
+            product.setName(productDto.getName());
         }
-        if (productForUpdate.getDescription() != null) {
-            product.setDescription(productForUpdate.getDescription());
+        if (productDto.getDescription() != null) {
+            product.setDescription(productDto.getDescription());
         }
-        if (productForUpdate.getVersion() != null) {
-            product.setVersion(productForUpdate.getVersion());
+        if (productDto.getVersion() != null) {
+            product.setVersion(productDto.getVersion());
         }
-        if (productForUpdate.getImage() != null) {
-            //TODO сделайте что-нибудь с изображением)
+        if (productDto.getCategory() != null) {
+            product.setCategory(Category.builder().id(productDto.getCategory()).build());
         }
-        if (productForUpdate.getCategory() != null) {
-            product.setCategory(productForUpdate.getCategory());
+        if (productDto.getLicense() != null) {
+            product.setLicense(productDto.getLicense());
         }
-        if (productForUpdate.getLicense() != null) {
-            product.setLicense(productForUpdate.getLicense());
+        if (productDto.getVendor() != null) {
+            product.setVendor(Vendor.builder().id(productDto.getVendor()).build());
         }
-        if (productForUpdate.getVendor() != null) {
-            product.setVendor(productForUpdate.getVendor());
+        if (productDto.getPrice() != null) {
+            product.setPrice(productDto.getPrice());
         }
-        if (productForUpdate.getPrice() != null) {
-            product.setPrice(productForUpdate.getPrice());
+        if (productDto.getQuantity() != null) {
+            product.setQuantity(productDto.getQuantity());
+            if (product.getQuantity() > 0) {
+                product.setProductAvailability(true);
+            }
         }
-        if (productForUpdate.getQuantity() != null) {
-            product.setQuantity(productForUpdate.getQuantity());
+        if (productDto.getInstallation() != null) {
+            product.setInstallation(productDto.getInstallation());
         }
-        if (productForUpdate.getInstallation() != null) {
-            product.setInstallation(productForUpdate.getInstallation());
+        if (product.getInstallation() != null) {
+            product.setInstallation(productDto.getInstallation());
         }
-        if (productForUpdate.getInstallationPrice() != null) {
-            product.setInstallationPrice(productForUpdate.getInstallationPrice());
-        }
-        if (product.getQuantity() > 0) {
-            product.setProductAvailability(true);
+        if (productDto.getInstallationPrice() != null) {
+            product.setInstallationPrice(productDto.getInstallationPrice());
         }
         product.setProductStatus(ProductStatus.DRAFT);
         productRepository.save(product);
         return ProductMapper.INSTANCE.productToProductResponseDto(product);
+    }
+
+    @Transactional
+    public ProductResponseDto createProductImage(Long sellerId, Long productId, MultipartFile file) {
+        checkSellerAccessRights(sellerId, productId);
+        Product product = getProductFromDatabase(productId);
+        if (product.getImage() != null) {
+            imageService.deleteImageById(product.getImage().getId());
+        }
+        ImageDto imageDto = imageService.addNewImage(file);
+        product.setImage(ImageMapper.INSTANCE.imageDtoToImage(imageDto));
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
+    }
+
+    @Transactional
+    public void deleteProductImage(Long sellerId, Long productId) {
+        checkSellerAccessRights(sellerId, productId);
+        Product product = getProductFromDatabase(productId);
+        if (product.getImage() != null) {
+            imageService.deleteImageById(product.getImage().getId());
+        }
     }
 
     @Transactional
     public ProductResponseDto updateStatusProductOnSent(Long sellerId, Long productId) {
-        Seller seller = getSellerFromDatabase(sellerId);
+        checkSellerAccessRights(sellerId, productId);
         Product product = getProductFromDatabase(productId);
-
-        if (!product.getSeller().getId().equals(sellerId)) {
-            throw new EntityNotFoundException(String.format(
-                    "Продавец %s не может корректировать чужой продукт!",
-                    seller.getName()));
-        }
         product.setProductStatus(ProductStatus.SHIPPED);
         return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
@@ -189,6 +200,17 @@ public class ProductService {
     private Seller getSellerFromDatabase(Long sellerId) {
         return sellerRepository.findById(sellerId)
                 .orElseThrow(() -> new EntityNotFoundException("Такого пользователя не существует"));
+    }
+
+    private void checkSellerAccessRights(Long sellerId, Long productId) {
+        Product product = getProductFromDatabase(productId);
+        Seller seller = getSellerFromDatabase(sellerId);
+
+        if (!product.getSeller().getId().equals(sellerId)) {
+            throw new AccessDenialException(String.format(
+                    "Продавец %s не может корректировать чужой продукт!",
+                    seller.getName()));
+        }
     }
 }
 

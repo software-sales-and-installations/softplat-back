@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.workshop.main.controller.vendor.VendorController;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
@@ -38,8 +39,8 @@ class VendorControllerTest {
 
     @BeforeAll
     static void assistant() {
-        vendorDto = VendorDto.builder().name("test").description("test").imageId(1L).country(Country.RUSSIA).build();
-        vendorResponseDto = VendorResponseDto.builder().id(1L).name("test").description("test").imageId(1L).country(Country.RUSSIA).build();
+        vendorDto = VendorDto.builder().name("test").description("test").country(Country.RUSSIA).build();
+        vendorResponseDto = VendorResponseDto.builder().id(1L).name("test").description("test").country(Country.RUSSIA).build();
         vendorResponseDtoList = List.of(vendorResponseDto, vendorResponseDto);
     }
 
@@ -55,9 +56,8 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
-                .andExpect(jsonPath("$.imageId", is(vendorResponseDto.getImageId()), Long.class))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
 
@@ -104,18 +104,8 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
-                .andExpect(jsonPath("$.imageId", is(vendorResponseDto.getImageId()), Long.class))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
-
-//    @Test
-//    void deleteVendor() throws Exception {
-//        mvc.perform(delete("/admin/vendor/1")
-//                        .characterEncoding(StandardCharsets.UTF_8)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk());
-//    }
 }

@@ -5,15 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ru.yandex.workshop.main.dto.image.ImageDto;
+import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.seller.SellerDto;
-import ru.yandex.workshop.main.dto.seller.SellerForResponse;
-import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
+import ru.yandex.workshop.main.dto.seller.SellerResponseDto;
+import ru.yandex.workshop.main.dto.seller.SellerUpdateDto;
 import ru.yandex.workshop.main.dto.seller.SellerMapper;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
+import ru.yandex.workshop.main.service.image.ImageService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,20 +30,21 @@ import java.util.stream.Collectors;
 public class SellerService {
 
     private final SellerRepository sellerRepository;
+    private final ImageService imageService;
 
     //TODO add in any controller
-    public List<SellerForResponse> getAllSellers() {
+    public List<SellerResponseDto> getAllSellers() {
         return sellerRepository.findAll(Pageable.ofSize(10)).stream()//TODO common custom pagination
                 .map(SellerMapper.INSTANCE::sellerToSellerForResponse)
                 .collect(Collectors.toList());
     }
 
-    public SellerForResponse getSeller(String email) {
+    public SellerResponseDto getSeller(String email) {
         return SellerMapper.INSTANCE.sellerToSellerForResponse(getSellerFromDatabase(email));
     }
 
     @Transactional
-    public SellerForResponse addSeller(SellerDto sellerDto) {
+    public SellerResponseDto addSeller(SellerDto sellerDto) {
         Seller seller = SellerMapper.INSTANCE.sellerDtoToSeller(sellerDto);
         seller.setRegistrationTime(LocalDateTime.now());
         try {
@@ -50,15 +55,32 @@ public class SellerService {
     }
 
     @Transactional
-    public SellerForResponse updateSeller(String email, SellerForUpdate sellerForUpdate) {
+    public SellerResponseDto addSellerImage(String email, MultipartFile file) {
         Seller seller = getSellerFromDatabase(email);
-        if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
-        if (sellerForUpdate.getDescription() != null) seller.setDescription(sellerForUpdate.getDescription());
-        if (sellerForUpdate.getEmail() != null && !sellerRepository.findByEmail(sellerForUpdate.getEmail()).isPresent())
-//        if (sellerForUpdate.getEmail() != null && sellerRepository.findByEmail(sellerForUpdate.getEmail()).isEmpty())
-            seller.setEmail(sellerForUpdate.getEmail());
-        //TODO save image
-        if (sellerForUpdate.getPhone() != null) seller.setPhone(sellerForUpdate.getPhone());
+        if (seller.getImage() != null) {
+            imageService.deleteImageById(seller.getImage().getId());
+        }
+        ImageDto imageDto = imageService.addNewImage(file);
+        seller.setImage(ImageMapper.INSTANCE.imageDtoToImage(imageDto));
+        return SellerMapper.INSTANCE.sellerToSellerForResponse(seller);
+    }
+
+    @Transactional
+    public void deleteSellerImage(String email) {
+        Seller seller = getSellerFromDatabase(email);
+        if (seller.getImage() != null) {
+            imageService.deleteImageById(seller.getImage().getId());
+        }
+    }
+
+    @Transactional
+    public SellerResponseDto updateSeller(String email, SellerUpdateDto sellerUpdateDto) {
+        Seller seller = getSellerFromDatabase(email);
+        if (sellerUpdateDto.getName() != null) seller.setName(sellerUpdateDto.getName());
+        if (sellerUpdateDto.getDescription() != null) seller.setDescription(sellerUpdateDto.getDescription());
+        if (sellerUpdateDto.getEmail() != null && !sellerRepository.findByEmail(sellerUpdateDto.getEmail()).isPresent())
+            seller.setEmail(sellerUpdateDto.getEmail());
+        if (sellerUpdateDto.getPhone() != null) seller.setPhone(sellerUpdateDto.getPhone());
         return SellerMapper.INSTANCE.sellerToSellerForResponse(sellerRepository.save(seller));
     }
 

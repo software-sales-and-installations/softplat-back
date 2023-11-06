@@ -6,9 +6,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.exception.WrongConditionException;
+import ru.yandex.workshop.main.exception.ImageUploadingError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleDuplicateException(final WrongConditionException e) {
+    public ErrorResponse handleWrongConditionException(final WrongConditionException e) {
         e.printStackTrace();
         return new ErrorResponse(e.getMessage());
     }
@@ -46,5 +47,19 @@ public class ErrorHandler {
             details.add(error.getDefaultMessage());
         }
         return new ErrorResponse(details.toString());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleAccessDenialException(final AccessDenialException e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAccessDenialException(final ImageUploadingError e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
     }
 }
