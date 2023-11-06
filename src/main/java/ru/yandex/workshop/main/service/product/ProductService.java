@@ -158,7 +158,7 @@ public class ProductService {
     }
 
     public List<ProductResponseDto> getAllProductsShipped(int from, int size) {
-        return productRepository.findAllByProductStatus(ProductStatus.SHIPPED, PageRequestOverride.of(from, size))
+        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED, PageRequestOverride.of(from, size))
                 .stream()
                 .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());

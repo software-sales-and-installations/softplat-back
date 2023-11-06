@@ -14,6 +14,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findAllBy(PageRequestOverride pageRequest);
 
-    List<Product> findAllByProductStatus(ProductStatus productStatus, PageRequestOverride pageRequest);
+    List<Product> findAllByProductStatusOrderByProductionTimeDesc(ProductStatus productStatus, PageRequestOverride pageRequest);
 
 }
