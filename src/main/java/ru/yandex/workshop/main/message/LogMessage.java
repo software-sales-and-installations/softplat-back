@@ -29,6 +29,7 @@ public enum LogMessage {
     TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED("Попытка установки статуса 'REJECTED' продукту id: {}."),
     TRY_DELETE_PRODUCT_ADMIN("Попытка удаления продукта по id: {}."),
     TRY_GET_PRODUCTS_SELLER("Попытка получения всех своих продуктов продавцом (URL/seller) id: {}."),
+    TRY_GET_ALL_PRODUCTS_SHIPPED("Попытка получения всех продуктов, ожидающих модерации."),
     TRY_GET_PRODUCT_BY_ID("Попытка получения продукта id: {} продавца id: {}."),
     TRY_CREATE_PRODUCT("Попытка создать продукт: {}."),
     TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавца id: {}: {}"),

@@ -30,6 +30,14 @@ public class AdminProductController {
         return productService.getAllProductsSeller(from, size);
     }
 
+    @GetMapping(path = "/shipped")
+    public List<ProductResponseDto> getAllProductsShipped(
+            @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+            @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
+        log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SHIPPED.label);
+        return productService.getAllProductsShipped(from, size);
+    }
+
     @GetMapping(path = "/{sellerId}/products")
     public List<ProductResponseDto> getProductsSeller(
             @PathVariable @Min(1) Long sellerId,
