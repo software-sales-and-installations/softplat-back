@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.security.dto.UserSecurity;
+import ru.yandex.workshop.security.dto.UserDetailsImpl;
 import ru.yandex.workshop.security.dto.registration.RegistrationAdminDto;
 import ru.yandex.workshop.security.dto.response.AdminResponseDto;
 import ru.yandex.workshop.security.mapper.AdminMapper;
@@ -41,7 +41,7 @@ public class AdminDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Admin admin = getAdmin(email);
-        return UserSecurity.fromUser(admin);
+        return UserDetailsImpl.fromUser(admin);
     }
 
     @Transactional

@@ -16,7 +16,7 @@ import java.security.Principal;
 public class BuyerBasketController {
     private final BasketService basketService;
 
-    @PreAuthorize("hasAuthority('seller:write')")
+    @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping("/basket/{productId}")
     public BasketDto addProductInBasket(Principal principal, @PathVariable Long productId,
                                         @RequestParam(defaultValue = "false") Boolean installation) {
@@ -24,7 +24,7 @@ public class BuyerBasketController {
         return basketService.addProduct(principal.getName(), productId, installation);
     }
 
-    @PreAuthorize("hasAuthority('seller:write')")
+    @PreAuthorize("hasAuthority('buyer:write)')")
     @DeleteMapping("/basket/{productId}")
     public BasketDto removeProductFromBasket(Principal principal, @PathVariable Long productId,
                                              @RequestParam(defaultValue = "false") Boolean installation) {
@@ -32,7 +32,7 @@ public class BuyerBasketController {
         return basketService.removeProduct(principal.getName(), productId, installation);
     }
 
-    @PreAuthorize("hasAuthority('seller:write')")
+    @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/basket")
     public BasketDto getBasket(Principal principal) {
         log.info(LogMessage.TRY_CHECK_BASKET.label, principal.getName());

@@ -41,8 +41,8 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String generateToken(String userDetails, String role) {
-        Claims claims = Jwts.claims().setSubject(userDetails);
+    public String generateToken(String username, String role) {
+        Claims claims = Jwts.claims().setSubject(username);
         claims.put("role", role);
         Date issuedDate = new Date();
         Date expiredDate = new Date(issuedDate.getTime() + jwtLifetime.toMillis());
@@ -65,20 +65,17 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-
         if (adminDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
             UserDetails userDetails = adminDetailsService.loadUserByUsername(getUsername(token));
-            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-
+            return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
         } else if (sellerDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
             UserDetails userDetails = sellerDetailsService.loadUserByUsername(getUsername(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-
         } else if (buyerDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
             UserDetails userDetails = buyerDetailsService.loadUserByUsername(getUsername(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-
         }
+
         return null;
     }
 

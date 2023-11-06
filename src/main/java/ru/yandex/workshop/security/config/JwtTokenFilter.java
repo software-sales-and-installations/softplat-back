@@ -34,6 +34,7 @@ public class JwtTokenFilter extends GenericFilterBean {
                 }
             }
         } catch (RuntimeException e) {
+            SecurityContextHolder.clearContext();
             throw new UnauthorizedException("Невалидный токен");
         }
 

@@ -1,11 +1,13 @@
 package ru.yandex.workshop.security.mapper;
 
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.yandex.workshop.security.dto.registration.RegistrationAdminDto;
 import ru.yandex.workshop.security.dto.response.AdminResponseDto;
 import ru.yandex.workshop.security.model.user.Admin;
 
+@Mapper
 public interface AdminMapper {
     AdminMapper INSTANCE = Mappers.getMapper(AdminMapper.class);
 

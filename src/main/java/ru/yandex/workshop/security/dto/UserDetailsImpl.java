@@ -19,7 +19,7 @@ import java.util.Set;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserSecurity implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
     Long id;
     String email;
     String password;
@@ -34,6 +34,11 @@ public class UserSecurity implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override

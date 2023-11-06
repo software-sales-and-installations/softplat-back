@@ -2,9 +2,13 @@ package ru.yandex.workshop.security.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
@@ -46,32 +50,32 @@ public class AuthController {
         try {
             Map<Object, Object> response = new HashMap<>();
             String token;
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
             switch (request.getRole()) {
                 case ADMIN:
                     UserDetails admin = adminDetailsService.loadUserByUsername(request.getEmail());
                     token = jwtTokenProvider.generateToken(request.getEmail(), request.getRole().name());
-                    response.put("email", request.getEmail());
+                    response.put("email", admin.getUsername());
                     response.put("token", token);
-
-                    return ResponseEntity.ok(response);
+                    break;
                 case SELLER:
                     UserDetails seller = sellerDetailsService.loadUserByUsername(request.getEmail());
                     token = jwtTokenProvider.generateToken(request.getEmail(), request.getRole().name());
-                    response.put("email", request.getEmail());
+                    response.put("email", seller.getUsername());
                     response.put("token", token);
-
-                    return ResponseEntity.ok(response);
+                    break;
                 case BUYER:
                     UserDetails buyer = buyerDetailsService.loadUserByUsername(request.getEmail());
                     token = jwtTokenProvider.generateToken(request.getEmail(), request.getRole().name());
-                    response.put("email", request.getEmail());
+                    response.put("email", buyer.getUsername());
                     response.put("token", token);
+                    break;
             }
 
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+        } catch (AuthenticationException e) {
+            return new ResponseEntity<>("Неправильный email/password", HttpStatus.FORBIDDEN);
         }
     }
 
