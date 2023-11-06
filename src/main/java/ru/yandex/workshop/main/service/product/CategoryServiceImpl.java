@@ -24,25 +24,25 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {
         return CategoryMapper.INSTANCE
-                .categoryToCategoryDto(repository
-                        .save(CategoryMapper.INSTANCE
-                                .categoryDtoToCategory(categoryDto)));
+                .categoryToCategoryDto(repository.save(CategoryMapper.INSTANCE.categoryDtoToCategory(categoryDto)));
     }
 
     @Transactional
     @Override
     public CategoryDto changeCategoryById(Long catId, CategoryDto categoryDto) {
-        Category oldCategory = availabilityCategory(catId);
+        Category category = availabilityCategory(catId);
 
-        return CategoryMapper.INSTANCE.categoryToCategoryDto(repository.save(oldCategory));
+        return CategoryMapper.INSTANCE.categoryToCategoryDto(repository.save(category));
     }
 
+    @Override
     public List<CategoryDto> findCategoryAll() {
         return repository.findAll(Pageable.ofSize(10)).stream()
                 .map(CategoryMapper.INSTANCE::categoryToCategoryDto)
                 .collect(Collectors.toList());
     }
 
+    @Override
     public CategoryDto findCategoryById(Long catId) {
         return CategoryMapper.INSTANCE.categoryToCategoryDto(
                 availabilityCategory(catId));
