@@ -2,10 +2,13 @@ package ru.yandex.workshop.main.controller.basket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.basket.BasketDto;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.buyer.BasketService;
+
+import java.security.Principal;
 
 @Slf4j
 @RestController("/buyer")
@@ -13,23 +16,26 @@ import ru.yandex.workshop.main.service.buyer.BasketService;
 public class BuyerBasketController {
     private final BasketService basketService;
 
-    @PostMapping("/{userId}/basket/{productId}")
-    public BasketDto addProductInBasket(@PathVariable Long userId, @PathVariable Long productId,
+    @PreAuthorize("hasAuthority('seller:write')")
+    @PostMapping("/basket/{productId}")
+    public BasketDto addProductInBasket(Principal principal, @PathVariable Long productId,
                                         @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_ADD_PRODUCT_IN_BASKET.label, productId);
-        return basketService.addProduct(userId, productId, installation);
+        return basketService.addProduct(principal.getName(), productId, installation);
     }
 
-    @DeleteMapping("/{userId}/basket/{productId}")
-    public BasketDto removeProductFromBasket(@PathVariable Long userId, @PathVariable Long productId,
+    @PreAuthorize("hasAuthority('seller:write')")
+    @DeleteMapping("/basket/{productId}")
+    public BasketDto removeProductFromBasket(Principal principal, @PathVariable Long productId,
                                              @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_DELETE_PRODUCT_FROM_BASKET.label, productId);
-        return basketService.removeProduct(userId, productId, installation);
+        return basketService.removeProduct(principal.getName(), productId, installation);
     }
 
-    @GetMapping("/{userId}/basket")
-    public BasketDto getBasket(@PathVariable Long userId) {
-        log.info(LogMessage.TRY_CHECK_BASKET.label, userId);
-        return basketService.getBasket(userId);
+    @PreAuthorize("hasAuthority('seller:write')")
+    @GetMapping("/basket")
+    public BasketDto getBasket(Principal principal) {
+        log.info(LogMessage.TRY_CHECK_BASKET.label, principal.getName());
+        return basketService.getBasket(principal.getName());
     }
 }

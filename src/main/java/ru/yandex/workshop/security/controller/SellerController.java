@@ -8,10 +8,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
-import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.seller.SellerBankService;
 import ru.yandex.workshop.security.dto.response.SellerResponseDto;
+import ru.yandex.workshop.security.dto.user.SellerDto;
 import ru.yandex.workshop.security.service.SellerDetailsServiceImpl;
 
 import javax.validation.Valid;
@@ -44,7 +44,7 @@ public class SellerController {
 
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping
-    public SellerResponseDto updateSeller(Principal principal, @RequestBody @Valid SellerForUpdate sellerForUpdate) {
+    public SellerResponseDto updateSeller(Principal principal, @RequestBody @Valid SellerDto sellerForUpdate) {
         log.debug(LogMessage.TRY_PATCH_SELLER.label, principal.getName());
         return sellerService.updateSeller(principal.getName(), sellerForUpdate);
     }

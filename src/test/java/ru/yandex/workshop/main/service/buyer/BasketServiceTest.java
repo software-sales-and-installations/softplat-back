@@ -19,12 +19,16 @@ import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
-import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
+import ru.yandex.workshop.security.model.Role;
+import ru.yandex.workshop.security.model.Status;
+import ru.yandex.workshop.security.model.user.Buyer;
+import ru.yandex.workshop.security.model.user.Seller;
+import ru.yandex.workshop.security.repository.BuyerRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +38,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -50,16 +55,26 @@ class BasketServiceTest {
     private ProductBasketRepository productBasketRepository;
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private BuyerRepository buyerRepository;
     @Captor
     private ArgumentCaptor<Basket> argumentCaptor;
 
     private static Product product;
-    static BankRequisites bankRequisites;
+    private static Buyer buyer;
+    private static final String email = "user@user.com";
 
 
     @BeforeEach
     void init() {
-        bankRequisites = new BankRequisites(
+        buyer = Buyer.builder()
+                .id(1L)
+                .email("user@user.com")
+                .name("user")
+                .phone("1234567890")
+                .build();
+
+        BankRequisites bankRequisites = new BankRequisites(
                 1L,
                 "1111 2222 3333 4444");
 
@@ -85,7 +100,10 @@ class BasketServiceTest {
                 "Description seller",
                 LocalDateTime.now(),
                 bankRequisites,
-                image);
+                image,
+                "password",
+                Role.SELLER,
+                Status.ACTIVE);
 
         Category category = new Category(
                 1L,
@@ -112,10 +130,11 @@ class BasketServiceTest {
     @Test
     @SneakyThrows
     void getBasketTest_whenEmpty_returnNewBasket() {
+        when(buyerRepository.findByEmail(anyString())).thenReturn(Optional.of(buyer));
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.empty());
         when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L, null));
 
-        basketService.getBasket(1L);
+        basketService.getBasket(email);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -128,11 +147,12 @@ class BasketServiceTest {
     @Test
     @SneakyThrows
     void addProductTest_whenHaveNoProducts_returnBasketDto() {
+        when(buyerRepository.findByEmail(anyString())).thenReturn(Optional.of(buyer));
         when(productRepository.findById(2L)).thenReturn(Optional.ofNullable(product));
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(1L, 1L, null)));
         when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L, null));
 
-        basketService.addProduct(1L, 2L, false);
+        basketService.addProduct(email, 2L, false);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -147,13 +167,14 @@ class BasketServiceTest {
     @Test
     @SneakyThrows
     void addProductTest_whenHaveSameProduct_returnBasketDto() {
+        when(buyerRepository.findByEmail(anyString())).thenReturn(Optional.of(buyer));
         when(productRepository.findById(2L)).thenReturn(Optional.ofNullable(product));
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
                 1L, 1L, List.of(new ProductBasket(1L, product, 1, true)))));
         when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L,
                 List.of(new ProductBasket(1L, product, 2, true))));
 
-        basketService.addProduct(1L, 2L, true);
+        basketService.addProduct(email, 2L, true);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -171,6 +192,7 @@ class BasketServiceTest {
         List<ProductBasket> productBaskets = new ArrayList<>();
         productBaskets.add(new ProductBasket(1L, product, 1, true));
 
+        when(buyerRepository.findByEmail(anyString())).thenReturn(Optional.of(buyer));
         when(productRepository.findById(2L)).thenReturn(Optional.ofNullable(product));
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
                 1L, 1L, productBaskets)));
@@ -178,7 +200,7 @@ class BasketServiceTest {
                 List.of(new ProductBasket(1L, product, 1, true))),
                 new ProductBasket(2L, product, 1, false));
 
-        basketService.addProduct(1L, 2L, false);
+        basketService.addProduct(email, 2L, false);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -197,11 +219,12 @@ class BasketServiceTest {
         List<ProductBasket> productBaskets = new ArrayList<>();
         productBaskets.add(new ProductBasket(1L, product, 1, true));
 
+        when(buyerRepository.findByEmail(anyString())).thenReturn(Optional.of(buyer));
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
                 1L, 1L, productBaskets)));
         when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L, new ArrayList<>()));
 
-        basketService.removeProduct(1L, 2L, true);
+        basketService.removeProduct(email, 2L, true);
 
         verify(basketRepository).save(argumentCaptor.capture());
 
@@ -217,12 +240,13 @@ class BasketServiceTest {
         List<ProductBasket> productBaskets = new ArrayList<>();
         productBaskets.add(new ProductBasket(2L, product, 2, true));
 
+        when(buyerRepository.findByEmail(anyString())).thenReturn(Optional.of(buyer));
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
                 1L, 1L, productBaskets)));
         when(basketRepository.save(any())).thenReturn(new Basket(
                 1L, 1L, List.of(new ProductBasket(2L, product, 1, true))));
 
-        basketService.removeProduct(1L, 2L, true);
+        basketService.removeProduct(email, 2L, true);
 
         verify(basketRepository).save(argumentCaptor.capture());
 

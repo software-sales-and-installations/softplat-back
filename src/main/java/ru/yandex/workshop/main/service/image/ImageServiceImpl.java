@@ -7,16 +7,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.util.StringUtils;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.ImageUploadingError;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.repository.image.ImageRepository;
 
@@ -34,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
     public ImageDto addNewImage(MultipartFile file) {
         try {
             Image image = Image.builder()
-                    .name(StringUtils.cleanPath(file.getOriginalFilename()))
+                    .name(StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())))
                     .contentType(file.getContentType())
                     .bytes(file.getBytes())
                     .size(file.getSize())

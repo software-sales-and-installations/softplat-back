@@ -27,7 +27,7 @@ public class UserProductController {
     private final UserProductService productService;
 
     @PreAuthorize("hasAuthority('seller:write')")
-    @PostMapping(path = "/product")
+    @PostMapping
     public ProductResponseDto createProduct(Principal principal, @RequestBody @Valid ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         return productService.createProduct(principal.getName(), productDto);
@@ -49,21 +49,21 @@ public class UserProductController {
     }
 
     @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping(path = "/product/{productId}/published")
+    @PatchMapping(path = "/{productId}/published")
     public ProductResponseDto updateStatusProductOnPublished(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_PUBLISHED.label, productId);
         return productService.updateStatusProduct(productId, ProductStatus.PUBLISHED);
     }
 
     @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping(path = "/product/{productId}/rejected")
+    @PatchMapping(path = "]/{productId}/rejected")
     public ProductResponseDto updateStatusProductOnRejected(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED.label, productId);
         return productService.updateStatusProduct(productId, ProductStatus.REJECTED);
     }
 
     @PreAuthorize("hasAuthority('admin:write')")
-    @DeleteMapping(path = "/product/{productId}")
+    @DeleteMapping(path = "/{productId}")
     public void deleteProductAdmin(
             @PathVariable @Min(1) Long productId) {
         log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
@@ -71,7 +71,7 @@ public class UserProductController {
     }
 
     @PreAuthorize("hasAuthority('seller:write')")
-    @DeleteMapping(path = "/product/{productId}")
+    @DeleteMapping(path = "/products/{productId}")
     public void deleteProductSeller(Principal principal, @PathVariable @Min(1) Long productId) {
         log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
         productService.deleteProductSeller(principal.getName(), productId);

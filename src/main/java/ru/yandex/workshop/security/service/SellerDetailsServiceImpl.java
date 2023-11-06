@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.image.ImageMapper;
-import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
@@ -22,6 +21,7 @@ import ru.yandex.workshop.main.service.image.ImageService;
 import ru.yandex.workshop.security.dto.UserSecurity;
 import ru.yandex.workshop.security.dto.registration.RegistrationUserDto;
 import ru.yandex.workshop.security.dto.response.SellerResponseDto;
+import ru.yandex.workshop.security.dto.user.SellerDto;
 import ru.yandex.workshop.security.mapper.SellerMapper;
 import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.user.Seller;
@@ -67,7 +67,7 @@ public class SellerDetailsServiceImpl implements UserDetailsService {
     }
 
     @Transactional
-    public SellerResponseDto updateSeller(String email, SellerForUpdate sellerForUpdate) {
+    public SellerResponseDto updateSeller(String email, SellerDto sellerForUpdate) {
         Seller seller = getSeller(email);
 
         if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
