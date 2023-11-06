@@ -26,6 +26,7 @@ public enum LogMessage {
     TRY_ADMIN_ADD_CATEGORY("Попытка добавить категорию."),
     TRY_ADMIN_PATCH_CATEGORY("Попытка изменения категории по id: {}"),
     TRY_GET_CATEGORY("Попытка получения списка категорий."),
+    TRY_GET_ALL_PRODUCTS_SHIPPED("Попытка получения всех продуктов, ожидающих модерации."),
     TRY_GET_ID_CATEGORY("Попытка получения категории по id: {}."),
     TRY_ADMIN_DELETE_CATEGORY("Попытка удаления категории по id: {}."),
     TRY_ADD_IMAGE("Попытка добавления изображения"),

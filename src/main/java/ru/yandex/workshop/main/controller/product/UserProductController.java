@@ -16,6 +16,7 @@ import ru.yandex.workshop.main.service.product.UserProductService;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -85,10 +86,26 @@ public class UserProductController {
         return productService.createProductImage(principal.getName(), productId, image);
     }
 
-    @PreAuthorize("hasAuthority('admin:write') || hasAuthority('seller:write')")
-    @DeleteMapping(path = "/{productId}/image")
-    public void deleteProductImage(Principal principal, @PathVariable @Min(1) Long productId) {
+    @PreAuthorize("hasAuthority('admin:write')")
+    @DeleteMapping(path = "/products/{productId}/image")
+    public void deleteProductImageAdmin(@PathVariable @Min(1) Long productId) {
         log.info(LogMessage.TRY_DElETE_IMAGE.label);
-        productService.deleteProductImage(principal.getName(), productId);
+        productService.deleteProductImage(productId);
+    }
+
+    @PreAuthorize("hasAuthority('seller:write')")
+    @DeleteMapping(path = "/{productId}/image")
+    public void deleteProductImageSeller(Principal principal, @PathVariable @Min(1) Long productId) {
+        log.info(LogMessage.TRY_DElETE_IMAGE.label);
+        productService.deleteProductImageSeller(principal.getName(), productId);
+    }
+
+    @PreAuthorize("hasAuthority('admin:write')")
+    @GetMapping(path = "/shipped")
+    public List<ProductResponseDto> getAllProductsShipped(
+            @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+            @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
+        log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SHIPPED.label);
+        return productService.getAllProductsShipped(from, size);
     }
 }

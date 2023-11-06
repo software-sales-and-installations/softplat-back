@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.product.ProductDto;
@@ -23,6 +24,8 @@ import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.security.repository.SellerRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -101,8 +104,13 @@ public class UserProductService {
     }
 
     @Transactional
-    public void deleteProductImage(String sellerEmail, Long productId) {
+    public void deleteProductImageSeller(String sellerEmail, Long productId) {
         checkSellerAccessRights(sellerEmail, productId);
+        deleteProductImage(productId);
+    }
+
+    @Transactional
+    public void deleteProductImage(Long productId) {
         Product product = getProductFromDatabase(productId);
         if (product.getImage() != null) {
             imageService.deleteImageById(product.getImage().getId());
@@ -142,6 +150,14 @@ public class UserProductService {
     public void deleteProductSeller(String sellerEmail, Long productId) {
         checkSellerAccessRights(sellerEmail, productId);
         deleteProduct(productId);
+    }
+
+
+    public List<ProductResponseDto> getAllProductsShipped(int from, int size) {
+        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED, PageRequestOverride.of(from, size))
+                .stream()
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
