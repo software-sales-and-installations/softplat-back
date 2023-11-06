@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.service.product;
 
+import com.querydsl.core.BooleanBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import ru.yandex.workshop.main.config.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.product.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductFilter;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
@@ -17,6 +19,7 @@ import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
+import ru.yandex.workshop.main.model.product.QProduct;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.product.CategoryRepository;
@@ -26,6 +29,7 @@ import ru.yandex.workshop.main.repository.vendor.VendorRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -211,6 +215,39 @@ public class ProductService {
                     "Продавец %s не может корректировать чужой продукт!",
                     seller.getName()));
         }
+    }
+
+    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter) {
+        int from = 0;
+        int size = 10;
+        PageRequestOverride pageRequest = PageRequestOverride.of(from, size);
+
+        BooleanBuilder predicate = new BooleanBuilder();
+        QProduct qProduct = QProduct.product;
+
+        if (productFilter.getSellerIds() != null && !productFilter.getSellerIds().isEmpty()) {
+            predicate.and(qProduct.seller.id.in(productFilter.getSellerIds()));
+        }
+
+        if (productFilter.getVendorIds() != null && !productFilter.getVendorIds().isEmpty()) {
+            predicate.and(qProduct.vendor.id.in(productFilter.getVendorIds()));
+        }
+
+        if (productFilter.getCategories() != null && !productFilter.getCategories().isEmpty()) {
+            predicate.and(qProduct.category.id.in(productFilter.getCategories()));
+        }
+
+//        Predicate predicate = QPredicates.builder()
+//                .add(productFilter.getSellerIds(), QProduct.product.seller.id::in)
+//                .add(productFilter.getVendorIds(), QProduct.product.vendor.id::in)
+//                .add(productFilter.getCategories(), QProduct.product.category.id::in)
+//                .buildOr();
+
+        Iterable<Product> products = productRepository.findAll(predicate, pageRequest);
+        List<ProductResponseDto> response = new ArrayList<>();
+        for (Product p : products) response.add(ProductMapper.INSTANCE.productToProductResponseDto(p));
+
+        return response;
     }
 }
 
