@@ -32,6 +32,8 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto changeCategoryById(Long catId, CategoryDto categoryDto) {
         Category category = availabilityCategory(catId);
 
+        category.setName(categoryDto.getName());
+
         return CategoryMapper.INSTANCE.categoryToCategoryDto(repository.save(category));
     }
 
