@@ -18,13 +18,12 @@ class VendorMapperTest {
 
     @Test
     void testItemDto() throws IOException {
-        VendorDto vendorDto = VendorDto.builder().name("test").description("test").imageId(1L).country(Country.RUSSIA).build();
+        VendorDto vendorDto = VendorDto.builder().name("test").description("test").country(Country.RUSSIA).build();
 
         JsonContent<VendorDto> result = jsonVendorDto.write(vendorDto);
 
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("test");
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("test");
-        assertThat(result).extractingJsonPathNumberValue("$.imageId").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.country").isEqualTo(Country.RUSSIA.toString());
     }
 }

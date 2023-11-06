@@ -5,16 +5,23 @@ public enum LogMessage {
     TRY_PATCH_BUYER("Попытка изменения покупателя по id: {}"),
     TRY_GET_BUYER("Попытка получения покупателя по id: {}"),
     TRY_ADD_SELLER("Попытка добавления нового продавца."),
+    TRY_ADD_SELLER_IMAGE("Попытка добавления нового изображения продавца."),
+    TRY_DELETE_SELLER_IMAGE("Попытка удаления изображения продавца."),
     TRY_PATCH_SELLER("Попытка изменения продавца по email: {}"),
     TRY_GET_SELLER("Попытка получения продавца по email: {}"),
     TRY_SELLER_PATCH_REQUISITES("Попытка изменения реквизитов по email: {}"),
     TRY_SELLER_GET_REQUISITES("Попытка получения реквизитов по email: {}"),
     TRY_SELLER_DELETE_REQUISITES("Попытка удаления реквизитов по email: {}"),
+    TRY_SELLER_ADD_PRODUCT_IMAGE("Попытка добавления нового изображения продукта."),
+    TRY_SELLER_DELETE_PRODUCT_IMAGE("Попытка удаления изображения продукта."),
     TRY_ADMIN_ADD_VENDOR("Попытка добавления нового вендора."),
+    TRY_ADMIN_ADD_VENDOR_IMAGE("Попытка добавления нового изображения вендора."),
+    TRY_ADMIN_DElETE_VENDOR_IMAGE("Попытка удаления изображения вендора."),
     TRY_ADMIN_PATCH_VENDOR("Попытка изменения вендора."),
     TRY_GET_VENDOR("Попытка получения списка вендоров."),
     TRY_GET_ID_VENDOR("Попытка получения вендора по id: {}."),
     TRY_ADMIN_DELETE_VENDOR("Попытка удаления вендора по id: {}."),
+    IMAGE_UPLOADING_ERROR("Ошибка при загрузке изображения"),
     TRY_GET_ALL_PRODUCTS_SELLER("Попытка получения всех продуктов продавцов."),
     TRY_GET_PRODUCTS_ADMIN("Попытка получения админом всех продуктов продавца (URL/admin) по id: {}."),
     TRY_GET_PRODUCTS_BY_ID_ADMIN("Попытка получения продукта по id: {}."),
@@ -31,6 +38,9 @@ public enum LogMessage {
     TRY_GET_CATEGORY("Попытка получения списка категорий."),
     TRY_GET_ID_CATEGORY("Попытка получения категории по id: {}."),
     TRY_ADMIN_DELETE_CATEGORY("Попытка удаления категории по id: {}.");
+    TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
+    TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
+    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}.");
 
     public final String label;
 
