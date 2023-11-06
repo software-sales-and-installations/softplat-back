@@ -25,5 +25,6 @@ public class Image {
     private String contentType;
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
+    @Column(name = "data")
     private byte[] bytes;
 }

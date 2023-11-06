@@ -62,7 +62,7 @@ public class Product {
     @JoinColumn(name = IMAGE_ID)
     Image image;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = CATEGORY_ID)
     Category category;
 
@@ -70,11 +70,11 @@ public class Product {
     @Column(name = PRODUCT_LICENSE)
     License license;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = VENDOR_ID)
     Vendor vendor;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = SELLER_ID)
     Seller seller;
 
@@ -93,4 +93,7 @@ public class Product {
 
     @Column(name = PRODUCT_AVAILABILITY)
     Boolean productAvailability;
+
+    @Column(name = "installation_price")
+    Float installationPrice;
 }

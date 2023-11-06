@@ -10,6 +10,7 @@ import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.exception.UnauthorizedException;
 import ru.yandex.workshop.security.exception.WrongRegException;
+import ru.yandex.workshop.main.exception.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,13 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicateException(final DuplicateException e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleWrongConditionException(final WrongConditionException e) {
         e.printStackTrace();
         return new ErrorResponse(e.getMessage());
     }
@@ -54,5 +62,19 @@ public class ErrorHandler {
             details.add(error.getDefaultMessage());
         }
         return new ErrorResponse(details.toString());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleAccessDenialException(final AccessDenialException e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAccessDenialException(final ImageUploadingError e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
     }
 }

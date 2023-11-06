@@ -29,7 +29,7 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public VendorResponseDto createVendor(VendorDto vendorDto) {
         return VendorMapper.INSTANCE
-                .vendorToVendorResponseDto(repository
+                .vendorToVendorResponseDto(vendorRepository
                         .save(VendorMapper.INSTANCE
                                 .vendorDtoToVendor(vendorDto)));
     }

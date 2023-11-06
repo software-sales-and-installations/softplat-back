@@ -84,6 +84,7 @@ class ProductMapperTest {
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         JsonContent<ProductDto> result = jsonProductDto.write(productDto);
@@ -97,5 +98,6 @@ class ProductMapperTest {
         assertThat(result).extractingJsonPathNumberValue("$.quantity").isEqualTo(5);
         assertThat(result).extractingJsonPathValue("$.installation").isEqualTo(true);
         assertThat(result).extractingJsonPathValue("$.productAvailability").isEqualTo(true);
+        assertThat(result).extractingJsonPathValue("$.installationPrice").isEqualTo(10.00);
     }
 }

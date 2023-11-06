@@ -126,6 +126,7 @@ class ProductServiceTest {
                 .installation(true)
                 .productStatus(ProductStatus.DRAFT)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productDto = ProductDto.builder()
@@ -139,6 +140,7 @@ class ProductServiceTest {
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productForUpdate = ProductDto.builder()
@@ -152,6 +154,7 @@ class ProductServiceTest {
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productResponseDto = ProductMapper.INSTANCE.productToProductResponseDto(product);
@@ -209,6 +212,7 @@ class ProductServiceTest {
         assertEquals(product.getPrice(), productDtoGet.getPrice());
         assertEquals(product.getQuantity(), productDtoGet.getQuantity());
         assertEquals(product.getPrice(), productDtoGet.getPrice());
+        assertEquals(product.getInstallationPrice(), productDtoGet.getInstallationPrice());
     }
 
     @Test
@@ -236,6 +240,7 @@ class ProductServiceTest {
         assertEquals(product.getPrice(), productDtoSave.getPrice());
         assertEquals(product.getQuantity(), productDtoSave.getQuantity());
         assertEquals(product.getPrice(), productDtoSave.getPrice());
+        assertEquals(product.getInstallationPrice(), productDtoSave.getInstallationPrice());
     }
 
     @Test
@@ -267,6 +272,7 @@ class ProductServiceTest {
         assertEquals(product.getPrice(), productDtoUpdate.getPrice());
         assertEquals(product.getQuantity(), productDtoUpdate.getQuantity());
         assertEquals(product.getPrice(), productDtoUpdate.getPrice());
+        assertEquals(product.getInstallationPrice(), productDtoUpdate.getInstallationPrice());
     }
 
     @Test

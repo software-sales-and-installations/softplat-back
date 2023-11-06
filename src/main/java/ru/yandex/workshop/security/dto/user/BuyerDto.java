@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BuyerDto {
-    @Email(message = "Email должен быть корректным адресом электронной почты")
+    @Email(groups = {New.class}, message = "Email должен быть корректным адресом электронной почты")
     @Size(min = 6, max = 30, message = "Длина email должна быть от 6 до 30 символов")
     private String email;
     @NotBlank(groups = {New.class}, message = "Необходимо указать имя пользователя")

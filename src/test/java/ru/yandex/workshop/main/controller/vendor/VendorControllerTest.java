@@ -1,5 +1,4 @@
-/*
-package ru.yandex.workshop.main.controller.vendor;
+/*package ru.yandex.workshop.main.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.workshop.main.controller.vendor.VendorController;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
@@ -103,8 +103,8 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
 }*/

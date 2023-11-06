@@ -72,6 +72,7 @@ class ImageControllerTest {
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         try {
