@@ -17,3 +17,16 @@ insert into CATEGORY (ID, NAME)
 
 insert into admin(email, name, password, role, status)
 values ('admin@admin.ru', 'admin', 'admin', 'ADMIN', 'ACTIVE');
+
+insert into VENDOR (name, description, country)
+values ('Adobe',
+        'Приложения от компании Adobe позволяют работать с векторной и растровой графикой, а также с видео и музыкой. На данной странице собраны самые популярные и доступные программы Adobe с ключами активации последних версий, а также версии Repack.',
+        'USA');
+insert into VENDOR (name, description, country)
+values ('Microsoft',
+        'Продукты компании включают операционные системы, приложения для повышения производительности различных устройств, серверные приложения, бизнес-решения, средства разработки программного обеспечения и видеоигры.',
+        'USA');
+insert into VENDOR (name, description, country)
+values ('Kaspersky',
+        'Международная компания, специализирующаяся на разработке систем защиты от компьютерных вирусов, спама, хакерских атак и прочих киберугроз.',
+        'RUSSIA');

@@ -9,6 +9,7 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.repository.seller.BankRepository;
+import ru.yandex.workshop.security.mapper.SellerMapper;
 import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.security.repository.SellerRepository;
 
@@ -26,15 +27,17 @@ public class SellerBankService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
         if (seller.getRequisites() == null)
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
-        return new BankRequisitesDto(seller.getRequisites().getAccount());
+        return SellerMapper.INSTANCE.requisitesToDto(seller.getRequisites());
     }
 
     @Transactional
     public BankRequisitesDto updateRequisites(String email, BankRequisitesDto requisites) {
         Seller seller = getSellerFromDatabase(email);
+        if (seller.getRequisites() != null) {
+            bankRepository.deleteById(seller.getRequisites().getId());
+        }
         seller.setRequisites(bankRepository.save(new BankRequisites(null, requisites.getAccount())));
-        sellerRepository.save(seller);
-        return new BankRequisitesDto(seller.getRequisites().getAccount());
+        return SellerMapper.INSTANCE.requisitesToDto(sellerRepository.save(seller).getRequisites());
     }
 
     @Transactional

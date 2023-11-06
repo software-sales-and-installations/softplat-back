@@ -17,12 +17,14 @@ public enum LogMessage {
     TRY_GET_ADMIN("Попытка получения админа по email: {}"),
     TRY_UPDATE_STATUS_PRODUCT_ON_PUBLISHED("Попытка установки статуса 'PUBLISHED' продукту id: {}."),
     TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED("Попытка установки статуса 'REJECTED' продукту id: {}."),
-    TRY_DELETE_PRODUCT_ADMIN("Попытка удаления продукта по id: {}."),
+    TRY_DELETE_PRODUCT("Попытка удаления продукта по id: {}."),
     TRY_GET_PRODUCTS_OF_SELLER("Попытка получения всех своих продуктов продавца с id: {}."),
     TRY_GET_PRODUCT_BY_ID("Попытка получения продукта id: {} продавца id: {}."),
     TRY_CREATE_PRODUCT("Попытка создать продукт: {}."),
     TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавцом email: {}: {}"),
-    TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}.");
+    TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}."),
+    TRY_ADD_IMAGE("Попытка добавления изображения"),
+    TRY_DElETE_IMAGE("Попытка удаления изображения");
 
     public final String label;
 

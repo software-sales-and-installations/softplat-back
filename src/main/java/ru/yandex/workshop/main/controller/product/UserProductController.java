@@ -5,9 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.service.product.UserProductService;
@@ -35,7 +36,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}")
     public ProductResponseDto updateProduct(Principal principal, @PathVariable Long productId,
-            @RequestBody @Valid ProductForUpdate productForUpdate) {
+            @RequestBody @Validated(New.class) ProductDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
         return productService.updateProduct(principal.getName(), productId, productForUpdate);
     }
@@ -61,11 +62,33 @@ public class UserProductController {
         return productService.updateStatusProduct(productId, ProductStatus.REJECTED);
     }
 
-    @PreAuthorize("hasAuthority('admin:write') || hasAuthority('seller:write')")
+    @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/product/{productId}")
     public void deleteProductAdmin(
             @PathVariable @Min(1) Long productId) {
-        log.debug(LogMessage.TRY_DELETE_PRODUCT_ADMIN.label, productId);
+        log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
         productService.deleteProduct(productId);
+    }
+
+    @PreAuthorize("hasAuthority('seller:write')")
+    @DeleteMapping(path = "/product/{productId}")
+    public void deleteProductSeller(Principal principal, @PathVariable @Min(1) Long productId) {
+        log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
+        productService.deleteProductSeller(principal.getName(), productId);
+    }
+
+    @PreAuthorize("hasAuthority('seller:write')")
+    @PostMapping(path = "/{productId}/image")
+    public ProductResponseDto createProductImage(Principal principal, @PathVariable @Min(1) Long productId,
+                                                 @RequestParam(value = "image") MultipartFile image) {
+        log.info(LogMessage.TRY_ADD_IMAGE.label);
+        return productService.createProductImage(principal.getName(), productId, image);
+    }
+
+    @PreAuthorize("hasAuthority('admin:write') || hasAuthority('seller:write')")
+    @DeleteMapping(path = "/{productId}/image")
+    public void deleteProductImage(Principal principal, @PathVariable @Min(1) Long productId) {
+        log.info(LogMessage.TRY_DElETE_IMAGE.label);
+        productService.deleteProductImage(principal.getName(), productId);
     }
 }

@@ -4,19 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ru.yandex.workshop.main.dto.image.ImageDto;
+import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductForUpdate;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.vendor.Vendor;
-import ru.yandex.workshop.main.repository.product.CategoryRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
-import ru.yandex.workshop.main.repository.vendor.VendorRepository;
+import ru.yandex.workshop.main.service.image.ImageService;
 import ru.yandex.workshop.security.model.user.Seller;
 import ru.yandex.workshop.security.repository.SellerRepository;
 
@@ -30,8 +32,7 @@ public class UserProductService {
 
     private final ProductRepository productRepository;
     private final SellerRepository sellerRepository;
-    private final CategoryRepository categoryRepository;
-    private final VendorRepository vendorRepository;
+    private final ImageService imageService;
 
     @Transactional
     public ProductResponseDto createProduct(String sellerEmail, ProductDto productDto) {
@@ -46,7 +47,7 @@ public class UserProductService {
     }
 
     @Transactional
-    public ProductResponseDto updateProduct(String email, Long productId, ProductForUpdate productForUpdate) {
+    public ProductResponseDto updateProduct(String email, Long productId, ProductDto productForUpdate) {
         Product product = getProductFromDatabase(productId);
         Seller seller = getSeller(email);
 
@@ -62,17 +63,14 @@ public class UserProductService {
         if (productForUpdate.getVersion() != null) {
             product.setVersion(productForUpdate.getVersion());
         }
-        if (productForUpdate.getImage() != null) {
-            //TODO сделайте что-нибудь с изображением)
-        }
         if (productForUpdate.getCategory() != null) {
-            product.setCategory(productForUpdate.getCategory());
+            product.setCategory(Category.builder().id(productForUpdate.getCategory()).build());
         }
         if (productForUpdate.getLicense() != null) {
             product.setLicense(productForUpdate.getLicense());
         }
         if (productForUpdate.getVendor() != null) {
-            product.setVendor(productForUpdate.getVendor());
+            product.setVendor(Vendor.builder().id(productForUpdate.getVendor()).build());
         }
         if (productForUpdate.getPrice() != null) {
             product.setPrice(productForUpdate.getPrice());
@@ -88,6 +86,27 @@ public class UserProductService {
         }
         product.setProductStatus(ProductStatus.DRAFT);
         return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+    }
+
+    @Transactional
+    public ProductResponseDto createProductImage(String sellerEmail, Long productId, MultipartFile file) {
+        checkSellerAccessRights(sellerEmail, productId);
+        Product product = getProductFromDatabase(productId);
+        if (product.getImage() != null) {
+            imageService.deleteImageById(product.getImage().getId());
+        }
+        ImageDto imageDto = imageService.addNewImage(file);
+        product.setImage(ImageMapper.INSTANCE.imageDtoToImage(imageDto));
+        return ProductMapper.INSTANCE.productToProductResponseDto(product);
+    }
+
+    @Transactional
+    public void deleteProductImage(String sellerEmail, Long productId) {
+        checkSellerAccessRights(sellerEmail, productId);
+        Product product = getProductFromDatabase(productId);
+        if (product.getImage() != null) {
+            imageService.deleteImageById(product.getImage().getId());
+        }
     }
 
     @Transactional
@@ -120,6 +139,12 @@ public class UserProductService {
     }
 
     @Transactional
+    public void deleteProductSeller(String sellerEmail, Long productId) {
+        checkSellerAccessRights(sellerEmail, productId);
+        deleteProduct(productId);
+    }
+
+    @Transactional
     public void deleteProduct(Long productId) {
         getProductFromDatabase(productId);
         productRepository.deleteById(productId);
@@ -130,19 +155,20 @@ public class UserProductService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private Category getCategoryFromDatabase(Long categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-    }
-
-    private Vendor getVendorFromDatabase(Long vendorId) {
-        return vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-    }
-
     private Seller getSeller(String email) {
         return sellerRepository.findByEmail(email).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    }
+
+    private void checkSellerAccessRights(String email, Long productId) {
+        Product product = getProductFromDatabase(productId);
+        Seller seller = getSeller(email);
+
+        if (!product.getSeller().getEmail().equals(email)) {
+            throw new AccessDenialException(String.format(
+                    "Продавец %s не может корректировать чужой продукт!",
+                    seller.getName()));
+        }
     }
 }
 

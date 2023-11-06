@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
 import ru.yandex.workshop.main.dto.seller.SellerForUpdate;
 import ru.yandex.workshop.main.message.LogMessage;
@@ -38,7 +39,7 @@ public class SellerController {
     @GetMapping("/{userId}")
     public SellerResponseDto getSeller(@PathVariable Long userId) {
         log.debug(LogMessage.TRY_GET_SELLER.label, userId);
-        return sellerService.getSeller(userId);
+        return sellerService.getSellerDto(userId);
     }
 
     @PreAuthorize("hasAuthority('seller:write')")
@@ -67,5 +68,28 @@ public class SellerController {
     public void deleteRequisites(Principal principal) {
         log.debug(LogMessage.TRY_SELLER_DELETE_REQUISITES.label, principal.getName());
         bankService.deleteRequisites(principal.getName());
+    }
+
+    @PreAuthorize("hasAuthority('seller:write')")
+    @PostMapping("/account/image")
+    public SellerResponseDto addSellerImage(Principal principal, @RequestParam(value = "image") MultipartFile image) {
+        log.debug(LogMessage.TRY_ADD_IMAGE.label);
+        return sellerService.addSellerImage(principal.getName(), image);
+    }
+
+    @PreAuthorize("hasAuthority('seller:write')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/account/image")
+    public void deleteOwnImage(Principal principal) {
+        log.debug(LogMessage.TRY_DElETE_IMAGE.label);
+        sellerService.deleteSellerImage(principal.getName());
+    }
+
+    @PreAuthorize("hasAuthority('admin:write')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{sellerId}/image")
+    public void deleteSellerImage(@PathVariable Long sellerId) {
+        log.debug(LogMessage.TRY_DElETE_IMAGE.label);
+        sellerService.deleteSellerImageBySellerId(sellerId);
     }
 }

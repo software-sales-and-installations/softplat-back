@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.yandex.workshop.main.model.image.Image;
+import ru.yandex.workshop.main.dto.image.ImageResponseDto;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
 
 import java.time.LocalDateTime;
@@ -20,5 +20,5 @@ public class SellerResponseDto {
     String description;
     LocalDateTime registrationTime;
     BankRequisites requisites;
-    Image image;
+    ImageResponseDto imageResponseDto;
 }

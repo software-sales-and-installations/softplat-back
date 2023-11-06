@@ -4,14 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ru.yandex.workshop.main.dto.image.ImageDto;
+import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
-import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
+import ru.yandex.workshop.main.service.image.ImageService;
 
 import java.util.List;
 
@@ -21,6 +24,7 @@ import java.util.List;
 @Slf4j
 public class VendorServiceImpl implements VendorService {
     private final VendorRepository repository;
+    private final ImageService imageService;
 
     @Override
     public VendorResponseDto createVendor(VendorDto vendorDto) {
@@ -31,7 +35,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public VendorResponseDto changeVendorById(Long vendorId, VendorUpdateDto vendorUpdateDto) {
+    public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
         Vendor oldVendor = availabilityVendor(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
@@ -40,16 +44,11 @@ public class VendorServiceImpl implements VendorService {
         if (vendorUpdateDto.getDescription() != null) {
             oldVendor.setDescription(vendorUpdateDto.getDescription());
         }
-        if (vendorUpdateDto.getImageId() != null) {
-            oldVendor.setImageId(vendorUpdateDto.getImageId());
-        }
         if (vendorUpdateDto.getCountry() != null) {
             oldVendor.setCountry(vendorUpdateDto.getCountry());
         }
 
-        return VendorMapper.INSTANCE
-                .vendorToVendorResponseDto(repository
-                        .save(oldVendor));
+        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.save(oldVendor));
     }
 
     @Transactional(readOnly = true)
@@ -71,6 +70,25 @@ public class VendorServiceImpl implements VendorService {
     public void deleteVendor(Long vendorId) {
         availabilityVendor(vendorId);
         repository.deleteById(vendorId);
+    }
+
+    @Override
+    public VendorResponseDto addVendorImage(Long vendorId, MultipartFile file) {
+        Vendor vendor = availabilityVendor(vendorId);
+        if (vendor.getImage() != null) {
+            imageService.deleteImageById(vendor.getImage().getId());
+        }
+        ImageDto imageDto = imageService.addNewImage(file);
+        vendor.setImage(ImageMapper.INSTANCE.imageDtoToImage(imageDto));
+        return VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor);
+    }
+
+    @Override
+    public void deleteVendorImage(Long vendorId) {
+        Vendor vendor = availabilityVendor(vendorId);
+        if (vendor.getImage() != null) {
+            imageService.deleteImageById(vendor.getImage().getId());
+        }
     }
 
     private Vendor availabilityVendor(Long vendorId) {

@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
-import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.vendor.VendorService;
 
@@ -32,7 +34,7 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{vendorId}")
     public VendorResponseDto changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                              @RequestBody @Valid VendorUpdateDto vendorUpdateDto) {
+                                              @RequestBody @Validated(New.class) VendorDto vendorUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
         return service.changeVendorById(vendorId, vendorUpdateDto);
     }
@@ -57,4 +59,18 @@ public class VendorController {
         service.deleteVendor(vendorId);
     }
 
+    @PreAuthorize("hasAuthority('admin:write')")
+    @PostMapping(path = "/{vendorId}/image")
+    public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
+                                               @RequestParam(value = "image") MultipartFile image) {
+        log.debug(LogMessage.TRY_ADD_IMAGE.label);
+        return service.addVendorImage(vendorId, image);
+    }
+
+    @PreAuthorize("hasAuthority('admin:write')")
+    @DeleteMapping(path = "/{vendorId}/image")
+    public void deleteVendorImage(@PathVariable(name = "vendorId") Long vendorId) {
+        log.debug(LogMessage.TRY_DElETE_IMAGE.label);
+        service.deleteVendorImage(vendorId);
+    }
 }

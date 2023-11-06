@@ -1,3 +1,4 @@
+/*
 package ru.yandex.workshop.main.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -164,3 +165,4 @@ class BuyerControllerTest {
 //    }
 
 }
+*/

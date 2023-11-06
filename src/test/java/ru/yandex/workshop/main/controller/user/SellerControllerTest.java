@@ -60,7 +60,7 @@ class SellerControllerTest {
 //        createSeller(sellerDto);
 //        String email = "joedoe@email.com";
 //
-//        SellerResponseDto response = getSeller(email);
+//        SellerResponseDto response = getSellerDto(email);
 //        assertEquals(sellerDto.getName(), response.getName());
 //        assertEquals(sellerDto.getEmail(), response.getEmail());
 //        assertEquals(sellerDto.getPhone(), response.getPhone());
@@ -169,7 +169,7 @@ class SellerControllerTest {
 //        );
 //    }
 //
-//    SellerResponseDto getSeller(String email) throws Exception {
+//    SellerResponseDto getSellerDto(String email) throws Exception {
 //        MvcResult result = mockMvc.perform(get("/seller/{email}", email)
 //                        .contentType(MediaType.APPLICATION_JSON))
 //                .andExpect(status().isOk())
