@@ -157,6 +157,14 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductResponseDto> getAllProductsShipped(int from, int size) {
+        return productRepository.findAllByProductStatus(ProductStatus.SHIPPED, PageRequestOverride.of(from, size))
+                .stream()
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
+                .collect(Collectors.toList());
+    }
+
+
     public ProductResponseDto getProductByIdAdmin(Long productId) {
         return ProductMapper.INSTANCE.productToProductResponseDto(getProductFromDatabase(productId));
     }
