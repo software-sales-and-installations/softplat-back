@@ -37,7 +37,7 @@ public enum LogMessage {
     TRY_ADMIN_PATCH_CATEGORY("Попытка изменения категории."),
     TRY_GET_CATEGORY("Попытка получения списка категорий."),
     TRY_GET_ID_CATEGORY("Попытка получения категории по id: {}."),
-    TRY_ADMIN_DELETE_CATEGORY("Попытка удаления категории по id: {}.");
+    TRY_ADMIN_DELETE_CATEGORY("Попытка удаления категории по id: {}."),
     TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
     TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
     TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}.");
