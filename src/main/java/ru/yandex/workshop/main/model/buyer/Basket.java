@@ -13,14 +13,14 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Builder
 @Table(name = "basket")
 public class Basket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @OneToOne
-    @JoinColumn(name = "buyer_id")
-    Buyer buyer;
+    @Column(name = "buyer_id")
+    Long buyerId;
     @OneToMany
     @JoinColumn(name = "basket_id")
     List<ProductBasket> productsInBasket = new ArrayList<>();

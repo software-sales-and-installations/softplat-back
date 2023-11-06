@@ -32,7 +32,10 @@ public enum LogMessage {
     TRY_GET_PRODUCT_BY_ID("Попытка получения продукта id: {} продавца id: {}."),
     TRY_CREATE_PRODUCT("Попытка создать продукт: {}."),
     TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавца id: {}: {}"),
-    TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}.");
+    TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}."),
+    TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
+    TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
+    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}.");
 
     public final String label;
 

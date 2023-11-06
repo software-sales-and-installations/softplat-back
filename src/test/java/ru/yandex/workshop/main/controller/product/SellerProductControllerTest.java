@@ -114,6 +114,7 @@ class SellerProductControllerTest {
                 .installation(true)
                 .productStatus(ProductStatus.DRAFT)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productResponseDto = ProductResponseDto.builder()
@@ -131,6 +132,7 @@ class SellerProductControllerTest {
                 .installation(true)
                 .productStatus(ProductStatus.DRAFT)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productDto = ProductDto.builder()
@@ -145,6 +147,7 @@ class SellerProductControllerTest {
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product));
@@ -203,7 +206,8 @@ class SellerProductControllerTest {
                 .andExpect(jsonPath("$.quantity", is(productResponseDto.getQuantity()), Integer.class))
                 .andExpect(jsonPath("$.installation", is(productResponseDto.getInstallation()), Boolean.class))
                 .andExpect(jsonPath("$.productStatus", is(productResponseDto.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productResponseDto.getProductAvailability()), Boolean.class));
+                .andExpect(jsonPath("$.productAvailability", is(productResponseDto.getProductAvailability()), Boolean.class))
+                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
     }
 
     @Test
@@ -239,7 +243,8 @@ class SellerProductControllerTest {
                 .andExpect(jsonPath("$.quantity", is(productResponseDto.getQuantity()), Integer.class))
                 .andExpect(jsonPath("$.installation", is(productResponseDto.getInstallation()), Boolean.class))
                 .andExpect(jsonPath("$.productStatus", is(productResponseDto.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productResponseDto.getProductAvailability()), Boolean.class));
+                .andExpect(jsonPath("$.productAvailability", is(productResponseDto.getProductAvailability()), Boolean.class))
+                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
     }
 
     @Test

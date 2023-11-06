@@ -112,6 +112,7 @@ class AdminProductControllerTest {
                 .installation(true)
                 .productStatus(ProductStatus.DRAFT)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productDto = ProductResponseDto.builder()
@@ -128,6 +129,7 @@ class AdminProductControllerTest {
                 .installation(true)
                 .productStatus(ProductStatus.DRAFT)
                 .productAvailability(true)
+                .installationPrice(10.00F)
                 .build();
 
         productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product));
@@ -199,7 +201,8 @@ class AdminProductControllerTest {
                 .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
                 .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))
                 .andExpect(jsonPath("$.productStatus", is(productDto.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class));
+                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class))
+                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
     }
 
     @Test

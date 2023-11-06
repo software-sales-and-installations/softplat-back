@@ -13,6 +13,7 @@ import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
@@ -58,6 +59,8 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(ProductDto productDto) {
+        if (productDto.getInstallation() && productDto.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо ввести цену устанвоки");
         Product product = ProductMapper.INSTANCE.productDtoToProduct(productDto);
         product.setCategory(getCategoryFromDatabase(product.getCategory().getId()));
         product.setVendor(getVendorFromDatabase(product.getVendor().getId()));
@@ -75,6 +78,8 @@ public class ProductService {
     public ProductResponseDto updateProduct(Long sellerId, Long productId, ProductDto productDto) {
         checkSellerAccessRights(sellerId, productId);
         Product product = getProductFromDatabase(productId);
+        if (productDto.getInstallation() && productDto.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо ввести цену устанвоки");
         if (productDto.getName() != null) {
             product.setName(productDto.getName());
         }
@@ -98,12 +103,18 @@ public class ProductService {
         }
         if (productDto.getQuantity() != null) {
             product.setQuantity(productDto.getQuantity());
+            if (product.getQuantity() > 0) {
+                product.setProductAvailability(true);
+            }
         }
         if (productDto.getInstallation() != null) {
             product.setInstallation(productDto.getInstallation());
         }
-        if (productDto.getQuantity() != null && productDto.getQuantity() > 0) {
-            product.setProductAvailability(true);
+        if (product.getInstallation() != null) {
+            product.setInstallation(productDto.getInstallation());
+        }
+        if (productDto.getInstallationPrice() != null) {
+            product.setInstallationPrice(productDto.getInstallationPrice());
         }
         product.setProductStatus(ProductStatus.DRAFT);
         productRepository.save(product);

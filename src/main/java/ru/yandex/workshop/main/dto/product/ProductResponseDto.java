@@ -35,4 +35,5 @@ public class ProductResponseDto {
     Boolean installation;
     ProductStatus productStatus;
     Boolean productAvailability;
+    Float installationPrice;
 }

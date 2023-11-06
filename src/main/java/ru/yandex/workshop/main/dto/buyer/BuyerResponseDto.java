@@ -1,13 +1,12 @@
 package ru.yandex.workshop.main.dto.buyer;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @ToString
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class BuyerResponseDto {
     private Long id;

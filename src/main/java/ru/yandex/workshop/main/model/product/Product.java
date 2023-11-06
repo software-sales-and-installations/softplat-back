@@ -93,4 +93,7 @@ public class Product {
 
     @Column(name = PRODUCT_AVAILABILITY)
     Boolean productAvailability;
+
+    @Column(name = "installation_price")
+    Float installationPrice;
 }
