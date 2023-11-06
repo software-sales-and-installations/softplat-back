@@ -66,7 +66,7 @@ class BasketServiceTest {
         Image image = new Image(
                 1L,
                 "name",
-                123.12F,
+                123L,
                 "contentType",
                 new byte[]{0x01, 0x02, 0x03});
 
@@ -74,7 +74,7 @@ class BasketServiceTest {
                 1L,
                 "name1",
                 "Name One",
-                1L,
+                image,
                 Country.RUSSIA);
 
         Seller seller = new Seller(

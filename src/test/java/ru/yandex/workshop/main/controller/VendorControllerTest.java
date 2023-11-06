@@ -56,8 +56,8 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
 
@@ -75,7 +75,6 @@ class VendorControllerTest {
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
                 .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
                 .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
-                .andExpect(jsonPath("$.imageId", is(vendorResponseDto.getImageId()), Long.class))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
 
@@ -104,8 +103,8 @@ class VendorControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName().toString())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription().toString())))
+                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
+                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
 }

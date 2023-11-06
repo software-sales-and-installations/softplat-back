@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.yandex.workshop.main.dto.product.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class ProductBasketDto {
-    private ProductDto productDto;
+    private ProductResponseDto productResponseDto;
     private Integer quantity;
     private Boolean installation;
 }
