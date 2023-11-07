@@ -20,8 +20,8 @@ import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.product.License;
-import ru.yandex.workshop.security.dto.response.SellerResponseDto;
-import ru.yandex.workshop.security.dto.user.SellerDto;
+import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
+import ru.yandex.workshop.main.dto.user.SellerDto;
 
 import java.io.File;
 import java.io.FileInputStream;

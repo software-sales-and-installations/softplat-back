@@ -13,14 +13,14 @@ import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.product.CategoryRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
+import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
-import ru.yandex.workshop.security.model.user.Seller;
-import ru.yandex.workshop.security.repository.SellerRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

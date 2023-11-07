@@ -17,11 +17,11 @@ import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
+import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
-import ru.yandex.workshop.security.model.user.Seller;
-import ru.yandex.workshop.security.repository.SellerRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -11,7 +11,7 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
-import ru.yandex.workshop.security.repository.SellerRepository;
+import ru.yandex.workshop.main.repository.seller.SellerRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

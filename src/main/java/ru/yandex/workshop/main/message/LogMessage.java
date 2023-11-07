@@ -33,7 +33,10 @@ public enum LogMessage {
     TRY_DElETE_IMAGE("Попытка удаления изображения"),
     TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
     TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
-    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}.");
+    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
+    TRY_ADD_ADMIN("ПОпытка добавить нового админа"),
+    TRY_ADD_SELLER("ПОпытка добавить нового продавца"),
+    TRY_ADD_BUYER("ПОпытка добавить нового продавца");
 
     public final String label;
 

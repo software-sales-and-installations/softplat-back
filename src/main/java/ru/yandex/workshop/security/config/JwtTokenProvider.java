@@ -1,19 +1,16 @@
 package ru.yandex.workshop.security.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
+import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import ru.yandex.workshop.security.service.AdminDetailsServiceImpl;
-import ru.yandex.workshop.security.service.BuyerDetailsServiceImpl;
-import ru.yandex.workshop.security.service.SellerDetailsServiceImpl;
+import ru.yandex.workshop.security.exception.JwtAuthenticationException;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -23,18 +20,18 @@ import java.util.Date;
 
 @Component
 @PropertySource(value = {"classpath:application.properties"})
-@RequiredArgsConstructor
 public class JwtTokenProvider {
-    private final AdminDetailsServiceImpl adminDetailsService;
-    private final SellerDetailsServiceImpl sellerDetailsService;
-    private final BuyerDetailsServiceImpl buyerDetailsService;
-
+    private final UserDetailsService service;
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.header}")
     private String authHeader;
     @Value("${jwt.lifetime}")
     private Duration jwtLifetime;
+
+    public JwtTokenProvider(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
+        this.service = userDetailsService;
+    }
 
     @PostConstruct
     protected void init() {
@@ -59,24 +56,14 @@ public class JwtTokenProvider {
         try {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return !claimsJws.getBody().getExpiration().before(new Date());
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Время токена истекло.");
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new JwtAuthenticationException("Время токена вышло", HttpStatus.UNAUTHORIZED);
         }
     }
 
     public Authentication getAuthentication(String token) {
-        if (adminDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
-            UserDetails userDetails = adminDetailsService.loadUserByUsername(getUsername(token));
-            return new UsernamePasswordAuthenticationToken(userDetails.getUsername(), userDetails.getPassword(), userDetails.getAuthorities());
-        } else if (sellerDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
-            UserDetails userDetails = sellerDetailsService.loadUserByUsername(getUsername(token));
-            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        } else if (buyerDetailsService.checkIfUserExistsByEmail(getUsername(token))) {
-            UserDetails userDetails = buyerDetailsService.loadUserByUsername(getUsername(token));
-            return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-        }
-
-        return null;
+        UserDetails userDetails = service.loadUserByUsername(getUsername(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public String getUsername(String token) {

@@ -37,7 +37,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}")
     public ProductResponseDto updateProduct(Principal principal, @PathVariable Long productId,
-            @RequestBody @Validated(New.class) ProductDto productForUpdate) {
+                                            @RequestBody @Validated(New.class) ProductDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
         return productService.updateProduct(principal.getName(), productId, productForUpdate);
     }

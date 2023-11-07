@@ -19,19 +19,21 @@ import ru.yandex.workshop.main.service.image.ImageService;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class VendorServiceImpl implements VendorService {
     private final VendorRepository repository;
     private final ImageService imageService;
 
+    @Transactional
     @Override
     public VendorResponseDto createVendor(VendorDto vendorDto) {
         return VendorMapper.INSTANCE
                 .vendorToVendorResponseDto(repository.save(VendorMapper.INSTANCE.vendorDtoToVendor(vendorDto)));
     }
 
+    @Transactional
     @Override
     public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
         Vendor oldVendor = availabilityVendor(vendorId);
@@ -49,14 +51,12 @@ public class VendorServiceImpl implements VendorService {
         return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.save(oldVendor));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<VendorResponseDto> findVendorAll() {
         return VendorMapper.INSTANCE
                 .vendorToListVendorResponseDto(repository.findAll());
     }
 
-    @Transactional(readOnly = true)
     @Override
     public VendorResponseDto findVendorById(Long vendorId) {
         return VendorMapper.INSTANCE
@@ -64,12 +64,14 @@ public class VendorServiceImpl implements VendorService {
                         .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
+    @Transactional
     @Override
     public void deleteVendor(Long vendorId) {
         availabilityVendor(vendorId);
         repository.deleteById(vendorId);
     }
 
+    @Transactional
     @Override
     public VendorResponseDto addVendorImage(Long vendorId, MultipartFile file) {
         Vendor vendor = availabilityVendor(vendorId);
@@ -81,6 +83,7 @@ public class VendorServiceImpl implements VendorService {
         return VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor);
     }
 
+    @Transactional
     @Override
     public void deleteVendorImage(Long vendorId) {
         Vendor vendor = availabilityVendor(vendorId);

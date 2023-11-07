@@ -8,7 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.workshop.security.dto.user.BuyerDto;
+import ru.yandex.workshop.main.dto.user.BuyerDto;
 
 @SpringBootTest
 @AutoConfigureMockMvc
