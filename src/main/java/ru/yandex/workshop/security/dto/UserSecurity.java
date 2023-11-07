@@ -19,7 +19,7 @@ import java.util.Set;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDetailsImpl implements UserDetails {
+public class UserSecurity implements UserDetails {
     Long id;
     String email;
     String password;

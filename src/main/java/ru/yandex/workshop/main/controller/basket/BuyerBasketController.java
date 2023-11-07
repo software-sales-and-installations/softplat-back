@@ -24,7 +24,7 @@ public class BuyerBasketController {
         return basketService.addProduct(principal.getName(), productId, installation);
     }
 
-    @PreAuthorize("hasAuthority('buyer:write)')")
+    @PreAuthorize("hasAuthority('buyer:write')")
     @DeleteMapping("/basket/{productId}")
     public BasketDto removeProductFromBasket(Principal principal, @PathVariable Long productId,
                                              @RequestParam(defaultValue = "false") Boolean installation) {
