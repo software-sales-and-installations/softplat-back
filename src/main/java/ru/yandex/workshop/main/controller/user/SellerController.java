@@ -10,11 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
 import ru.yandex.workshop.main.dto.user.SellerDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
-import ru.yandex.workshop.main.dto.validation.ValidSeller;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.seller.SellerBankService;
-import ru.yandex.workshop.main.service.seller.SellerServiceImpl;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.main.service.seller.SellerService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -27,14 +25,8 @@ import java.util.List;
 @RequestMapping(path = "/seller")
 @Slf4j
 public class SellerController {
-    private final SellerServiceImpl sellerService;
+    private final SellerService sellerService;
     private final SellerBankService bankService;
-
-    @PostMapping
-    public void addSeller(@Validated(ValidSeller.class) UserDto userDto) {
-        log.debug(LogMessage.TRY_ADD_SELLER.label);
-        sellerService.addSeller(userDto);
-    }
 
     @GetMapping
     public List<SellerResponseDto> getAllSellers(@RequestParam(name = "from", defaultValue = "0") @Min(0) int from,

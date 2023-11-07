@@ -7,10 +7,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.user.BuyerDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
-import ru.yandex.workshop.main.dto.validation.ValidBuyer;
 import ru.yandex.workshop.main.message.LogMessage;
-import ru.yandex.workshop.main.service.buyer.BuyerServiceImpl;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.main.service.buyer.BuyerService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -21,13 +19,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RequestMapping("/buyer")
 public class BuyerController {
-    private final BuyerServiceImpl buyerService;
-
-    @PostMapping
-    public void addBuyer(@Validated(ValidBuyer.class) UserDto userDto) {
-        log.info(LogMessage.TRY_ADD_BUYER.label);
-        buyerService.addBuyer(userDto);
-    }
+    private final BuyerService buyerService;
 
     @GetMapping("/{userId}")
     public BuyerResponseDto getBuyer(@PathVariable Long userId) {

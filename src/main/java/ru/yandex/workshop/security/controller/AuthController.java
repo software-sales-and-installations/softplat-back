@@ -24,6 +24,7 @@ import ru.yandex.workshop.security.service.AuthService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.xml.bind.ValidationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException {
         log.info("Регистрация пользователя");
         return authService.createNewUser(userDto);
     }

@@ -19,12 +19,6 @@ import java.security.Principal;
 public class AdminController {
     private final AdminService adminService;
 
-    @PostMapping
-    public void addAdmin(@RequestBody @Valid UserDto userDto) { //TODO New.class!!!!
-        log.info(LogMessage.TRY_ADD_ADMIN.label);
-        adminService.addAdmin(userDto);
-    }
-
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping
     public AdminResponseDto getAdminByEmail(Principal principal) {

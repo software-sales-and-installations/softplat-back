@@ -29,10 +29,8 @@ public class UserDto {
     @NotBlank(message = "Необходимо указать имя")
     @Length(min = 2, max = 20, message = "Длина имени должна быть от 2 до 20 символов")
     String name;
-    @NotNull(groups = {ValidSeller.class, ValidBuyer.class}, message = "Необходимо указать номер телефона")
-    @Pattern(groups = {ValidSeller.class, ValidBuyer.class}, regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
+//    @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
     String phone;
-    @NotBlank(groups = {ValidSeller.class}, message = "Необходимо указать описание вашего профиля")
     @Length(max = 500, message = "Описание должно быть длинной не более 500 символов")
     String description;
     @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")

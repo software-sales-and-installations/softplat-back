@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.workshop.main.dto.user.BuyerDto;
 import ru.yandex.workshop.main.dto.user.mapper.BuyerMapper;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
+import ru.yandex.workshop.main.dto.validation.ValidBuyer;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
@@ -14,20 +16,23 @@ import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.security.dto.UserDto;
 
+import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Slf4j
-public class BuyerServiceImpl {
+public class BuyerService {
 
     private final BuyerRepository buyerRepository;
 
     @Transactional
-    public void addBuyer(UserDto userDto) {
+    public void addBuyer(UserDto userDto) throws ValidationException {
         if (checkIfUserExistsByEmail(userDto.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userDto.getEmail());
+
+        if(userDto.getPhone() == null) throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
         Buyer buyer = BuyerMapper.INSTANCE.buyerDtoToBuyer(userDto);
         buyer.setRegistrationTime(LocalDateTime.now());
