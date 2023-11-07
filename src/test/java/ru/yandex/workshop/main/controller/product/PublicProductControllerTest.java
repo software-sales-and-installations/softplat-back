@@ -250,6 +250,45 @@ class PublicProductControllerTest {
         assertEquals(expect.get(2).getName(), actual.get(2).getName());
     }
 
+    @Test
+    @SneakyThrows
+    void whenSearchPriceFrom1000To2000_thenReturnProducts1And2() {
+        String sort = "price";
+        ProductFilter productFilter = new ProductFilter();
+        productFilter.setPriceMin(1000F);
+        productFilter.setPriceMax(2000F);
+
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
+        List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2);
+        assertEquals(expect.size(), actual.size());
+        assertEquals(expect.get(0).getName(), actual.get(0).getName());
+        assertEquals(expect.get(1).getName(), actual.get(1).getName());
+    }
+
+    @Test
+    @SneakyThrows
+    void whenSearchPriceLowerThan450_thenReturnEmptyList() {
+        String sort = "new";
+        ProductFilter productFilter = new ProductFilter();
+        productFilter.setPriceMax(450F);
+
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
+        List<ProductResponseDto> expect = Lists.emptyList();
+        assertEquals(actual, expect);
+    }
+
+    @Test
+    @SneakyThrows
+    void whenSearchGreaterThanOrEqualTo2000_thenReturnProduct2() {
+        String sort = "new";
+        ProductFilter productFilter = new ProductFilter();
+        productFilter.setPriceMin(2000F);
+
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
+        List<ProductResponseDto> expect = List.of(productResponseDto2);
+        assertEquals(actual.get(0).getName(), expect.get(0).getName());
+    }
+
     private List<ProductResponseDto> getSearchResultsByFilter(ProductFilter productFilter, String sort) throws Exception {
         MvcResult result = mockMvc.perform(get("/search")
                         .contentType(MediaType.APPLICATION_JSON)

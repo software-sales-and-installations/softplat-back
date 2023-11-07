@@ -244,6 +244,8 @@ public class ProductService {
                 .add(productFilter.getSellerIds(), product.seller.id::in)
                 .add(productFilter.getVendorIds(), product.vendor.id::in)
                 .add(productFilter.getCategories(), product.category.id::in)
+                .add(productFilter.getPriceMin(), product.price::goe)
+                .add(productFilter.getPriceMax(), product.price::loe)
                 .buildAnd();
 
         if (productFilter.getIsRussian() != null) {
@@ -263,5 +265,3 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 }
-
-
