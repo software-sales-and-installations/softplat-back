@@ -9,6 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorFilter;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -40,7 +41,7 @@ class VendorServiceTest {
     @BeforeEach
     void assistant() {
         vendorDtoOne = VendorDto.builder().name("testOne").description("testOne").country(Country.RUSSIA).build();
-        vendorDtoTwo = VendorDto.builder().name("testTwo").description("testTwo").country(Country.RUSSIA).build();
+        vendorDtoTwo = VendorDto.builder().name("testTwo").description("testTwo").country(Country.INDIA).build();
         newVendorUpdateDto = VendorDto.builder().name("newTest").description("newTest").country(Country.USA).build();
 
         vendorResponseDto = service.createVendor(vendorDtoOne);
@@ -71,11 +72,15 @@ class VendorServiceTest {
 
     @Test
     void findVendorAll() {
-        TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v", Vendor.class);
-        List<Vendor> vendorList = query.getResultList();
+        List<VendorResponseDto> response = service.findVendorAll(new VendorFilter(null, List.of(Country.INDIA)), 0, 10);
+        TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v where v.country = :country", Vendor.class);
+        List<Vendor> vendorList = query.setParameter("country", Country.INDIA).getResultList();
 
         MatcherAssert.assertThat(vendorList, notNullValue());
-        MatcherAssert.assertThat(vendorList.size(), equalTo(5));
+        MatcherAssert.assertThat(response, notNullValue());
+        MatcherAssert.assertThat(vendorList.size(), equalTo(response.size()));
+        MatcherAssert.assertThat(vendorList.get(0).getCountry(), equalTo(response.get(0).getCountry()));
+        MatcherAssert.assertThat(vendorList.get(0).getName(), equalTo(response.get(0).getName()));
     }
 
     @Test

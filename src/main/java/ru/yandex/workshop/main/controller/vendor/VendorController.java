@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorFilter;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -49,9 +51,12 @@ public class VendorController {
     }
 
     @GetMapping(path = "/vendor")
-    public List<VendorResponseDto> findVendorAll() {
-        log.debug(LogMessage.TRY_GET_VENDOR.label);
-        return service.findVendorAll();
+    public List<VendorResponseDto> findVendorWithFilers(
+            @RequestBody VendorFilter vendorFilter,
+            @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+            @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
+        log.debug(LogMessage.TRY_GET_VENDORS.label);
+        return service.findVendorAll(vendorFilter, from, size);
     }
 
     @GetMapping(path = "/vendor/{vendorId}")
