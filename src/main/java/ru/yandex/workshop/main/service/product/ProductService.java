@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.service.product;
 
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.product.QProduct;
 import ru.yandex.workshop.main.model.seller.Seller;
+import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.product.CategoryRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
@@ -242,6 +244,16 @@ public class ProductService {
                 .add(productFilter.getVendorIds(), product.vendor.id::in)
                 .add(productFilter.getCategories(), product.category.id::in)
                 .buildAnd();
+
+        if (productFilter.getIsRussian() != null) {
+            BooleanExpression countryExpression;
+            if (productFilter.getIsRussian()) {
+                countryExpression = product.vendor.country.eq(Country.RUSSIA);
+            } else {
+                countryExpression = product.vendor.country.ne(Country.RUSSIA);
+            }
+            predicate = ExpressionUtils.and(predicate, countryExpression);
+        }
 
         Page<Product> products = productRepository.findAll(predicate, pageRequest);
 

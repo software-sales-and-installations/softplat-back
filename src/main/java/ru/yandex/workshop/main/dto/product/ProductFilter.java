@@ -16,4 +16,5 @@ public class ProductFilter {
     private List<Long> categories;
     private List<Long> sellerIds;
     private List<Long> vendorIds;
+    private Boolean isRussian;
 }
