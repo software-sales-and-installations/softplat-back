@@ -23,9 +23,10 @@ public class PublicProductController {
     public List<ProductResponseDto> searchProducts(
             @RequestBody ProductFilter productFilter,
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
-            @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
+            @RequestParam(name = "size", defaultValue = "20") @Min(1) int size,
+            @RequestParam(name = "sort", defaultValue = "new") String sort) {
         log.debug(LogMessage.TRY_GET_PRODUCTS_FILTER.label);
-        return productService.getProductsByFilter(productFilter, from, size);
+        return productService.getProductsByFilter(productFilter, from, size, sort);
     }
 }
 

@@ -60,7 +60,7 @@ class PublicProductControllerTest {
                 .license(License.LICENSE)
                 .vendor(vendorId1)
                 .seller(sellerId1)
-                .price(1000.421F)
+                .price(1000F)
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
@@ -76,7 +76,7 @@ class PublicProductControllerTest {
                 .license(License.LICENSE)
                 .vendor(vendorId2)
                 .seller(sellerId2)
-                .price(1000.421F)
+                .price(2000F)
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
@@ -92,7 +92,7 @@ class PublicProductControllerTest {
                 .license(License.LICENSE)
                 .vendor(vendorId3)
                 .seller(sellerId3)
-                .price(1000.421F)
+                .price(500F)
                 .quantity(5)
                 .installation(true)
                 .productAvailability(true)
@@ -111,10 +111,11 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchCategories1And2_thenReturnAllProducts() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setCategories(List.of(1L, 2L));
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2, productResponseDto3);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -125,10 +126,11 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchVendorIds1And2_thenReturnProducts1And2() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setVendorIds(List.of(1L, 2L));
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -138,10 +140,11 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchTextDescriptionAndDetails_thenReturnProduct3() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setText("description and details");
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto3);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -150,11 +153,12 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchCategoryId2AndVendorId2_thenReturnProduct2() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setCategories(List.of(2L));
         productFilter.setVendorIds(List.of(2L));
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto2);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -163,11 +167,12 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchSellerId1AndSellerId3AndTextProduct_thenReturnProducts1And3() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setSellerIds(List.of(1L, 3L));
         productFilter.setText("pRoDucT");
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto3);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -177,10 +182,11 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchCountryIsRussian_thenReturnProduct3() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setIsRussian(true);
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto3);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -189,10 +195,11 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchCountryIsNotRussian_thenReturnProducts1And2() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setIsRussian(false);
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -202,9 +209,10 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchWithEmptyProductFilter_thenReturnAllProducts() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2, productResponseDto3);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
@@ -215,6 +223,7 @@ class PublicProductControllerTest {
     @Test
     @SneakyThrows
     void whenSearchProductsMatchingNoCriteria_thenReturnEmptyList() {
+        String sort = "new";
         ProductFilter productFilter = new ProductFilter();
         productFilter.setText("foo");
         productFilter.setSellerIds(List.of(3L));
@@ -222,17 +231,32 @@ class PublicProductControllerTest {
         productFilter.setCategories(List.of(5L));
         productFilter.setIsRussian(true);
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = Lists.emptyList();
         assertEquals(actual, expect);
     }
 
-    private List<ProductResponseDto> getSearchResultsByFilter(ProductFilter productFilter) throws Exception {
+    @Test
+    @SneakyThrows
+    void whenSearchSortingByPrice_thenReturnProductsFromLowerToHigherPrice() {
+        String sort = "price";
+        ProductFilter productFilter = new ProductFilter();
+
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
+        List<ProductResponseDto> expect = List.of(productResponseDto3, productResponseDto1, productResponseDto2);
+        assertEquals(expect.size(), actual.size());
+        assertEquals(expect.get(0).getName(), actual.get(0).getName());
+        assertEquals(expect.get(1).getName(), actual.get(1).getName());
+        assertEquals(expect.get(2).getName(), actual.get(2).getName());
+    }
+
+    private List<ProductResponseDto> getSearchResultsByFilter(ProductFilter productFilter, String sort) throws Exception {
         MvcResult result = mockMvc.perform(get("/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productFilter))
                         .param("from", "0")
-                        .param("size", "20"))
+                        .param("size", "20")
+                        .param("sort", sort))
                 .andExpect(status().isOk())
                 .andReturn();
 

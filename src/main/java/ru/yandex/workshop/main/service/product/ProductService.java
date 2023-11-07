@@ -224,11 +224,12 @@ public class ProductService {
         }
     }
 
-    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter, int from, int size) {
-        PageRequest pageRequest = PageRequestOverride.of(from, size, Sort.by("productionTime").descending());
+    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter, int from, int size, String sort) {
+        Sort sortBy = (sort.equals("new")) ?
+                Sort.by("productionTime").descending() : Sort.by("price").ascending();
+        PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
 
         QProduct product = QProduct.product;
-
         BooleanExpression statusPublishedExpression = product.productStatus.eq(ProductStatus.PUBLISHED);
 
         Function<String, Predicate> textPredicateFunction = text -> {
