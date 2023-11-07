@@ -1,8 +1,12 @@
 package ru.yandex.workshop.main.service.product;
 
-import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,10 +31,11 @@ import ru.yandex.workshop.main.repository.product.ProductRepository;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
+import ru.yandex.workshop.main.util.QPredicates;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -217,37 +222,32 @@ public class ProductService {
         }
     }
 
-    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter) {
-        int from = 0;
-        int size = 10;
-        PageRequestOverride pageRequest = PageRequestOverride.of(from, size);
+    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter, int from, int size) {
+        PageRequest pageRequest = PageRequestOverride.of(from, size, Sort.by("productionTime").descending());
 
-        BooleanBuilder predicate = new BooleanBuilder();
-        QProduct qProduct = QProduct.product;
+        QProduct product = QProduct.product;
 
-        if (productFilter.getSellerIds() != null && !productFilter.getSellerIds().isEmpty()) {
-            predicate.and(qProduct.seller.id.in(productFilter.getSellerIds()));
-        }
+        BooleanExpression statusPublishedExpression = product.productStatus.eq(ProductStatus.PUBLISHED);
 
-        if (productFilter.getVendorIds() != null && !productFilter.getVendorIds().isEmpty()) {
-            predicate.and(qProduct.vendor.id.in(productFilter.getVendorIds()));
-        }
+        Function<String, Predicate> textPredicateFunction = text -> {
+            BooleanExpression nameExpression = product.name.toLowerCase().like("%" + text.toLowerCase() + "%");
+            BooleanExpression descriptionExpression = product.description.toLowerCase().like("%" + text.toLowerCase() + "%");
+            return nameExpression.or(descriptionExpression);
+        };
 
-        if (productFilter.getCategories() != null && !productFilter.getCategories().isEmpty()) {
-            predicate.and(qProduct.category.id.in(productFilter.getCategories()));
-        }
+        Predicate predicate = QPredicates.builder()
+                .add(statusPublishedExpression)
+                .add(productFilter.getText(), textPredicateFunction)
+                .add(productFilter.getSellerIds(), product.seller.id::in)
+                .add(productFilter.getVendorIds(), product.vendor.id::in)
+                .add(productFilter.getCategories(), product.category.id::in)
+                .buildAnd();
 
-//        Predicate predicate = QPredicates.builder()
-//                .add(productFilter.getSellerIds(), QProduct.product.seller.id::in)
-//                .add(productFilter.getVendorIds(), QProduct.product.vendor.id::in)
-//                .add(productFilter.getCategories(), QProduct.product.category.id::in)
-//                .buildOr();
+        Page<Product> products = productRepository.findAll(predicate, pageRequest);
 
-        Iterable<Product> products = productRepository.findAll(predicate, pageRequest);
-        List<ProductResponseDto> response = new ArrayList<>();
-        for (Product p : products) response.add(ProductMapper.INSTANCE.productToProductResponseDto(p));
-
-        return response;
+        return products.getContent().stream()
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
+                .collect(Collectors.toList());
     }
 }
 

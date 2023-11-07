@@ -7,6 +7,7 @@ public enum LogMessage {
     TRY_ADD_SELLER("Попытка добавления нового продавца."),
     TRY_ADD_SELLER_IMAGE("Попытка добавления нового изображения продавца."),
     TRY_DELETE_SELLER_IMAGE("Попытка удаления изображения продавца."),
+    TRY_GET_PRODUCTS_FILTER("Попытка получения списка продуктов с учетом фильтра."),
     TRY_PATCH_SELLER("Попытка изменения продавца по email: {}"),
     TRY_GET_SELLER("Попытка получения продавца по email: {}"),
     TRY_SELLER_PATCH_REQUISITES("Попытка изменения реквизитов по email: {}"),

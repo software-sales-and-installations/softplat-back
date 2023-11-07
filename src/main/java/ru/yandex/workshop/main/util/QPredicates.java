@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.util;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -20,6 +21,20 @@ public class QPredicates {
     public <T> QPredicates add(T object, Function<T, Predicate> function) {
         if (object != null) {
             predicates.add(function.apply(object));
+        }
+        return this;
+    }
+
+    public QPredicates add(Predicate predicate) {
+        if (predicate != null) {
+            predicates.add(predicate);
+        }
+        return this;
+    }
+
+    public QPredicates add(BooleanExpression expression) {
+        if (expression != null) {
+            predicates.add(expression);
         }
         return this;
     }
