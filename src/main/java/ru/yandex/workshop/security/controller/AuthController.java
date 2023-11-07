@@ -12,11 +12,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
 import ru.yandex.workshop.security.dto.JwtRequest;
 import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.message.ExceptionMessage;
+import ru.yandex.workshop.security.message.LogMessage;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 import ru.yandex.workshop.security.service.AuthService;
@@ -40,8 +42,8 @@ public class AuthController {
 
 
     @PostMapping("/auth/login")
-    public ResponseEntity<Object> authorization(@RequestBody JwtRequest request) {
-        log.info("Авторизация пользователя");
+    public ResponseEntity<Object> authorization(@RequestBody @Valid JwtRequest request) {
+        log.info(LogMessage.TRY_AUTHORIZATION.label);
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -54,21 +56,26 @@ public class AuthController {
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            return new ResponseEntity<>("Неправильный email/password", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(ExceptionMessage.INVALID_AUTHENTICATION.label, HttpStatus.FORBIDDEN);
         }
     }
 
     @PostMapping("/auth/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        log.info("Выход пользователя");
+        log.info(LogMessage.TRY_LOGOUT.label);
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
     }
 
     @PostMapping("/registration")
     public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException {
-        log.info("Регистрация пользователя");
+        log.info(LogMessage.TRY_REGISTRATION.label);
         return authService.createNewUser(userDto);
     }
 
+    @PostMapping("/changePass")
+    public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
+        log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
+        return authService.changePass(request);
+    }
 }

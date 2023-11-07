@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.security.message.ExceptionMessage;
 import ru.yandex.workshop.security.model.UserSecurity;
 import ru.yandex.workshop.security.repository.UserRepository;
 

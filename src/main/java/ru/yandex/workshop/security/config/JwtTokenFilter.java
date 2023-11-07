@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 import ru.yandex.workshop.security.exception.JwtAuthenticationException;
 import ru.yandex.workshop.security.exception.UnauthorizedException;
+import ru.yandex.workshop.security.message.ExceptionMessage;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -38,7 +39,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         } catch (JwtAuthenticationException e) {
             SecurityContextHolder.clearContext();
             ((HttpServletResponse) servletResponse).sendError(e.getHttpStatus().value());
-            throw new UnauthorizedException("Невалидный токен");
+            throw new UnauthorizedException(ExceptionMessage.NOT_VALID_TOKEN.label);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);

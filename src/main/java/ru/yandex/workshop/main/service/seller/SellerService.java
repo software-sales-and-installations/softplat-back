@@ -12,7 +12,6 @@ import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.user.SellerDto;
 import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
-import ru.yandex.workshop.main.dto.validation.ValidSeller;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;

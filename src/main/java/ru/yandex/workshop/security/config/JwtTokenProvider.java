@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import ru.yandex.workshop.security.exception.JwtAuthenticationException;
+import ru.yandex.workshop.security.message.ExceptionMessage;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -57,7 +58,7 @@ public class JwtTokenProvider {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             return !claimsJws.getBody().getExpiration().before(new Date());
         } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("Время токена вышло", HttpStatus.UNAUTHORIZED);
+            throw new JwtAuthenticationException(ExceptionMessage.TIMEOUT_TOKEN.label, HttpStatus.UNAUTHORIZED);
         }
     }
 

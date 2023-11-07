@@ -7,14 +7,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.yandex.workshop.main.controller.user.BuyerController;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.admin.AdminService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
 import ru.yandex.workshop.main.service.seller.SellerService;
+import ru.yandex.workshop.security.dto.JwtRequest;
 import ru.yandex.workshop.security.dto.UserDto;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
+import ru.yandex.workshop.security.message.ExceptionMessage;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 
@@ -39,11 +40,11 @@ public class AuthService {
 
     public ResponseEntity<Object> createNewUser(UserDto userDto) throws ValidationException {
         if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
-            throw new WrongRegException("Пароли не совпадают");
+            throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
 
         if (repository.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new WrongRegException("Пользователь с указанным логином уже существует");
+            throw new WrongRegException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
         } else {
             User user = UserMapper.INSTANCE.userDtoToUser(userDto);
             user.setPassword(passwordEncoder.encode(userDto.getPassword()));
@@ -68,6 +69,16 @@ public class AuthService {
 
             return ResponseEntity.of(Optional.of(UserMapper.INSTANCE.userToUserResponseDto(repository.save(user))));
         }
+    }
 
+    public ResponseEntity<Object> changePass(JwtRequest request) throws WrongRegException {
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
+        }
+
+        User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new WrongRegException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        return ResponseEntity.of(Optional.of(UserMapper.INSTANCE.userToUserResponseDto(repository.save(user))));
     }
 }
