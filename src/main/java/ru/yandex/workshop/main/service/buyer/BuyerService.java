@@ -13,6 +13,9 @@ import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.exception.WrongRegException;
+import ru.yandex.workshop.security.model.User;
+import ru.yandex.workshop.security.repository.UserRepository;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
@@ -24,13 +27,15 @@ import java.time.LocalDateTime;
 public class BuyerService {
 
     private final BuyerRepository buyerRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void addBuyer(UserDto userDto) throws ValidationException {
         if (checkIfUserExistsByEmail(userDto.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userDto.getEmail());
 
-        if(userDto.getPhone() == null) throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
+        if (userDto.getPhone() == null)
+            throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
         Buyer buyer = BuyerMapper.INSTANCE.buyerDtoToBuyer(userDto);
         buyer.setRegistrationTime(LocalDateTime.now());
@@ -48,6 +53,7 @@ public class BuyerService {
         if (updateDto.getEmail() != null) {
             if (checkIfUserExistsByEmail(updateDto.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + updateDto.getEmail());
+            changeEmail(oldBuyer.getEmail(), updateDto.getEmail());
             oldBuyer.setEmail(updateDto.getEmail());
         }
         if (updateDto.getPhone() != null) {
@@ -70,5 +76,11 @@ public class BuyerService {
 
     public boolean checkIfUserExistsByEmail(String email) {
         return buyerRepository.findByEmail(email).isPresent();
+    }
+
+    private void changeEmail(String oldEmail, String newEmail) {
+        User user = userRepository.findByEmail(oldEmail).orElseThrow(() -> new WrongRegException(ru.yandex.workshop.security.message.ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        user.setEmail(newEmail);
+        userRepository.save(user);
     }
 }

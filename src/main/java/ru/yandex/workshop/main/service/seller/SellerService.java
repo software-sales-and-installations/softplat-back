@@ -19,6 +19,9 @@ import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
 import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.exception.WrongRegException;
+import ru.yandex.workshop.security.model.User;
+import ru.yandex.workshop.security.repository.UserRepository;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
@@ -33,14 +36,17 @@ import java.util.stream.Collectors;
 public class SellerService {
     private final SellerRepository sellerRepository;
     private final ImageService imageService;
+    private final UserRepository userRepository;
 
     @Transactional
     public void addSeller(UserDto userDto) throws ValidationException {
         if (checkIfUserExistsByEmail(userDto.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userDto.getEmail());
 
-        if(userDto.getPhone().isEmpty()) throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
-        if(userDto.getDescription().isEmpty()) throw new ValidationException("Необходимо указать описание вашего профиля. Описание должно быть длинной не более 500 символов.");
+        if (userDto.getPhone().isEmpty())
+            throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
+        if (userDto.getDescription().isEmpty())
+            throw new ValidationException("Необходимо указать описание вашего профиля. Описание должно быть длинной не более 500 символов.");
 
 
         Seller seller = SellerMapper.INSTANCE.userDtoToSeller(userDto);
@@ -58,6 +64,7 @@ public class SellerService {
         if (sellerForUpdate.getEmail() != null) {
             if (checkIfUserExistsByEmail(sellerForUpdate.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + sellerForUpdate.getEmail());
+            changeEmail(seller.getEmail(), sellerForUpdate.getEmail());
             seller.setEmail(sellerForUpdate.getEmail());
         }
         //TODO save image
@@ -111,5 +118,11 @@ public class SellerService {
 
     public boolean checkIfUserExistsByEmail(String email) {
         return (sellerRepository.findByEmail(email).isPresent());
+    }
+
+    private void changeEmail(String oldEmail, String newEmail) {
+        User user = userRepository.findByEmail(oldEmail).orElseThrow(() -> new WrongRegException(ru.yandex.workshop.security.message.ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        user.setEmail(newEmail);
+        userRepository.save(user);
     }
 }

@@ -26,7 +26,6 @@ public class UserDto {
     @NotBlank(message = "Необходимо указать имя")
     @Length(min = 2, max = 20, message = "Длина имени должна быть от 2 до 20 символов")
     String name;
-//    @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
     String phone;
     @Length(max = 500, message = "Описание должно быть длинной не более 500 символов")
     String description;
