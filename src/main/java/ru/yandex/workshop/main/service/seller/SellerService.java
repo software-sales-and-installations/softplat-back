@@ -19,9 +19,7 @@ import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
 import ru.yandex.workshop.security.dto.UserDto;
-import ru.yandex.workshop.security.exception.WrongRegException;
-import ru.yandex.workshop.security.model.User;
-import ru.yandex.workshop.security.repository.UserRepository;
+import ru.yandex.workshop.security.service.ChangeService;
 
 import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
@@ -36,7 +34,7 @@ import java.util.stream.Collectors;
 public class SellerService {
     private final SellerRepository sellerRepository;
     private final ImageService imageService;
-    private final UserRepository userRepository;
+    private final ChangeService changeService;
 
     @Transactional
     public void addSeller(UserDto userDto) throws ValidationException {
@@ -64,10 +62,9 @@ public class SellerService {
         if (sellerForUpdate.getEmail() != null) {
             if (checkIfUserExistsByEmail(sellerForUpdate.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + sellerForUpdate.getEmail());
-            changeEmail(seller.getEmail(), sellerForUpdate.getEmail());
+            changeService.changeEmail(seller.getEmail(), sellerForUpdate.getEmail());
             seller.setEmail(sellerForUpdate.getEmail());
         }
-        //TODO save image
         if (sellerForUpdate.getPhone() != null) seller.setPhone(sellerForUpdate.getPhone());
 
         return SellerMapper.INSTANCE.sellerToSellerResponseDto(sellerRepository.save(seller));
@@ -118,11 +115,5 @@ public class SellerService {
 
     public boolean checkIfUserExistsByEmail(String email) {
         return (sellerRepository.findByEmail(email).isPresent());
-    }
-
-    private void changeEmail(String oldEmail, String newEmail) {
-        User user = userRepository.findByEmail(oldEmail).orElseThrow(() -> new WrongRegException(ru.yandex.workshop.security.message.ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-        user.setEmail(newEmail);
-        userRepository.save(user);
     }
 }

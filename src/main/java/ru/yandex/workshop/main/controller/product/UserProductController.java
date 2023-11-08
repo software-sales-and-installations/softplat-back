@@ -57,7 +57,7 @@ public class UserProductController {
     }
 
     @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping(path = "]/{productId}/rejected")
+    @PatchMapping(path = "/{productId}/rejected")
     public ProductResponseDto updateStatusProductOnRejected(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED.label, productId);
         return productService.updateStatusProduct(productId, ProductStatus.REJECTED);

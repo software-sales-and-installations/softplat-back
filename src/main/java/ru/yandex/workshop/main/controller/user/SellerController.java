@@ -48,6 +48,7 @@ public class SellerController {
         return sellerService.updateSeller(principal.getName(), sellerForUpdate);
     }
 
+    @PreAuthorize("hasAuthority('seller:write')")
     @GetMapping("/bank/{userId}")
     public BankRequisitesDto getRequisites(@PathVariable Long userId) {
         log.debug(LogMessage.TRY_SELLER_GET_REQUISITES.label, userId);

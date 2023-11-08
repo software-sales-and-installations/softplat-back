@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 @RequestMapping(path = "/vendor")
 public class VendorController {
     private final VendorService service;
@@ -26,7 +27,7 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public VendorResponseDto createVendor(@RequestBody @Valid VendorDto vendorDto) {
+    public VendorResponseDto createVendor(@RequestBody @Validated(New.class) VendorDto vendorDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
         return service.createVendor(vendorDto);
     }
@@ -34,7 +35,7 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{vendorId}")
     public VendorResponseDto changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                              @RequestBody @Validated(New.class) VendorDto vendorUpdateDto) {
+                                              @RequestBody @Valid VendorDto vendorUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
         return service.changeVendorById(vendorId, vendorUpdateDto);
     }

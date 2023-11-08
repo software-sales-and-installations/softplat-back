@@ -22,6 +22,7 @@ import ru.yandex.workshop.security.message.LogMessage;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 import ru.yandex.workshop.security.service.AuthService;
+import ru.yandex.workshop.security.service.ChangeService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final ChangeService changeService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository repository;
@@ -73,9 +75,9 @@ public class AuthController {
         return authService.createNewUser(userDto);
     }
 
-    @PostMapping("/changePass")
+    @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
-        return authService.changePass(request);
+        return changeService.changePass(request);
     }
 }

@@ -36,7 +36,7 @@ public class VendorServiceImpl implements VendorService {
     @Transactional
     @Override
     public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
-        Vendor oldVendor = availabilityVendor(vendorId);
+        Vendor oldVendor = getVendor(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
             oldVendor.setName(vendorUpdateDto.getName());
@@ -67,14 +67,14 @@ public class VendorServiceImpl implements VendorService {
     @Transactional
     @Override
     public void deleteVendor(Long vendorId) {
-        availabilityVendor(vendorId);
+        getVendor(vendorId);
         repository.deleteById(vendorId);
     }
 
     @Transactional
     @Override
     public VendorResponseDto addVendorImage(Long vendorId, MultipartFile file) {
-        Vendor vendor = availabilityVendor(vendorId);
+        Vendor vendor = getVendor(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
@@ -86,13 +86,13 @@ public class VendorServiceImpl implements VendorService {
     @Transactional
     @Override
     public void deleteVendorImage(Long vendorId) {
-        Vendor vendor = availabilityVendor(vendorId);
+        Vendor vendor = getVendor(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
     }
 
-    private Vendor availabilityVendor(Long vendorId) {
+    private Vendor getVendor(Long vendorId) {
         return repository.findById(vendorId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }

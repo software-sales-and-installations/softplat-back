@@ -23,8 +23,6 @@ public class AdminController {
     @GetMapping
     public AdminResponseDto getAdminByEmail(Principal principal) {
         log.info(LogMessage.TRY_GET_ADMIN.label, principal.getName());
-        AdminResponseDto response = adminService.getAdminDto(principal.getName());
-        log.info("{}", response);
-        return response;
+        return adminService.getAdminDto(principal.getName());
     }
 }

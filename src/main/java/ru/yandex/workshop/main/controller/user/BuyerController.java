@@ -21,21 +21,18 @@ import java.security.Principal;
 public class BuyerController {
     private final BuyerService buyerService;
 
+    @PreAuthorize("hasAuthority('buyer:write') and hasAuthority('seller:write')")
     @GetMapping("/{userId}")
     public BuyerResponseDto getBuyer(@PathVariable Long userId) {
         log.info(LogMessage.TRY_GET_BUYER.label, userId);
-        BuyerResponseDto response = buyerService.getBuyer(userId);
-        log.info("{}", response);
-        return response;
+        return buyerService.getBuyer(userId);
     }
 
     @PreAuthorize("hasAuthority('buyer:write')")
     @PatchMapping
     public BuyerResponseDto updateBuyer(Principal principal, @RequestBody @Valid BuyerDto buyerDto) {
         log.info(LogMessage.TRY_PATCH_BUYER.label, principal.getName());
-        BuyerResponseDto response = buyerService.updateBuyer(principal.getName(), buyerDto);
-        log.info("{}", response);
-        return response;
+        return buyerService.updateBuyer(principal.getName(), buyerDto);
     }
 
 }
