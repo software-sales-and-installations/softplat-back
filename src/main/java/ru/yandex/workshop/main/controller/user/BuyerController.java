@@ -21,7 +21,6 @@ import java.security.Principal;
 public class BuyerController {
     private final BuyerService buyerService;
 
-    @PreAuthorize("hasAuthority('buyer:write') and hasAuthority('seller:write')")
     @GetMapping("/{userId}")
     public BuyerResponseDto getBuyer(@PathVariable Long userId) {
         log.info(LogMessage.TRY_GET_BUYER.label, userId);

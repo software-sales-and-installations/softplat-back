@@ -42,31 +42,27 @@ public class AuthService {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
 
-        if (repository.findByEmail(userDto.getEmail()).isPresent()) {
-            throw new WrongRegException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
-        } else {
-            User user = UserMapper.INSTANCE.userDtoToUser(userDto);
-            user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
-            switch (userDto.getRole()) {
-                case ADMIN:
-                    log.info(LogMessage.TRY_ADD_ADMIN.label);
+        switch (userDto.getRole()) {
+            case ADMIN:
+                log.info(LogMessage.TRY_ADD_ADMIN.label);
 
-                    adminService.addAdmin(userDto);
-                    break;
-                case SELLER:
-                    log.info(LogMessage.TRY_ADD_SELLER.label);
+                adminService.addAdmin(userDto);
+                break;
+            case SELLER:
+                log.info(LogMessage.TRY_ADD_SELLER.label);
 
-                    sellerService.addSeller(userDto);
-                    break;
-                case BUYER:
-                    log.debug(LogMessage.TRY_ADD_BUYER.label);
+                sellerService.addSeller(userDto);
+                break;
+            case BUYER:
+                log.debug(LogMessage.TRY_ADD_BUYER.label);
 
-                    buyerService.addBuyer(userDto);
-                    break;
-            }
-
-            return ResponseEntity.of(Optional.of(UserMapper.INSTANCE.userToUserResponseDto(repository.save(user))));
+                buyerService.addBuyer(userDto);
+                break;
         }
+
+        return ResponseEntity.of(Optional.of(UserMapper.INSTANCE.userToUserResponseDto(repository.save(user))));
     }
 }

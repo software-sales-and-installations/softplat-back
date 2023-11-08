@@ -62,7 +62,7 @@ public class SellerController {
         return bankService.updateRequisites(principal.getName(), requisites);
     }
 
-    @PreAuthorize("hasAuthority('seller:write')")
+    @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping("/bank")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRequisites(Principal principal) {

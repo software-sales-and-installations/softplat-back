@@ -1,4 +1,3 @@
-/*
 package ru.yandex.workshop.main.controller.product;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,14 +11,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorMapper;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
+import ru.yandex.workshop.main.service.product.PublicProductService;
+import ru.yandex.workshop.main.service.product.UserProductService;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -35,11 +38,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = AdminProductController.class)
+@WebMvcTest(controllers = UserProductController.class)
 class AdminProductControllerTest {
 
     @MockBean
-    private ProductService productService;
+    private UserProductService userProductService;
+    @MockBean
+    private PublicProductService publicProductService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -121,7 +126,7 @@ class AdminProductControllerTest {
                 .category(category)
                 .license(License.LICENSE)
                 .vendor(VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor))
-                .seller(SellerMapper.INSTANCE.sellerToSellerForResponse(seller))
+                .seller(SellerMapper.INSTANCE.sellerToSellerResponseDto(seller))
                 .price(1000.421F)
                 .quantity(5)
                 .installation(true)
@@ -133,123 +138,127 @@ class AdminProductControllerTest {
         productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product));
     }
 
-    @Test
-    @DisplayName("Вызов метода getAllProductsSellerTest: получение всех продуктов")
-    void getAllProductsSellerTest() throws Exception {
-        when(productService
-                .getAllProductsSeller(anyInt(), anyInt()))
-                .thenReturn(productDtoList);
-        mockMvc.perform(get("/admin/products")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .param("from", "0")
-                        .param("size", "20"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(productDtoList)));
-    }
+//    @Test
+//    @DisplayName("Вызов метода getAllProductsSellerTest: получение всех продуктов")
+//    void getAllProductsSellerTest() throws Exception {
+//        when(publicProductService
+//                .getProductsOfSeller(anyLong(), anyInt(), anyInt()))
+//                .thenReturn(productDtoList);
+//        mockMvc.perform(get("/1/products")
+//                        .characterEncoding(StandardCharsets.UTF_8)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .param("from", "0")
+//                        .param("size", "20"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().json(mapper.writeValueAsString(productDtoList)));
+//    }
+//Могу удалить??
+//    @Test
+//    @DisplayName("Вызов метода getProductsSellerTest: получение всех продуктов конкретного продавца")
+//    void getProductsSellerTest() throws Exception {
+//        when(userProductService
+//                .getProductsSeller(anyLong(), anyInt(), anyInt()))
+//                .thenReturn(productDtoList);
+//        mockMvc.perform(get("/admin/1/products")
+//                        .characterEncoding(StandardCharsets.UTF_8)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .param("sellerId", "1")
+//                        .param("from", "0")
+//                        .param("size", "20"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().json(mapper.writeValueAsString(productDtoList)));
+//    }
 
-    @Test
-    @DisplayName("Вызов метода getProductsSellerTest: получение всех продуктов конкретного продавца")
-    void getProductsSellerTest() throws Exception {
-        when(productService
-                .getProductsSeller(anyLong(), anyInt(), anyInt()))
-                .thenReturn(productDtoList);
-        mockMvc.perform(get("/admin/1/products")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .param("sellerId", "1")
-                        .param("from", "0")
-                        .param("size", "20"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(productDtoList)));
-    }
+//    не понял за что отвечает тест?
+//    @Test
+//    @DisplayName("Вызов метода getProductsSellerTest: получение продуктa по id")
+//    void getProductByIdAdminTest() throws Exception {
+//        when(userProductService
+//                .getProductByIdAdmin(anyLong()))
+//                .thenReturn(productDto);
+//
+//        mockMvc.perform(get("/admin/product/1")
+//                        .characterEncoding(StandardCharsets.UTF_8)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.id", is(productDto.getId()), Long.class))
+//                .andExpect(jsonPath("$.name", is(productDto.getName())))
+//                .andExpect(jsonPath("$.description", is(productDto.getDescription())))
+//                .andExpect(jsonPath("$.version", is(productDto.getVersion())))
+//                .andExpect(jsonPath("$.category.id", is(productDto.getCategory().getId()), Long.class))
+//                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName())))
+//                .andExpect(jsonPath("$.license", is(productDto.getLicense().toString())))
+//                .andExpect(jsonPath("$.vendor.id", is(productDto.getVendor().getId()), Long.class))
+//                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName())))
+//                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription())))
+//                .andExpect(jsonPath("$.vendor.country", is(productDto.getVendor().getCountry().toString())))
+//                .andExpect(jsonPath("$.seller.id", is(productDto.getSeller().getId()), Long.class))
+//                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail())))
+//                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName())))
+//                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone())))
+//                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription())))
+//                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount())))
+//                .andExpect(jsonPath("$.price", is(productDto.getPrice()), Float.class))
+//                .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
+//                .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))
+//                .andExpect(jsonPath("$.productStatus", is(productDto.getProductStatus().toString())))
+//                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class))
+//                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
+//    }
 
-    @Test
-    @DisplayName("Вызов метода getProductsSellerTest: получение продуктa по id")
-    void getProductByIdAdminTest() throws Exception {
-        when(productService
-                .getProductByIdAdmin(anyLong()))
-                .thenReturn(productDto);
+//TODO лежит из-за прав доступа
+//    @Test
+//    @DisplayName("Вызов метода updateStatusProductOnPublishedTest: обновление статуса товара на 'PUBLISHED'")
+//    void updateStatusProductOnPublishedTest() throws Exception {
+//        productDto.setProductStatus(ProductStatus.PUBLISHED);
+//        when(userProductService
+//                .updateStatusProductOnPublished(anyLong()))
+//                .thenReturn(productDto);
+//        mockMvc.perform(patch("/admin/product/1/published")
+//                        .characterEncoding(StandardCharsets.UTF_8)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .header("X-Share-Product-Id", productDto.getId())
+//                        .param("productId", "1"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.productStatus", is("PUBLISHED")));
+//    }
 
-        mockMvc.perform(get("/admin/product/1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(productDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(productDto.getName())))
-                .andExpect(jsonPath("$.description", is(productDto.getDescription())))
-                .andExpect(jsonPath("$.version", is(productDto.getVersion())))
-                .andExpect(jsonPath("$.category.id", is(productDto.getCategory().getId()), Long.class))
-                .andExpect(jsonPath("$.category.name", is(productDto.getCategory().getName())))
-                .andExpect(jsonPath("$.license", is(productDto.getLicense().toString())))
-                .andExpect(jsonPath("$.vendor.id", is(productDto.getVendor().getId()), Long.class))
-                .andExpect(jsonPath("$.vendor.name", is(productDto.getVendor().getName())))
-                .andExpect(jsonPath("$.vendor.description", is(productDto.getVendor().getDescription())))
-                .andExpect(jsonPath("$.vendor.country", is(productDto.getVendor().getCountry().toString())))
-                .andExpect(jsonPath("$.seller.id", is(productDto.getSeller().getId()), Long.class))
-                .andExpect(jsonPath("$.seller.email", is(productDto.getSeller().getEmail())))
-                .andExpect(jsonPath("$.seller.name", is(productDto.getSeller().getName())))
-                .andExpect(jsonPath("$.seller.phone", is(productDto.getSeller().getPhone())))
-                .andExpect(jsonPath("$.seller.description", is(productDto.getSeller().getDescription())))
-                .andExpect(jsonPath("$.seller.requisites.account", is(productDto.getSeller().getRequisites().getAccount())))
-                .andExpect(jsonPath("$.price", is(productDto.getPrice()), Float.class))
-                .andExpect(jsonPath("$.quantity", is(productDto.getQuantity()), Integer.class))
-                .andExpect(jsonPath("$.installation", is(productDto.getInstallation()), Boolean.class))
-                .andExpect(jsonPath("$.productStatus", is(productDto.getProductStatus().toString())))
-                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class))
-                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
-    }
+//    Аналогично выше
+//    @Test
+//    @DisplayName("Вызов метода updateStatusProductOnRejectedTest: обновление статуса товара на 'REJECTED'")
+//    void updateStatusProductOnRejectedTest() throws Exception {
+//        productDto.setProductStatus(ProductStatus.REJECTED);
+//        when(userProductService
+//                .updateStatusProductOnRejected(anyLong()))
+//                .thenReturn(productDto);
+//        mockMvc.perform(patch("/admin/product/1/rejected")
+//                        .characterEncoding(StandardCharsets.UTF_8)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .header("X-Share-Product-Id", productDto.getId())
+//                        .param("productId", "1"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.productStatus", is("REJECTED")));
+//    }
 
-    @Test
-    @DisplayName("Вызов метода updateStatusProductOnPublishedTest: обновление статуса товара на 'PUBLISHED'")
-    void updateStatusProductOnPublishedTest() throws Exception {
-        productDto.setProductStatus(ProductStatus.PUBLISHED);
-        when(productService
-                .updateStatusProductOnPublished(anyLong()))
-                .thenReturn(productDto);
-        mockMvc.perform(patch("/admin/product/1/published")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("X-Share-Product-Id", productDto.getId())
-                        .param("productId", "1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.productStatus", is("PUBLISHED")));
-    }
-
-    @Test
-    @DisplayName("Вызов метода updateStatusProductOnRejectedTest: обновление статуса товара на 'REJECTED'")
-    void updateStatusProductOnRejectedTest() throws Exception {
-        productDto.setProductStatus(ProductStatus.REJECTED);
-        when(productService
-                .updateStatusProductOnRejected(anyLong()))
-                .thenReturn(productDto);
-        mockMvc.perform(patch("/admin/product/1/rejected")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("X-Share-Product-Id", productDto.getId())
-                        .param("productId", "1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.productStatus", is("REJECTED")));
-    }
-
-    @Test
-    @DisplayName("Вызов метода deleteProductAdminTest: удаление продукта")
-    void deleteProductAdminTest() throws Exception {
-        when(productService
-                .updateStatusProductOnRejected(anyLong()))
-                .thenReturn(productDto);
-        mockMvc.perform(delete("/admin/product/1")
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .header("X-Share-Product-Id", productDto.getId())
-                        .param("productId", "1"))
-                .andExpect(status().isOk());
-    }
+//    Аналогично выше
+//    @Test
+//    @DisplayName("Вызов метода deleteProductAdminTest: удаление продукта")
+//    void deleteProductAdminTest() throws Exception {
+//        when(userProductService
+//                .updateStatusProductOnRejected(anyLong()))
+//                .thenReturn(productDto);
+//        mockMvc.perform(delete("/admin/product/1")
+//                        .characterEncoding(StandardCharsets.UTF_8)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .header("X-Share-Product-Id", productDto.getId())
+//                        .param("productId", "1"))
+//                .andExpect(status().isOk());
+//    }
 }
-*/
+

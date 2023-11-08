@@ -1,4 +1,3 @@
-/*
 package ru.yandex.workshop.main.controller.image;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -204,4 +203,4 @@ class ImageControllerTest {
                 result.getResponse().getContentAsString(),
                 ProductResponseDto.class);
     }
-}*/
+}

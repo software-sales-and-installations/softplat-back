@@ -1,5 +1,5 @@
-/*package ru.yandex.workshop.main.controller;
-
+package ru.yandex.workshop.main.controller.vendor;
+/*
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.workshop.main.controller.vendor.VendorController;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
@@ -107,4 +106,5 @@ class VendorControllerTest {
                 .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
-}*/
+}
+*/

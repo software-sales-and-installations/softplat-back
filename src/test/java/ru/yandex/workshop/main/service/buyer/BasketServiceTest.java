@@ -52,8 +52,6 @@ class BasketServiceTest {
     @Mock
     private BasketRepository basketRepository;
     @Mock
-    private ProductBasketRepository productBasketRepository;
-    @Mock
     private ProductRepository productRepository;
     @Mock
     private BuyerRepository buyerRepository;
@@ -100,10 +98,7 @@ class BasketServiceTest {
                 "Description seller",
                 LocalDateTime.now(),
                 bankRequisites,
-                image,
-                "password",
-                Role.SELLER,
-                Status.ACTIVE);
+                image);
 
         Category category = new Category(
                 1L,
