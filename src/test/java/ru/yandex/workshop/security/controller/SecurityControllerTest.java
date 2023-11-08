@@ -1,28 +1,31 @@
 package ru.yandex.workshop.security.controller;
 
+import org.junit.Test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.*;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
+import ru.yandex.workshop.security.config.WebSecurityConfigurer;
 import ru.yandex.workshop.security.dto.JwtRequest;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuthController.class)
+@ContextConfiguration(classes = WebSecurityConfigurer.class)
 public class SecurityControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -43,9 +46,11 @@ public class SecurityControllerTest {
         token = "secret";
     }
 
+
+    @ExtendWith(SpringExtension.class)
     @WithMockUser(value = "spring")
     @Test
-    public void givenAuthRequestOnPrivateService_shouldSucceedWith200() throws Exception {
+    public void auth() throws Exception {
         when(jwtTokenProvider.generateToken(anyString(), anyString()))
                 .thenReturn(token);
 
