@@ -17,7 +17,7 @@ public class SellerDto {
     @NotBlank(groups = {New.class}, message = "Необходимо указать имя")
     @Length(min = 2, max = 20, message = "Длина имени должна быть от 2 до 20 символов")
     private String name;
-    @Email(message = "Email должен быть корректным адресом электронной почты")
+    @Email(groups = {New.class}, message = "Email должен быть корректным адресом электронной почты")
     private String email;
     @NotBlank(groups = {New.class}, message = "Необходимо указать номер телефона")
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
