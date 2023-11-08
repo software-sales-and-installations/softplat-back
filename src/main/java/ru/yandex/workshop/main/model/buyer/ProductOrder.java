@@ -27,4 +27,5 @@ public class ProductOrder {
     //стоимость 1 единицы продукта с учетом скидок/бонусов/промокодов/цены за установку
     @Column(name = "amount")
     Float productAmount;
+    Boolean installation;
 }

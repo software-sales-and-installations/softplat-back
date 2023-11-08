@@ -68,9 +68,9 @@ public class OrderService {
         return OrderMapper.INSTANCE.orderToOrderDto(order);
     }
 
-    public List<OrderResponseDto> getAllOrders(String email) {
+    /*public List<OrderResponseDto> getAllOrders(String email) {
         Buyer buyer = buyerRepository.findByEmail(email).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
 
-    }
+    }*/
 }

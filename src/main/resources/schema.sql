@@ -145,6 +145,7 @@ CREATE TABLE IF NOT EXISTS product_order
     product_id BIGINT                                  NOT NULL,
     quantity   INT                                     NOT NULL,
     amount     FLOAT                                   NOT NULL,
+    installation boolean DEFAULT 'FALSE'               NOT NULL,
     CONSTRAINT pk_product_order PRIMARY KEY (id),
     CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES "order" (id) on update cascade on delete cascade,
     CONSTRAINT fk_product_order FOREIGN KEY (product_id) REFERENCES product (id) on update cascade on delete cascade
