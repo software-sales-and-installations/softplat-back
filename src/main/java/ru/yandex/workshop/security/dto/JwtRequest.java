@@ -8,10 +8,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtRequest {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
