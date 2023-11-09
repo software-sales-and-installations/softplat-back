@@ -202,7 +202,7 @@ class ProductServiceTest {
                 .findById(
                         product.getId()))
                 .thenReturn(Optional.of(product));
-        var productDtoGet = publicProductService.getProductById(product.getId());
+        var productDtoGet = publicProductService.getProductById(product.getId(), null);
         assertNotNull(productDtoGet);
         assertEquals(product.getName(), productDtoGet.getName());
         assertEquals(product.getDescription(), productDtoGet.getDescription());

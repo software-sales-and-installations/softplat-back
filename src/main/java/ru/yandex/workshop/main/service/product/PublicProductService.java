@@ -9,6 +9,7 @@ import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
@@ -36,12 +37,23 @@ public class PublicProductService {
                 .collect(Collectors.toList());
     }
 
-    public ProductResponseDto getProductById(Long productId) {
+    public ProductResponseDto getProductById(Long productId, License license) {
+        if (license != null) {
+            Product product = getProductFromDatabase(productId);
+            return ProductMapper.INSTANCE.productToProductResponseDto(getProductFromDatabaseByLicense(product.getName(), license));
+        }
+
         return ProductMapper.INSTANCE.productToProductResponseDto(getProductFromDatabase(productId));
     }
 
+
     private Product getProductFromDatabase(Long productId) {
         return productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    }
+
+    private Product getProductFromDatabaseByLicense(String name, License license) {
+        return productRepository.findProductByNameEqualsAndLicenseEquals(name, license)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.message.LogMessage;
+import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.service.product.PublicProductService;
 
 import javax.validation.constraints.Min;
@@ -21,9 +22,10 @@ public class PublicProductController {
 
     // TODO поиск и каталог ПО
     @GetMapping(path = "/{productId}")
-    public ProductResponseDto getProductById(@PathVariable Long productId) {
+    public ProductResponseDto getProductById(@PathVariable Long productId,
+                                             @RequestParam (required = false) License license) {
         log.debug(LogMessage.TRY_GET_PRODUCT_BY_ID.label, productId);
-        return productService.getProductById(productId);
+        return productService.getProductById(productId, license);
     }
 
     @GetMapping(path = "/{sellerId}/products")
