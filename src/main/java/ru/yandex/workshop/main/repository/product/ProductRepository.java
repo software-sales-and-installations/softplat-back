@@ -3,6 +3,7 @@ package ru.yandex.workshop.main.repository.product;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.model.product.License;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ProductRepository extends JpaRepository<Product, Long>, QuerydslPredicateExecutor<Product> {
 
     List<Product> findProductBySellerId(Long sellerId, PageRequestOverride pageRequest);
 
@@ -30,7 +31,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "where p.license like 'LICENSE' " +
             "and p.license like 'FREE' " +
             "and p.status like 'PUBLISHED' " +
-            "and p.availability is true "+
+            "and p.availability is true " +
             "order by p.production_time desc", nativeQuery = true)
     List<Product> findAllProducts(Pageable pageable);
 }

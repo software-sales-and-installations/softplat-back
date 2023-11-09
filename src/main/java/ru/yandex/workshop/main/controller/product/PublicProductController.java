@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.product.SearchProductRequest;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.service.product.PublicProductService;
@@ -20,7 +21,20 @@ import java.util.List;
 public class PublicProductController {
     private final PublicProductService productService;
 
-    // TODO поиск и каталог ПО
+    // TODO поиск
+
+    @GetMapping
+    public List<ProductResponseDto> searchProducts(@RequestParam(name = "name", required = false) String name,
+                                                   @RequestParam(name = "description", required = false) String description,
+                                                   @RequestParam(name = "categories", required = false) Long categories,
+                                                   @RequestParam(name = "startPrice", required = false) Integer startPrice,
+                                                   @RequestParam(name = "endPrice", required = false) Integer endPrice,
+                                                   @RequestParam(name = "from", defaultValue = "0") int from,
+                                                   @RequestParam(name = "size", defaultValue = "10") int size) {
+        log.debug(LogMessage.TRY_GET_PRODUCTS.label);
+        return productService.searchProduct(SearchProductRequest.of(name, description, categories, startPrice, endPrice, from, size));
+    }
+
     @GetMapping
     public List<ProductResponseDto> getProductsAll(@RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
                                                    @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
