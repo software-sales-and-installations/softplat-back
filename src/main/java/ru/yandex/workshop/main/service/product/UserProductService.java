@@ -12,6 +12,7 @@ import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
+import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Category;
@@ -133,6 +134,9 @@ public class UserProductService {
     public ProductResponseDto updateStatusProduct(Long productId, ProductStatus status) {
         Product product = getProductFromDatabase(productId);
 
+        if (product.getProductStatus() == status)
+            throw new DuplicateException("Продукт уже имеет этот статус.");
+
         switch (status) {
             case PUBLISHED:
                 product.setProductStatus(ProductStatus.PUBLISHED);
@@ -154,7 +158,8 @@ public class UserProductService {
 
 
     public List<ProductResponseDto> getAllProductsShipped(int from, int size) {
-        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED, PageRequestOverride.of(from, size))
+        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
+                        PageRequestOverride.of(from, size))
                 .stream()
                 .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());

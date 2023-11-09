@@ -294,25 +294,6 @@ class ProductServiceTest {
         assertEquals(product.getProductStatus(), productDtoUpdate.getProductStatus());
     }
 
-    /*@Test
-    @DisplayName("Вызов метода getAllProductsSellerTest: получение всех продуктов всех seller")
-    void getAllProductsSellerTest() {
-        when(sellerRepository
-                .findById(
-                        product.getSeller().getId()))
-                .thenReturn(Optional.of(product.getSeller()));
-
-        when(productRepository.findAll(pageRequest))
-                .thenReturn(Collections.singletonList(product));
-        final List<ProductResponseDto> productDtoList = productService
-                .getAllProductsSeller(
-                        0,
-                        20);
-        assertNotNull(productDtoList);
-        assertEquals(1, productDtoList.size());
-        assertEquals(product.getName(), productDtoList.get(0).getName());
-    }*/
-
     @Test
     @DisplayName("Вызов метода updateStatusProductOnPublishedTest: обновление статуса на 'PUBLISHED'")
     void updateStatusProductOnPublishedTest() {
