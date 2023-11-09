@@ -13,10 +13,11 @@ import java.util.Collections;
 @Configuration
 public class SwaggerConfiguration {
     @Bean
-    public Docket api() {
+    public Docket mainApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("ru.yandex.workshop.main.controller"))
+                .apis(RequestHandlerSelectors.basePackage("ru.yandex.workshop.main.controller")
+                        .or(RequestHandlerSelectors.basePackage("ru.yandex.workshop.security.controller")))
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());

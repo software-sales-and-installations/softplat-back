@@ -4,7 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 
+import java.util.Optional;
+
 @Repository
 public interface BuyerRepository extends JpaRepository<Buyer, Long> {
-    boolean existsBuyerByEmail(String email);
+    Optional<Buyer> findByEmail(String email);
 }

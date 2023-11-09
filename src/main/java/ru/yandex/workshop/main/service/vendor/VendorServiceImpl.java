@@ -29,25 +29,24 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 public class VendorServiceImpl implements VendorService {
-
-    private final VendorRepository vendorRepository;
+    private final VendorRepository repository;
     private final ImageService imageService;
 
+    @Transactional
     @Override
     public VendorResponseDto createVendor(VendorDto vendorDto) {
         return VendorMapper.INSTANCE
-                .vendorToVendorResponseDto(vendorRepository
-                        .save(VendorMapper.INSTANCE
-                                .vendorDtoToVendor(vendorDto)));
+                .vendorToVendorResponseDto(repository.save(VendorMapper.INSTANCE.vendorDtoToVendor(vendorDto)));
     }
 
+    @Transactional
     @Override
     public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
-        Vendor oldVendor = getVendorByIdOrThrowException(vendorId);
+        Vendor oldVendor = getVendor(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
             oldVendor.setName(vendorUpdateDto.getName());
@@ -59,12 +58,9 @@ public class VendorServiceImpl implements VendorService {
             oldVendor.setCountry(vendorUpdateDto.getCountry());
         }
 
-        return VendorMapper.INSTANCE
-                .vendorToVendorResponseDto(vendorRepository
-                        .save(oldVendor));
+        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.save(oldVendor));
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<VendorResponseDto> findVendorAll(VendorFilter vendorFilter, int from, int size) {
         PageRequest pageRequest = PageRequestOverride.of(from, size);
@@ -89,23 +85,24 @@ public class VendorServiceImpl implements VendorService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
     @Override
     public VendorResponseDto findVendorById(Long vendorId) {
         return VendorMapper.INSTANCE
-                .vendorToVendorResponseDto(vendorRepository.findById(vendorId)
+                .vendorToVendorResponseDto(repository.findById(vendorId)
                         .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
+    @Transactional
     @Override
     public void deleteVendor(Long vendorId) {
-        getVendorByIdOrThrowException(vendorId);
-        vendorRepository.deleteById(vendorId);
+        getVendor(vendorId);
+        repository.deleteById(vendorId);
     }
 
+    @Transactional
     @Override
     public VendorResponseDto addVendorImage(Long vendorId, MultipartFile file) {
-        Vendor vendor = getVendorByIdOrThrowException(vendorId);
+        Vendor vendor = getVendor(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
@@ -114,16 +111,17 @@ public class VendorServiceImpl implements VendorService {
         return VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor);
     }
 
+    @Transactional
     @Override
     public void deleteVendorImage(Long vendorId) {
-        Vendor vendor = getVendorByIdOrThrowException(vendorId);
+        Vendor vendor = getVendor(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
     }
 
-    private Vendor getVendorByIdOrThrowException(Long vendorId) {
-        return vendorRepository.findById(vendorId)
+    private Vendor getVendor(Long vendorId) {
+        return repository.findById(vendorId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }
