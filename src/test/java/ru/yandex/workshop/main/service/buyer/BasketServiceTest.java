@@ -27,8 +27,6 @@ import ru.yandex.workshop.main.repository.buyer.BasketRepository;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
-import ru.yandex.workshop.security.model.Role;
-import ru.yandex.workshop.security.model.Status;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -53,6 +51,8 @@ class BasketServiceTest {
     private BasketRepository basketRepository;
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    private ProductBasketRepository productBasketRepository; //НЕ УДАЛЯТЬ, НУЖЕН ДЛЯ РАБОТЫ ТЕСТА
     @Mock
     private BuyerRepository buyerRepository;
     @Captor
