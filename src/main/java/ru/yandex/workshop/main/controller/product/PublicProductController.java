@@ -9,6 +9,7 @@ import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.product.PublicProductService;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class PublicProductController {
 
     @GetMapping(path = "/search")
     public List<ProductResponseDto> searchProducts(
-            @RequestBody ProductFilter productFilter,
+            @RequestBody @Valid ProductFilter productFilter,
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
             @RequestParam(name = "size", defaultValue = "20") @Min(1) int size,
             @RequestParam(name = "sort", defaultValue = "new") String sort) {

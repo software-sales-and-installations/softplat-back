@@ -3,18 +3,15 @@ package ru.yandex.workshop.main.service.buyer;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.workshop.main.model.buyer.Basket;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.ProductBasket;
-import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
@@ -40,10 +37,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureTestDatabase
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ExtendWith(MockitoExtension.class)
 class BasketServiceTest {
     @InjectMocks
     private BasketService basketService;
@@ -76,29 +70,22 @@ class BasketServiceTest {
                 1L,
                 "1111 2222 3333 4444");
 
-        Image image = new Image(
-                1L,
-                "name",
-                123L,
-                "contentType",
-                new byte[]{0x01, 0x02, 0x03});
+        Vendor vendor = Vendor.builder()
+                .id(1L)
+                .name("name1")
+                .description("Name One")
+                .country(Country.RUSSIA)
+                .build();
 
-        Vendor vendor = new Vendor(
-                1L,
-                "name1",
-                "Name One",
-                image,
-                Country.RUSSIA);
-
-        Seller seller = new Seller(
-                1L,
-                "NameTwo@gmail.com",
-                "Name",
-                " +79111111111",
-                "Description seller",
-                LocalDateTime.now(),
-                bankRequisites,
-                image);
+        Seller seller = Seller.builder()
+                .id(1L)
+                .email("NameTwo@gmail.com")
+                .name("Name")
+                .phone("+79111111111")
+                .description("Description seller")
+                .registrationTime(LocalDateTime.now())
+                .requisites(bankRequisites)
+                .build();
 
         Category category = new Category(
                 1L,
@@ -118,7 +105,6 @@ class BasketServiceTest {
                 .installation(true)
                 .quantity(1234)
                 .productStatus(ProductStatus.PUBLISHED)
-                .image(image)
                 .build();
     }
 
