@@ -2,6 +2,8 @@ package ru.yandex.workshop.main.service.product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.configuration.PageRequestOverride;
@@ -32,6 +34,15 @@ public class PublicProductService {
         PageRequestOverride pageRequest = PageRequestOverride.of(from, size);
         // TODO у меня в Postman валится этот метод, Павел Михайлов, проверь пожалуйста
         return productRepository.findProductBySellerId(sellerId, pageRequest)
+                .stream()
+                .map(ProductMapper.INSTANCE::productToProductResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ProductResponseDto> getProductsAll(int from, int size) {
+        Pageable page = PageRequest.of(from, size);
+
+        return productRepository.findAllProducts(page)
                 .stream()
                 .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());

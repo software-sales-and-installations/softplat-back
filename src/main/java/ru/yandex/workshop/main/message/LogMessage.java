@@ -20,6 +20,7 @@ public enum LogMessage {
     TRY_DELETE_PRODUCT("Попытка удаления продукта по id: {}."),
     TRY_GET_PRODUCTS_OF_SELLER("Попытка получения всех своих продуктов продавца с id: {}."),
     TRY_GET_PRODUCT_BY_ID("Попытка получения продукта id: {} продавца id: {}."),
+    TRY_GET_PRODUCTS("Попытка получения списка продуктов."),
     TRY_CREATE_PRODUCT("Попытка создать продукт: {}."),
     TRY_UPDATE_PRODUCT("Попытка обновления продукта id: {} продавцом email: {}: {}"),
     TRY_UPDATE_STATUS_PRODUCT_ON_SENT("Попытка установки статуса 'SHIPPED' продукту id: {} продавцом: {}."),

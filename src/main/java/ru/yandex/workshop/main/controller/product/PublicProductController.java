@@ -21,9 +21,16 @@ public class PublicProductController {
     private final PublicProductService productService;
 
     // TODO поиск и каталог ПО
+    @GetMapping
+    public List<ProductResponseDto> getProductsAll(@RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+                                                   @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
+        log.debug(LogMessage.TRY_GET_PRODUCTS.label);
+        return productService.getProductsAll(from, size);
+    }
+
     @GetMapping(path = "/{productId}")
     public ProductResponseDto getProductById(@PathVariable Long productId,
-                                             @RequestParam (required = false) License license) {
+                                             @RequestParam(required = false) License license) {
         log.debug(LogMessage.TRY_GET_PRODUCT_BY_ID.label, productId);
         return productService.getProductById(productId, license);
     }

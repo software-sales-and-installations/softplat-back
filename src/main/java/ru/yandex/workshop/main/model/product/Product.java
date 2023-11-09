@@ -62,19 +62,20 @@ public class Product {
     @JoinColumn(name = IMAGE_ID)
     Image image;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = CATEGORY_ID)
     Category category;
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = PRODUCT_LICENSE)
     License license;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = VENDOR_ID)
     Vendor vendor;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = SELLER_ID)
     Seller seller;
 
