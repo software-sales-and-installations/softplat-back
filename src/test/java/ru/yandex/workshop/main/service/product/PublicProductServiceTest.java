@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 class PublicProductServiceTest {
@@ -73,7 +73,7 @@ class PublicProductServiceTest {
         Seller savedSeller2 = sellerRepository.save(seller2);
         Seller savedSeller3 = sellerRepository.save(seller3);
 
-        long categoryId1 = 1, vendorId1 = 1, sellerId1 = savedSeller1.getId();
+        long categoryId1 = 1, vendorId1 = 1;
         ProductDto productDto1 = ProductDto.builder()
                 .name("product1")
                 .description("product1 description")
@@ -81,7 +81,6 @@ class PublicProductServiceTest {
                 .category(categoryId1)
                 .license(License.LICENSE)
                 .vendor(vendorId1)
-                .seller(sellerId1)
                 .price(1000F)
                 .quantity(5)
                 .installation(true)
@@ -89,7 +88,7 @@ class PublicProductServiceTest {
                 .installationPrice(10.00F)
                 .build();
 
-        long categoryId2 = 2, vendorId2 = 2, sellerId2 = savedSeller2.getId();
+        long categoryId2 = 2, vendorId2 = 2;
         ProductDto productDto2 = ProductDto.builder()
                 .name("product2")
                 .description("product2 description")
@@ -97,7 +96,6 @@ class PublicProductServiceTest {
                 .category(categoryId2)
                 .license(License.LICENSE)
                 .vendor(vendorId2)
-                .seller(sellerId2)
                 .price(2000F)
                 .quantity(5)
                 .installation(true)
@@ -105,7 +103,7 @@ class PublicProductServiceTest {
                 .installationPrice(10.00F)
                 .build();
 
-        long categoryId3 = 2, vendorId3 = 3, sellerId3 = savedSeller3.getId();
+        long categoryId3 = 2, vendorId3 = 3;
         ProductDto productDto3 = ProductDto.builder()
                 .name("product3")
                 .description("product3 description and details")
@@ -113,7 +111,6 @@ class PublicProductServiceTest {
                 .category(categoryId3)
                 .license(License.LICENSE)
                 .vendor(vendorId3)
-                .seller(sellerId3)
                 .price(500F)
                 .quantity(5)
                 .installation(true)
@@ -129,9 +126,13 @@ class PublicProductServiceTest {
         product2.setProductStatus(ProductStatus.PUBLISHED);
         product3.setProductStatus(ProductStatus.PUBLISHED);
 
-        product3.setProductionTime(LocalDateTime.now());
-        product2.setProductionTime(LocalDateTime.now());
-        product1.setProductionTime(LocalDateTime.now());
+        product3.setProductionTime(LocalDateTime.of(2022, 10, 1, 12, 40));
+        product2.setProductionTime(LocalDateTime.of(2022, 11, 1, 12, 40));
+        product1.setProductionTime(LocalDateTime.of(2022, 12, 1, 12, 40));
+
+        product1.setSeller(seller1);
+        product2.setSeller(seller2);
+        product3.setSeller(seller3);
 
         savedProduct1 = productRepository.save(product1);
         savedProduct2 = productRepository.save(product2);
