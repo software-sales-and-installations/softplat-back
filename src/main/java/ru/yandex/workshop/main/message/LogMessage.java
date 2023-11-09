@@ -37,7 +37,8 @@ public enum LogMessage {
     TRY_ADD_INSTALLATION_FOR_PRODUCT_IN_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_ADMIN("ПОпытка добавить нового админа"),
     TRY_ADD_SELLER("ПОпытка добавить нового продавца"),
-    TRY_ADD_BUYER("ПОпытка добавить нового продавца");
+    TRY_ADD_BUYER("ПОпытка добавить нового продавца"),
+    TRY_GET_PRODUCTS_FILTER("Попытка получения списка продуктов с учетом фильтра.");
 
     public final String label;
 

@@ -66,13 +66,13 @@ public class BuyerService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
-    public Buyer getSecurityBuyer(String email) {
+    private Buyer getSecurityBuyer(String email) {
         return buyerRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    public boolean checkIfUserExistsByEmail(String email) {
+    private boolean checkIfUserExistsByEmail(String email) {
         return buyerRepository.findByEmail(email).isPresent();
     }
 }
