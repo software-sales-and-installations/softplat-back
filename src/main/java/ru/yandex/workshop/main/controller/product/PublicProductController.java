@@ -42,7 +42,7 @@ public class PublicProductController {
             @RequestBody @Valid ProductFilter productFilter,
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
             @RequestParam(name = "size", defaultValue = "20") @Min(1) int size,
-            @RequestParam(name = "sort", defaultValue = "new") SortBy sort) {
+            @RequestParam(name = "sort", defaultValue = "NEWEST") SortBy sort) {
         log.debug(LogMessage.TRY_GET_PRODUCTS_FILTER.label);
         return productService.getProductsByFilter(productFilter, from, size, sort);
     }
