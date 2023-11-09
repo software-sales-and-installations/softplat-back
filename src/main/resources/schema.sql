@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS product
     production_time    TIMESTAMP WITHOUT TIME ZONE,
     image_id           BIGINT  DEFAULT NULL,
     category_id        BIGINT                  NOT NULL,
-    license            VARCHAR                 NOT NULL,
+    license            VARCHAR(50)                 NOT NULL,
     vendor_id          BIGINT                  NOT NULL,
     seller_id          BIGINT                  NOT NULL,
     price              FLOAT                   NOT NULL,
