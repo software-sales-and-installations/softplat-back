@@ -36,7 +36,10 @@ public enum LogMessage {
     TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_ADMIN("ПОпытка добавить нового админа"),
     TRY_ADD_SELLER("ПОпытка добавить нового продавца"),
-    TRY_ADD_BUYER("ПОпытка добавить нового продавца");
+    TRY_ADD_BUYER("ПОпытка добавить нового продавца"),
+    TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
+    TRY_BUYER_DELETE_FAVORITE("Попытка удаления данных из избранного"),
+    TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}");
 
     public final String label;
 
