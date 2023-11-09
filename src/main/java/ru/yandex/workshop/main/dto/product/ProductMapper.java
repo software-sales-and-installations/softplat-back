@@ -22,7 +22,6 @@ public interface ProductMapper {
 
     @Mapping(target = "category", expression = "java(mapCategoryIdToCategory(productDto))")
     @Mapping(target = "vendor", expression = "java(mapVendorIdToVendor(productDto))")
-    @Mapping(target = "seller", expression = "java(mapSellerIdToSeller(productDto))")
     Product productDtoToProduct(ProductDto productDto);
 
     @Mapping(target = "image", expression = "java(mapImageToImageResponseDto(product))")
@@ -53,10 +52,5 @@ public interface ProductMapper {
     default Vendor mapVendorIdToVendor(ProductDto productDto) {
         long vendorId = productDto.getVendor();
         return Vendor.builder().id(vendorId).build();
-    }
-
-    default Seller mapSellerIdToSeller(ProductDto productDto) {
-        long sellerId = productDto.getSeller();
-        return Seller.builder().id(sellerId).build();
     }
 }

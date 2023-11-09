@@ -10,7 +10,6 @@ import ru.yandex.workshop.security.model.Status;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -19,10 +18,12 @@ import javax.validation.constraints.Pattern;
 public class UserDto {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
     @Email(message = "Email должен быть корректным адресом электронной почты")
+    @Length(min = 6, max = 30, message = "Адрес электронной почты должен содержать от 6 до 30 символов")
     String email;
-    @NotNull(message = "Необходимо указать пароль")
+    @NotBlank(message = "Необходимо указать пароль")
+    @Length(min = 8, max = 40, message = "Пароль должен быть длиной от 8 до 40 символов")
     String password;
-    @NotNull(message = "Необходимо повторно указать пароль")
+    @NotBlank(message = "Необходимо повторно указать пароль")
     String confirmPassword;
     @NotBlank(message = "Необходимо указать имя")
     @Length(min = 2, max = 20, message = "Длина имени должна быть от 2 до 20 символов")
@@ -31,7 +32,7 @@ public class UserDto {
     String phone;
     @Length(max = 500, message = "Описание должно быть длинной не более 500 символов")
     String description;
-    @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
+    @NotBlank(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
     @Builder.Default
     Status status = Status.ACTIVE;
