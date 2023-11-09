@@ -1,4 +1,34 @@
-DROP TABLE IF EXISTS users, buyer, seller, admin, category, vendor, image, basket, "order", statistic, product, requisite CASCADE;
+--DROP TABLE IF EXISTS users, buyer, seller, admin, category, vendor, image, basket, "order", statistic, product, requisite CASCADE;
+
+drop table if exists product_order cascade;
+
+drop table if exists product_basket cascade;
+
+drop table if exists countries cascade;
+
+drop table if exists users cascade;
+
+drop table if exists admin cascade;
+
+drop table if exists basket cascade;
+
+drop table if exists "order" cascade;
+
+drop table if exists statistic cascade;
+
+drop table if exists buyer cascade;
+
+drop table if exists product cascade;
+
+drop table if exists seller cascade;
+
+drop table if exists requisite cascade;
+
+drop table if exists category cascade;
+
+drop table if exists vendor cascade;
+
+drop table if exists image cascade;
 
 CREATE TABLE IF NOT EXISTS users
 (

@@ -75,4 +75,11 @@ public class ErrorHandler {
         e.printStackTrace();
         return new ErrorResponse(e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotValidValueException(final NotValidValueException e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
+    }
 }
