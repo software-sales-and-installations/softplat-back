@@ -39,7 +39,7 @@ public class AdminService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    public boolean checkIfUserExistsByEmail(String email) {
+    private boolean checkIfUserExistsByEmail(String email) {
         return adminRepository.findByEmail(email).isPresent();
     }
 }
