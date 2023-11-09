@@ -14,6 +14,7 @@ import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
@@ -47,6 +48,9 @@ public class UserProductService {
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
+        if (productDto.getInstallation() != null && productDto.getInstallation()
+                && productDto.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо указать цену установки.");
         return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
@@ -88,6 +92,9 @@ public class UserProductService {
         if (productForUpdate.getInstallation() != null) {
             product.setInstallation(productForUpdate.getInstallation());
         }
+        if (productForUpdate.getInstallation() != null && productForUpdate.getInstallation()
+                && productForUpdate.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо указать цену установки.");
         product.setProductStatus(ProductStatus.DRAFT);
         return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
