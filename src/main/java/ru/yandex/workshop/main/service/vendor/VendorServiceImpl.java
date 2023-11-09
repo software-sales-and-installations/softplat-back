@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.yandex.workshop.main.config.PageRequestOverride;
+import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
@@ -78,7 +78,7 @@ public class VendorServiceImpl implements VendorService {
                 .add(vendorFilter.getCountries(), vendor.country::in)
                 .buildAnd();
 
-        Page<Vendor> vendors = vendorRepository.findAll(predicate, pageRequest);
+        Page<Vendor> vendors = repository.findAll(predicate, pageRequest);
 
         return vendors.getContent().stream()
                 .map(VendorMapper.INSTANCE::vendorToVendorResponseDto)

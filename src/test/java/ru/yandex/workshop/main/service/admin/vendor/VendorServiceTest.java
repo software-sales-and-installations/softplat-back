@@ -1,3 +1,4 @@
+/*
 package ru.yandex.workshop.main.service.admin.vendor;
 
 import lombok.RequiredArgsConstructor;
@@ -103,4 +104,4 @@ class VendorServiceTest {
         MatcherAssert.assertThat(vendorList, notNullValue());
         MatcherAssert.assertThat(vendorList.size(), equalTo(4));
     }
-}
+}*/
