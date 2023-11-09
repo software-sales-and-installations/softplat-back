@@ -19,7 +19,6 @@ import java.util.List;
 public class PublicProductController {
     private final PublicProductService productService;
 
-    // TODO поиск и каталог ПО
     @GetMapping(path = "/{productId}")
     public ProductResponseDto getProductById(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_GET_PRODUCT_BY_ID.label, productId);
