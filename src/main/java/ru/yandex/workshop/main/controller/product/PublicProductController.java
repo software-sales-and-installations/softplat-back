@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.product.ProductFilter;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.product.SortBy;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.product.PublicProductService;
 
@@ -41,7 +42,7 @@ public class PublicProductController {
             @RequestBody @Valid ProductFilter productFilter,
             @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
             @RequestParam(name = "size", defaultValue = "20") @Min(1) int size,
-            @RequestParam(name = "sort", defaultValue = "new") String sort) {
+            @RequestParam(name = "sort", defaultValue = "new") SortBy sort) {
         log.debug(LogMessage.TRY_GET_PRODUCTS_FILTER.label);
         return productService.getProductsByFilter(productFilter, from, size, sort);
     }

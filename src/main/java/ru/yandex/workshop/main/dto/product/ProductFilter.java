@@ -21,6 +21,7 @@ public class ProductFilter {
     private List<Long> sellerIds;
     private List<Long> vendorIds;
     private Boolean isRussian;
+    private Boolean isDemo;
     private Float priceMin;
     private Float priceMax;
 }

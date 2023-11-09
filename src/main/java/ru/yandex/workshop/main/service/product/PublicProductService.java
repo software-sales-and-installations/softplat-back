@@ -14,8 +14,10 @@ import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.product.ProductFilter;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.product.SortBy;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.product.QProduct;
@@ -57,8 +59,8 @@ public class PublicProductService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter, int from, int size, String sort) {
-        Sort sortBy = (sort.equals("new")) ?
+    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter, int from, int size, SortBy sort) {
+        Sort sortBy = (sort.equals(SortBy.NEWEST)) ?
                 Sort.by("productionTime").descending() : Sort.by("price").ascending();
 
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
@@ -92,6 +94,16 @@ public class PublicProductService {
             predicate = ExpressionUtils.and(predicate, countryExpression);
         }
 
+        if (productFilter.getIsDemo() != null) {
+            BooleanExpression licenseExpression;
+            if (productFilter.getIsDemo()) {
+                licenseExpression = product.license.eq(License.DEMO);
+            } else {
+                licenseExpression = product.license.ne(License.DEMO);
+            }
+            predicate = ExpressionUtils.and(predicate, licenseExpression);
+        }
+
         Page<Product> products = productRepository.findAll(predicate, pageRequest);
 
         return products.getContent().stream()
@@ -99,5 +111,3 @@ public class PublicProductService {
                 .collect(Collectors.toList());
     }
 }
-
-
