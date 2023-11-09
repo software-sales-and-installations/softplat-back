@@ -15,11 +15,11 @@ import java.util.List;
 public interface ProductOrderRepository extends JpaRepository<ProductOrder, Long>,
         QuerydslPredicateExecutor<ProductOrder> {
 
-    List<ProductOrder> findAllProductOrderAndTimestampBetween(
-            Predicate predicate,
-            PageRequest pageRequest,
-            @Param("start") LocalDate start,
-            @Param("end") LocalDate end);
+//    List<ProductOrder> findAllProductOrderAndTimestampBetween(
+//            Predicate predicate,
+//            PageRequest pageRequest,
+//            @Param("start") LocalDate start,
+//            @Param("end") LocalDate end);
 
 //    List<ProductOrder> findAllByProductOrderByDateBetween(Predicate predicate, PageRequest pageRequest, LocalDate start, LocalDate end);
 }

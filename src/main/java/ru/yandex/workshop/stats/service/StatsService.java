@@ -2,6 +2,7 @@ package ru.yandex.workshop.stats.service;
 
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -38,11 +39,12 @@ public class StatsService {
 
     public SellerReport getSellerReportAdmin(
             StatsFilterAdmin statsFilterAdmin,
-            LocalDate start,
-            LocalDate end,
+            LocalDate start, // вот здесь проблема, у нас в ProductOrder нету даты
+            LocalDate end,   // и тут соответственно
             String sort,
-            int from,
-            int size) {
+            int from,       // пагинация для статистики не нужна
+            int size) {     // пагинация для статистики не нужна
+
 //        if (sort.equals(SortEnum.QUANTITY.toString().toLowerCase())) {
 //            sort = valueOf(Sort.by(SortEnum.productAmount.toString().toLowerCase()));
 //        }
@@ -58,7 +60,9 @@ public class StatsService {
                 .add(statsFilterAdmin.getVendorIds(), qProductOrder.product.vendor.id::in)
                 .buildAnd();
         SellerReport sellerReport = new SellerReport();
-        List<ProductOrder> productOrderList = productOrderRepository.findAllProductOrderAndTimestampBetween(predicate, pageRequest, start, end);
+
+        Page<ProductOrder> productOrderList = productOrderRepository.findAll(predicate, pageRequest);
+
         List<SellerReportEntry> sellerReportEntryList = new ArrayList<>();
         Float sumRevenue = 0F;
         for (ProductOrder productOrder : productOrderList) {
