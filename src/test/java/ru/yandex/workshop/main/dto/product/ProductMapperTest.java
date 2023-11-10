@@ -9,7 +9,6 @@ import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
-import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
@@ -59,18 +58,6 @@ class ProductMapperTest {
                 .bytes(new byte[]{0x01, 0x02, 0x03})
                 .build();
 
-        Seller seller = Seller
-                .builder()
-                .id(1L)
-                .email("aamamama_ma@mail.ru")
-                .name("seller")
-                .phone("+79111111111")
-                .description("description seller")
-                .registrationTime(time.minusYears(5L))
-                .requisites(requisites)
-                .image(image)
-                .build();
-
         ProductDto productDto = ProductDto
                 .builder()
                 .name("product")
@@ -79,7 +66,6 @@ class ProductMapperTest {
                 .category(category.getId())
                 .license(License.LICENSE)
                 .vendor(vendor.getId())
-                .seller(seller.getId())
                 .price(100.5F)
                 .quantity(5)
                 .installation(true)
@@ -93,7 +79,6 @@ class ProductMapperTest {
         assertThat(result).extractingJsonPathStringValue("$.version").isEqualTo("22");
         assertThat(result).extractingJsonPathNumberValue("$.category").isEqualTo(1);
         assertThat(result).extractingJsonPathStringValue("$.license").isEqualTo(License.LICENSE.toString());
-        assertThat(result).extractingJsonPathNumberValue("$.seller").isEqualTo(1);
         assertThat(result).extractingJsonPathNumberValue("$.price").isEqualTo(100.5);
         assertThat(result).extractingJsonPathNumberValue("$.quantity").isEqualTo(5);
         assertThat(result).extractingJsonPathValue("$.installation").isEqualTo(true);

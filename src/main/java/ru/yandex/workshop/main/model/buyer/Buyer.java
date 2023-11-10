@@ -21,12 +21,9 @@ public class Buyer {
     Long id;
     @Column(unique = true)
     String email;
-    @Column(name = "first_name")
-    String firstName;
-    @Column(name = "last_name")
-    String lastName;
+    String name;
     @Column(name = "number")
-    String telephone;
+    String phone;
     @DateTimeFormat
     @Column(name = "registration_time")
     LocalDateTime registrationTime;

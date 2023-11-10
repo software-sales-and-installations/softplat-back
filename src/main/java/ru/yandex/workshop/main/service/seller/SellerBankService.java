@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
+import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
@@ -21,19 +22,22 @@ public class SellerBankService {
     private final SellerRepository sellerRepository;
     private final BankRepository bankRepository;
 
-    public BankRequisitesDto getRequisites(String email) {
-        Seller seller = getSellerFromDatabase(email);
+    public BankRequisitesDto getRequisites(Long userId) {
+        Seller seller = sellerRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
         if (seller.getRequisites() == null)
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
-        return new BankRequisitesDto(seller.getRequisites().getId(), seller.getRequisites().getAccount());
+        return SellerMapper.INSTANCE.requisitesToDto(seller.getRequisites());
     }
 
     @Transactional
     public BankRequisitesDto updateRequisites(String email, BankRequisitesDto requisites) {
         Seller seller = getSellerFromDatabase(email);
+        if (seller.getRequisites() != null) {
+            bankRepository.deleteById(seller.getRequisites().getId());
+        }
         seller.setRequisites(bankRepository.save(new BankRequisites(null, requisites.getAccount())));
-        sellerRepository.save(seller);
-        return new BankRequisitesDto(seller.getRequisites().getId(), seller.getRequisites().getAccount());
+        return SellerMapper.INSTANCE.requisitesToDto(sellerRepository.save(seller).getRequisites());
     }
 
     @Transactional

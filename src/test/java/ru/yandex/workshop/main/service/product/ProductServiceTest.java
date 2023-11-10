@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.workshop.main.config.PageRequestOverride;
+import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
@@ -39,7 +39,8 @@ import static org.mockito.Mockito.when;
 @Transactional
 class ProductServiceTest {
 
-    private ProductService productService;
+    private PublicProductService publicProductService;
+    private UserProductService userProductService;
     private ProductRepository productRepository;
     private SellerRepository sellerRepository;
     private CategoryRepository categoryRepository;
@@ -59,7 +60,7 @@ class ProductServiceTest {
     static Long categoryId;
     static BankRequisites bankRequisites;
     static LocalDateTime time;
-    static String foramttedString;
+    static String formattedString;
 
     @BeforeEach
     void beforeEach() {
@@ -67,19 +68,20 @@ class ProductServiceTest {
         sellerRepository = mock(SellerRepository.class);
         categoryRepository = mock(CategoryRepository.class);
         vendorRepository = mock(VendorRepository.class);
-        productService = new ProductService(
+        userProductService = new UserProductService(
                 productRepository,
                 sellerRepository,
-                categoryRepository,
-                vendorRepository,
                 imageService);
+        publicProductService = new PublicProductService(
+                productRepository,
+                sellerRepository);
 
         pageRequest = PageRequestOverride.of(0, 20);
 
         time = LocalDateTime.of(LocalDate.of(2023, 11, 1),
                 LocalTime.of(22, 21, 41, 760048200));
         DateTimeFormatter aFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        foramttedString = time.format(aFormatter);
+        formattedString = time.format(aFormatter);
 
         bankRequisites = new BankRequisites(
                 1L,
@@ -133,7 +135,6 @@ class ProductServiceTest {
                 .category(categoryId)
                 .license(License.LICENSE)
                 .vendor(vendorId)
-                .seller(sellerId)
                 .price(1000.421F)
                 .quantity(5)
                 .installation(true)
@@ -147,7 +148,6 @@ class ProductServiceTest {
                 .category(categoryId)
                 .license(License.LICENSE)
                 .vendor(vendorId)
-                .seller(sellerId)
                 .price(1000.421F)
                 .quantity(5)
                 .installation(true)
@@ -179,8 +179,8 @@ class ProductServiceTest {
                         product.getSeller().getId(),
                         pageRequest))
                 .thenReturn(Collections.singletonList(product));
-        final List<ProductResponseDto> productDtoList = productService
-                .getProductsSeller(
+        final List<ProductResponseDto> productDtoList = publicProductService
+                .getProductsOfSeller(
                         product.getSeller().getId(),
                         0,
                         20);
@@ -200,7 +200,7 @@ class ProductServiceTest {
                 .findById(
                         product.getId()))
                 .thenReturn(Optional.of(product));
-        var productDtoGet = productService.getProductById(seller.getId(), product.getId());
+        var productDtoGet = publicProductService.getProductById(product.getId());
         assertNotNull(productDtoGet);
         assertEquals(product.getName(), productDtoGet.getName());
         assertEquals(product.getDescription(), productDtoGet.getDescription());
@@ -220,7 +220,7 @@ class ProductServiceTest {
                 .findById(category.getId()))
                 .thenReturn(Optional.of(category));
         when(sellerRepository
-                .findById(seller.getId()))
+                .findByEmail(seller.getEmail()))
                 .thenReturn(Optional.of(seller));
         when(vendorRepository
                 .findById(vendor.getId()))
@@ -228,7 +228,7 @@ class ProductServiceTest {
         when(productRepository
                 .save(product))
                 .thenReturn(product);
-        var productDtoSave = productService.createProduct(productDto);
+        var productDtoSave = userProductService.createProduct(seller.getEmail(), productDto);
         assertNotNull(productDtoSave);
         assertEquals(product.getName(), productDtoSave.getName());
         assertEquals(product.getDescription(), productDtoSave.getDescription());
@@ -245,7 +245,7 @@ class ProductServiceTest {
     @DisplayName("Вызов метода updateProductTest: обновление продукта")
     void updateProductTest() {
         when(sellerRepository
-                .findById(seller.getId()))
+                .findByEmail(seller.getEmail()))
                 .thenReturn(Optional.of(seller));
         when(productRepository
                 .findById(product.getId()))
@@ -259,7 +259,7 @@ class ProductServiceTest {
         product.setInstallation(productForUpdate.getInstallation());
         product.setProductAvailability(productForUpdate.getProductAvailability());
 
-        var productDtoUpdate = productService.updateProduct(seller.getId(), product.getId(),
+        var productDtoUpdate = userProductService.updateProduct(seller.getEmail(), product.getId(),
                 productForUpdate);
         assertNotNull(productDtoUpdate);
         assertEquals(product.getName(), productDtoUpdate.getName());
@@ -277,7 +277,7 @@ class ProductServiceTest {
     @DisplayName("Вызов метода updateStatusProductOnSentTest: обновление статуса на 'SHIPPED'")
     void updateStatusProductOnSentTest() {
         when(sellerRepository
-                .findById(seller.getId()))
+                .findByEmail(seller.getEmail()))
                 .thenReturn(Optional.of(seller));
 
         when(productRepository
@@ -286,60 +286,17 @@ class ProductServiceTest {
 
         product.setProductStatus(ProductStatus.SHIPPED);
 
-        var productDtoUpdate = productService.updateStatusProductOnSent(seller.getId(),
+        var productDtoUpdate = userProductService.updateStatusProductOnSent(seller.getEmail(),
                 product.getId());
         assertNotNull(product);
         assertEquals(product.getProductStatus(), productDtoUpdate.getProductStatus());
     }
 
     @Test
-    @DisplayName("Вызов метода getAllProductsSellerTest: получение всех продуктов всех seller")
-    void getAllProductsSellerTest() {
-        when(sellerRepository
-                .findById(
-                        product.getSeller().getId()))
-                .thenReturn(Optional.of(product.getSeller()));
-
-        when(productRepository.findAllBy(pageRequest))
-                .thenReturn(Collections.singletonList(product));
-        final List<ProductResponseDto> productDtoList = productService
-                .getAllProductsSeller(
-                        0,
-                        20);
-        assertNotNull(productDtoList);
-        assertEquals(1, productDtoList.size());
-        assertEquals(product.getName(), productDtoList.get(0).getName());
-    }
-
-    @Test
-    @DisplayName("Вызов метода getProductByIdAdminTest: получение продуктa по id")
-    void getProductByIdAdminTest() {
-        when(sellerRepository
-                .findById(
-                        product.getSeller().getId()))
-                .thenReturn(Optional.of(product.getSeller()));
-
-        when(productRepository.findById(product.getId()))
-                .thenReturn(Optional.of(product));
-        var productByIdAdmin = productService
-                .getProductByIdAdmin(product.getId());
-        assertNotNull(productByIdAdmin);
-        assertEquals(product.getName(), productByIdAdmin.getName());
-        assertEquals(product.getDescription(), productByIdAdmin.getDescription());
-        assertEquals(product.getVersion(), productByIdAdmin.getVersion());
-        assertEquals(product.getCategory().getId(), productByIdAdmin.getCategory().getId());
-        assertEquals(product.getVendor().getId(), productByIdAdmin.getVendor().getId());
-        assertEquals(product.getPrice(), productByIdAdmin.getPrice());
-        assertEquals(product.getQuantity(), productByIdAdmin.getQuantity());
-        assertEquals(product.getPrice(), productByIdAdmin.getPrice());
-        assertEquals(product.getInstallationPrice(), productByIdAdmin.getInstallationPrice());
-    }
-
-    @Test
     @DisplayName("Вызов метода updateStatusProductOnPublishedTest: обновление статуса на 'PUBLISHED'")
     void updateStatusProductOnPublishedTest() {
         when(sellerRepository
-                .findById(seller.getId()))
+                .findByEmail(seller.getEmail()))
                 .thenReturn(Optional.of(seller));
 
         when(productRepository
@@ -348,7 +305,7 @@ class ProductServiceTest {
 
         product.setProductStatus(ProductStatus.PUBLISHED);
 
-        var productDtoUpdate = productService.updateStatusProductOnSent(seller.getId(),
+        var productDtoUpdate = userProductService.updateStatusProductOnSent(seller.getEmail(),
                 product.getId());
         assertNotNull(product);
         assertEquals(product.getProductStatus(), productDtoUpdate.getProductStatus());
@@ -358,7 +315,7 @@ class ProductServiceTest {
     @DisplayName("Вызов метода updateStatusProductOnRejectedTest: обновление статуса на 'REJECTED'")
     void updateStatusProductOnRejectedTest() {
         when(sellerRepository
-                .findById(seller.getId()))
+                .findByEmail(seller.getEmail()))
                 .thenReturn(Optional.of(seller));
 
         when(productRepository
@@ -367,14 +324,14 @@ class ProductServiceTest {
 
         product.setProductStatus(ProductStatus.REJECTED);
 
-        var productDtoUpdate = productService.updateStatusProductOnSent(seller.getId(),
+        var productDtoUpdate = userProductService.updateStatusProductOnSent(seller.getEmail(),
                 product.getId());
         assertNotNull(product);
         assertEquals(product.getProductStatus(), productDtoUpdate.getProductStatus());
     }
 
     @Test
-    @DisplayName("Вызов метода deleteProductAdminTest: удаление продукта")
+    @DisplayName("Вызов метода deleteProductTest: удаление продукта")
     void deleteProductAdminTest() {
         when(sellerRepository
                 .findById(seller.getId()))
@@ -383,6 +340,6 @@ class ProductServiceTest {
                 .findById(product.getId()))
                 .thenReturn(Optional.of(product));
 
-        productService.deleteProductAdmin(product.getId());
+        userProductService.deleteProduct(product.getId());
     }
 }

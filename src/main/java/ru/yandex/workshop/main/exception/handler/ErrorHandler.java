@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.workshop.main.exception.*;
+import ru.yandex.workshop.security.exception.UnauthorizedException;
+import ru.yandex.workshop.security.exception.WrongRegException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,20 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final EntityNotFoundException e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleWrongRegException(final WrongRegException e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUnauthorizedException(final UnauthorizedException e) {
         e.printStackTrace();
         return new ErrorResponse(e.getMessage());
     }
