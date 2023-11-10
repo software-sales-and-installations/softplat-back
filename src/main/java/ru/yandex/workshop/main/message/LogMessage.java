@@ -3,6 +3,10 @@ package ru.yandex.workshop.main.message;
 public enum LogMessage {
     TRY_PATCH_BUYER("Попытка изменения покупателя по email: {}"),
     TRY_GET_BUYER("Попытка получения покупателя по id: {}"),
+    TRY_ADD_SELLER("Попытка добавления нового продавца."),
+    TRY_ADD_SELLER_IMAGE("Попытка добавления нового изображения продавца."),
+    TRY_DELETE_SELLER_IMAGE("Попытка удаления изображения продавца."),
+    TRY_GET_PRODUCTS_FILTER("Попытка получения списка продуктов с учетом фильтра."),
     TRY_PATCH_SELLER("Попытка изменения продавца по email: {}"),
     TRY_GET_SELLER("Попытка получения продавца по id: {}"),
     TRY_GET_All_SELLERS("Попытка получения списка продавцов"),
@@ -11,7 +15,7 @@ public enum LogMessage {
     TRY_SELLER_DELETE_REQUISITES("Попытка удаления реквизитов по email: {}"),
     TRY_ADMIN_ADD_VENDOR("Попытка добавления нового вендора."),
     TRY_ADMIN_PATCH_VENDOR("Попытка изменения вендора."),
-    TRY_GET_VENDOR("Попытка получения списка вендоров."),
+    TRY_GET_VENDORS("Попытка получения списка вендоров."),
     TRY_GET_ID_VENDOR("Попытка получения вендора по id: {}."),
     TRY_ADMIN_DELETE_VENDOR("Попытка удаления вендора по id: {}."),
     TRY_GET_ADMIN("Попытка получения админа по email: {}"),
@@ -36,9 +40,7 @@ public enum LogMessage {
     TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_INSTALLATION_FOR_PRODUCT_IN_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_ADMIN("ПОпытка добавить нового админа"),
-    TRY_ADD_SELLER("ПОпытка добавить нового продавца"),
-    TRY_ADD_BUYER("ПОпытка добавить нового продавца"),
-    TRY_GET_PRODUCTS_FILTER("Попытка получения списка продуктов с учетом фильтра.");
+    TRY_ADD_BUYER("ПОпытка добавить нового продавца");
 
     public final String label;
 
