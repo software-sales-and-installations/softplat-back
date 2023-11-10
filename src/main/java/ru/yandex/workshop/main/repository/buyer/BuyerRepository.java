@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface BuyerRepository extends JpaRepository<Buyer, Long>, QuerydslPredicateExecutor<Buyer> {
     Optional<Buyer> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

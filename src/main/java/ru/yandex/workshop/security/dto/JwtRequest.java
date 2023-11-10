@@ -1,12 +1,14 @@
 package ru.yandex.workshop.security.dto;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.validator.constraints.Length;
 import ru.yandex.workshop.main.dto.validation.New;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -14,9 +16,11 @@ import javax.validation.constraints.NotNull;
 public class JwtRequest {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
     @Email(message = "Email должен быть корректным адресом электронной почты")
+    @Length(min = 6, max = 30, message = "Адрес электронной почты должен содержать от 6 до 30 символов")
     String email;
-    @NotNull(message = "Необходимо указать пароль")
+    @Length(groups = {New.class}, min = 8, max = 40, message = "Пароль должен быть длиной от 8 до 40 символов")
+    @NotBlank(message = "Необходимо указать пароль")
     String password;
-    @NotNull(groups = {New.class}, message = "Необходимо указать пароль повторно")
+    @NotBlank(groups = {New.class}, message = "Необходимо указать пароль повторно")
     String confirmPassword;
 }

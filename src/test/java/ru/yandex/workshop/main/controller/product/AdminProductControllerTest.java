@@ -1,142 +1,142 @@
-package ru.yandex.workshop.main.controller.product;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.workshop.main.dto.product.ProductMapper;
-import ru.yandex.workshop.main.dto.product.ProductResponseDto;
-import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
-import ru.yandex.workshop.main.dto.vendor.VendorMapper;
-import ru.yandex.workshop.main.model.product.Category;
-import ru.yandex.workshop.main.model.product.License;
-import ru.yandex.workshop.main.model.product.Product;
-import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.main.model.seller.BankRequisites;
-import ru.yandex.workshop.main.model.seller.Seller;
-import ru.yandex.workshop.main.model.vendor.Country;
-import ru.yandex.workshop.main.model.vendor.Vendor;
-import ru.yandex.workshop.main.service.product.PublicProductService;
-import ru.yandex.workshop.main.service.product.UserProductService;
-
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@WebMvcTest(controllers = UserProductController.class)
-class AdminProductControllerTest {
-
-    @MockBean
-    private UserProductService userProductService;
-    @MockBean
-    private PublicProductService publicProductService;
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper mapper = new ObjectMapper();
-
-    static Product product;
-    static Long productId;
-    static ProductResponseDto productDto;
-    static Vendor vendor;
-    static Long vendorId;
-    static Seller seller;
-    static Long sellerId;
-    static Category category;
-    static Long categoryId;
-    static BankRequisites bankRequisites;
-    static LocalDateTime time;
-    static String foramttedString;
-
-    static List<ProductResponseDto> productDtoList;
-
-    @BeforeAll
-    static void beforeEach() {
-        time = LocalDateTime.of(LocalDate.of(2023, 11, 1),
-                LocalTime.of(22, 21, 41, 760048200));
-        DateTimeFormatter aFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        foramttedString = time.format(aFormatter);
-
-        bankRequisites = new BankRequisites(
-                1L,
-                "1111 2222 3333 4444");
-
-        vendorId = 1L;
-        vendor = Vendor.builder()
-                .id(vendorId)
-                .name("name1")
-                .description("Name One")
-                .country(Country.RUSSIA)
-                .build();
-
-        sellerId = 1L;
-        seller = Seller.builder()
-                .id(sellerId)
-                .email("NameTwo@gmail.com")
-                .name("Name")
-                .phone(" +79111111111")
-                .description("Description seller")
-                .registrationTime(time)
-                .requisites(bankRequisites)
-                .build();
-
-        categoryId = 1L;
-        category = new Category(
-                categoryId,
-                "Category");
-
-        productId = 1L;
-        product = Product.builder()
-                .id(productId)
-                .description("Description product")
-                .version("2.0.0.1")
-                .productionTime(time)
-                .category(category)
-                .license(License.LICENSE)
-                .vendor(vendor)
-                .seller(seller)
-                .price(1000.421F)
-                .quantity(5)
-                .installation(true)
-                .productStatus(ProductStatus.DRAFT)
-                .productAvailability(true)
-                .installationPrice(10.00F)
-                .build();
-
-        productDto = ProductResponseDto.builder()
-                .id(productId)
-                .description("Description product")
-                .version("2.0.0.1")
-                .productionTime(time)
-                .category(category)
-                .license(License.LICENSE)
-                .vendor(VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor))
-                .seller(SellerMapper.INSTANCE.sellerToSellerResponseDto(seller))
-                .price(1000.421F)
-                .quantity(5)
-                .installation(true)
-                .productStatus(ProductStatus.DRAFT)
-                .productAvailability(true)
-                .installationPrice(10.00F)
-                .build();
-
-        productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product));
-    }
+//package ru.yandex.workshop.main.controller.product;
+//
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.DisplayName;
+//import org.junit.jupiter.api.Test;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+//import org.springframework.boot.test.mock.mockito.MockBean;
+//import org.springframework.http.MediaType;
+//import org.springframework.test.web.servlet.MockMvc;
+//import ru.yandex.workshop.main.dto.product.ProductMapper;
+//import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+//import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
+//import ru.yandex.workshop.main.dto.vendor.VendorMapper;
+//import ru.yandex.workshop.main.model.product.Category;
+//import ru.yandex.workshop.main.model.product.License;
+//import ru.yandex.workshop.main.model.product.Product;
+//import ru.yandex.workshop.main.model.product.ProductStatus;
+//import ru.yandex.workshop.main.model.seller.BankRequisites;
+//import ru.yandex.workshop.main.model.seller.Seller;
+//import ru.yandex.workshop.main.model.vendor.Country;
+//import ru.yandex.workshop.main.model.vendor.Vendor;
+//import ru.yandex.workshop.main.service.product.PublicProductService;
+//import ru.yandex.workshop.main.service.product.UserProductService;
+//
+//import java.nio.charset.StandardCharsets;
+//import java.time.LocalDate;
+//import java.time.LocalDateTime;
+//import java.time.LocalTime;
+//import java.time.format.DateTimeFormatter;
+//import java.util.List;
+//
+//import static org.hamcrest.Matchers.is;
+//import static org.mockito.ArgumentMatchers.anyInt;
+//import static org.mockito.ArgumentMatchers.anyLong;
+//import static org.mockito.Mockito.when;
+//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+//
+//@WebMvcTest(controllers = UserProductController.class)
+//class AdminProductControllerTest {
+//
+//    @MockBean
+//    private UserProductService userProductService;
+//    @MockBean
+//    private PublicProductService publicProductService;
+//    @Autowired
+//    private MockMvc mockMvc;
+//    @Autowired
+//    private ObjectMapper mapper = new ObjectMapper();
+//
+//    static Product product;
+//    static Long productId;
+//    static ProductResponseDto productDto;
+//    static Vendor vendor;
+//    static Long vendorId;
+//    static Seller seller;
+//    static Long sellerId;
+//    static Category category;
+//    static Long categoryId;
+//    static BankRequisites bankRequisites;
+//    static LocalDateTime time;
+//    static String foramttedString;
+//
+//    static List<ProductResponseDto> productDtoList;
+//
+//    @BeforeAll
+//    static void beforeEach() {
+//        time = LocalDateTime.of(LocalDate.of(2023, 11, 1),
+//                LocalTime.of(22, 21, 41, 760048200));
+//        DateTimeFormatter aFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        foramttedString = time.format(aFormatter);
+//
+//        bankRequisites = new BankRequisites(
+//                1L,
+//                "1111 2222 3333 4444");
+//
+//        vendorId = 1L;
+//        vendor = Vendor.builder()
+//                .id(vendorId)
+//                .name("name1")
+//                .description("Name One")
+//                .country(Country.RUSSIA)
+//                .build();
+//
+//        sellerId = 1L;
+//        seller = Seller.builder()
+//                .id(sellerId)
+//                .email("NameTwo@gmail.com")
+//                .name("Name")
+//                .phone(" +79111111111")
+//                .description("Description seller")
+//                .registrationTime(time)
+//                .requisites(bankRequisites)
+//                .build();
+//
+//        categoryId = 1L;
+//        category = new Category(
+//                categoryId,
+//                "Category");
+//
+//        productId = 1L;
+//        product = Product.builder()
+//                .id(productId)
+//                .description("Description product")
+//                .version("2.0.0.1")
+//                .productionTime(time)
+//                .category(category)
+//                .license(License.LICENSE)
+//                .vendor(vendor)
+//                .seller(seller)
+//                .price(1000.421F)
+//                .quantity(5)
+//                .installation(true)
+//                .productStatus(ProductStatus.DRAFT)
+//                .productAvailability(true)
+//                .installationPrice(10.00F)
+//                .build();
+//
+//        productDto = ProductResponseDto.builder()
+//                .id(productId)
+//                .description("Description product")
+//                .version("2.0.0.1")
+//                .productionTime(time)
+//                .category(category)
+//                .license(License.LICENSE)
+//                .vendor(VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor))
+//                .seller(SellerMapper.INSTANCE.sellerToSellerResponseDto(seller))
+//                .price(1000.421F)
+//                .quantity(5)
+//                .installation(true)
+//                .productStatus(ProductStatus.DRAFT)
+//                .productAvailability(true)
+//                .installationPrice(10.00F)
+//                .build();
+//
+//        productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product));
+//    }
 
 //    @Test
 //    @DisplayName("Вызов метода getAllProductsSellerTest: получение всех продуктов")
@@ -260,5 +260,5 @@ class AdminProductControllerTest {
 //                        .param("productId", "1"))
 //                .andExpect(status().isOk());
 //    }
-}
+//}
 

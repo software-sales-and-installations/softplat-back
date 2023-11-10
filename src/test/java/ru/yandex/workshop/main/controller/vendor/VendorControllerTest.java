@@ -9,16 +9,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorFilter;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
-import ru.yandex.workshop.main.service.vendor.VendorService;
+import ru.yandex.workshop.main.service.vendor.VendorServiceImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = VendorController.class)
 class VendorControllerTest {
     @MockBean
-    VendorService service;
+    VendorServiceImpl service;
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -77,15 +77,17 @@ class VendorControllerTest {
                 .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
     }
 
+
     @Test
-    void findVendorAll() throws Exception {
-        when(service.findVendorAll())
+    void findVendorsWithFiltersTest() throws Exception {
+        when(service.findVendorAll(any(), anyInt(), anyInt()))
                 .thenReturn(vendorResponseDtoList);
 
         mvc.perform(get("/vendor")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(new VendorFilter("test", List.of(Country.CHINA)))))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(vendorResponseDtoList)));
     }

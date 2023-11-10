@@ -12,7 +12,9 @@ import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
+import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
@@ -46,6 +48,9 @@ public class UserProductService {
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
+        if (productDto.getInstallation() != null && productDto.getInstallation()
+                && productDto.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо указать цену установки.");
         return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
 
@@ -87,6 +92,9 @@ public class UserProductService {
         if (productForUpdate.getInstallation() != null) {
             product.setInstallation(productForUpdate.getInstallation());
         }
+        if (productForUpdate.getInstallation() != null && productForUpdate.getInstallation()
+                && productForUpdate.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо указать цену установки.");
         product.setProductStatus(ProductStatus.DRAFT);
         return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
     }
@@ -133,6 +141,9 @@ public class UserProductService {
     public ProductResponseDto updateStatusProduct(Long productId, ProductStatus status) {
         Product product = getProductFromDatabase(productId);
 
+        if (product.getProductStatus() == status)
+            throw new DuplicateException("Продукт уже имеет этот статус.");
+
         switch (status) {
             case PUBLISHED:
                 product.setProductStatus(ProductStatus.PUBLISHED);
@@ -154,7 +165,8 @@ public class UserProductService {
 
 
     public List<ProductResponseDto> getAllProductsShipped(int from, int size) {
-        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED, PageRequestOverride.of(from, size))
+        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
+                        PageRequestOverride.of(from, size))
                 .stream()
                 .map(ProductMapper.INSTANCE::productToProductResponseDto)
                 .collect(Collectors.toList());

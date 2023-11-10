@@ -13,6 +13,6 @@ import javax.validation.constraints.Pattern;
 public class BankRequisitesDto {
     Long id;
     @Pattern(regexp = "[0-9]{16}", message = "Номер счета должен содержать 16 цифр 0-9")
-    @NotBlank
+    @NotBlank(message = "Необходимо указать номер счета")
     private String account;
 }

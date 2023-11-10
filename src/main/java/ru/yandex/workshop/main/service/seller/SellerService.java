@@ -41,9 +41,9 @@ public class SellerService {
         if (checkIfUserExistsByEmail(userDto.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userDto.getEmail());
 
-        if (userDto.getPhone().isEmpty())
+        if (userDto.getPhone() == null || userDto.getPhone().isEmpty())
             throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
-        if (userDto.getDescription().isEmpty())
+        if (userDto.getDescription() == null || userDto.getDescription().isEmpty())
             throw new ValidationException("Необходимо указать описание вашего профиля. Описание должно быть длинной не более 500 символов.");
 
 
@@ -108,12 +108,12 @@ public class SellerService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
     }
 
-    public Seller getSeller(String email) {
+    private Seller getSeller(String email) {
         return sellerRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    public boolean checkIfUserExistsByEmail(String email) {
+    private boolean checkIfUserExistsByEmail(String email) {
         return (sellerRepository.findByEmail(email).isPresent());
     }
 }
