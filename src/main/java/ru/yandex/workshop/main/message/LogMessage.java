@@ -40,7 +40,6 @@ public enum LogMessage {
     TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_INSTALLATION_FOR_PRODUCT_IN_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_ADMIN("Попытка добавить нового админа"),
-    TRY_ADD_SELLER("Попытка добавить нового продавца"),
     TRY_ADD_BUYER("Попытка добавить нового покупателя"),
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
     TRY_BUYER_DELETE_FAVORITE("Попытка удаления данных из избранного"),
