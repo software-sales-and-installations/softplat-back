@@ -3,7 +3,7 @@ package ru.yandex.workshop.main.dto.basket;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.yandex.workshop.security.dto.response.BuyerResponseDto;
+import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

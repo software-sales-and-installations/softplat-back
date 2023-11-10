@@ -3,16 +3,15 @@ package ru.yandex.workshop.main.service.buyer;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
 import ru.yandex.workshop.main.dto.basket.OrderToCreateDto;
+import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.Order;
 import ru.yandex.workshop.main.model.buyer.ProductBasket;
 import ru.yandex.workshop.main.model.image.Image;
@@ -21,15 +20,12 @@ import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
+import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.main.repository.buyer.OrderRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
-import ru.yandex.workshop.security.model.Role;
-import ru.yandex.workshop.security.model.Status;
-import ru.yandex.workshop.security.model.user.Buyer;
-import ru.yandex.workshop.security.model.user.Seller;
-import ru.yandex.workshop.security.repository.BuyerRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,13 +34,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureTestDatabase
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
@@ -95,15 +89,12 @@ class OrderServiceTest {
                 .requisites(bankRequisites)
                 .build();
 
-        buyer = new Buyer(
-                1L,
-                "NameTwo@gmail.com",
-                "Name",
-                "9111111111",
-                LocalDateTime.now(),
-                "123",
-                Role.BUYER,
-                Status.ACTIVE);
+        buyer = Buyer.builder()
+                .id(1L)
+                .email("NameTwo@gmail.com")
+                .name("user")
+                .phone("1234567890")
+                .build();
 
         Category category = new Category(
                 1L,
@@ -162,5 +153,29 @@ class OrderServiceTest {
         assertEquals(order.getProductionTime(), responseDto.getProductionTime());
     }
 
+    @Test
+    @SneakyThrows
+    void getOrderTest() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+
+        OrderResponseDto responseDto = orderService.getOrder(email, 1L);
+
+        assertEquals(order.getId(), responseDto.getId());
+        assertEquals(order.getProductionTime(), responseDto.getProductionTime());
+        assertEquals(order.getBuyer().getEmail(), responseDto.getBuyer().getEmail());
+    }
+
+    @Test
+    @SneakyThrows
+    void getAllOrdersTest() {
+        when(buyerRepository.findByEmail(email)).thenReturn(Optional.of(buyer));
+        when(orderRepository.findAllByBuyer_Id(anyLong(), any())).thenReturn(List.of(order));
+
+        List<OrderResponseDto> responseDto = orderService.getAllOrders(email);
+
+        assertEquals(order.getId(), responseDto.get(0).getId());
+        assertEquals(order.getProductionTime(), responseDto.get(0).getProductionTime());
+        assertEquals(order.getBuyer().getEmail(), responseDto.get(0).getBuyer().getEmail());
+    }
 }
 

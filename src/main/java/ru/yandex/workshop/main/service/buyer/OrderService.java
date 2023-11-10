@@ -3,6 +3,7 @@ package ru.yandex.workshop.main.service.buyer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.basket.OrderMapper;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
 import ru.yandex.workshop.main.dto.basket.OrderToCreateDto;
@@ -10,16 +11,17 @@ import ru.yandex.workshop.main.dto.basket.ProductOrderMapper;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.Order;
 import ru.yandex.workshop.main.model.buyer.ProductOrder;
+import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.main.repository.buyer.OrderRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
-import ru.yandex.workshop.security.model.user.Buyer;
-import ru.yandex.workshop.security.repository.BuyerRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,8 +35,7 @@ public class OrderService {
     public OrderResponseDto createOrder(String email, OrderToCreateDto orderToCreateDto) {
         if (orderToCreateDto.getProductBaskets() == null || orderToCreateDto.getProductBaskets().size() == 0)
             throw new EntityNotFoundException("Перед оформлением заказа добавьте товары в корзину");
-        Buyer buyer = buyerRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        Buyer buyer = getBuyerOrThrowException(email);
         Order order = new Order();
         order.setBuyer(buyer);
         order.setProductionTime(LocalDateTime.now());
@@ -44,7 +45,7 @@ public class OrderService {
             ProductOrder productOrder = ProductOrderMapper.INSTANCE.productBasketToProductOrder(
                     productBasketRepository.findById(productBasketId).orElseThrow(()
                     -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
-            if (productOrder.getProduct().getQuantity() >= productOrder.getQuantity()){
+            if (productOrder.getProduct().getQuantity() >= productOrder.getQuantity()) {
                 productOrder.setId(null);
                 if (productOrder.getInstallation()) {
                     productOrder.setProductAmount(productOrder.getProduct().getPrice() +
@@ -68,9 +69,15 @@ public class OrderService {
         return OrderMapper.INSTANCE.orderToOrderDto(order);
     }
 
-    /*public List<OrderResponseDto> getAllOrders(String email) {
-        Buyer buyer = buyerRepository.findByEmail(email).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    public List<OrderResponseDto> getAllOrders(String email) {
+        Buyer buyer = getBuyerOrThrowException(email);
+        return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.of(0, 20)).stream()
+                .map(OrderMapper.INSTANCE::orderToOrderDto)
+                .collect(Collectors.toList());
+    }
 
-    }*/
+    private Buyer getBuyerOrThrowException(String email) {
+        return buyerRepository.findByEmail(email).orElseThrow(() ->
+                new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    }
 }

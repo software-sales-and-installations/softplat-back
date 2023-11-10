@@ -38,12 +38,14 @@ public enum LogMessage {
     TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
     TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
     TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
-    TRY_ADD_INSTALLATION_FOR_PRODUCT_IN_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_ADMIN("Попытка добавить нового админа"),
     TRY_ADD_BUYER("Попытка добавить нового покупателя"),
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
     TRY_BUYER_DELETE_FAVORITE("Попытка удаления данных из избранного"),
-    TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}");
+    TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}"),
+    TRY_ADD_ORDER("Попытка создания оплаченного заказа"),
+    TRY_GET_ALL_ORDERS("Попытка получить все покупки"),
+    TRY_GET_ORDER("Попытка получить заказ по id {}");
 
     public final String label;
 
