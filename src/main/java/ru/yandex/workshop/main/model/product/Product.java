@@ -5,8 +5,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.workshop.main.model.image.Image;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Vendor;
-import ru.yandex.workshop.security.model.user.Seller;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

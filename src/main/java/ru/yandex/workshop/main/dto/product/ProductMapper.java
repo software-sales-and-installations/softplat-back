@@ -5,15 +5,15 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.image.ImageResponseDto;
+import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
+import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Vendor;
-import ru.yandex.workshop.security.dto.response.SellerResponseDto;
-import ru.yandex.workshop.security.mapper.SellerMapper;
-import ru.yandex.workshop.security.model.user.Seller;
 
 @Mapper
 public interface ProductMapper {
@@ -22,7 +22,6 @@ public interface ProductMapper {
 
     @Mapping(target = "category", expression = "java(mapCategoryIdToCategory(productDto))")
     @Mapping(target = "vendor", expression = "java(mapVendorIdToVendor(productDto))")
-    @Mapping(target = "seller", expression = "java(mapSellerIdToSeller(productDto))")
     Product productDtoToProduct(ProductDto productDto);
 
     @Mapping(target = "image", expression = "java(mapImageToImageResponseDto(product))")
@@ -53,10 +52,5 @@ public interface ProductMapper {
     default Vendor mapVendorIdToVendor(ProductDto productDto) {
         long vendorId = productDto.getVendor();
         return Vendor.builder().id(vendorId).build();
-    }
-
-    default Seller mapSellerIdToSeller(ProductDto productDto) {
-        long sellerId = productDto.getSeller();
-        return Seller.builder().id(sellerId).build();
     }
 }

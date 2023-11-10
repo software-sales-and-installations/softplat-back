@@ -13,14 +13,14 @@ import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.product.CategoryRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
+import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
-import ru.yandex.workshop.security.model.user.Seller;
-import ru.yandex.workshop.security.repository.SellerRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -135,7 +135,6 @@ class ProductServiceTest {
                 .category(categoryId)
                 .license(License.LICENSE)
                 .vendor(vendorId)
-                .seller(sellerId)
                 .price(1000.421F)
                 .quantity(5)
                 .installation(true)
@@ -149,7 +148,6 @@ class ProductServiceTest {
                 .category(categoryId)
                 .license(License.LICENSE)
                 .vendor(vendorId)
-                .seller(sellerId)
                 .price(1000.421F)
                 .quantity(5)
                 .installation(true)
@@ -293,25 +291,6 @@ class ProductServiceTest {
         assertNotNull(product);
         assertEquals(product.getProductStatus(), productDtoUpdate.getProductStatus());
     }
-
-    /*@Test
-    @DisplayName("Вызов метода getAllProductsSellerTest: получение всех продуктов всех seller")
-    void getAllProductsSellerTest() {
-        when(sellerRepository
-                .findById(
-                        product.getSeller().getId()))
-                .thenReturn(Optional.of(product.getSeller()));
-
-        when(productRepository.findAll(pageRequest))
-                .thenReturn(Collections.singletonList(product));
-        final List<ProductResponseDto> productDtoList = productService
-                .getAllProductsSeller(
-                        0,
-                        20);
-        assertNotNull(productDtoList);
-        assertEquals(1, productDtoList.size());
-        assertEquals(product.getName(), productDtoList.get(0).getName());
-    }*/
 
     @Test
     @DisplayName("Вызов метода updateStatusProductOnPublishedTest: обновление статуса на 'PUBLISHED'")

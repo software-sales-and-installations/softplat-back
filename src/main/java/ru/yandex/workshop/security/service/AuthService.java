@@ -2,56 +2,69 @@ package ru.yandex.workshop.security.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.yandex.workshop.security.dto.registration.RegistrationAdminDto;
-import ru.yandex.workshop.security.dto.registration.RegistrationUserDto;
+import ru.yandex.workshop.main.message.LogMessage;
+import ru.yandex.workshop.main.service.admin.AdminService;
+import ru.yandex.workshop.main.service.buyer.BuyerService;
+import ru.yandex.workshop.main.service.seller.SellerService;
+import ru.yandex.workshop.security.dto.UserDto;
 import ru.yandex.workshop.security.exception.WrongRegException;
+import ru.yandex.workshop.security.mapper.UserMapper;
+import ru.yandex.workshop.security.message.ExceptionMessage;
+import ru.yandex.workshop.security.model.Status;
+import ru.yandex.workshop.security.model.User;
+import ru.yandex.workshop.security.repository.UserRepository;
 
+import javax.xml.bind.ValidationException;
 import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final AdminDetailsServiceImpl adminService;
-    private final SellerDetailsServiceImpl sellerService;
-    private final BuyerDetailsServiceImpl buyerService;
+    private final UserRepository repository;
+    private final AdminService adminService;
+    private final SellerService sellerService;
+    private final BuyerService buyerService;
+    private PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<Object> createNewUser(RegistrationUserDto registrationUserDto) {
-        if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
-            throw new WrongRegException("Пароли не совпадают");
-        }
-
-        switch (registrationUserDto.getRole()) {
-            case SELLER:
-                if (sellerService.checkIfUserExistsByEmail(registrationUserDto.getEmail())) {
-                    throw new WrongRegException("Пользователь с указанным логином уже существует");
-                } else {
-                    return ResponseEntity.of(Optional.ofNullable(sellerService.addSeller(registrationUserDto)));
-                }
-            case BUYER:
-                if (buyerService.checkIfUserExistsByEmail(registrationUserDto.getEmail())) {
-                    throw new WrongRegException("Пользователь с указанным логином уже существует");
-                } else {
-                    return ResponseEntity.of(Optional.ofNullable(buyerService.addNewBuyer(registrationUserDto)));
-
-                }
-        }
-
-        throw new WrongRegException("Ошибка при регистрации");
+    @Lazy
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<Object> createNewAdmin(RegistrationAdminDto registrationAdminDto) {
-        if (!registrationAdminDto.getPassword().equals(registrationAdminDto.getConfirmPassword())) {
-            throw new WrongRegException("Пароли не совпадают");
+    public ResponseEntity<Object> createNewUser(UserDto userDto) throws ValidationException {
+        if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
+            throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
 
-        if (adminService.getAdminDto(registrationAdminDto.getEmail()) != null) {
-            throw new WrongRegException("Пользователь с указанным логином уже существует");
-        } else {
-            return ResponseEntity.of(Optional.ofNullable(adminService.addAdmin(registrationAdminDto)));
+        User user = UserMapper.INSTANCE.userDtoToUser(userDto);
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setStatus(Status.ACTIVE);
+
+        switch (userDto.getRole()) {
+            case ADMIN:
+                log.info(LogMessage.TRY_ADD_ADMIN.label);
+
+                adminService.addAdmin(userDto);
+                break;
+            case SELLER:
+                log.info(LogMessage.TRY_ADD_SELLER.label);
+
+                sellerService.addSeller(userDto);
+                break;
+            case BUYER:
+                log.debug(LogMessage.TRY_ADD_BUYER.label);
+
+                buyerService.addBuyer(userDto);
+                break;
         }
 
+        return ResponseEntity.of(Optional.of(UserMapper.INSTANCE.userToUserResponseDto(repository.save(user))));
     }
 }

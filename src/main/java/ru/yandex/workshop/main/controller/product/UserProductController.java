@@ -37,7 +37,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}")
     public ProductResponseDto updateProduct(Principal principal, @PathVariable Long productId,
-            @RequestBody @Validated(New.class) ProductDto productForUpdate) {
+                                            @RequestBody @Validated(New.class) ProductDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
         return productService.updateProduct(principal.getName(), productId, productForUpdate);
     }
@@ -57,7 +57,7 @@ public class UserProductController {
     }
 
     @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping(path = "]/{productId}/rejected")
+    @PatchMapping(path = "/{productId}/rejected")
     public ProductResponseDto updateStatusProductOnRejected(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED.label, productId);
         return productService.updateStatusProduct(productId, ProductStatus.REJECTED);

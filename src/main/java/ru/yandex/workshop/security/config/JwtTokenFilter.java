@@ -6,13 +6,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
+import ru.yandex.workshop.security.exception.JwtAuthenticationException;
 import ru.yandex.workshop.security.exception.UnauthorizedException;
+import ru.yandex.workshop.security.message.ExceptionMessage;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
@@ -33,8 +36,10 @@ public class JwtTokenFilter extends GenericFilterBean {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (RuntimeException e) {
-            throw new UnauthorizedException("Невалидный токен");
+        } catch (JwtAuthenticationException e) {
+            SecurityContextHolder.clearContext();
+            ((HttpServletResponse) servletResponse).sendError(e.getHttpStatus().value());
+            throw new UnauthorizedException(ExceptionMessage.NOT_VALID_TOKEN.label);
         }
 
         filterChain.doFilter(servletRequest, servletResponse);

@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
+import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.BankRepository;
-import ru.yandex.workshop.security.mapper.SellerMapper;
-import ru.yandex.workshop.security.model.user.Seller;
-import ru.yandex.workshop.security.repository.SellerRepository;
+import ru.yandex.workshop.main.repository.seller.SellerRepository;
 
 @Service
 @Transactional(readOnly = true)

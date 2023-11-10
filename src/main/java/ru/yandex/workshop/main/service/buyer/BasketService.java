@@ -10,13 +10,13 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Basket;
+import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.ProductBasket;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
+import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
-import ru.yandex.workshop.security.model.user.Buyer;
-import ru.yandex.workshop.security.repository.BuyerRepository;
 
 import java.util.List;
 import java.util.Optional;
