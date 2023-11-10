@@ -14,8 +14,7 @@ import javax.validation.constraints.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductDto {
     @NotBlank(groups = {New.class}, message = "Необходимо указать имя продукта")
-    @Pattern(message = "Неверные символы в названии товара",
-            regexp = "^[а-яА-Яa-zA-Z0-9\\s№-]+$")
+    @Pattern(regexp = "^[а-яА-Яa-zA-Z0-9\\s№-]+$", message = "Неверные символы в названии товара")
     @Size(min = 2, max = 255, message = "Длина названия продукта должна быть от 2 до 255 символов")
     String name;
 
@@ -35,9 +34,6 @@ public class ProductDto {
 
     @NotNull(groups = {New.class}, message = "Необходимо указать вендора продукта.")
     Long vendor;
-
-    @NotNull(groups = {New.class}, message = "Необходимо указать продавца продукта.")
-    Long seller;
 
     @PositiveOrZero
     @NotNull(groups = {New.class}, message = "Необходимо указать цену продукта.")

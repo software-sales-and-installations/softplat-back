@@ -14,3 +14,6 @@ insert into CATEGORY (ID, NAME)
 values (7, 'Интернет');
 insert into CATEGORY (ID, NAME)
 values (8, 'ERM и CRM');
+
+insert into users(email, password, role, status)
+values ('admin@admin.ru', 'admin', 'ADMIN', 'ACTIVE');

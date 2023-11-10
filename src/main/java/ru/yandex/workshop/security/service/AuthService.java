@@ -15,6 +15,7 @@ import ru.yandex.workshop.security.dto.UserDto;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.message.ExceptionMessage;
+import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 
@@ -44,6 +45,7 @@ public class AuthService {
 
         User user = UserMapper.INSTANCE.userDtoToUser(userDto);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setStatus(Status.ACTIVE);
 
         switch (userDto.getRole()) {
             case ADMIN:
