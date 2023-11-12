@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.controller.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,18 +30,21 @@ public class SellerController {
     private final SellerBankService bankService;
 
     @GetMapping
+    @Operation(summary = "Получение списка продавцов", description = "Доступ для всех")
     public List<SellerResponseDto> getAllSellers(@RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
                                                  @RequestParam(name = "size", defaultValue = "20") @Min(1) int size) {
         log.debug(LogMessage.TRY_GET_All_SELLERS.label);
         return sellerService.getAllSellers(from, size);
     }
 
+    @Operation(summary = "Получение конкретного продавца по userId", description = "Доступ для всех")
     @GetMapping("/{userId}")
     public SellerResponseDto getSeller(@PathVariable Long userId) {
         log.debug(LogMessage.TRY_GET_SELLER.label, userId);
         return sellerService.getSellerDto(userId);
     }
 
+    @Operation(summary = "Обновление данных о себе продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping
     public SellerResponseDto updateSeller(Principal principal, @RequestBody @Valid SellerDto sellerForUpdate) {
@@ -48,6 +52,7 @@ public class SellerController {
         return sellerService.updateSeller(principal.getName(), sellerForUpdate);
     }
 
+    @Operation(summary = "Получение своих банковских реквизитов продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @GetMapping("/bank")
     public BankRequisitesDto getRequisites(Principal principal) {
@@ -55,6 +60,7 @@ public class SellerController {
         return bankService.getRequisites(principal.getName());
     }
 
+    @Operation(summary = "Обновление своих банковских реквизитов продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping("/bank")
     public BankRequisitesDto updateRequisites(Principal principal, @RequestBody BankRequisitesDto requisites) {
@@ -62,6 +68,7 @@ public class SellerController {
         return bankService.updateRequisites(principal.getName(), requisites);
     }
 
+    @Operation(summary = "Удаление своих банковских реквизитов продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping("/bank")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -70,6 +77,7 @@ public class SellerController {
         bankService.deleteRequisites(principal.getName());
     }
 
+    @Operation(summary = "Добавление/обновление изображения своего профиля продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping("/account/image")
     public SellerResponseDto addSellerImage(Principal principal, @RequestParam(value = "image") MultipartFile image) {
@@ -77,6 +85,7 @@ public class SellerController {
         return sellerService.addSellerImage(principal.getName(), image);
     }
 
+    @Operation(summary = "Удаление изображения своего профиля продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/account/image")
@@ -85,6 +94,7 @@ public class SellerController {
         sellerService.deleteSellerImage(principal.getName());
     }
 
+    @Operation(summary = "Удаление изображения профиля продавца админом", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{sellerId}/image")

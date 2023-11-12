@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.controller.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,12 +27,14 @@ public class BuyerController {
     private final BuyerService buyerService;
     private final BuyerFavoriteService favoriteService;
 
+    @Operation(summary = "Получение покупателя по id", description = "Доступ для всех")
     @GetMapping("/{userId}")
     public BuyerResponseDto getBuyer(@PathVariable Long userId) {
         log.info(LogMessage.TRY_GET_BUYER.label, userId);
         return buyerService.getBuyer(userId);
     }
 
+    @Operation(summary = "Обновление данных о себе покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PatchMapping
     public BuyerResponseDto updateBuyer(Principal principal, @RequestBody @Valid BuyerDto buyerDto) {
@@ -39,6 +42,7 @@ public class BuyerController {
         return buyerService.updateBuyer(principal.getName(), buyerDto);
     }
 
+    @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping("/favorites/{productId}")
     public FavoriteDto createFavorite(Principal principal,
@@ -47,6 +51,7 @@ public class BuyerController {
         return favoriteService.create(principal.getName(), productId);
     }
 
+    @Operation(summary = "Удаление товара из избранного", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @DeleteMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -56,6 +61,7 @@ public class BuyerController {
         favoriteService.delete(principal.getName(), productId);
     }
 
+    @Operation(summary = "Просмотр избранных товаров", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/favorites")
     public List<FavoriteDto> getAll(Principal principal) {

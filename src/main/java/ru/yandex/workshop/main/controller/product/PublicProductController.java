@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.controller.product;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -22,12 +23,14 @@ import java.util.List;
 public class PublicProductController {
     private final PublicProductService productService;
 
+    @Operation(summary = "Получение товара по id", description = "Доступ для всех")
     @GetMapping(path = "/{productId}")
     public ProductResponseDto getProductById(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_GET_PRODUCT_BY_ID.label, productId);
         return productService.getProductById(productId);
     }
 
+    @Operation(summary = "Получение списка товаров конкретного продавца", description = "Доступ для всех")
     @GetMapping(path = "/{sellerId}/products")
     public List<ProductResponseDto> getProductsOfSeller(
             @PathVariable @Min(1) Long sellerId,
@@ -37,6 +40,7 @@ public class PublicProductController {
         return productService.getProductsOfSeller(sellerId, from, size);
     }
 
+    @Operation(summary = "Получение списка товаров", description = "Доступ для всех, поддерживает поиск, сортировку и фильтрацию")
     @GetMapping(path = "/search")
     public List<ProductResponseDto> searchProducts(
             @RequestBody @Valid ProductFilter productFilter,

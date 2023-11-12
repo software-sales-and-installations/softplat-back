@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.controller.product;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class UserProductController {
 
     private final UserProductService productService;
 
+    @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping
     public ProductResponseDto createProduct(Principal principal, @RequestBody @Valid ProductDto productDto) {
@@ -35,6 +37,7 @@ public class UserProductController {
         return productService.createProduct(principal.getName(), productDto);
     }
 
+    @Operation(summary = "Редактирование своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}")
     public ProductResponseDto updateProduct(Principal principal, @PathVariable Long productId,
@@ -43,6 +46,7 @@ public class UserProductController {
         return productService.updateProduct(principal.getName(), productId, productForUpdate);
     }
 
+    @Operation(summary = "Отправка своего товара на модерацию админом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}/send")
     public ProductResponseDto updateStatusProductOnSent(Principal principal, @PathVariable Long productId) {
@@ -50,6 +54,7 @@ public class UserProductController {
         return productService.updateStatusProductOnSent(principal.getName(), productId);
     }
 
+    @Operation(summary = "Одобрение карточки товара", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{productId}/published")
     public ProductResponseDto updateStatusProductOnPublished(@PathVariable Long productId) {
@@ -57,6 +62,7 @@ public class UserProductController {
         return productService.updateStatusProduct(productId, ProductStatus.PUBLISHED);
     }
 
+    @Operation(summary = "Отклонение карточки товара", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{productId}/rejected")
     public ProductResponseDto updateStatusProductOnRejected(@PathVariable Long productId) {
@@ -64,6 +70,7 @@ public class UserProductController {
         return productService.updateStatusProduct(productId, ProductStatus.REJECTED);
     }
 
+    @Operation(summary = "Удаление карточки товара", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -73,6 +80,7 @@ public class UserProductController {
         productService.deleteProduct(productId);
     }
 
+    @Operation(summary = "Удаление своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping(path = "/products/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -81,6 +89,7 @@ public class UserProductController {
         productService.deleteProductSeller(principal.getName(), productId);
     }
 
+    @Operation(summary = "Добавление/обновление изображения своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping(path = "/{productId}/image")
     public ProductResponseDto createProductImage(Principal principal, @PathVariable @Min(1) Long productId,
@@ -89,6 +98,7 @@ public class UserProductController {
         return productService.createProductImage(principal.getName(), productId, image);
     }
 
+    @Operation(summary = "Удаление изображения карточки товара", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/products/{productId}/image")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -97,6 +107,7 @@ public class UserProductController {
         productService.deleteProductImage(productId);
     }
 
+    @Operation(summary = "Удаление изображения своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping(path = "/{productId}/image")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
@@ -105,6 +116,7 @@ public class UserProductController {
         productService.deleteProductImageSeller(principal.getName(), productId);
     }
 
+    @Operation(summary = "Получение списка товаров на модерацию", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/shipped")
     public List<ProductResponseDto> getAllProductsShipped(

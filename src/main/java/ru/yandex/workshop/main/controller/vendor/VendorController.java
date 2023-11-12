@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.controller.vendor;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.util.List;
 public class VendorController {
     private final VendorService service;
 
+    @Operation(summary = "Добавление вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -34,6 +36,7 @@ public class VendorController {
         return service.createVendor(vendorDto);
     }
 
+    @Operation(summary = "Изменение информации о вендоре", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{vendorId}")
     public VendorResponseDto changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
@@ -42,6 +45,7 @@ public class VendorController {
         return service.changeVendorById(vendorId, vendorUpdateDto);
     }
 
+    @Operation(summary = "Получение списка вендоров с фильтрацией", description = "Доступ для всех")
     @GetMapping(path = "/vendor")
     public List<VendorResponseDto> findVendorWithFilers(
             @RequestBody VendorFilter vendorFilter,
@@ -51,12 +55,14 @@ public class VendorController {
         return service.findVendorAll(vendorFilter, from, size);
     }
 
+    @Operation(summary = "Получение вендора по id", description = "Доступ для всех")
     @GetMapping(path = "/{vendorId}")
     public VendorResponseDto findVendorById(@PathVariable(name = "vendorId") Long vendorId) {
         log.debug(LogMessage.TRY_GET_ID_VENDOR.label);
         return service.findVendorById(vendorId);
     }
 
+    @Operation(summary = "Удаление вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{vendorId}")
@@ -65,6 +71,7 @@ public class VendorController {
         service.deleteVendor(vendorId);
     }
 
+    @Operation(summary = "Добавление/обновление изображения вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PostMapping(path = "/{vendorId}/image")
     public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
@@ -73,6 +80,7 @@ public class VendorController {
         return service.addVendorImage(vendorId, image);
     }
 
+    @Operation(summary = "Удаление изображения вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/{vendorId}/image")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)

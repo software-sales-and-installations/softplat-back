@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.controller.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ import java.security.Principal;
 public class AdminController {
     private final AdminService adminService;
 
+    @Operation(summary = "Получение информации об админе - просмотр своего ЛК", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping
     public AdminResponseDto getAdminByEmail(Principal principal) {
