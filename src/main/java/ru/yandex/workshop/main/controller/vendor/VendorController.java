@@ -75,6 +75,7 @@ public class VendorController {
 
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/{vendorId}/image")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteVendorImage(@PathVariable(name = "vendorId") Long vendorId) {
         log.debug(LogMessage.TRY_DElETE_IMAGE.label);
         service.deleteVendorImage(vendorId);

@@ -22,9 +22,8 @@ public class SellerBankService {
     private final SellerRepository sellerRepository;
     private final BankRepository bankRepository;
 
-    public BankRequisitesDto getRequisites(Long userId) {
-        Seller seller = sellerRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    public BankRequisitesDto getRequisites(String email) {
+        Seller seller = getSellerFromDatabase(email);
         if (seller.getRequisites() == null)
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         return SellerMapper.INSTANCE.requisitesToDto(seller.getRequisites());

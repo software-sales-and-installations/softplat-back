@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.controller.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +40,7 @@ public class BuyerController {
     }
 
     @PreAuthorize("hasAuthority('buyer:write')")
-    @PostMapping("/{buyerEmail}/favorites/{productId}")
+    @PostMapping("/favorites/{productId}")
     public FavoriteDto createFavorite(Principal principal,
                                       @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", principal.getName(), productId);
@@ -47,7 +48,8 @@ public class BuyerController {
     }
 
     @PreAuthorize("hasAuthority('buyer:write')")
-    @DeleteMapping("/{buyerEmail}/favorites/{productId}")
+    @DeleteMapping("/favorites/{productId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteFavorite(Principal principal,
                                @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_DELETE_FAVORITE.label, "{}, {}", principal.getName(), productId);
@@ -55,7 +57,7 @@ public class BuyerController {
     }
 
     @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping("/{buyerEmail}/favorites")
+    @GetMapping("/favorites")
     public List<FavoriteDto> getAll(Principal principal) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, principal.getName());
         List<FavoriteDto> response = favoriteService.getAll(principal.getName());

@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.controller.product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +66,7 @@ public class UserProductController {
 
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/{productId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductAdmin(
             @PathVariable @Min(1) Long productId) {
         log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
@@ -73,6 +75,7 @@ public class UserProductController {
 
     @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping(path = "/products/{productId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductSeller(Principal principal, @PathVariable @Min(1) Long productId) {
         log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
         productService.deleteProductSeller(principal.getName(), productId);
@@ -88,6 +91,7 @@ public class UserProductController {
 
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/products/{productId}/image")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductImageAdmin(@PathVariable @Min(1) Long productId) {
         log.info(LogMessage.TRY_DElETE_IMAGE.label);
         productService.deleteProductImage(productId);
@@ -95,6 +99,7 @@ public class UserProductController {
 
     @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping(path = "/{productId}/image")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductImageSeller(Principal principal, @PathVariable @Min(1) Long productId) {
         log.info(LogMessage.TRY_DElETE_IMAGE.label);
         productService.deleteProductImageSeller(principal.getName(), productId);

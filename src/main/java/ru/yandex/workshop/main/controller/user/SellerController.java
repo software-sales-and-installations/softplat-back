@@ -49,10 +49,10 @@ public class SellerController {
     }
 
     @PreAuthorize("hasAuthority('seller:write')")
-    @GetMapping("/bank/{userId}")
-    public BankRequisitesDto getRequisites(@PathVariable Long userId) {
-        log.debug(LogMessage.TRY_SELLER_GET_REQUISITES.label, userId);
-        return bankService.getRequisites(userId);
+    @GetMapping("/bank")
+    public BankRequisitesDto getRequisites(Principal principal) {
+        log.debug(LogMessage.TRY_SELLER_GET_REQUISITES.label, principal.getName());
+        return bankService.getRequisites(principal.getName());
     }
 
     @PreAuthorize("hasAuthority('seller:write')")
