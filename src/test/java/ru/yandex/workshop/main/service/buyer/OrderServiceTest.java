@@ -9,23 +9,21 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
-import ru.yandex.workshop.main.dto.basket.OrderToCreateDto;
+import ru.yandex.workshop.main.mapper.OrderPositionMapper;
+import ru.yandex.workshop.main.model.buyer.BasketPosition;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.Order;
-import ru.yandex.workshop.main.model.buyer.ProductBasket;
+import ru.yandex.workshop.main.model.buyer.OrderPosition;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
-import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
+import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.OrderRepository;
-import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -45,26 +43,24 @@ class OrderServiceTest {
     @Mock
     private OrderRepository orderRepository;
     @Mock
-    private ProductBasketRepository productBasketRepository;
+    private BuyerService buyerService;
     @Mock
-    private BuyerRepository buyerRepository;
+    private BasketPositionRepository basketPositionRepository;
+    @Mock
+    private OrderPositionMapper mapper;
     @Captor
     private ArgumentCaptor<Order> argumentCaptor;
 
     private static Product product;
-    private static OrderToCreateDto orderToCreateDto;
     private static Buyer buyer;
     private static final String email = "NameTwo@gmail.com";
-    private static ProductBasket productBasket;
+    private static BasketPosition basketPosition;
+    private static OrderPosition orderPosition;
     private static Order order;
 
 
     @BeforeEach
     void init() {
-        BankRequisites bankRequisites = new BankRequisites(
-                1L,
-                "1111 2222 3333 4444");
-
         Image image = new Image(
                 1L,
                 "name",
@@ -84,9 +80,7 @@ class OrderServiceTest {
                 .email("NameOne@gmail.com")
                 .name("Name")
                 .phone(" +79111111111")
-                .description("Description seller")
                 .registrationTime(LocalDateTime.now())
-                .requisites(bankRequisites)
                 .build();
 
         buyer = Buyer.builder()
@@ -119,9 +113,14 @@ class OrderServiceTest {
                 .installationPrice(10.00F)
                 .build();
 
-        orderToCreateDto = new OrderToCreateDto(List.of(1L));
+        basketPosition = new BasketPosition(1L, product, 2, true);
 
-        productBasket = new ProductBasket(1L, product, 2, true);
+        orderPosition = OrderPosition.builder()
+                .id(1L)
+                .product(product)
+                .quantity(2)
+                .installation(true)
+                .build();
 
         order = new Order(1L, LocalDateTime.now(), buyer, new ArrayList<>(), 12.12F);
     }
@@ -129,11 +128,12 @@ class OrderServiceTest {
     @Test
     @SneakyThrows
     void createOrderTest() {
-        when(buyerRepository.findByEmail(email)).thenReturn(Optional.of(buyer));
-        when(productBasketRepository.findById(1L)).thenReturn(Optional.of(productBasket));
+        when(buyerService.getBuyerByEmail(email)).thenReturn(buyer);
+        when(basketPositionRepository.findById(1L)).thenReturn(Optional.of(basketPosition));
         when(orderRepository.save(any())).thenReturn(order);
+        when(mapper.basketPositionToOrderPosition(any())).thenReturn(orderPosition);
 
-        OrderResponseDto responseDto = orderService.createOrder(email, orderToCreateDto);
+        Order response = orderService.createOrder(email, List.of(1L));
 
         verify(orderRepository).save(argumentCaptor.capture());
 
@@ -143,14 +143,14 @@ class OrderServiceTest {
         assertEquals(email, captorValue.getBuyer().getEmail());
         assertEquals(buyer.getName(), captorValue.getBuyer().getName());
         assertEquals(product.getId(), captorValue.getProductsOrdered().get(0).getProduct().getId());
-        assertEquals(productBasket.getQuantity(), captorValue.getProductsOrdered().get(0).getQuantity());
-        assertEquals(productBasket.getInstallation(), captorValue.getProductsOrdered().get(0).getInstallation());
+        assertEquals(basketPosition.getQuantity(), captorValue.getProductsOrdered().get(0).getQuantity());
+        assertEquals(basketPosition.getInstallation(), captorValue.getProductsOrdered().get(0).getInstallation());
         assertEquals(product.getPrice() + product.getInstallationPrice(), captorValue.getProductsOrdered().get(0).getProductAmount());
         assertEquals((product.getPrice() + product.getInstallationPrice()) * 2, captorValue.getOrderAmount());
 
-        assertEquals(order.getOrderAmount(), responseDto.getOrderAmount());
-        assertEquals(order.getBuyer().getName(), responseDto.getBuyer().getName());
-        assertEquals(order.getProductionTime(), responseDto.getProductionTime());
+        assertEquals(order.getOrderAmount(), response.getOrderAmount());
+        assertEquals(order.getBuyer().getName(), response.getBuyer().getName());
+        assertEquals(order.getProductionTime(), response.getProductionTime());
     }
 
     @Test
@@ -158,24 +158,24 @@ class OrderServiceTest {
     void getOrderTest() {
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
-        OrderResponseDto responseDto = orderService.getOrder(email, 1L);
+        Order response = orderService.getOrder(1L);
 
-        assertEquals(order.getId(), responseDto.getId());
-        assertEquals(order.getProductionTime(), responseDto.getProductionTime());
-        assertEquals(order.getBuyer().getEmail(), responseDto.getBuyer().getEmail());
+        assertEquals(order.getId(), response.getId());
+        assertEquals(order.getProductionTime(), response.getProductionTime());
+        assertEquals(order.getBuyer().getEmail(), response.getBuyer().getEmail());
     }
 
     @Test
     @SneakyThrows
     void getAllOrdersTest() {
-        when(buyerRepository.findByEmail(email)).thenReturn(Optional.of(buyer));
+        when(buyerService.getBuyerByEmail(email)).thenReturn(buyer);
         when(orderRepository.findAllByBuyer_Id(anyLong(), any())).thenReturn(List.of(order));
 
-        List<OrderResponseDto> responseDto = orderService.getAllOrders(email);
+        List<Order> response = orderService.getAllOrders(email);
 
-        assertEquals(order.getId(), responseDto.get(0).getId());
-        assertEquals(order.getProductionTime(), responseDto.get(0).getProductionTime());
-        assertEquals(order.getBuyer().getEmail(), responseDto.get(0).getBuyer().getEmail());
+        assertEquals(order.getId(), response.get(0).getId());
+        assertEquals(order.getProductionTime(), response.get(0).getProductionTime());
+        assertEquals(order.getBuyer().getEmail(), response.get(0).getBuyer().getEmail());
     }
 }
 
