@@ -3,6 +3,7 @@
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import lombok.SneakyThrows;
 //import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.Disabled;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -32,6 +33,7 @@
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
+//@Disabled
 //@SpringBootTest
 //@AutoConfigureMockMvc
 //@AutoConfigureTestDatabase
@@ -155,7 +157,7 @@
 //        long sellerId = 1, productId = 1, imageId = 1;
 //
 //        createSeller(sellerDto);
-//        ProductResponseDto productResponseDto = createProduct(productDto);
+//        ProductResponseDto productResponseDto = create(productDto);
 //
 //        assertNull(productResponseDto.getImage());
 //
@@ -192,7 +194,7 @@
 //                SellerResponseDto.class);
 //    }
 //
-//    private ProductResponseDto createProduct(ProductDto productDto) throws Exception {
+//    private ProductResponseDto create(ProductDto productDto) throws Exception {
 //        MvcResult result = mockMvc.perform(post("/seller/product")
 //                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(objectMapper.writeValueAsString(productDto)))

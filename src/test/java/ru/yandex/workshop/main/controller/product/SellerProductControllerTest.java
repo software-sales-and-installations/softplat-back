@@ -11,9 +11,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductMapper;
+import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
-import ru.yandex.workshop.main.dto.vendor.VendorMapper;
+import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
@@ -212,7 +212,7 @@ class SellerProductControllerTest {
     @DisplayName("Вызов метода createProductTest: создание продукта")
     void createProductTest() throws Exception {
         when(productService
-                .createProduct(any()))
+                .create(any()))
                 .thenReturn(productResponseDto);
         mockMvc.perform(post("/seller/product")
                         .content(mapper.writeValueAsString(productDto))
@@ -251,7 +251,7 @@ class SellerProductControllerTest {
         productResponseDto.setProductStatus(ProductStatus.PUBLISHED);
 
         when(productService
-                .updateProduct(anyLong(), anyLong(), any()))
+                .update(anyLong(), anyLong(), any()))
                 .thenReturn(productResponseDto);
         mockMvc.perform(patch("/seller/{sellerId}/product/{productId}", sellerId, productId)
                         .content(mapper.writeValueAsString(productDto))
