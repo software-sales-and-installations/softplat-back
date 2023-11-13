@@ -4,5 +4,5 @@ public enum SortEnum {
     POPULAR,
     QUANTITY,
     PRICE,
-    productAmount
+    AMOUNT
 }

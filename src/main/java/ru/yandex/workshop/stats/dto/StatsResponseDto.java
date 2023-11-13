@@ -2,8 +2,9 @@ package ru.yandex.workshop.stats.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.yandex.workshop.stats.model.SellerReportEntry;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -12,13 +13,6 @@ import java.time.LocalDate;
 @Builder
 public class StatsResponseDto {
 
-    Long id;
-
-    String product;
-
-    LocalDate purchaseDate;
-
-    Long quantity;
-
-    Long amount;
+    List<SellerReportEntry> sellerReportEntryList;
+    Float sumRevenue;
 }

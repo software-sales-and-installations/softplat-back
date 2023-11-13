@@ -126,6 +126,22 @@ values ('Kaspersky',
         'SHIPPED',
         true);
 
+insert into product (name, description, version, production_time, category_id, license, vendor_id, seller_id, price, installation_price, quantity, installation, status, availability)
+values ('Adobe',
+        'Adobe для вашего ПК',
+        '2021.02.547',
+        '2021-01-01 10:00:00',
+        1,
+        'FREE',
+        1,
+        2,
+        2000,
+        150,
+        10,
+        true,
+        'SHIPPED',
+        true);
+
 insert into buyer (email, name, number, registration_time)
 values ('email@email.ru',
         'Ваня',
@@ -146,7 +162,17 @@ values (2);
 
 insert into "order" (production_time, amount, buyer_id)
 values ('2023-11-09 14:43:00',
-        1000,
+        2000,
+        1);
+
+insert into "order" (production_time, amount, buyer_id)
+values ('2023-11-09 10:43:00',
+        2000,
+        2);
+
+insert into "order" (production_time, amount, buyer_id)
+values ('2023-11-09 10:43:00',
+        2000,
         1);
 
 insert into product_basket(basket_id, product_id, quantity)
@@ -154,8 +180,23 @@ values (1,
         1,
         2000);
 
-insert into product_order(order_id, product_id, quantity, amount)
+insert into product_order(order_id, product_id, quantity, amount, installation)
 values (1,
         1,
         2,
-        4000)
+        4000,
+        true);
+
+insert into product_order(order_id, product_id, quantity, amount, installation)
+values (2,
+        1,
+        3,
+        6000,
+        true);
+
+insert into product_order(order_id, product_id, quantity, amount, installation)
+values (2,
+        5,
+        1,
+        2000,
+        true)
