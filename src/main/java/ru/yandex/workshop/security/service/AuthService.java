@@ -41,17 +41,17 @@ public class AuthService {
             case ADMIN:
                 log.info(LogMessage.TRY_ADD_ADMIN.label);
 
-                adminService.addAdmin(userMapper.userToAdmin(userDto));
+                adminService.addAdmin(userMapper.userDtoToAdmin(userDto));
                 break;
             case SELLER:
                 log.info(LogMessage.TRY_ADD_SELLER.label);
 
-                sellerService.addSeller(userMapper.userToSeller(userDto));
+                sellerService.addSeller(userMapper.userDtoToSeller(userDto));
                 break;
             case BUYER:
                 log.debug(LogMessage.TRY_ADD_BUYER.label);
 
-                buyerService.addBuyer(userMapper.userToBuyer(userDto));
+                buyerService.addBuyer(userMapper.userDtoToBuyer(userDto));
                 break;
         }
 
