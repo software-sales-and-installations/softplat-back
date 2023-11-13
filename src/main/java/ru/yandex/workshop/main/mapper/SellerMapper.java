@@ -12,7 +12,6 @@ import ru.yandex.workshop.main.model.seller.Seller;
 @Mapper(componentModel = "spring", uses = ImageMapper.class)
 @Component
 public interface SellerMapper {
-
     @Mapping(target = "imageResponseDto", source = "image")
     SellerResponseDto sellerToSellerResponseDto(Seller seller);
 

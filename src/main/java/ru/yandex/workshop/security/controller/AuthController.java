@@ -85,7 +85,7 @@ public class AuthController {
         if ((userDto.getRole().equals(Role.SELLER) || userDto.getRole().equals(Role.BUYER)) && (userDto.getPhone() == null || userDto.getPhone().isEmpty()))
             throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
-        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userMapper.userDtoToUser(userDto)))));
+        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userDto))));
     }
 
     @PostMapping("/change/pass")

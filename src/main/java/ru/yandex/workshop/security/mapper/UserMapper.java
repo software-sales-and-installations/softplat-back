@@ -14,11 +14,11 @@ import ru.yandex.workshop.security.model.User;
 public interface UserMapper {
     User userDtoToUser(UserDto userDto);
 
-    Admin userToAdmin(User user);
+    Admin userToAdmin(UserDto userDto);
 
-    Seller userToSeller(User user);
+    Seller userToSeller(UserDto userDto);
 
-    Buyer userToBuyer(User user);
+    Buyer userToBuyer(UserDto userDto);
 
     UserResponseDto userToUserResponseDto(User user);
 }

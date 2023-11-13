@@ -10,6 +10,7 @@ import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.admin.AdminService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
 import ru.yandex.workshop.main.service.seller.SellerService;
+import ru.yandex.workshop.security.dto.UserDto;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.User;
@@ -32,28 +33,28 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createNewUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setStatus(Status.ACTIVE);
+    public User createNewUser(UserDto userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userDto.setStatus(Status.ACTIVE);
 
-        switch (user.getRole()) {
+        switch (userDto.getRole()) {
             case ADMIN:
                 log.info(LogMessage.TRY_ADD_ADMIN.label);
 
-                adminService.addAdmin(userMapper.userToAdmin(user));
+                adminService.addAdmin(userMapper.userToAdmin(userDto));
                 break;
             case SELLER:
                 log.info(LogMessage.TRY_ADD_SELLER.label);
 
-                sellerService.addSeller(userMapper.userToSeller(user));
+                sellerService.addSeller(userMapper.userToSeller(userDto));
                 break;
             case BUYER:
                 log.debug(LogMessage.TRY_ADD_BUYER.label);
 
-                buyerService.addBuyer(userMapper.userToBuyer(user));
+                buyerService.addBuyer(userMapper.userToBuyer(userDto));
                 break;
         }
 
-        return repository.save(user);
+        return repository.save(userMapper.userDtoToUser(userDto));
     }
 }
