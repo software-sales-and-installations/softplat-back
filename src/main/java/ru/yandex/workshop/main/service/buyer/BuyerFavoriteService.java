@@ -4,17 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.workshop.main.dto.user.mapper.FavoriteMapper;
-import ru.yandex.workshop.main.dto.user.response.FavoriteDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
+import ru.yandex.workshop.main.model.buyer.Favorite;
 import ru.yandex.workshop.main.repository.buyer.FavoriteRepository;
-import ru.yandex.workshop.main.repository.product.ProductRepository;
+import ru.yandex.workshop.main.service.product.CRUDProductService;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,34 +21,33 @@ import java.util.stream.Collectors;
 public class BuyerFavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-    private final BuyerRepository buyerRepository;
-    private final ProductRepository productRepository;
-    private final FavoriteMapper mapper;
+    private final BuyerService buyerService;
+    private final CRUDProductService productService;
 
-    public FavoriteDto create(String buyerEmail, Long productId) {
+    public Favorite create(String buyerEmail, Long productId) {
         if (favoriteRepository.existsByBuyerEmailAndProductId(buyerEmail, productId))
             throw new DuplicateException("Предмет был добавлен в избранное ранее.");
-        return mapper.toDTO(favoriteRepository.save(mapper.toModel(
-                null,
-                buyerRepository.findByEmail(buyerEmail).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)),
-                productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label))
-        )));
+        Favorite favorite = getFavorite(buyerEmail, productId);
+        return favoriteRepository.save(favorite);
     }
 
     public void delete(String buyerEmail, Long productId) {
-        favoriteRepository.delete(mapper.toModel(
-                null,
-                buyerRepository.findByEmail(buyerEmail).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)),
-                productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label))
-        ));
+        Favorite favorite = getFavorite(buyerEmail, productId);
+        favoriteRepository.delete(favorite);
     }
 
-    public List<FavoriteDto> getAll(String buyerEmail) {
-        if (!buyerRepository.existsByEmail(buyerEmail))
+    @Transactional(readOnly = true)
+    public List<Favorite> getAll(String buyerEmail) {
+        if (!buyerService.checkIfUserExistsByEmail(buyerEmail))
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
-        return favoriteRepository.findAllByBuyerEmail(buyerEmail)
-                .stream()
-                .map(mapper::toDTO)
-                .collect(Collectors.toList());
+        return new ArrayList<>(favoriteRepository.findAllByBuyerEmail(buyerEmail));
+    }
+
+    @Transactional(readOnly = true)
+    public Favorite getFavorite(String buyerEmail, Long productId) {
+        Favorite favorite = new Favorite();
+        favorite.setBuyer(buyerService.getBuyerByEmail(buyerEmail));
+        favorite.setProduct(productService.getProductOrThrowException(productId));
+        return favorite;
     }
 }

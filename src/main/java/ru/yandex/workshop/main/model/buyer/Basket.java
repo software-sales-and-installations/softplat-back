@@ -23,5 +23,5 @@ public class Basket {
     Long buyerId;
     @OneToMany
     @JoinColumn(name = "basket_id")
-    List<ProductBasket> productsInBasket = new ArrayList<>();
+    List<BasketPosition> productsInBasket = new ArrayList<>();
 }

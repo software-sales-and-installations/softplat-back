@@ -9,10 +9,10 @@
 //import org.springframework.boot.test.mock.mockito.MockBean;
 //import org.springframework.http.MediaType;
 //import org.springframework.test.web.servlet.MockMvc;
-//import ru.yandex.workshop.main.dto.product.ProductMapper;
+//import ru.yandex.workshop.main.mapper.ProductMapper;
 //import ru.yandex.workshop.main.dto.product.ProductResponseDto;
-//import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
-//import ru.yandex.workshop.main.dto.vendor.VendorMapper;
+//import ru.yandex.workshop.main.mapper.SellerMapper;
+//import ru.yandex.workshop.main.mapper.VendorMapper;
 //import ru.yandex.workshop.main.model.product.Category;
 //import ru.yandex.workshop.main.model.product.License;
 //import ru.yandex.workshop.main.model.product.Product;
@@ -137,7 +137,7 @@
 //
 //        productDtoList = List.of(ProductMapper.INSTANCE.productToProductResponseDto(product));
 //    }
-
+//
 //    @Test
 //    @DisplayName("Вызов метода getAllProductsSellerTest: получение всех продуктов")
 //    void getAllProductsSellerTest() throws Exception {
@@ -170,7 +170,7 @@
 //                .andExpect(status().isOk())
 //                .andExpect(content().json(mapper.writeValueAsString(productDtoList)));
 //    }
-
+//
 //    не понял за что отвечает тест?
 //    @Test
 //    @DisplayName("Вызов метода getProductsSellerTest: получение продуктa по id")
@@ -208,7 +208,7 @@
 //                .andExpect(jsonPath("$.productAvailability", is(productDto.getProductAvailability()), Boolean.class))
 //                .andExpect(jsonPath("$.installationPrice", is(productDto.getInstallationPrice()), Float.class));
 //    }
-
+//
 //TODO лежит из-за прав доступа
 //    @Test
 //    @DisplayName("Вызов метода updateStatusProductOnPublishedTest: обновление статуса товара на 'PUBLISHED'")
@@ -226,7 +226,7 @@
 //                .andExpect(status().isOk())
 //                .andExpect(jsonPath("$.productStatus", is("PUBLISHED")));
 //    }
-
+//
 //    Аналогично выше
 //    @Test
 //    @DisplayName("Вызов метода updateStatusProductOnRejectedTest: обновление статуса товара на 'REJECTED'")
@@ -244,7 +244,7 @@
 //                .andExpect(status().isOk())
 //                .andExpect(jsonPath("$.productStatus", is("REJECTED")));
 //    }
-
+//
 //    Аналогично выше
 //    @Test
 //    @DisplayName("Вызов метода deleteProductAdminTest: удаление продукта")
