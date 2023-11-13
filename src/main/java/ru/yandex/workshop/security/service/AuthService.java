@@ -20,7 +20,6 @@ import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 
-import javax.xml.bind.ValidationException;
 import java.util.Optional;
 
 @Slf4j
@@ -40,7 +39,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<Object> createNewUser(UserDto userDto) throws ValidationException {
+    public ResponseEntity<Object> createNewUser(UserDto userDto) {
         if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }

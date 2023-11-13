@@ -19,10 +19,11 @@ import ru.yandex.workshop.security.dto.JwtRequest;
 import ru.yandex.workshop.security.dto.UserDto;
 import ru.yandex.workshop.security.message.ExceptionMessage;
 import ru.yandex.workshop.security.message.LogMessage;
+import ru.yandex.workshop.security.model.Role;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 import ru.yandex.workshop.security.service.AuthService;
-import ru.yandex.workshop.security.service.ChangeService;
+import ru.yandex.workshop.security.service.UserDetailsChangeService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +38,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    private final ChangeService changeService;
+    private final UserDetailsChangeService userDetailsChangeService;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository repository;
@@ -72,12 +73,18 @@ public class AuthController {
     @PostMapping("/registration")
     public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException {
         log.info(LogMessage.TRY_REGISTRATION.label);
+
+        if ((userDto.getRole().equals(Role.SELLER) || userDto.getRole().equals(Role.BUYER)) && (userDto.getPhone() == null || userDto.getPhone().isEmpty()))
+            throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
+        if (userDto.getRole().equals(Role.SELLER) && (userDto.getDescription() == null || userDto.getDescription().isEmpty()))
+            throw new ValidationException("Необходимо указать описание вашего профиля. Описание должно быть длинной не более 500 символов.");
+
         return authService.createNewUser(userDto);
     }
 
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
-        return changeService.changePass(request);
+        return userDetailsChangeService.changePass(request);
     }
 }
