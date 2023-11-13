@@ -70,7 +70,7 @@ public class UserProductController {
     @PatchMapping(path = "/{productId}/rejected")
     public ProductResponseDto updateStatusProductOnRejected(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED.label, productId);
-        Product response =  productService.updateStatusProduct(productId, ProductStatus.REJECTED);
+        Product response = productService.updateStatusProduct(productId, ProductStatus.REJECTED);
         return productMapper.productToProductResponseDto(response);
     }
 
