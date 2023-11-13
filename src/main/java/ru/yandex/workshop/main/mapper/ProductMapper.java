@@ -17,9 +17,6 @@ public interface ProductMapper {
     @Mapping(target = "vendor", expression = "java(mapVendorIdToVendor(productDto))")
     Product productDtoToProduct(ProductDto productDto);
 
-    @Mapping(target = "image", source = "image")
-    @Mapping(target = "vendor", source = "vendor")
-    @Mapping(target = "seller", source = "seller")
     ProductResponseDto productToProductResponseDto(Product product);
 
     default Category mapCategoryIdToCategory(ProductDto productDto) {

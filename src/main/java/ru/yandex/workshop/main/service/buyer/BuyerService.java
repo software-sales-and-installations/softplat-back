@@ -35,7 +35,7 @@ public class BuyerService {
     }
 
     public Buyer updateBuyer(String email, Buyer updateRequest) {
-        Buyer oldBuyer = getSecurityBuyer(email);
+        Buyer oldBuyer = getBuyerByEmail(email);
 
         if (updateRequest.getName() != null) {
             oldBuyer.setName(updateRequest.getName());
@@ -61,7 +61,7 @@ public class BuyerService {
     }
 
     @Transactional(readOnly = true)
-    public Buyer getSecurityBuyer(String email) {
+    public Buyer getBuyerByEmail(String email) {
         return buyerRepository
                 .findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));

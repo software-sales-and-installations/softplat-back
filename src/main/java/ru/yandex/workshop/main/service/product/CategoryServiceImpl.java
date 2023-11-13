@@ -25,7 +25,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category changeCategoryById(Long catId, Category updateRequest) {
-        Category category = availabilityCategory(catId);
+        Category category = getCategoryById(catId);
         category.setName(updateRequest.getName());
         return repository.save(category);
     }
@@ -39,19 +39,15 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Transactional(readOnly = true)
-    public Category findCategoryById(Long catId) {
-        return availabilityCategory(catId);
+    public Category getCategoryById(Long catId) {
+        return repository.findById(catId).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
+        );
     }
 
     @Override
     public void deleteCategory(Long catId) {
-        availabilityCategory(catId);
-
+        getCategoryById(catId);
         repository.deleteById(catId);
-    }
-
-    private Category availabilityCategory(Long catId) {
-        return repository.findById(catId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

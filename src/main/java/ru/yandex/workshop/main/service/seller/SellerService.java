@@ -72,7 +72,7 @@ public class SellerService {
             imageService.deleteImageById(seller.getImage().getId());
         }
         ImageDto imageDto = imageService.addNewImage(file);
-        seller.setImage(imageService.getImage(imageDto.getId()));
+        seller.setImage(imageService.getImageById(imageDto.getId()));
         return seller;
     }
 

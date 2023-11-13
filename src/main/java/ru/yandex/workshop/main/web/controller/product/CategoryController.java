@@ -35,7 +35,7 @@ public class CategoryController {
     @GetMapping(path = "/{catId}")
     public CategoryDto findCategoryById(@PathVariable(name = "catId") Long catId) {
         log.debug(LogMessage.TRY_GET_ID_CATEGORY.label, catId);
-        Category response = service.findCategoryById(catId);
+        Category response = service.getCategoryById(catId);
         return categoryMapper.categoryToCategoryDto(response);
     }
 

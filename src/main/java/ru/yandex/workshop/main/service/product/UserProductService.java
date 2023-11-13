@@ -99,7 +99,7 @@ public class UserProductService {
             imageService.deleteImageById(product.getImage().getId());
         }
         ImageDto imageDto = imageService.addNewImage(file);
-        product.setImage(imageService.getImage(imageDto.getId()));
+        product.setImage(imageService.getImageById(imageDto.getId()));
         return product;
     }
 

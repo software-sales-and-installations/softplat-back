@@ -13,5 +13,5 @@ public interface ImageService {
 
     void deleteImageById(Long imageId);
 
-    Image getImage(Long imageId);
+    Image getImageById(Long imageId);
 }
