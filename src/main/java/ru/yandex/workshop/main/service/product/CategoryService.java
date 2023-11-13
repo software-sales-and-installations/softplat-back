@@ -1,18 +1,18 @@
 package ru.yandex.workshop.main.service.product;
 
-import ru.yandex.workshop.main.dto.category.CategoryDto;
+import ru.yandex.workshop.main.model.product.Category;
 
 import java.util.List;
 
 public interface CategoryService {
 
-    CategoryDto createCategory(CategoryDto categoryDto);
+    Category createCategory(Category category);
 
-    CategoryDto changeCategoryById(Long catId, CategoryDto categoryDto);
+    Category changeCategoryById(Long catId, Category category);
 
-    List<CategoryDto> findCategoryAll();
+    List<Category> findCategoryAll();
 
-    CategoryDto findCategoryById(Long catId);
+    Category getCategoryById(Long catId);
 
     void deleteCategory(Long catId);
 }

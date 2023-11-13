@@ -1,16 +1,24 @@
 package ru.yandex.workshop.security.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
+import ru.yandex.workshop.main.model.admin.Admin;
+import ru.yandex.workshop.main.model.buyer.Buyer;
+import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.security.dto.UserDto;
 import ru.yandex.workshop.security.dto.UserResponseDto;
 import ru.yandex.workshop.security.model.User;
 
-@Mapper
+@Mapper(componentModel = "spring")
+@Component
 public interface UserMapper {
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
     User userDtoToUser(UserDto userDto);
+
+    Admin userDtoToAdmin(UserDto userDto);
+
+    Seller userDtoToSeller(UserDto userDto);
+
+    Buyer userDtoToBuyer(UserDto userDto);
 
     UserResponseDto userToUserResponseDto(User user);
 }

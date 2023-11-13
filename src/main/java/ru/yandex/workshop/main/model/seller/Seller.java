@@ -25,7 +25,6 @@ public class Seller {
     String name;
     @Column(name = "number")
     String phone;
-    String description;
     @DateTimeFormat
     @Column(name = "registration_time")
     LocalDateTime registrationTime;

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
-import ru.yandex.workshop.main.dto.user.mapper.SellerMapper;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
@@ -14,33 +13,32 @@ import ru.yandex.workshop.main.repository.seller.BankRepository;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class SellerBankService {
 
     private final SellerRepository sellerRepository;
+    private final SellerService sellerService;
     private final BankRepository bankRepository;
 
-    public BankRequisitesDto getRequisites(Long userId) {
-        Seller seller = sellerRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    @Transactional(readOnly = true)
+    public BankRequisites getRequisites(Long userId) {
+        Seller seller = sellerService.getSeller(userId);
         if (seller.getRequisites() == null)
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
-        return SellerMapper.INSTANCE.requisitesToDto(seller.getRequisites());
+        return seller.getRequisites();
     }
 
-    @Transactional
-    public BankRequisitesDto updateRequisites(String email, BankRequisitesDto requisites) {
+    public BankRequisites updateRequisites(String email, BankRequisitesDto requisites) {
         Seller seller = getSellerFromDatabase(email);
         if (seller.getRequisites() != null) {
             bankRepository.deleteById(seller.getRequisites().getId());
         }
         seller.setRequisites(bankRepository.save(new BankRequisites(null, requisites.getAccount())));
-        return SellerMapper.INSTANCE.requisitesToDto(sellerRepository.save(seller).getRequisites());
+        return sellerRepository.save(seller).getRequisites();
     }
 
-    @Transactional
     public void deleteRequisites(String email) {
         Seller seller = getSellerFromDatabase(email);
         if (seller.getRequisites() == null)
