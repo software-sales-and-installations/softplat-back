@@ -212,7 +212,7 @@ class SellerProductControllerTest {
     @DisplayName("Вызов метода createProductTest: создание продукта")
     void createProductTest() throws Exception {
         when(productService
-                .createProduct(any()))
+                .create(any()))
                 .thenReturn(productResponseDto);
         mockMvc.perform(post("/seller/product")
                         .content(mapper.writeValueAsString(productDto))
@@ -251,7 +251,7 @@ class SellerProductControllerTest {
         productResponseDto.setProductStatus(ProductStatus.PUBLISHED);
 
         when(productService
-                .updateProduct(anyLong(), anyLong(), any()))
+                .update(anyLong(), anyLong(), any()))
                 .thenReturn(productResponseDto);
         mockMvc.perform(patch("/seller/{sellerId}/product/{productId}", sellerId, productId)
                         .content(mapper.writeValueAsString(productDto))

@@ -157,7 +157,7 @@
 //        long sellerId = 1, productId = 1, imageId = 1;
 //
 //        createSeller(sellerDto);
-//        ProductResponseDto productResponseDto = createProduct(productDto);
+//        ProductResponseDto productResponseDto = create(productDto);
 //
 //        assertNull(productResponseDto.getImage());
 //
@@ -194,7 +194,7 @@
 //                SellerResponseDto.class);
 //    }
 //
-//    private ProductResponseDto createProduct(ProductDto productDto) throws Exception {
+//    private ProductResponseDto create(ProductDto productDto) throws Exception {
 //        MvcResult result = mockMvc.perform(post("/seller/product")
 //                        .contentType(MediaType.APPLICATION_JSON)
 //                        .content(objectMapper.writeValueAsString(productDto)))

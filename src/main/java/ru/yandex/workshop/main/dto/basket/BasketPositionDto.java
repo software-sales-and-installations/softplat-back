@@ -10,7 +10,7 @@ import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductBasketDto {
+public class BasketPositionDto {
     private ProductResponseDto productResponseDto;
     private Integer quantity;
     private Boolean installation;

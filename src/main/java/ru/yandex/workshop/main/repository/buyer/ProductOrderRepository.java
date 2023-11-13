@@ -2,8 +2,8 @@ package ru.yandex.workshop.main.repository.buyer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import ru.yandex.workshop.main.model.buyer.ProductOrder;
+import ru.yandex.workshop.main.model.buyer.OrderPosition;
 
 @Repository
-public interface ProductOrderRepository extends JpaRepository<ProductOrder, Long> {
+public interface ProductOrderRepository extends JpaRepository<OrderPosition, Long> {
 }

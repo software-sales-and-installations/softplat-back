@@ -49,18 +49,16 @@ public class BuyerController {
     }
 
     @PreAuthorize("hasAuthority('buyer:write')")
-    @PostMapping("/{buyerEmail}/favorites/{productId}")
-    public FavoriteDto createFavorite(Principal principal,
-                                      @PathVariable Long productId) {
+    @PostMapping("/favorites/{productId}")
+    public FavoriteDto createFavorite(Principal principal, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", principal.getName(), productId);
         Favorite response = favoriteService.create(principal.getName(), productId);
-        return favoriteMapper.toDTO(response);
+        return favoriteMapper.toFavouriteDto(response);
     }
 
     @PreAuthorize("hasAuthority('buyer:write')")
-    @DeleteMapping("/{buyerEmail}/favorites/{productId}")
-    public void deleteFavorite(Principal principal,
-                               @PathVariable Long productId) {
+    @DeleteMapping("/favorites/{productId}")
+    public void deleteFavorite(Principal principal, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_DELETE_FAVORITE.label, "{}, {}", principal.getName(), productId);
         favoriteService.delete(principal.getName(), productId);
     }
@@ -71,7 +69,7 @@ public class BuyerController {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, principal.getName());
         List<Favorite> response = favoriteService.getAll(principal.getName());
         return response.stream()
-                .map(favoriteMapper::toDTO)
+                .map(favoriteMapper::toFavouriteDto)
                 .collect(Collectors.toList());
     }
 }

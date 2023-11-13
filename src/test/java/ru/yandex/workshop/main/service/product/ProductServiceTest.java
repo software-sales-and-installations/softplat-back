@@ -228,7 +228,7 @@
 //        when(productRepository
 //                .save(product))
 //                .thenReturn(product);
-//        var productDtoSave = userProductService.createProduct(seller.getEmail(), productDto);
+//        var productDtoSave = userProductService.create(seller.getEmail(), productDto);
 //        assertNotNull(productDtoSave);
 //        assertEquals(product.getName(), productDtoSave.getName());
 //        assertEquals(product.getDescription(), productDtoSave.getDescription());
@@ -259,7 +259,7 @@
 //        product.setInstallation(productForUpdate.getInstallation());
 //        product.setProductAvailability(productForUpdate.getProductAvailability());
 //
-//        var productDtoUpdate = userProductService.updateProduct(seller.getEmail(), product.getId(),
+//        var productDtoUpdate = userProductService.update(seller.getEmail(), product.getId(),
 //                productForUpdate);
 //        assertNotNull(productDtoUpdate);
 //        assertEquals(product.getName(), productDtoUpdate.getName());
@@ -340,6 +340,6 @@
 //                .findById(product.getId()))
 //                .thenReturn(Optional.of(product));
 //
-//        userProductService.deleteProduct(product.getId());
+//        userProductService.delete(product.getId());
 //    }
 //}

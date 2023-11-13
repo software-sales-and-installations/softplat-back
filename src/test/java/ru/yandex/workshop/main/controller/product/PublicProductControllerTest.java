@@ -100,9 +100,9 @@ class PublicProductControllerTest {
                 .installationPrice(10.00F)
                 .build();
 
-        productResponseDto1 = createProduct(productDto1);
-        productResponseDto2 = createProduct(productDto2);
-        productResponseDto3 = createProduct(productDto3);
+        productResponseDto1 = create(productDto1);
+        productResponseDto2 = create(productDto2);
+        productResponseDto3 = create(productDto3);
 
         approveProductByAdmin(productResponseDto3.getId());
         approveProductByAdmin(productResponseDto2.getId());
@@ -317,7 +317,7 @@ class PublicProductControllerTest {
                 SellerResponseDto.class);
     }
 
-    private ProductResponseDto createProduct(ProductDto productDto) throws Exception {
+    private ProductResponseDto create(ProductDto productDto) throws Exception {
         MvcResult result = mockMvc.perform(post("/seller/product")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDto)))
