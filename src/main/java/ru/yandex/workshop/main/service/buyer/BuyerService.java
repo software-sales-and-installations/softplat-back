@@ -9,9 +9,8 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
-import ru.yandex.workshop.security.service.ChangeService;
+import ru.yandex.workshop.security.service.UserDetailsChangeService;
 
-import javax.xml.bind.ValidationException;
 import java.time.LocalDateTime;
 
 @Service
@@ -21,16 +20,14 @@ import java.time.LocalDateTime;
 public class BuyerService {
 
     private final BuyerRepository buyerRepository;
-    private final ChangeService changeService;
+    private final UserDetailsChangeService userDetailsChangeService;
 
-    public void addBuyer(Buyer buyer) throws ValidationException {
+    public void addBuyer(Buyer buyer) {
         if (checkIfUserExistsByEmail(buyer.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + buyer.getEmail());
 
-        if (buyer.getPhone() == null)
-            throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
-
         buyer.setRegistrationTime(LocalDateTime.now());
+
         buyerRepository.save(buyer);
     }
 
@@ -43,7 +40,7 @@ public class BuyerService {
         if (updateRequest.getEmail() != null) {
             if (checkIfUserExistsByEmail(updateRequest.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + updateRequest.getEmail());
-            changeService.changeEmail(oldBuyer.getEmail(), updateRequest.getEmail());
+            userDetailsChangeService.changeEmail(oldBuyer.getEmail(), updateRequest.getEmail());
             oldBuyer.setEmail(updateRequest.getEmail());
         }
         if (updateRequest.getPhone() != null) {

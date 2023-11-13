@@ -31,8 +31,6 @@ public class UserDto {
     String name;
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
     String phone;
-    @Length(max = 500, message = "Описание должно быть длинной не более 500 символов")
-    String description;
     @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
     @Builder.Default
