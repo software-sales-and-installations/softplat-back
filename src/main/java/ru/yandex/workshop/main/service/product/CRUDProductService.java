@@ -117,11 +117,18 @@ public class CRUDProductService {
 
         switch (status) {
             case PUBLISHED:
+                if (product.getProductStatus() != ProductStatus.SHIPPED)
+                    throw new WrongConditionException("Продукт не подлежит модерации");
                 product.setProductStatus(ProductStatus.PUBLISHED);
                 product.setProductionTime(LocalDateTime.now());
                 break;
             case REJECTED:
+                if (product.getProductStatus() == ProductStatus.DRAFT)
+                    throw new WrongConditionException("Продукт не подлежит модерации");
                 product.setProductStatus(ProductStatus.REJECTED);
+                break;
+            case SHIPPED:
+                product.setProductStatus(ProductStatus.SHIPPED);
                 break;
         }
 

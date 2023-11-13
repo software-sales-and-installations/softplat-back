@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.validation.New;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
@@ -63,7 +64,9 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{productId}/moderation")
     public ProductResponseDto updateStatusProductAdmin(@PathVariable Long productId, @RequestParam ProductStatus status) {
-        log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_PUBLISHED.label, productId);
+        log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT.label, productId);
+        if (status != ProductStatus.PUBLISHED && status != ProductStatus.REJECTED)
+            throw new WrongConditionException("Некорректный статус");
         Product response = productService.updateStatus(productId, status);
         return productMapper.productToProductResponseDto(response);
     }
