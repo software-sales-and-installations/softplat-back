@@ -17,6 +17,7 @@ import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.service.seller.SellerBankService;
 import ru.yandex.workshop.main.service.seller.SellerService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -56,7 +57,7 @@ public class SellerController {
     @Operation(summary = "Обновление данных о себе продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping
-    public SellerResponseDto updateSeller(Principal principal, @RequestBody @Valid SellerDto sellerDto) {
+    public SellerResponseDto updateSeller(@ApiIgnore Principal principal, @RequestBody @Valid SellerDto sellerDto) {
         log.debug(LogMessage.TRY_PATCH_SELLER.label, principal.getName());
         Seller updateRequest = sellerMapper.sellerDtoToSeller(sellerDto);
         Seller response = sellerService.updateSeller(principal.getName(), updateRequest);
@@ -75,7 +76,7 @@ public class SellerController {
     @Operation(summary = "Обновление своих банковских реквизитов продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping("/bank")
-    public BankRequisitesDto updateRequisites(Principal principal, @RequestBody BankRequisitesDto requisites) {
+    public BankRequisitesDto updateRequisites(@ApiIgnore Principal principal, @RequestBody BankRequisitesDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, principal.getName());
         BankRequisites response = bankService.updateRequisites(principal.getName(), requisites);
         return sellerMapper.requisitesToDto(response);
@@ -85,7 +86,7 @@ public class SellerController {
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping("/bank")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteRequisites(Principal principal) {
+    public void deleteRequisites(@ApiIgnore Principal principal) {
         log.debug(LogMessage.TRY_SELLER_DELETE_REQUISITES.label, principal.getName());
         bankService.deleteRequisites(principal.getName());
     }
@@ -93,7 +94,7 @@ public class SellerController {
     @Operation(summary = "Добавление/обновление изображения своего профиля продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping("/account/image")
-    public SellerResponseDto addSellerImage(Principal principal, @RequestParam(value = "image") MultipartFile image) {
+    public SellerResponseDto addSellerImage(@ApiIgnore Principal principal, @RequestParam(value = "image") MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
         Seller response = sellerService.addSellerImage(principal.getName(), image);
         return sellerMapper.sellerToSellerResponseDto(response);
@@ -103,7 +104,7 @@ public class SellerController {
     @PreAuthorize("hasAuthority('seller:write')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/account/image")
-    public void deleteOwnImage(Principal principal) {
+    public void deleteOwnImage(@ApiIgnore Principal principal) {
         log.debug(LogMessage.TRY_DElETE_IMAGE.label);
         sellerService.deleteSellerImage(principal.getName());
     }

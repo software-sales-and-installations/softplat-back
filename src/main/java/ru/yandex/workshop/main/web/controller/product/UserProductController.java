@@ -17,6 +17,7 @@ import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.service.product.CRUDProductService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -37,7 +38,7 @@ public class UserProductController {
     @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping
-    public ProductResponseDto createProduct(Principal principal, @RequestBody @Valid ProductDto productDto) {
+    public ProductResponseDto createProduct(@ApiIgnore Principal principal, @RequestBody @Valid ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         Product request = productMapper.productDtoToProduct(productDto);
         Product response = productService.create(principal.getName(), request);
@@ -47,7 +48,7 @@ public class UserProductController {
     @Operation(summary = "Редактирование своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}/update")
-    public ProductResponseDto updateProduct(Principal principal, @PathVariable Long productId,
+    public ProductResponseDto updateProduct(@ApiIgnore Principal principal, @PathVariable Long productId,
                                             @RequestBody @Validated(New.class) ProductDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
         productService.checkSellerAccessRights(principal.getName(), productId);
@@ -59,7 +60,7 @@ public class UserProductController {
     @Operation(summary = "Отправка своего товара на модерацию админом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}/send")
-    public ProductResponseDto updateStatusProductOnSent(Principal principal, @PathVariable Long productId) {
+    public ProductResponseDto updateStatusProductOnSent(@ApiIgnore Principal principal, @PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_SENT.label, productId, principal.getName());
         productService.checkSellerAccessRights(principal.getName(), productId);
         Product response = productService.updateStatus(productId, ProductStatus.SHIPPED);
@@ -90,7 +91,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping(path = "/products/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteProductSeller(Principal principal, @PathVariable @Min(1) Long productId) {
+    public void deleteProductSeller(@ApiIgnore Principal principal, @PathVariable @Min(1) Long productId) {
         log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
         productService.checkSellerAccessRights(principal.getName(), productId);
         productService.delete(productId);
@@ -99,7 +100,7 @@ public class UserProductController {
     @Operation(summary = "Добавление/обновление изображения своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping(path = "/{productId}/image")
-    public ProductResponseDto createProductImage(Principal principal, @PathVariable @Min(1) Long productId,
+    public ProductResponseDto createProductImage(@ApiIgnore Principal principal, @PathVariable @Min(1) Long productId,
                                                  @RequestParam(value = "image") MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
         productService.checkSellerAccessRights(principal.getName(), productId);
@@ -120,7 +121,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping(path = "/{productId}/image")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteProductImageSeller(Principal principal, @PathVariable @Min(1) Long productId) {
+    public void deleteProductImageSeller(@ApiIgnore Principal principal, @PathVariable @Min(1) Long productId) {
         log.info(LogMessage.TRY_DElETE_IMAGE.label);
         productService.checkSellerAccessRights(principal.getName(), productId);
         productService.deleteProductImage(productId);

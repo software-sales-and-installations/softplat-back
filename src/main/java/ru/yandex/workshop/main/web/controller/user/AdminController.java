@@ -12,6 +12,7 @@ import ru.yandex.workshop.main.mapper.AdminMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.admin.Admin;
 import ru.yandex.workshop.main.service.admin.AdminService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
 
@@ -26,7 +27,7 @@ public class AdminController {
     @Operation(summary = "Получение информации об админе - просмотр своего ЛК", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping
-    public AdminResponseDto getAdminByEmail(Principal principal) {
+    public AdminResponseDto getAdminByEmail(@ApiIgnore Principal principal) {
         log.info(LogMessage.TRY_GET_ADMIN.label, principal.getName());
         Admin response = adminService.getAdmin(principal.getName());
         return adminMapper.adminToAdminResponseDto(response);

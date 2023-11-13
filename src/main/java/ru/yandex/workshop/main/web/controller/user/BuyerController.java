@@ -17,6 +17,7 @@ import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.Favorite;
 import ru.yandex.workshop.main.service.buyer.BuyerFavoriteService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -45,7 +46,7 @@ public class BuyerController {
     @Operation(summary = "Обновление данных о себе покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PatchMapping
-    public BuyerResponseDto updateBuyer(Principal principal, @RequestBody @Valid BuyerDto buyerDto) {
+    public BuyerResponseDto updateBuyer(@ApiIgnore Principal principal, @RequestBody @Valid BuyerDto buyerDto) {
         log.info(LogMessage.TRY_PATCH_BUYER.label, principal.getName());
         Buyer updateRequest = buyerMapper.buyerDtoToBuyer(buyerDto);
         Buyer response = buyerService.updateBuyer(principal.getName(), updateRequest);
@@ -55,7 +56,7 @@ public class BuyerController {
     @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping("/favorites/{productId}")
-    public FavoriteDto createFavorite(Principal principal, @PathVariable Long productId) {
+    public FavoriteDto createFavorite(@ApiIgnore Principal principal, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", principal.getName(), productId);
         Favorite response = favoriteService.create(principal.getName(), productId);
         return favoriteMapper.toFavouriteDto(response);
@@ -65,7 +66,7 @@ public class BuyerController {
     @PreAuthorize("hasAuthority('buyer:write')")
     @DeleteMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteFavorite(Principal principal,
+    public void deleteFavorite(@ApiIgnore Principal principal,
                                @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_DELETE_FAVORITE.label, "{}, {}", principal.getName(), productId);
         favoriteService.delete(principal.getName(), productId);
@@ -74,7 +75,7 @@ public class BuyerController {
     @Operation(summary = "Просмотр избранных товаров", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/favorites")
-    public List<FavoriteDto> getAll(Principal principal) {
+    public List<FavoriteDto> getAll(@ApiIgnore Principal principal) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, principal.getName());
         List<Favorite> response = favoriteService.getAll(principal.getName());
         return response.stream()
