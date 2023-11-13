@@ -76,8 +76,6 @@ public class AuthController {
 
         if ((userDto.getRole().equals(Role.SELLER) || userDto.getRole().equals(Role.BUYER)) && (userDto.getPhone() == null || userDto.getPhone().isEmpty()))
             throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
-        if (userDto.getRole().equals(Role.SELLER) && (userDto.getDescription() == null || userDto.getDescription().isEmpty()))
-            throw new ValidationException("Необходимо указать описание вашего профиля. Описание должно быть длинной не более 500 символов.");
 
         return authService.createNewUser(userDto);
     }

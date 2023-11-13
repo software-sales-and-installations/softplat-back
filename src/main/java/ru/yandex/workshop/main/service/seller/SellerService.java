@@ -47,7 +47,6 @@ public class SellerService {
         Seller seller = getSeller(email);
 
         if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
-        if (sellerForUpdate.getDescription() != null) seller.setDescription(sellerForUpdate.getDescription());
         if (sellerForUpdate.getEmail() != null) {
             if (checkIfSellerExistsByEmail(sellerForUpdate.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + sellerForUpdate.getEmail());
