@@ -82,7 +82,7 @@ public class BasketService {
 
     @Transactional(readOnly = true)
     public Basket getBasketByBuyerEmail(String email) {
-        Buyer buyer = buyerService.getSecurityBuyer(email);
+        Buyer buyer = buyerService.getBuyerByEmail(email);
         Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
         return basket.orElseGet(() -> basketRepository.save(Basket.builder()
                 .buyerId(buyer.getId())

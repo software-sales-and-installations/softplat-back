@@ -46,7 +46,7 @@ public class BuyerFavoriteService {
     @Transactional(readOnly = true)
     public Favorite getFavorite(String buyerEmail, Long productId) {
         Favorite favorite = new Favorite();
-        favorite.setBuyer(buyerService.getSecurityBuyer(buyerEmail));
+        favorite.setBuyer(buyerService.getBuyerByEmail(buyerEmail));
         favorite.setProduct(productService.getProductOrThrowException(productId));
         return favorite;
     }

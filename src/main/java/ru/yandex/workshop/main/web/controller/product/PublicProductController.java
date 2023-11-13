@@ -40,7 +40,7 @@ public class PublicProductController {
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize,
             @RequestParam(name = "sort", defaultValue = "NEWEST") SortBy sort) {
         log.debug(LogMessage.TRY_GET_PRODUCTS_FILTER.label);
-        List<Product> response =  productService.getProductsByFilter(productsSearchRequestDto, minId, pageSize, sort);
+        List<Product> response = productService.getProductsByFilter(productsSearchRequestDto, minId, pageSize, sort);
         return response.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
