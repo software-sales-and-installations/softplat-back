@@ -31,7 +31,7 @@ import java.util.function.Function;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class PublicProductService {
+public class SearchProductService {
 
     private final ProductRepository productRepository;
 

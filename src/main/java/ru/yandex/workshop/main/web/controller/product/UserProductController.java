@@ -9,11 +9,12 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.validation.New;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.main.service.product.UserProductService;
+import ru.yandex.workshop.main.service.product.CRUDProductService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 @Validated
 public class UserProductController {
 
-    private final UserProductService productService;
+    private final CRUDProductService productService;
     private final ProductMapper productMapper;
 
     @PreAuthorize("hasAuthority('seller:write')")
@@ -36,7 +37,7 @@ public class UserProductController {
     public ProductResponseDto createProduct(Principal principal, @RequestBody @Valid ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         Product request = productMapper.productDtoToProduct(productDto);
-        Product response = productService.createProduct(principal.getName(), request);
+        Product response = productService.create(principal.getName(), request);
         return productMapper.productToProductResponseDto(response);
     }
 
@@ -45,8 +46,9 @@ public class UserProductController {
     public ProductResponseDto updateProduct(Principal principal, @PathVariable Long productId,
                                             @RequestBody @Validated(New.class) ProductDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
+        productService.checkSellerAccessRights(principal.getName(), productId);
         Product updateRequest = productMapper.productDtoToProduct(productForUpdate);
-        Product response = productService.updateProduct(principal.getName(), productId, updateRequest);
+        Product response = productService.update(principal.getName(), productId, updateRequest);
         return productMapper.productToProductResponseDto(response);
     }
 
@@ -54,39 +56,34 @@ public class UserProductController {
     @PatchMapping(path = "/{productId}/send")
     public ProductResponseDto updateStatusProductOnSent(Principal principal, @PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_SENT.label, productId, principal.getName());
-        Product response = productService.updateStatusProductOnSent(principal.getName(), productId);
+        productService.checkSellerAccessRights(principal.getName(), productId);
+        Product response = productService.updateStatus(productId, ProductStatus.SHIPPED);
         return productMapper.productToProductResponseDto(response);
     }
 
     @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping(path = "/{productId}/published")
-    public ProductResponseDto updateStatusProductOnPublished(@PathVariable Long productId) {
-        log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_PUBLISHED.label, productId);
-        Product response = productService.updateStatusProduct(productId, ProductStatus.PUBLISHED);
-        return productMapper.productToProductResponseDto(response);
-    }
-
-    @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping(path = "/{productId}/rejected")
-    public ProductResponseDto updateStatusProductOnRejected(@PathVariable Long productId) {
-        log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_REJECTED.label, productId);
-        Product response = productService.updateStatusProduct(productId, ProductStatus.REJECTED);
+    @PatchMapping(path = "/{productId}/moderation")
+    public ProductResponseDto updateStatusProductAdmin(@PathVariable Long productId, @RequestParam ProductStatus status) {
+        log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT.label, productId);
+        if (status != ProductStatus.PUBLISHED && status != ProductStatus.REJECTED)
+            throw new WrongConditionException("Некорректный статус");
+        Product response = productService.updateStatus(productId, status);
         return productMapper.productToProductResponseDto(response);
     }
 
     @PreAuthorize("hasAuthority('admin:write')")
     @DeleteMapping(path = "/{productId}")
-    public void deleteProductAdmin(
-            @PathVariable @Min(1) Long productId) {
+    public void deleteProductAdmin(@PathVariable @Min(1) Long productId) {
         log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
-        productService.deleteProduct(productId);
+        productService.delete(productId);
     }
 
     @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping(path = "/products/{productId}")
     public void deleteProductSeller(Principal principal, @PathVariable @Min(1) Long productId) {
         log.debug(LogMessage.TRY_DELETE_PRODUCT.label, productId);
-        productService.deleteProductSeller(principal.getName(), productId);
+        productService.checkSellerAccessRights(principal.getName(), productId);
+        productService.delete(productId);
     }
 
     @PreAuthorize("hasAuthority('seller:write')")
@@ -94,7 +91,8 @@ public class UserProductController {
     public ProductResponseDto createProductImage(Principal principal, @PathVariable @Min(1) Long productId,
                                                  @RequestParam(value = "image") MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
-        Product response = productService.createProductImage(principal.getName(), productId, image);
+        productService.checkSellerAccessRights(principal.getName(), productId);
+        Product response = productService.createProductImage(productId, image);
         return productMapper.productToProductResponseDto(response);
     }
 
@@ -109,7 +107,8 @@ public class UserProductController {
     @DeleteMapping(path = "/{productId}/image")
     public void deleteProductImageSeller(Principal principal, @PathVariable @Min(1) Long productId) {
         log.info(LogMessage.TRY_DElETE_IMAGE.label);
-        productService.deleteProductImageSeller(principal.getName(), productId);
+        productService.checkSellerAccessRights(principal.getName(), productId);
+        productService.deleteProductImage(productId);
     }
 
     @PreAuthorize("hasAuthority('admin:write')")

@@ -13,18 +13,14 @@ import javax.persistence.*;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "product_order")
-public class ProductOrder {
+@Table(name = "basket_position")
+public class BasketPosition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @Column(name = "order_id")
-    Long orderId;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id")
     Product product;
     Integer quantity;
-    //стоимость 1 единицы продукта с учетом скидок/бонусов/промокодов/цены за установку
-    @Column(name = "amount")
-    Float productAmount;
+    Boolean installation;
 }

@@ -10,7 +10,7 @@ import ru.yandex.workshop.main.dto.product.SortBy;
 import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
-import ru.yandex.workshop.main.service.product.PublicProductService;
+import ru.yandex.workshop.main.service.product.SearchProductService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Validated
 public class PublicProductController {
-    private final PublicProductService productService;
+    private final SearchProductService productService;
     private final ProductMapper productMapper;
 
     @GetMapping(path = "/{productId}")

@@ -21,5 +21,4 @@ public interface SellerMapper {
         if (requisites == null) return null;
         return new BankRequisitesDto(requisites.getId(), requisites.getAccount());
     }
-
 }

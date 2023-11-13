@@ -29,13 +29,13 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class UserProductService {
+public class CRUDProductService {
 
     private final ProductRepository productRepository;
     private final SellerService sellerService;
     private final ImageService imageService;
 
-    public Product createProduct(String sellerEmail, Product product) {
+    public Product create(String sellerEmail, Product product) {
         Seller seller = sellerService.getSeller(sellerEmail);
         product.setSeller(seller);
         product.setProductStatus(ProductStatus.DRAFT);
@@ -48,8 +48,8 @@ public class UserProductService {
         return productRepository.save(product);
     }
 
-    public Product updateProduct(String email, Long productId, Product productForUpdate) {
-        Product product = getProductFromDatabase(productId);
+    public Product update(String email, Long productId, Product productForUpdate) {
+        Product product = getProductOrThrowException(productId);
         Seller seller = sellerService.getSeller(email);
 
         if (!product.getSeller().getId().equals(seller.getId())) {
@@ -92,9 +92,8 @@ public class UserProductService {
         return productRepository.save(product);
     }
 
-    public Product createProductImage(String sellerEmail, Long productId, MultipartFile file) {
-        checkSellerAccessRights(sellerEmail, productId);
-        Product product = getProductFromDatabase(productId);
+    public Product createProductImage(Long productId, MultipartFile file) {
+        Product product = getProductOrThrowException(productId);
         if (product.getImage() != null) {
             imageService.deleteImageById(product.getImage().getId());
         }
@@ -103,51 +102,37 @@ public class UserProductService {
         return product;
     }
 
-    public void deleteProductImageSeller(String sellerEmail, Long productId) {
-        checkSellerAccessRights(sellerEmail, productId);
-        deleteProductImage(productId);
-    }
-
     public void deleteProductImage(Long productId) {
-        Product product = getProductFromDatabase(productId);
+        Product product = getProductOrThrowException(productId);
         if (product.getImage() != null) {
             imageService.deleteImageById(product.getImage().getId());
         }
     }
 
-    public Product updateStatusProductOnSent(String email, Long productId) {
-        Seller seller = sellerService.getSeller(email);
-        Product product = getProductFromDatabase(productId);
-
-        if (!product.getSeller().getId().equals(seller.getId())) {
-            throw new EntityNotFoundException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
-        }
-        product.setProductStatus(ProductStatus.SHIPPED);
-        return productRepository.save(product);
-    }
-
-    public Product updateStatusProduct(Long productId, ProductStatus status) {
-        Product product = getProductFromDatabase(productId);
+    public Product updateStatus(Long productId, ProductStatus status) {
+        Product product = getProductOrThrowException(productId);
 
         if (product.getProductStatus() == status)
             throw new DuplicateException("Продукт уже имеет этот статус.");
 
         switch (status) {
             case PUBLISHED:
+                if (product.getProductStatus() != ProductStatus.SHIPPED)
+                    throw new WrongConditionException("Продукт не подлежит модерации");
                 product.setProductStatus(ProductStatus.PUBLISHED);
                 product.setProductionTime(LocalDateTime.now());
                 break;
             case REJECTED:
+                if (product.getProductStatus() == ProductStatus.DRAFT)
+                    throw new WrongConditionException("Продукт не подлежит модерации");
                 product.setProductStatus(ProductStatus.REJECTED);
+                break;
+            case SHIPPED:
+                product.setProductStatus(ProductStatus.SHIPPED);
                 break;
         }
 
         return productRepository.save(product);
-    }
-
-    public void deleteProductSeller(String sellerEmail, Long productId) {
-        checkSellerAccessRights(sellerEmail, productId);
-        deleteProduct(productId);
     }
 
     @Transactional(readOnly = true)
@@ -156,25 +141,22 @@ public class UserProductService {
                 PageRequestOverride.of(from, size)));
     }
 
-    public void deleteProduct(Long productId) {
-        getProductFromDatabase(productId);
+    public void delete(Long productId) {
+        getProductOrThrowException(productId);
         productRepository.deleteById(productId);
     }
 
     @Transactional(readOnly = true)
-    public Product getProductFromDatabase(Long productId) {
+    public Product getProductOrThrowException(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private void checkSellerAccessRights(String email, Long productId) {
-        Product product = getProductFromDatabase(productId);
-        Seller seller = sellerService.getSeller(email);
+    public void checkSellerAccessRights(String email, Long productId) {
+        Product product = getProductOrThrowException(productId);
 
         if (!product.getSeller().getEmail().equals(email)) {
-            throw new AccessDenialException(String.format(
-                    "Продавец %s не может корректировать чужой продукт!",
-                    seller.getName()));
+            throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
         }
     }
 }

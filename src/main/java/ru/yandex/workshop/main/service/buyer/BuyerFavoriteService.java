@@ -9,7 +9,7 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Favorite;
 import ru.yandex.workshop.main.repository.buyer.FavoriteRepository;
-import ru.yandex.workshop.main.service.product.UserProductService;
+import ru.yandex.workshop.main.service.product.CRUDProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class BuyerFavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final BuyerService buyerService;
-    private final UserProductService userProductService;
+    private final CRUDProductService productService;
 
     public Favorite create(String buyerEmail, Long productId) {
         if (favoriteRepository.existsByBuyerEmailAndProductId(buyerEmail, productId))
@@ -47,7 +47,7 @@ public class BuyerFavoriteService {
     public Favorite getFavorite(String buyerEmail, Long productId) {
         Favorite favorite = new Favorite();
         favorite.setBuyer(buyerService.getBuyerByEmail(buyerEmail));
-        favorite.setProduct(userProductService.getProductFromDatabase(productId));
+        favorite.setProduct(productService.getProductOrThrowException(productId));
         return favorite;
     }
 }

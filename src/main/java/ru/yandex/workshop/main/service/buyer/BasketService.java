@@ -6,12 +6,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.model.buyer.Basket;
+import ru.yandex.workshop.main.model.buyer.BasketPosition;
 import ru.yandex.workshop.main.model.buyer.Buyer;
-import ru.yandex.workshop.main.model.buyer.ProductBasket;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
-import ru.yandex.workshop.main.service.product.PublicProductService;
+import ru.yandex.workshop.main.service.product.SearchProductService;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import java.util.Optional;
 public class BasketService {
     private final BasketRepository basketRepository;
     private final ProductBasketRepository productBasketRepository;
-    private final PublicProductService publicProductService;
+    private final SearchProductService searchProductService;
     private final BuyerService buyerService;
 
     public Basket addProduct(String buyerEmail, Long productId, Boolean installation) {
@@ -33,19 +33,19 @@ public class BasketService {
         if (product.getQuantity() == 0) throw new WrongConditionException("Товара нет в наличии.");
         Basket basket = getBasketByBuyerEmail(buyerEmail);
         if (basket.getProductsInBasket() == null) {
-            ProductBasket productBasket = new ProductBasket(null, product, 1, installation);
-            basket.setProductsInBasket(List.of(productBasket));
+            BasketPosition basketPosition = new BasketPosition(null, product, 1, installation);
+            basket.setProductsInBasket(List.of(basketPosition));
             return basketRepository.save(basket);
         }
-        for (ProductBasket productBasket : basket.getProductsInBasket()) {
-            if (productBasket.getProduct().getId().equals(product.getId()) &&
-                    productBasket.getProduct().getInstallation().equals(installation)) {
-                productBasket.setQuantity(productBasket.getQuantity() + 1);
+        for (BasketPosition basketPosition : basket.getProductsInBasket()) {
+            if (basketPosition.getProduct().getId().equals(product.getId()) &&
+                    basketPosition.getProduct().getInstallation().equals(installation)) {
+                basketPosition.setQuantity(basketPosition.getQuantity() + 1);
                 return basketRepository.save(basket);
             }
         }
-        ProductBasket productBasket = new ProductBasket(null, product, 1, installation);
-        basket.getProductsInBasket().add(productBasket);
+        BasketPosition basketPosition = new BasketPosition(null, product, 1, installation);
+        basket.getProductsInBasket().add(basketPosition);
         return basketRepository.save(basket);
     }
 
@@ -53,15 +53,15 @@ public class BasketService {
         Basket basket = getBasketByBuyerEmail(buyerEmail);
         if (basket.getProductsInBasket() != null) {
             for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
-                ProductBasket productBasket = basket.getProductsInBasket().get(i);
-                if (productBasket.getProduct().getId().equals(productId) &&
-                        productBasket.getProduct().getInstallation().equals(installation)) {
-                    if (productBasket.getQuantity() == 1) {
-                        productBasketRepository.deleteById(productBasket.getId());
+                BasketPosition basketPosition = basket.getProductsInBasket().get(i);
+                if (basketPosition.getProduct().getId().equals(productId) &&
+                        basketPosition.getProduct().getInstallation().equals(installation)) {
+                    if (basketPosition.getQuantity() == 1) {
+                        productBasketRepository.deleteById(basketPosition.getId());
                         basket.getProductsInBasket().remove(i);
                         if (basket.getProductsInBasket().size() == 0) basket.setProductsInBasket(null);
                     } else {
-                        productBasket.setQuantity(productBasket.getQuantity() - 1);
+                        basketPosition.setQuantity(basketPosition.getQuantity() - 1);
                     }
                     return basketRepository.save(basket);
                 }
@@ -77,7 +77,7 @@ public class BasketService {
 
     @Transactional(readOnly = true)
     public Product getProduct(long id) {
-        return publicProductService.getProductById(id);
+        return searchProductService.getProductById(id);
     }
 
     @Transactional(readOnly = true)
