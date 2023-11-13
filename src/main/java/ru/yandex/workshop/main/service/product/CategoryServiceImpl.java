@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.workshop.main.dto.category.CategoryDto;
-import ru.yandex.workshop.main.dto.category.CategoryMapper;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.product.Category;
@@ -15,42 +13,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
 
-    @Transactional
     @Override
-    public CategoryDto createCategory(CategoryDto categoryDto) {
-        return CategoryMapper.INSTANCE
-                .categoryToCategoryDto(repository.save(CategoryMapper.INSTANCE.categoryDtoToCategory(categoryDto)));
+    public Category createCategory(Category category) {
+        return repository.save(category);
     }
 
-    @Transactional
     @Override
-    public CategoryDto changeCategoryById(Long catId, CategoryDto categoryDto) {
+    public Category changeCategoryById(Long catId, Category updateRequest) {
         Category category = availabilityCategory(catId);
-
-        category.setName(categoryDto.getName());
-
-        return CategoryMapper.INSTANCE.categoryToCategoryDto(repository.save(category));
+        category.setName(updateRequest.getName());
+        return repository.save(category);
     }
 
     @Override
-    public List<CategoryDto> findCategoryAll() {
+    @Transactional(readOnly = true)
+    public List<Category> findCategoryAll() {
         return repository.findAll(Pageable.ofSize(10)).stream()
-                .map(CategoryMapper.INSTANCE::categoryToCategoryDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public CategoryDto findCategoryById(Long catId) {
-        return CategoryMapper.INSTANCE.categoryToCategoryDto(
-                availabilityCategory(catId));
+    @Transactional(readOnly = true)
+    public Category findCategoryById(Long catId) {
+        return availabilityCategory(catId);
     }
 
-    @Transactional
     @Override
     public void deleteCategory(Long catId) {
         availabilityCategory(catId);

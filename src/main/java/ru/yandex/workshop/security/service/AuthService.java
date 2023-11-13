@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.yandex.workshop.main.mapper.BuyerMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.service.admin.AdminService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
@@ -30,6 +31,7 @@ public class AuthService {
     private final AdminService adminService;
     private final SellerService sellerService;
     private final BuyerService buyerService;
+    private final BuyerMapper buyerMapper;
     private PasswordEncoder passwordEncoder;
 
     @Lazy
@@ -61,7 +63,7 @@ public class AuthService {
             case BUYER:
                 log.debug(LogMessage.TRY_ADD_BUYER.label);
 
-                buyerService.addBuyer(userDto);
+                buyerService.addBuyer(buyerMapper.buyerDtoToBuyer(userDto));
                 break;
         }
 

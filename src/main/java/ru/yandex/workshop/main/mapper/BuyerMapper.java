@@ -1,0 +1,18 @@
+package ru.yandex.workshop.main.mapper;
+
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
+import ru.yandex.workshop.main.dto.user.BuyerDto;
+import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
+import ru.yandex.workshop.main.model.buyer.Buyer;
+import ru.yandex.workshop.security.dto.UserDto;
+
+@Mapper(componentModel = "spring")
+@Component
+public interface BuyerMapper {
+    Buyer buyerDtoToBuyer(UserDto userDto);
+
+    BuyerResponseDto buyerToBuyerResponseDto(Buyer buyer);
+
+    Buyer buyerDtoToBuyer(BuyerDto buyerDto);
+}

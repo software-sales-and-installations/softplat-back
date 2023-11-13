@@ -3,6 +3,7 @@
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import lombok.SneakyThrows;
 //import org.junit.jupiter.api.BeforeAll;
+//import org.junit.jupiter.api.Disabled;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -32,6 +33,7 @@
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 //
+//@Disabled
 //@SpringBootTest
 //@AutoConfigureMockMvc
 //@AutoConfigureTestDatabase

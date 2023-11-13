@@ -11,9 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.configuration.PageRequestOverride;
-import ru.yandex.workshop.main.dto.product.ProductFilter;
-import ru.yandex.workshop.main.dto.product.ProductMapper;
-import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.product.ProductsSearchRequestDto;
 import ru.yandex.workshop.main.dto.product.SortBy;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
@@ -23,43 +21,28 @@ import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.product.QProduct;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
-import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.util.QPredicates;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class PublicProductService {
 
     private final ProductRepository productRepository;
-    private final SellerRepository sellerRepository;
 
-    public List<ProductResponseDto> getProductsOfSeller(Long sellerId, int from, int size) {
-        sellerRepository.findById(sellerId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-        PageRequestOverride pageRequest = PageRequestOverride.of(from, size);
-        // TODO у меня в Postman валится этот метод, Павел Михайлов, проверь пожалуйста
-        return productRepository.findProductBySellerId(sellerId, pageRequest)
-                .stream()
-                .map(ProductMapper.INSTANCE::productToProductResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    public ProductResponseDto getProductById(Long productId) {
-        return ProductMapper.INSTANCE.productToProductResponseDto(getProductFromDatabase(productId));
-    }
-
-    private Product getProductFromDatabase(Long productId) {
+    @Transactional(readOnly = true)
+    public Product getProductById(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    public List<ProductResponseDto> getProductsByFilter(ProductFilter productFilter, int from, int size, SortBy sort) {
+    @Transactional(readOnly = true)
+    public List<Product> getProductsByFilter(ProductsSearchRequestDto productsSearchRequestDto, int from, int size, SortBy sort) {
         Sort sortBy = (sort.equals(SortBy.NEWEST)) ?
                 Sort.by("productionTime").descending() : Sort.by("price").ascending();
 
@@ -76,17 +59,17 @@ public class PublicProductService {
 
         Predicate predicate = QPredicates.builder()
                 .add(statusPublishedExpression)
-                .add(productFilter.getText(), textPredicateFunction)
-                .add(productFilter.getSellerIds(), product.seller.id::in)
-                .add(productFilter.getVendorIds(), product.vendor.id::in)
-                .add(productFilter.getCategories(), product.category.id::in)
-                .add(productFilter.getPriceMin(), product.price::goe)
-                .add(productFilter.getPriceMax(), product.price::loe)
+                .add(productsSearchRequestDto.getText(), textPredicateFunction)
+                .add(productsSearchRequestDto.getSellerIds(), product.seller.id::in)
+                .add(productsSearchRequestDto.getVendorIds(), product.vendor.id::in)
+                .add(productsSearchRequestDto.getCategories(), product.category.id::in)
+                .add(productsSearchRequestDto.getPriceMin(), product.price::goe)
+                .add(productsSearchRequestDto.getPriceMax(), product.price::loe)
                 .buildAnd();
 
-        if (productFilter.getIsRussian() != null) {
+        if (productsSearchRequestDto.getIsRussian() != null) {
             BooleanExpression countryExpression;
-            if (productFilter.getIsRussian()) {
+            if (productsSearchRequestDto.getIsRussian()) {
                 countryExpression = product.vendor.country.eq(Country.RUSSIA);
             } else {
                 countryExpression = product.vendor.country.ne(Country.RUSSIA);
@@ -94,9 +77,9 @@ public class PublicProductService {
             predicate = ExpressionUtils.and(predicate, countryExpression);
         }
 
-        if (productFilter.getIsDemo() != null) {
+        if (productsSearchRequestDto.getIsDemo() != null) {
             BooleanExpression licenseExpression;
-            if (productFilter.getIsDemo()) {
+            if (productsSearchRequestDto.getIsDemo()) {
                 licenseExpression = product.license.eq(License.DEMO);
             } else {
                 licenseExpression = product.license.ne(License.DEMO);
@@ -106,8 +89,6 @@ public class PublicProductService {
 
         Page<Product> products = productRepository.findAll(predicate, pageRequest);
 
-        return products.getContent().stream()
-                .map(ProductMapper.INSTANCE::productToProductResponseDto)
-                .collect(Collectors.toList());
+        return new ArrayList<>(products.getContent());
     }
 }

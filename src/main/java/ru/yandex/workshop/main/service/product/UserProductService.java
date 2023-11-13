@@ -7,10 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
-import ru.yandex.workshop.main.dto.image.ImageMapper;
-import ru.yandex.workshop.main.dto.product.ProductDto;
-import ru.yandex.workshop.main.dto.product.ProductMapper;
-import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
@@ -22,42 +18,39 @@ import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
-import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
+import ru.yandex.workshop.main.service.seller.SellerService;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class UserProductService {
 
     private final ProductRepository productRepository;
-    private final SellerRepository sellerRepository;
+    private final SellerService sellerService;
     private final ImageService imageService;
 
-    @Transactional
-    public ProductResponseDto createProduct(String sellerEmail, ProductDto productDto) {
-        Seller seller = getSeller(sellerEmail);
-        Product product = ProductMapper.INSTANCE.productDtoToProduct(productDto);
+    public Product createProduct(String sellerEmail, Product product) {
+        Seller seller = sellerService.getSeller(sellerEmail);
         product.setSeller(seller);
         product.setProductStatus(ProductStatus.DRAFT);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
-        if (productDto.getInstallation() != null && productDto.getInstallation()
-                && productDto.getInstallationPrice() == null)
+        if (product.getInstallation() != null && product.getInstallation()
+                && product.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо указать цену установки.");
-        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+        return productRepository.save(product);
     }
 
-    @Transactional
-    public ProductResponseDto updateProduct(String email, Long productId, ProductDto productForUpdate) {
+    public Product updateProduct(String email, Long productId, Product productForUpdate) {
         Product product = getProductFromDatabase(productId);
-        Seller seller = getSeller(email);
+        Seller seller = sellerService.getSeller(email);
 
         if (!product.getSeller().getId().equals(seller.getId())) {
             throw new EntityNotFoundException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
@@ -72,13 +65,13 @@ public class UserProductService {
             product.setVersion(productForUpdate.getVersion());
         }
         if (productForUpdate.getCategory() != null) {
-            product.setCategory(Category.builder().id(productForUpdate.getCategory()).build());
+            product.setCategory(Category.builder().id(productForUpdate.getCategory().getId()).build());
         }
         if (productForUpdate.getLicense() != null) {
             product.setLicense(productForUpdate.getLicense());
         }
         if (productForUpdate.getVendor() != null) {
-            product.setVendor(Vendor.builder().id(productForUpdate.getVendor()).build());
+            product.setVendor(Vendor.builder().id(productForUpdate.getVendor().getId()).build());
         }
         if (productForUpdate.getPrice() != null) {
             product.setPrice(productForUpdate.getPrice());
@@ -96,28 +89,25 @@ public class UserProductService {
                 && productForUpdate.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо указать цену установки.");
         product.setProductStatus(ProductStatus.DRAFT);
-        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+        return productRepository.save(product);
     }
 
-    @Transactional
-    public ProductResponseDto createProductImage(String sellerEmail, Long productId, MultipartFile file) {
+    public Product createProductImage(String sellerEmail, Long productId, MultipartFile file) {
         checkSellerAccessRights(sellerEmail, productId);
         Product product = getProductFromDatabase(productId);
         if (product.getImage() != null) {
             imageService.deleteImageById(product.getImage().getId());
         }
         ImageDto imageDto = imageService.addNewImage(file);
-        product.setImage(ImageMapper.INSTANCE.imageDtoToImage(imageDto));
-        return ProductMapper.INSTANCE.productToProductResponseDto(product);
+        product.setImage(imageService.getImage(imageDto.getId()));
+        return product;
     }
 
-    @Transactional
     public void deleteProductImageSeller(String sellerEmail, Long productId) {
         checkSellerAccessRights(sellerEmail, productId);
         deleteProductImage(productId);
     }
 
-    @Transactional
     public void deleteProductImage(Long productId) {
         Product product = getProductFromDatabase(productId);
         if (product.getImage() != null) {
@@ -125,20 +115,18 @@ public class UserProductService {
         }
     }
 
-    @Transactional
-    public ProductResponseDto updateStatusProductOnSent(String email, Long productId) {
-        Seller seller = getSeller(email);
+    public Product updateStatusProductOnSent(String email, Long productId) {
+        Seller seller = sellerService.getSeller(email);
         Product product = getProductFromDatabase(productId);
 
         if (!product.getSeller().getId().equals(seller.getId())) {
             throw new EntityNotFoundException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
         }
         product.setProductStatus(ProductStatus.SHIPPED);
-        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+        return productRepository.save(product);
     }
 
-    @Transactional
-    public ProductResponseDto updateStatusProduct(Long productId, ProductStatus status) {
+    public Product updateStatusProduct(Long productId, ProductStatus status) {
         Product product = getProductFromDatabase(productId);
 
         if (product.getProductStatus() == status)
@@ -154,43 +142,34 @@ public class UserProductService {
                 break;
         }
 
-        return ProductMapper.INSTANCE.productToProductResponseDto(productRepository.save(product));
+        return productRepository.save(product);
     }
 
-    @Transactional
     public void deleteProductSeller(String sellerEmail, Long productId) {
         checkSellerAccessRights(sellerEmail, productId);
         deleteProduct(productId);
     }
 
-
-    public List<ProductResponseDto> getAllProductsShipped(int from, int size) {
-        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
-                        PageRequestOverride.of(from, size))
-                .stream()
-                .map(ProductMapper.INSTANCE::productToProductResponseDto)
-                .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public List<Product> getAllProductsShipped(int from, int size) {
+        return new ArrayList<>(productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
+                PageRequestOverride.of(from, size)));
     }
 
-    @Transactional
     public void deleteProduct(Long productId) {
         getProductFromDatabase(productId);
         productRepository.deleteById(productId);
     }
 
-    private Product getProductFromDatabase(Long productId) {
+    @Transactional(readOnly = true)
+    public Product getProductFromDatabase(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private Seller getSeller(String email) {
-        return sellerRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-    }
-
     private void checkSellerAccessRights(String email, Long productId) {
         Product product = getProductFromDatabase(productId);
-        Seller seller = getSeller(email);
+        Seller seller = sellerService.getSeller(email);
 
         if (!product.getSeller().getEmail().equals(email)) {
             throw new AccessDenialException(String.format(
@@ -199,5 +178,3 @@ public class UserProductService {
         }
     }
 }
-
-

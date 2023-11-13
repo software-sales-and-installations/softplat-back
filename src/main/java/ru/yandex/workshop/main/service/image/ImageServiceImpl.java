@@ -6,10 +6,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.image.ImageDto;
-import ru.yandex.workshop.main.dto.image.ImageMapper;
+import ru.yandex.workshop.main.mapper.ImageMapper;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.ImageUploadingError;
 import ru.yandex.workshop.main.message.ExceptionMessage;
@@ -21,10 +22,12 @@ import java.util.Objects;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
+    private final ImageMapper imageMapper;
 
     @Override
     public ImageDto addNewImage(MultipartFile file) {
@@ -35,7 +38,7 @@ public class ImageServiceImpl implements ImageService {
                     .bytes(file.getBytes())
                     .size(file.getSize())
                     .build();
-            return ImageMapper.INSTANCE.imageToImageDto(imageRepository.save(image));
+            return imageMapper.imageToImageDto(imageRepository.save(image));
         } catch (IOException e) {
             log.error(ExceptionMessage.IMAGE_UPLOADING_ERROR.label);
             throw new ImageUploadingError(ExceptionMessage.IMAGE_UPLOADING_ERROR.label);
@@ -43,6 +46,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseEntity<byte[]> getImageAsByteArray(Long imageId) {
         Image image = getImageOrThrowException(imageId);
         return ResponseEntity.ok()
@@ -55,6 +59,14 @@ public class ImageServiceImpl implements ImageService {
     public void deleteImageById(Long imageId) {
         getImageOrThrowException(imageId);
         imageRepository.deleteById(imageId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Image getImage(Long imageId) {
+        return imageRepository.findById(imageId).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.name())
+        );
     }
 
     private Image getImageOrThrowException(Long imageId) {

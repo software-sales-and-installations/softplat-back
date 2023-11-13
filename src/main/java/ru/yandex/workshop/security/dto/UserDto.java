@@ -10,6 +10,7 @@ import ru.yandex.workshop.security.model.Status;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Data
@@ -32,7 +33,7 @@ public class UserDto {
     String phone;
     @Length(max = 500, message = "Описание должно быть длинной не более 500 символов")
     String description;
-    @NotBlank(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
+    @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
     @Builder.Default
     Status status = Status.ACTIVE;
