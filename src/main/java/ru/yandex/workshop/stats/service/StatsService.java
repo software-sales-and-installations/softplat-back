@@ -1,21 +1,18 @@
 package ru.yandex.workshop.stats.service;
 
 import com.querydsl.core.types.Predicate;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.NotValidValueException;
 import ru.yandex.workshop.main.model.buyer.Order;
 import ru.yandex.workshop.main.model.buyer.ProductOrder;
-import ru.yandex.workshop.main.model.buyer.QOrder;
 import ru.yandex.workshop.main.model.buyer.QProductOrder;
 import ru.yandex.workshop.main.repository.buyer.OrderRepository;
 import ru.yandex.workshop.main.repository.buyer.ProductOrderRepository;
 import ru.yandex.workshop.main.util.QPredicates;
 import ru.yandex.workshop.stats.dto.StatsFilterAdmin;
 import ru.yandex.workshop.stats.dto.StatsFilterSeller;
-import ru.yandex.workshop.stats.model.QStats;
 import ru.yandex.workshop.stats.model.SellerReport;
 import ru.yandex.workshop.stats.model.SellerReportEntry;
 import ru.yandex.workshop.stats.model.Stats;
@@ -23,8 +20,8 @@ import ru.yandex.workshop.stats.repository.StatsRepository;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static ru.yandex.workshop.main.message.ExceptionMessage.NOT_VALID_VALUE_EXCEPTION;
@@ -53,22 +50,40 @@ public class StatsService {
 //            sort = valueOf(Sort.by(SortEnum.productAmount.toString().toLowerCase()));
 //        }
 
-        SellerReportEntry sellerReportEntry = new SellerReportEntry();
         QProductOrder productOrder = QProductOrder.productOrder;
-
         Predicate predicate = QPredicates.builder()
                 .add(statsFilterAdmin.getCategoriesIds(), productOrder.product.category.id::in)
                 .add(statsFilterAdmin.getSellerIds(), productOrder.product.seller.id::in)
                 .add(statsFilterAdmin.getVendorIds(), productOrder.product.vendor.id::in)
                 .buildAnd();
 
-        List<Stats> statsList = statsRepository.findSellerReport(start, end, predicate)
+        List<SellerReportEntry> sellerReportEntryList = statsRepository
+                .findSellerReport(start, end, predicate)
+                .stream()
+                .map(stats -> {
+                    SellerReportEntry sellerReportEntry = new SellerReportEntry();
+                    sellerReportEntry.setProductName(stats.getProduct().getName());
+                    sellerReportEntry.setQuantity(stats.getQuantity());
+                    sellerReportEntry.setRevenue(stats.getAmount());
+                    return sellerReportEntry;
+                })
+                .collect(Collectors.toMap(
+                        SellerReportEntry::getProductName,
+                        Function.identity(),
+                        (entry1, entry2) -> new SellerReportEntry(
+                                entry1.getProductName(),
+                                entry1.getQuantity() + entry2.getQuantity(),
+                                entry1.getRevenue() + entry2.getRevenue()
+                        ))
+                )
+                .values()
+                .stream()
+                .collect(Collectors.toList());
 
         System.out.println();
         System.out.println();
-        System.out.println(statsList.get(0));
-        System.out.println(statsList.get(1));
-        System.out.println(statsList.get(2));
+        System.out.println(sellerReportEntryList.get(0));
+        System.out.println(sellerReportEntryList.get(1));
         System.out.println();
         System.out.println();
 
@@ -125,10 +140,10 @@ public class StatsService {
 //                .from(qStats)
 //                .where(qStats.product.seller.id > 1 );
 
-        //Iterable<Order> orderList = orderRepository.findAll(predicate);
+    //Iterable<Order> orderList = orderRepository.findAll(predicate);
 
-        // Нужно подумать над моделью Statictic: создать отдельную сущность Statistic для связи с БД
-        // Как связать и нужно ли связывать эту сущность с sellerReport и sellerReportEntity
+    // Нужно подумать над моделью Statictic: создать отдельную сущность Statistic для связи с БД
+    // Как связать и нужно ли связывать эту сущность с sellerReport и sellerReportEntity
 
 //        QProductOrder qProductOrder = QProductOrder.productOrder;
 /*        Predicate predicate = QPredicates.builder()

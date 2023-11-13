@@ -196,7 +196,7 @@ values (2,
 
 insert into product_order(order_id, product_id, quantity, amount, installation)
 values (2,
-        5,
+        2,
         1,
         2000,
         true)
