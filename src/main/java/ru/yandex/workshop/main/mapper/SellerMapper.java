@@ -8,13 +8,10 @@ import ru.yandex.workshop.main.dto.user.SellerDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
-import ru.yandex.workshop.security.dto.UserDto;
 
 @Mapper(componentModel = "spring", uses = ImageMapper.class)
 @Component
 public interface SellerMapper {
-
-    Seller userDtoToSeller(UserDto userDto);
 
     @Mapping(target = "imageResponseDto", source = "image")
     SellerResponseDto sellerToSellerResponseDto(Seller seller);

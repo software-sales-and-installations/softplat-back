@@ -10,7 +10,6 @@ import ru.yandex.workshop.main.mapper.AdminMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.admin.Admin;
 import ru.yandex.workshop.main.repository.admin.AdminRepository;
-import ru.yandex.workshop.security.dto.UserDto;
 
 @Slf4j
 @Service
@@ -20,11 +19,11 @@ public class AdminService {
     private final AdminRepository adminRepository;
     private final AdminMapper adminMapper;
 
-    public void addAdmin(UserDto userDto) {
-        if (checkIfUserExistsByEmail(userDto.getEmail()))
+    public void addAdmin(Admin admin) {
+        if (checkIfUserExistsByEmail(admin.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
 
-        adminRepository.save(adminMapper.userDtoToAdmin(userDto));
+        adminRepository.save(admin);
     }
 
     @Transactional(readOnly = true)

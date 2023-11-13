@@ -15,7 +15,6 @@ import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
-import ru.yandex.workshop.security.dto.UserDto;
 import ru.yandex.workshop.security.service.UserDetailsChangeService;
 
 import java.time.LocalDateTime;
@@ -33,11 +32,10 @@ public class SellerService {
     private final UserDetailsChangeService userDetailsChangeService;
     private final SellerMapper sellerMapper;
 
-    public void addSeller(UserDto userDto) {
-        if (checkIfSellerExistsByEmail(userDto.getEmail()))
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userDto.getEmail());
+    public void addSeller(Seller seller) {
+        if (checkIfSellerExistsByEmail(seller.getEmail()))
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + seller.getEmail());
 
-        Seller seller = sellerMapper.userDtoToSeller(userDto);
         seller.setRegistrationTime(LocalDateTime.now());
 
         sellerRepository.save(seller);

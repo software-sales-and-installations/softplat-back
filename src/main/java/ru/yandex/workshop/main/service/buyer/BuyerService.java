@@ -27,6 +27,7 @@ public class BuyerService {
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + buyer.getEmail());
 
         buyer.setRegistrationTime(LocalDateTime.now());
+
         buyerRepository.save(buyer);
     }
 

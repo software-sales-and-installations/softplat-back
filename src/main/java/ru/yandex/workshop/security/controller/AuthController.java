@@ -17,6 +17,8 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
 import ru.yandex.workshop.security.dto.JwtRequest;
 import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.exception.WrongRegException;
+import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.message.ExceptionMessage;
 import ru.yandex.workshop.security.message.LogMessage;
 import ru.yandex.workshop.security.model.Role;
@@ -31,6 +33,7 @@ import javax.validation.Valid;
 import javax.xml.bind.ValidationException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -42,6 +45,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository repository;
+    private final UserMapper userMapper;
 
 
     @PostMapping("/auth/login")
@@ -74,15 +78,19 @@ public class AuthController {
     public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException {
         log.info(LogMessage.TRY_REGISTRATION.label);
 
+        if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
+            throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
+        }
+
         if ((userDto.getRole().equals(Role.SELLER) || userDto.getRole().equals(Role.BUYER)) && (userDto.getPhone() == null || userDto.getPhone().isEmpty()))
             throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
-        return authService.createNewUser(userDto);
+        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userMapper.userDtoToUser(userDto)))));
     }
 
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
-        return userDetailsChangeService.changePass(request);
+        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(userDetailsChangeService.changePass(request))));
     }
 }
