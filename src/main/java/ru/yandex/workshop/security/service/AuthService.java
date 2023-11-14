@@ -40,7 +40,7 @@ public class AuthService {
 
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setStatus(Status.ACTIVE);
-        User user = User.builder().role(userDto.getRole()).status(userDto.getStatus()).build();
+        User user = User.builder().email(userDto.getEmail()).role(userDto.getRole()).status(userDto.getStatus()).build();
 
         switch (userDto.getRole()) {
             case ADMIN:
@@ -48,21 +48,18 @@ public class AuthService {
 
                 Admin admin = adminService.addAdmin(userMapper.userDtoToAdmin(userDto));
                 user.setId(admin.getId());
-                user.setEmail(admin.getEmail());
                 break;
             case SELLER:
                 log.info(LogMessage.TRY_ADD_SELLER.label);
 
                 Seller seller = sellerService.addSeller(userMapper.userDtoToSeller(userDto));
                 user.setId(seller.getId());
-                user.setEmail(seller.getEmail());
                 break;
             case BUYER:
                 log.debug(LogMessage.TRY_ADD_BUYER.label);
 
                 Buyer buyer = buyerService.addBuyer(userMapper.userDtoToBuyer(userDto));
                 user.setId(buyer.getId());
-                user.setEmail(buyer.getEmail());
                 break;
         }
 
