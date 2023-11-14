@@ -46,8 +46,8 @@ class SellerControllerTest extends CrudOperations {
                 .name("Joe")
                 .email("joedoe@email.com")
                 .phone("0123456789")
-                .password("password")
-                .confirmPassword("password")
+                .password("Password12345!")
+                .confirmPassword("Password12345!")
                 .role(Role.SELLER)
                 .build();
     }
