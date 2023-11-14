@@ -9,8 +9,8 @@ import ru.yandex.workshop.main.model.buyer.Basket;
 import ru.yandex.workshop.main.model.buyer.BasketPosition;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.product.Product;
+import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
-import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
 import ru.yandex.workshop.main.service.product.SearchProductService;
 
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BasketService {
     private final BasketRepository basketRepository;
-    private final ProductBasketRepository productBasketRepository;
+    private final BasketPositionRepository basketPositionRepository;
     private final SearchProductService searchProductService;
     private final BuyerService buyerService;
 
@@ -57,7 +57,7 @@ public class BasketService {
                 if (basketPosition.getProduct().getId().equals(productId) &&
                         basketPosition.getProduct().getInstallation().equals(installation)) {
                     if (basketPosition.getQuantity() == 1) {
-                        productBasketRepository.deleteById(basketPosition.getId());
+                        basketPositionRepository.deleteById(basketPosition.getId());
                         basket.getProductsInBasket().remove(i);
                         if (basket.getProductsInBasket().size() == 0) basket.setProductsInBasket(null);
                     } else {
