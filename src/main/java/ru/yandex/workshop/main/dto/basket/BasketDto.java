@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,5 +12,5 @@ import java.util.List;
 public class BasketDto {
     private Long id;
     private Long buyerId;
-    private final List<ProductBasketDto> productsInBasket = new ArrayList<>();
+    private List<BasketPositionDto> productsInBasket;
 }

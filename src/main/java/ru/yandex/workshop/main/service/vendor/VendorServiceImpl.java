@@ -11,12 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
-import ru.yandex.workshop.main.dto.image.ImageMapper;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorFilter;
-import ru.yandex.workshop.main.dto.vendor.VendorMapper;
-import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.mapper.ImageMapper;
+import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.vendor.QVendor;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -24,9 +23,9 @@ import ru.yandex.workshop.main.repository.vendor.VendorRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
 import ru.yandex.workshop.main.util.QPredicates;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,17 +34,18 @@ import java.util.stream.Collectors;
 public class VendorServiceImpl implements VendorService {
     private final VendorRepository repository;
     private final ImageService imageService;
+    private final VendorMapper vendorMapper;
+    private final ImageMapper imageMapper;
 
     @Transactional
     @Override
-    public VendorResponseDto createVendor(VendorDto vendorDto) {
-        return VendorMapper.INSTANCE
-                .vendorToVendorResponseDto(repository.save(VendorMapper.INSTANCE.vendorDtoToVendor(vendorDto)));
+    public Vendor createVendor(VendorDto vendorDto) {
+        return repository.save(vendorMapper.vendorDtoToVendor(vendorDto));
     }
 
     @Transactional
     @Override
-    public VendorResponseDto changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
+    public Vendor changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
         Vendor oldVendor = getVendor(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
@@ -58,11 +58,11 @@ public class VendorServiceImpl implements VendorService {
             oldVendor.setCountry(vendorUpdateDto.getCountry());
         }
 
-        return VendorMapper.INSTANCE.vendorToVendorResponseDto(repository.save(oldVendor));
+        return repository.save(oldVendor);
     }
 
     @Override
-    public List<VendorResponseDto> findVendorAll(VendorFilter vendorFilter, int from, int size) {
+    public List<Vendor> findVendorsWithFilter(VendorFilter vendorFilter, int from, int size) {
         PageRequest pageRequest = PageRequestOverride.of(from, size);
 
         QVendor vendor = QVendor.vendor;
@@ -80,16 +80,14 @@ public class VendorServiceImpl implements VendorService {
 
         Page<Vendor> vendors = repository.findAll(predicate, pageRequest);
 
-        return vendors.getContent().stream()
-                .map(VendorMapper.INSTANCE::vendorToVendorResponseDto)
-                .collect(Collectors.toList());
+        return new ArrayList<>(vendors.getContent());
     }
 
     @Override
-    public VendorResponseDto findVendorById(Long vendorId) {
-        return VendorMapper.INSTANCE
-                .vendorToVendorResponseDto(repository.findById(vendorId)
-                        .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
+    public Vendor getVendorById(Long vendorId) {
+        return repository.findById(vendorId).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
+        );
     }
 
     @Transactional
@@ -101,14 +99,14 @@ public class VendorServiceImpl implements VendorService {
 
     @Transactional
     @Override
-    public VendorResponseDto addVendorImage(Long vendorId, MultipartFile file) {
+    public Vendor addVendorImage(Long vendorId, MultipartFile file) {
         Vendor vendor = getVendor(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
         ImageDto imageDto = imageService.addNewImage(file);
-        vendor.setImage(ImageMapper.INSTANCE.imageDtoToImage(imageDto));
-        return VendorMapper.INSTANCE.vendorToVendorResponseDto(vendor);
+        vendor.setImage(imageMapper.imageDtoToImage(imageDto));
+        return vendor;
     }
 
     @Transactional

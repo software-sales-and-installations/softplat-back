@@ -1,10 +1,9 @@
 package ru.yandex.workshop.main.repository.buyer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
-import ru.yandex.workshop.main.model.buyer.ProductBasket;
+import ru.yandex.workshop.main.model.buyer.BasketPosition;
 
 @Repository
-public interface ProductBasketRepository extends JpaRepository<ProductBasket, Long>, QuerydslPredicateExecutor<ProductBasket> {
+public interface ProductBasketRepository extends JpaRepository<BasketPosition, Long> {
 }

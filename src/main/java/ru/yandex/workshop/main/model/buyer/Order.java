@@ -28,7 +28,7 @@ public class Order {
     Buyer buyer;
     @OneToMany
     @JoinColumn(name = "order_id")
-    List<ProductOrder> productsOrdered = new ArrayList<>();
+    List<OrderPosition> productsOrdered = new ArrayList<>();
     //стоимость всего заказа
     @Column(name = "amount")
     Float orderAmount;

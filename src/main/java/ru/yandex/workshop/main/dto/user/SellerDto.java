@@ -19,6 +19,4 @@ public class SellerDto {
     private String email;
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
     private String phone;
-    @Length(max = 500, message = "Описание должно быть длинной не более 500 символов")
-    private String description;
 }
