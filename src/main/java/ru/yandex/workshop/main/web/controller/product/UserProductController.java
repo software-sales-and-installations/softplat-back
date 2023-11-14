@@ -53,7 +53,7 @@ public class UserProductController {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
         productService.checkSellerAccessRights(principal.getName(), productId);
         Product updateRequest = productMapper.productDtoToProduct(productForUpdate);
-        Product response = productService.update(principal.getName(), productId, updateRequest);
+        Product response = productService.update(productId, updateRequest);
         return productMapper.productToProductResponseDto(response);
     }
 

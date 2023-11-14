@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -22,7 +23,9 @@ public class ProductsSearchRequestDto {
     private List<Long> vendorIds;
     private Boolean isRussian;
     private Boolean isDemo;
+    @PositiveOrZero
     private Float priceMin;
+    @PositiveOrZero
     private Float priceMax;
 }
 

@@ -48,13 +48,9 @@ public class CRUDProductService {
         return productRepository.save(product);
     }
 
-    public Product update(String email, Long productId, Product productForUpdate) {
+    public Product update(Long productId, Product productForUpdate) {
         Product product = getProductOrThrowException(productId);
-        Seller seller = sellerService.getSeller(email);
 
-        if (!product.getSeller().getId().equals(seller.getId())) {
-            throw new EntityNotFoundException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
-        }
         if (productForUpdate.getName() != null) {
             product.setName(productForUpdate.getName());
         }
@@ -88,7 +84,9 @@ public class CRUDProductService {
         if (productForUpdate.getInstallation() != null && productForUpdate.getInstallation()
                 && productForUpdate.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо указать цену установки.");
+
         product.setProductStatus(ProductStatus.DRAFT);
+
         return productRepository.save(product);
     }
 

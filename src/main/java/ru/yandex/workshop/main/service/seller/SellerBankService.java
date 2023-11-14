@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
@@ -30,7 +29,7 @@ public class SellerBankService {
         return seller.getRequisites();
     }
 
-    public BankRequisites updateRequisites(String email, BankRequisitesDto requisites) {
+    public BankRequisites updateRequisites(String email, BankRequisites requisites) {
         Seller seller = getSellerFromDatabase(email);
         if (seller.getRequisites() != null) {
             bankRepository.deleteById(seller.getRequisites().getId());

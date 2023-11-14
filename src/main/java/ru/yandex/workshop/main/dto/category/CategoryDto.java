@@ -13,7 +13,6 @@ import javax.validation.constraints.Size;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryDto {
-    Long id;
     @NotBlank(message = "Необходимо указать название категории")
     @Size(min = 2, max = 20, message = "Длина названия должна быть от 2 до 20 символов")
     String name;

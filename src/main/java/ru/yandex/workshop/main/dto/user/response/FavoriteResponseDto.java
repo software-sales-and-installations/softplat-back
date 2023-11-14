@@ -11,8 +11,7 @@ import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FavoriteDto {
-
+public class FavoriteResponseDto {
     Long userId;
     ProductResponseDto product;
 }
