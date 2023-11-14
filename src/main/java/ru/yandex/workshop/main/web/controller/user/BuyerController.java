@@ -1,7 +1,9 @@
 package ru.yandex.workshop.main.web.controller.user;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,7 @@ import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.Favorite;
 import ru.yandex.workshop.main.service.buyer.BuyerFavoriteService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -32,6 +35,7 @@ public class BuyerController {
     private final BuyerMapper buyerMapper;
     private final FavoriteMapper favoriteMapper;
 
+    @Operation(summary = "Получение покупателя по id", description = "Доступ для всех")
     @GetMapping("/{userId}")
     public BuyerResponseDto getBuyer(@PathVariable Long userId) {
         log.info(LogMessage.TRY_GET_BUYER.label, userId);
@@ -39,33 +43,39 @@ public class BuyerController {
         return buyerMapper.buyerToBuyerResponseDto(response);
     }
 
+    @Operation(summary = "Обновление данных о себе покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PatchMapping
-    public BuyerResponseDto updateBuyer(Principal principal, @RequestBody @Valid BuyerDto buyerDto) {
+    public BuyerResponseDto updateBuyer(@ApiIgnore Principal principal, @RequestBody @Valid BuyerDto buyerDto) {
         log.info(LogMessage.TRY_PATCH_BUYER.label, principal.getName());
         Buyer updateRequest = buyerMapper.buyerDtoToBuyer(buyerDto);
         Buyer response = buyerService.updateBuyer(principal.getName(), updateRequest);
         return buyerMapper.buyerToBuyerResponseDto(response);
     }
 
+    @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping("/favorites/{productId}")
-    public FavoriteDto createFavorite(Principal principal, @PathVariable Long productId) {
+    public FavoriteDto createFavorite(@ApiIgnore Principal principal, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", principal.getName(), productId);
         Favorite response = favoriteService.create(principal.getName(), productId);
         return favoriteMapper.toFavouriteDto(response);
     }
 
+    @Operation(summary = "Удаление товара из избранного", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @DeleteMapping("/favorites/{productId}")
-    public void deleteFavorite(Principal principal, @PathVariable Long productId) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteFavorite(@ApiIgnore Principal principal,
+                               @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_DELETE_FAVORITE.label, "{}, {}", principal.getName(), productId);
         favoriteService.delete(principal.getName(), productId);
     }
 
+    @Operation(summary = "Просмотр избранных товаров", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/favorites")
-    public List<FavoriteDto> getAll(Principal principal) {
+    public List<FavoriteDto> getAll(@ApiIgnore Principal principal) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, principal.getName());
         List<Favorite> response = favoriteService.getAll(principal.getName());
         return response.stream()

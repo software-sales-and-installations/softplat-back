@@ -16,12 +16,11 @@ import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
+import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
-import ru.yandex.workshop.main.repository.buyer.ProductBasketRepository;
 import ru.yandex.workshop.main.service.product.SearchProductService;
 
 import java.time.LocalDateTime;
@@ -45,7 +44,7 @@ class BasketServiceTest {
     @Mock
     private SearchProductService productService;
     @Mock
-    private ProductBasketRepository productBasketRepository; //НЕ УДАЛЯТЬ, НУЖЕН ДЛЯ РАБОТЫ ТЕСТА
+    private BasketPositionRepository basketPositionRepository; //НЕ УДАЛЯТЬ, НУЖЕН ДЛЯ РАБОТЫ ТЕСТА
     @Mock
     private BuyerService buyerService;
     @Captor
@@ -65,10 +64,6 @@ class BasketServiceTest {
                 .phone("1234567890")
                 .build();
 
-        BankRequisites bankRequisites = new BankRequisites(
-                1L,
-                "1111 2222 3333 4444");
-
         Vendor vendor = Vendor.builder()
                 .id(1L)
                 .name("name1")
@@ -82,7 +77,6 @@ class BasketServiceTest {
                 .name("Name")
                 .phone("+79111111111")
                 .registrationTime(LocalDateTime.now())
-                .requisites(bankRequisites)
                 .build();
 
         Category category = new Category(

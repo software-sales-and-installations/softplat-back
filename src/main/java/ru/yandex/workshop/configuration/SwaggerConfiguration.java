@@ -16,7 +16,7 @@ public class SwaggerConfiguration {
     public Docket mainApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("ru.yandex.workshop.main.controller")
+                .apis(RequestHandlerSelectors.basePackage("ru.yandex.workshop.main.web.controller")
                         .or(RequestHandlerSelectors.basePackage("ru.yandex.workshop.security.controller")))
                 .paths(PathSelectors.any())
                 .build()

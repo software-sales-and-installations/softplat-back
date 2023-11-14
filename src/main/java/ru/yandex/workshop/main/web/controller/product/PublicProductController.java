@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.web.controller.product;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +27,7 @@ public class PublicProductController {
     private final SearchProductService productService;
     private final ProductMapper productMapper;
 
+    @Operation(summary = "Получение продукта по id", description = "Доступ для всех")
     @GetMapping(path = "/{productId}")
     public ProductResponseDto getProductById(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_GET_PRODUCT_BY_ID.label, productId);
@@ -33,6 +35,7 @@ public class PublicProductController {
         return productMapper.productToProductResponseDto(response);
     }
 
+    @Operation(summary = "Получение списка продуктов/поиск/фильтрация", description = "Доступ для всех")
     @GetMapping(path = "/search")
     public List<ProductResponseDto> searchProducts(
             @RequestBody @Valid ProductsSearchRequestDto productsSearchRequestDto,

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -17,6 +18,7 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
 import ru.yandex.workshop.security.dto.JwtRequest;
 import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.message.ExceptionMessage;
@@ -75,7 +77,7 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException {
+    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException, WrongDataDbException {
         log.info(LogMessage.TRY_REGISTRATION.label);
 
         if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
@@ -88,6 +90,7 @@ public class AuthController {
         return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userDto))));
     }
 
+    @PreAuthorize("hasAuthority('seller:write') and hasAuthority('admin:write') and hasAuthority('buyer:write')")
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);

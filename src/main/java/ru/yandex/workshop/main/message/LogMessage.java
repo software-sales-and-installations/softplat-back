@@ -4,14 +4,12 @@ public enum LogMessage {
     TRY_PATCH_BUYER("Попытка изменения покупателя по email: {}"),
     TRY_GET_BUYER("Попытка получения покупателя по id: {}"),
     TRY_ADD_SELLER("Попытка добавления нового продавца."),
-    TRY_ADD_SELLER_IMAGE("Попытка добавления нового изображения продавца."),
-    TRY_DELETE_SELLER_IMAGE("Попытка удаления изображения продавца."),
     TRY_GET_PRODUCTS_FILTER("Попытка получения списка продуктов с учетом фильтра."),
     TRY_PATCH_SELLER("Попытка изменения продавца по email: {}"),
     TRY_GET_SELLER("Попытка получения продавца по id: {}"),
     TRY_GET_All_SELLERS("Попытка получения списка продавцов"),
     TRY_SELLER_PATCH_REQUISITES("Попытка изменения реквизитов по email: {}"),
-    TRY_SELLER_GET_REQUISITES("Попытка получения реквизитов по id продавца: {}"),
+    TRY_SELLER_GET_REQUISITES("Попытка получения реквизитов по email продавца: {}"),
     TRY_SELLER_DELETE_REQUISITES("Попытка удаления реквизитов по email: {}"),
     TRY_ADMIN_ADD_VENDOR("Попытка добавления нового вендора."),
     TRY_ADMIN_PATCH_VENDOR("Попытка изменения вендора."),
@@ -37,12 +35,14 @@ public enum LogMessage {
     TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
     TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
     TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
-    TRY_ADD_INSTALLATION_FOR_PRODUCT_IN_BASKET("Попытка удаление из корзины продукта с id {}."),
     TRY_ADD_ADMIN("Попытка добавить нового админа"),
     TRY_ADD_BUYER("Попытка добавить нового покупателя"),
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
     TRY_BUYER_DELETE_FAVORITE("Попытка удаления данных из избранного"),
-    TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}");
+    TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}"),
+    TRY_ADD_ORDER("Попытка создания оплаченного заказа"),
+    TRY_GET_ALL_ORDERS("Попытка получить все покупки"),
+    TRY_GET_ORDER("Попытка получить заказ по id {}");
 
     public final String label;
 

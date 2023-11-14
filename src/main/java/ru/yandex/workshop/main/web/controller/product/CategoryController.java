@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.web.controller.product;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class CategoryController {
     private final CategoryServiceImpl service;
     private final CategoryMapper categoryMapper;
 
+    @Operation(summary = "Получение списка категорий", description = "Доступ для всех")
     @GetMapping
     public List<CategoryDto> findAllCategories() {
         log.debug(LogMessage.TRY_GET_CATEGORY.label);
@@ -32,6 +34,7 @@ public class CategoryController {
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "Получение категории по id", description = "Доступ для всех")
     @GetMapping(path = "/{catId}")
     public CategoryDto findCategoryById(@PathVariable(name = "catId") Long catId) {
         log.debug(LogMessage.TRY_GET_ID_CATEGORY.label, catId);
@@ -39,6 +42,7 @@ public class CategoryController {
         return categoryMapper.categoryToCategoryDto(response);
     }
 
+    @Operation(summary = "Создание категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -49,6 +53,7 @@ public class CategoryController {
         return categoryMapper.categoryToCategoryDto(response);
     }
 
+    @Operation(summary = "Изменение категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{catId}")
     public CategoryDto changeCategoryById(@PathVariable(name = "catId") Long catId,
@@ -59,6 +64,7 @@ public class CategoryController {
         return categoryMapper.categoryToCategoryDto(response);
     }
 
+    @Operation(summary = "Удаление категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{catId}")
