@@ -22,8 +22,6 @@ import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 
-import java.util.Optional;
-
 @Slf4j
 @Service
 @Transactional

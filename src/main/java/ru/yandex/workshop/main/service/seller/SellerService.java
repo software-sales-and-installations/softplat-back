@@ -10,7 +10,6 @@ import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.mapper.SellerMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;

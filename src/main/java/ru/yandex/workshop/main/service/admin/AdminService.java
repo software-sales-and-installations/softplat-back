@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.mapper.AdminMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.admin.Admin;
 import ru.yandex.workshop.main.repository.admin.AdminRepository;
