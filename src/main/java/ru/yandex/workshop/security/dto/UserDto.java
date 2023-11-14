@@ -22,7 +22,12 @@ public class UserDto {
     @Length(min = 6, max = 30, message = "Адрес электронной почты должен содержать от 6 до 30 символов")
     String email;
     @NotBlank(message = "Необходимо указать пароль")
-    @Length(min = 8, max = 40, message = "Пароль должен быть длиной от 8 до 40 символов")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,40}$", message = "Пароль должен соответствовать следующим требованиям: " +
+            "1. Использование строчной буквы;" +
+            "2. Использование прописной буквы;" +
+            "3. Использование спец.символа \"@,#,$,%,^,&,+,=,!\";" +
+            "4. Использование цифры от 0 до 9;" +
+            "5. Длина пароля от 8 до 40 символов;")
     String password;
     @NotBlank(message = "Необходимо повторно указать пароль")
     String confirmPassword;
@@ -33,6 +38,5 @@ public class UserDto {
     String phone;
     @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
-    @Builder.Default
-    Status status = Status.ACTIVE;
+    Status status;
 }

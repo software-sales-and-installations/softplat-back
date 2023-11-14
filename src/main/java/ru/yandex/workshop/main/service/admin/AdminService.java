@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.mapper.AdminMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.admin.Admin;
 import ru.yandex.workshop.main.repository.admin.AdminRepository;
@@ -17,13 +16,12 @@ import ru.yandex.workshop.main.repository.admin.AdminRepository;
 @RequiredArgsConstructor
 public class AdminService {
     private final AdminRepository adminRepository;
-    private final AdminMapper adminMapper;
 
-    public void addAdmin(Admin admin) {
+    public Admin addAdmin(Admin admin) {
         if (checkIfUserExistsByEmail(admin.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
 
-        adminRepository.save(admin);
+        return adminRepository.save(admin);
     }
 
     @Transactional(readOnly = true)
