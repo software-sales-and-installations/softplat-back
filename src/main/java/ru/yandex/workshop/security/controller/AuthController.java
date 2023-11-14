@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -88,6 +89,7 @@ public class AuthController {
         return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userDto))));
     }
 
+    @PreAuthorize("hasAuthority('seller:write') and hasAuthority('admin:write') and hasAuthority('buyer:write')")
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
