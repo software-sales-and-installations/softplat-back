@@ -23,8 +23,6 @@ import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
 
-import java.sql.SQLException;
-
 @Slf4j
 @Service
 @Transactional
