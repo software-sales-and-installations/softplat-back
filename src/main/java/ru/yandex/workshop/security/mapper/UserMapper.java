@@ -21,10 +21,4 @@ public interface UserMapper {
     Buyer userDtoToBuyer(UserDto userDto);
 
     UserResponseDto userToUserResponseDto(User user);
-
-    UserResponseDto userToUserResponseDto(Admin user);
-
-    UserResponseDto userToUserResponseDto(Seller user);
-
-    UserResponseDto userToUserResponseDto(Buyer user);
 }
