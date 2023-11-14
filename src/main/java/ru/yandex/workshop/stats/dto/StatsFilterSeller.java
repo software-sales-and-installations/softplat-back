@@ -15,6 +15,5 @@ import java.util.List;
 public class StatsFilterSeller {
 
     List<Long> categoriesIds;
-    List<Long> sellerIds;
     List<Long> vendorIds;
 }

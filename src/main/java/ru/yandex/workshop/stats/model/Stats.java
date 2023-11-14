@@ -42,9 +42,9 @@ public class Stats {
     @JoinColumn(name = PRODUCT_ID)
     Product product;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd", iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @Column(name = DATE_BUY)
-    LocalDate dateBuy;
+    LocalDateTime dateBuy;
 
     @Column(name = QUANTITY)
     Integer quantity;

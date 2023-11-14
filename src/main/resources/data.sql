@@ -86,7 +86,7 @@ values ('NOD32',
         1,
         'LICENSE',
         3,
-        1,
+        2,
         3500,
         150,
         50,
@@ -115,7 +115,7 @@ values ('Kaspersky',
         'Kaspersky для тебя, Лягушонок',
         '2020.10.0',
         '2020-11-01 10:00:00',
-        1,
+        2,
         'LICENSE',
         3,
         2,
@@ -134,7 +134,7 @@ values ('Adobe',
         1,
         'FREE',
         1,
-        2,
+        1,
         2000,
         150,
         10,
@@ -161,17 +161,17 @@ insert into basket(buyer_id)
 values (2);
 
 insert into "order" (production_time, amount, buyer_id)
-values ('2023-11-09 14:43:00',
+values ('2023-11-08 14:43:00',
         2000,
         1);
 
 insert into "order" (production_time, amount, buyer_id)
-values ('2023-11-09 10:43:00',
+values ('2023-11-08 10:43:00',
         2000,
         2);
 
 insert into "order" (production_time, amount, buyer_id)
-values ('2023-11-09 10:43:00',
+values ('2023-11-13 10:43:00',
         2000,
         1);
 
@@ -196,7 +196,7 @@ values (2,
 
 insert into product_order(order_id, product_id, quantity, amount, installation)
 values (2,
-        2,
+        4,
         1,
         2000,
         true)
