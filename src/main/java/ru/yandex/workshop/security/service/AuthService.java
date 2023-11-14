@@ -41,31 +41,33 @@ public class AuthService {
 
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setStatus(Status.ACTIVE);
-        User userSecutiry = repository.save(userMapper.userDtoToUser(userDto));
-        User user = null;
-        ResponseEntity<Object> response = null;
+        User user = User.builder().role(userDto.getRole()).status(userDto.getStatus()).build();
 
         switch (userDto.getRole()) {
             case ADMIN:
                 log.info(LogMessage.TRY_ADD_ADMIN.label);
 
                 Admin admin = adminService.addAdmin(userMapper.userDtoToAdmin(userDto));
-                user = User.builder().id(admin.getId()).email(admin.getEmail()).role(userSecutiry.getRole()).status(userSecutiry.getStatus()).build();
+                user.setId(admin.getId());
+                user.setEmail(admin.getEmail());
                 break;
             case SELLER:
                 log.info(LogMessage.TRY_ADD_SELLER.label);
 
                 Seller seller = sellerService.addSeller(userMapper.userDtoToSeller(userDto));
-                user = User.builder().id(seller.getId()).email(seller.getEmail()).role(userSecutiry.getRole()).status(userSecutiry.getStatus()).build();
+                user.setId(seller.getId());
+                user.setEmail(seller.getEmail());
                 break;
             case BUYER:
                 log.debug(LogMessage.TRY_ADD_BUYER.label);
 
                 Buyer buyer = buyerService.addBuyer(userMapper.userDtoToBuyer(userDto));
-                user = User.builder().id(buyer.getId()).email(buyer.getEmail()).role(userSecutiry.getRole()).status(userSecutiry.getStatus()).build();
+                user.setId(buyer.getId());
+                user.setEmail(buyer.getEmail());
                 break;
         }
 
+        repository.save(userMapper.userDtoToUser(userDto));
         return user;
 
     }
