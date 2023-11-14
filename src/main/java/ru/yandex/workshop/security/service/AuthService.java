@@ -3,6 +3,7 @@ package ru.yandex.workshop.security.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,8 @@ import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.User;
 import ru.yandex.workshop.security.repository.UserRepository;
+
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -40,30 +43,33 @@ public class AuthService {
 
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         userDto.setStatus(Status.ACTIVE);
-        User user = repository.save(userMapper.userDtoToUser(userDto));
+        User userSecutiry = repository.save(userMapper.userDtoToUser(userDto));
+        User user = null;
+        ResponseEntity<Object> response = null;
 
         switch (userDto.getRole()) {
             case ADMIN:
                 log.info(LogMessage.TRY_ADD_ADMIN.label);
 
                 Admin admin = adminService.addAdmin(userMapper.userDtoToAdmin(userDto));
-                user.setId(admin.getId());
+                user = User.builder().id(admin.getId()).email(admin.getEmail()).role(userSecutiry.getRole()).status(userSecutiry.getStatus()).build();
                 break;
             case SELLER:
                 log.info(LogMessage.TRY_ADD_SELLER.label);
 
                 Seller seller = sellerService.addSeller(userMapper.userDtoToSeller(userDto));
-                user.setId(seller.getId());
+                user = User.builder().id(seller.getId()).email(seller.getEmail()).role(userSecutiry.getRole()).status(userSecutiry.getStatus()).build();
                 break;
             case BUYER:
                 log.debug(LogMessage.TRY_ADD_BUYER.label);
 
                 Buyer buyer = buyerService.addBuyer(userMapper.userDtoToBuyer(userDto));
-                user.setId(buyer.getId());
+                user = User.builder().id(buyer.getId()).email(buyer.getEmail()).role(userSecutiry.getRole()).status(userSecutiry.getStatus()).build();
                 break;
         }
 
         return user;
+
     }
 
     private boolean checkIfUserExistsByEmail(String email) {
