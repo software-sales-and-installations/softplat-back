@@ -30,15 +30,14 @@ public class SellerService {
     private final SellerRepository sellerRepository;
     private final ImageService imageService;
     private final UserDetailsChangeService userDetailsChangeService;
-    private final SellerMapper sellerMapper;
 
-    public void addSeller(Seller seller) {
+    public Seller addSeller(Seller seller) {
         if (checkIfSellerExistsByEmail(seller.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + seller.getEmail());
 
         seller.setRegistrationTime(LocalDateTime.now());
 
-        sellerRepository.save(seller);
+        return sellerRepository.save(seller);
     }
 
     public Seller updateSeller(String email, Seller sellerForUpdate) {

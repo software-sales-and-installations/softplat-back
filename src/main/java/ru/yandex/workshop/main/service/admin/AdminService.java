@@ -17,13 +17,12 @@ import ru.yandex.workshop.main.repository.admin.AdminRepository;
 @RequiredArgsConstructor
 public class AdminService {
     private final AdminRepository adminRepository;
-    private final AdminMapper adminMapper;
 
-    public void addAdmin(Admin admin) {
+    public Admin addAdmin(Admin admin) {
         if (checkIfUserExistsByEmail(admin.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
 
-        adminRepository.save(admin);
+        return adminRepository.save(admin);
     }
 
     @Transactional(readOnly = true)

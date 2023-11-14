@@ -33,6 +33,5 @@ public class UserDto {
     String phone;
     @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
-    @Builder.Default
-    Status status = Status.ACTIVE;
+    Status status;
 }

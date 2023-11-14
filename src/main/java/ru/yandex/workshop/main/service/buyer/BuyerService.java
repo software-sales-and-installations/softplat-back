@@ -22,13 +22,13 @@ public class BuyerService {
     private final BuyerRepository buyerRepository;
     private final UserDetailsChangeService userDetailsChangeService;
 
-    public void addBuyer(Buyer buyer) {
+    public Buyer addBuyer(Buyer buyer) {
         if (checkIfUserExistsByEmail(buyer.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + buyer.getEmail());
 
         buyer.setRegistrationTime(LocalDateTime.now());
 
-        buyerRepository.save(buyer);
+        return buyerRepository.save(buyer);
     }
 
     public Buyer updateBuyer(String email, Buyer updateRequest) {
