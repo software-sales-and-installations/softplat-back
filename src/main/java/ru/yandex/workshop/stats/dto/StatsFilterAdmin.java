@@ -26,7 +26,6 @@ public class StatsFilterAdmin {
     LocalDateTime start;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime end;
-//    SortEnum sort;
 
     public static StatsFilterAdmin of(
             List<Long> categoriesIds,
@@ -34,7 +33,6 @@ public class StatsFilterAdmin {
             List<Long> vendorIds,
             LocalDateTime start,
             LocalDateTime end
-            //        SortEnum sort
     ) {
         StatsFilterAdmin filterAdmin = new StatsFilterAdmin();
 
@@ -56,9 +54,6 @@ public class StatsFilterAdmin {
         if (vendorIds != null) {
             filterAdmin.setVendorIds(vendorIds);
         }
-//        if (sort != null) {
-//            filterAdmin.setSort(SortEnum.valueOf(sort.toString().toUpperCase()));
-//        }
         return filterAdmin;
     }
 

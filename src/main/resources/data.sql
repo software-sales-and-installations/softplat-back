@@ -1,4 +1,3 @@
-
 insert into CATEGORY (NAME)
 values ('Офисные');
 insert into CATEGORY (NAME)
@@ -46,18 +45,16 @@ values ('1111222233334444');
 insert into requisite (account)
 values ('5555666677778888');
 
-insert into seller (email, name, description, number, registration_time, requisites_id)
+insert into seller (email, name, number, registration_time, requisites_id)
 values ('seller1@admin.ru',
         'ИП Огурец',
-        'Мы продаем ПО как для себя.',
         '9111111111',
         '2022-06-16 16:37:23',
         1);
 
-insert into seller (email, name, description, number, registration_time, requisites_id)
+insert into seller (email, name, number, registration_time, requisites_id)
 values ('seller2@admin.ru',
         'ИП Томат',
-        'Мы торгуем помидорами и ПО. Шучу, не помидорами.',
         '9222222222',
         '2020-06-16 16:37:23',
         2);
@@ -115,7 +112,7 @@ values ('Kaspersky',
         'Kaspersky для тебя, Лягушонок',
         '2020.10.0',
         '2020-11-01 10:00:00',
-        2,
+        1,
         'LICENSE',
         3,
         2,
@@ -175,28 +172,26 @@ values ('2023-11-13 10:43:00',
         2000,
         1);
 
-insert into product_basket(basket_id, product_id, quantity)
+insert into basket_position(basket_id, product_id, quantity, installation)
 values (1,
         1,
-        2000);
+        2000,
+        true);
 
-insert into product_order(order_id, product_id, quantity, amount, installation)
+insert into order_position(order_id, product_id, quantity, amount)
 values (1,
         1,
         2,
-        4000,
-        true);
+        4000);
 
-insert into product_order(order_id, product_id, quantity, amount, installation)
-values (2,
+insert into order_position(order_id, product_id, quantity, amount)
+values (3,
         1,
         3,
-        6000,
-        true);
+        6000);
 
-insert into product_order(order_id, product_id, quantity, amount, installation)
+insert into order_position(order_id, product_id, quantity, amount)
 values (2,
         4,
-        1,
-        2000,
-        true)
+        10,
+        5000)

@@ -38,7 +38,7 @@ public class OrderService {
         for (Long productBasketId : productBaskets) {
             OrderPosition productOrder = mapper.basketPositionToOrderPosition(
                     basketPositionRepository.findById(productBasketId).orElseThrow(()
-                    -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
+                            -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
             if (productOrder.getProduct().getQuantity() >= productOrder.getQuantity()) {
                 productOrder.setId(null);
                 if (productOrder.getInstallation()) {
@@ -63,5 +63,9 @@ public class OrderService {
     public List<Order> getAllOrders(String email) {
         Buyer buyer = buyerService.getBuyerByEmail(email);
         return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.of(0, 20));
+    }
+
+    public List<Order> getAll() {
+        return orderRepository.findAll();
     }
 }

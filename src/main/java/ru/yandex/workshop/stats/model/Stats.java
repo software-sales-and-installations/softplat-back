@@ -7,7 +7,6 @@ import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.product.Product;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
