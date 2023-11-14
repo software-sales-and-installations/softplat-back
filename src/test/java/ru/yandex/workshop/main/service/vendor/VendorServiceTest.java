@@ -1,5 +1,4 @@
-/*
-package ru.yandex.workshop.main.service.admin.vendor;
+package ru.yandex.workshop.main.service.vendor;
 
 import lombok.RequiredArgsConstructor;
 import org.hamcrest.MatcherAssert;
@@ -11,10 +10,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorFilter;
-import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
-import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -33,47 +30,47 @@ class VendorServiceTest {
     private final EntityManager em;
     private final VendorService service;
 
-    VendorDto vendorDtoOne;
-    VendorDto vendorDtoTwo;
-    VendorResponseDto vendorResponseDto;
-    VendorDto newVendorUpdateDto;
-    VendorResponseDto newVendorResponseDto;
+    VendorDto newVendorRequestOne;
+    VendorDto newVendorRequestTwo;
+    Vendor newVendorResponseOne;
+    Vendor newVendorResponseTwo;
+    VendorDto vendorUpdateDto;
 
     @BeforeEach
     void assistant() {
-        vendorDtoOne = VendorDto.builder().name("testOne").description("testOne").country(Country.RUSSIA).build();
-        vendorDtoTwo = VendorDto.builder().name("testTwo").description("testTwo").country(Country.INDIA).build();
-        newVendorUpdateDto = VendorDto.builder().name("newTest").description("newTest").country(Country.USA).build();
+        newVendorRequestOne = VendorDto.builder().name("testOne").description("testOne").country(Country.RUSSIA).build();
+        newVendorRequestTwo = VendorDto.builder().name("testTwo").description("testTwo").country(Country.INDIA).build();
+        vendorUpdateDto = VendorDto.builder().name("newTest").description("newTest").country(Country.USA).build();
 
-        vendorResponseDto = service.createVendor(vendorDtoOne);
-        newVendorResponseDto = service.createVendor(vendorDtoTwo);
+        newVendorResponseOne = service.createVendor(newVendorRequestOne);
+        newVendorResponseTwo = service.createVendor(newVendorRequestTwo);
     }
 
     @Test
     void createVendor() {
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v WHERE v.id = :vendorId", Vendor.class);
-        Vendor vendor = query.setParameter("vendorId", vendorResponseDto.getId()).getSingleResult();
+        Vendor vendor = query.setParameter("vendorId", newVendorResponseOne.getId()).getSingleResult();
 
         MatcherAssert.assertThat(vendor.getId(), notNullValue());
-        MatcherAssert.assertThat(vendor.getDescription(), equalTo(vendorResponseDto.getDescription()));
-        MatcherAssert.assertThat(vendor.getCountry(), equalTo(vendorResponseDto.getCountry()));
+        MatcherAssert.assertThat(vendor.getDescription(), equalTo(newVendorResponseOne.getDescription()));
+        MatcherAssert.assertThat(vendor.getCountry(), equalTo(newVendorResponseOne.getCountry()));
     }
 
     @Test
     void changeVendorById() {
-        service.changeVendorById(vendorResponseDto.getId(), newVendorUpdateDto);
+        service.changeVendorById(newVendorResponseOne.getId(), vendorUpdateDto);
 
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v WHERE v.id = :vendorId", Vendor.class);
-        Vendor vendor = query.setParameter("vendorId", vendorResponseDto.getId()).getSingleResult();
+        Vendor vendor = query.setParameter("vendorId", newVendorResponseOne.getId()).getSingleResult();
 
         MatcherAssert.assertThat(vendor.getId(), notNullValue());
-        MatcherAssert.assertThat(vendor.getDescription(), equalTo(newVendorUpdateDto.getDescription()));
-        MatcherAssert.assertThat(vendor.getCountry(), equalTo(newVendorUpdateDto.getCountry()));
+        MatcherAssert.assertThat(vendor.getDescription(), equalTo(newVendorResponseOne.getDescription()));
+        MatcherAssert.assertThat(vendor.getCountry(), equalTo(newVendorResponseOne.getCountry()));
     }
 
     @Test
     void findVendorAll() {
-        List<VendorResponseDto> response = service.findVendorAll(new VendorFilter(null, List.of(Country.INDIA)), 0, 10);
+        List<Vendor> response = service.findVendorsWithFilter(new VendorFilter(null, List.of(Country.INDIA)), 0, 10);
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v where v.country = :country", Vendor.class);
         List<Vendor> vendorList = query.setParameter("country", Country.INDIA).getResultList();
 
@@ -87,16 +84,16 @@ class VendorServiceTest {
     @Test
     void findVendorById() {
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v WHERE v.id = :vendorId", Vendor.class);
-        Vendor vendor = query.setParameter("vendorId", vendorResponseDto.getId()).getSingleResult();
+        Vendor vendor = query.setParameter("vendorId", newVendorResponseOne.getId()).getSingleResult();
 
         MatcherAssert.assertThat(vendor.getId(), notNullValue());
-        MatcherAssert.assertThat(vendor.getDescription(), equalTo(vendorResponseDto.getDescription()));
-        MatcherAssert.assertThat(vendor.getCountry(), equalTo(vendorResponseDto.getCountry()));
+        MatcherAssert.assertThat(vendor.getDescription(), equalTo(newVendorResponseOne.getDescription()));
+        MatcherAssert.assertThat(vendor.getCountry(), equalTo(newVendorResponseOne.getCountry()));
     }
 
     @Test
     void deleteVendor() {
-        service.deleteVendor(vendorResponseDto.getId());
+        service.deleteVendor(newVendorResponseOne.getId());
 
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v", Vendor.class);
         List<Vendor> vendorList = query.getResultList();
@@ -104,4 +101,4 @@ class VendorServiceTest {
         MatcherAssert.assertThat(vendorList, notNullValue());
         MatcherAssert.assertThat(vendorList.size(), equalTo(4));
     }
-}*/
+}

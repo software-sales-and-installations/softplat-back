@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProductsSearchRequestDto {
-    @Pattern(regexp = "[а-яА-Яa-zA-Z0-9\\s-$]")
+    @Pattern(regexp = "^[\\p{L}\\d\\s-]+$")
     @Size(min = 3, max = 40, message = "Количество символов от 3 до 40 включительно")
     private String text;
     private List<Long> categories;

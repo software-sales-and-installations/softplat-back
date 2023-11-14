@@ -34,7 +34,7 @@ public class UserProductController {
 
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping
-    public ProductResponseDto createProduct(Principal principal, @RequestBody @Valid ProductDto productDto) {
+    public ProductResponseDto createProduct(Principal principal, @RequestBody @Validated(New.class) ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         Product request = productMapper.productDtoToProduct(productDto);
         Product response = productService.create(principal.getName(), request);
@@ -44,7 +44,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}/update")
     public ProductResponseDto updateProduct(Principal principal, @PathVariable Long productId,
-                                            @RequestBody @Validated(New.class) ProductDto productForUpdate) {
+                                            @RequestBody @Valid ProductDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
         productService.checkSellerAccessRights(principal.getName(), productId);
         Product updateRequest = productMapper.productDtoToProduct(productForUpdate);

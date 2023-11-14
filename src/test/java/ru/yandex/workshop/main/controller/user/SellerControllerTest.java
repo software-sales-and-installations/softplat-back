@@ -1,4 +1,3 @@
-/*
 package ru.yandex.workshop.main.controller.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,14 +9,18 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.yandex.workshop.main.controller.CrudOperations;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.dto.user.SellerDto;
+import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.model.Role;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,46 +32,44 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class SellerControllerTest {
+class SellerControllerTest extends CrudOperations {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
-    private static SellerDto sellerDto;
+    private UserDto userDto;
 
     @BeforeEach
     void init() {
-        sellerDto = SellerDto.builder()
+        userDto = UserDto.builder()
                 .name("Joe")
                 .email("joedoe@email.com")
                 .phone("0123456789")
+                .password("password")
+                .confirmPassword("password")
+                .role(Role.SELLER)
                 .build();
     }
 
     @Test
     @SneakyThrows
     void addNewSeller_whenCorrect_thenReturnNewSeller() {
-        SellerResponseDto response = createSeller(sellerDto);
-        assertEquals(sellerDto.getName(), response.getName());
-        assertEquals(sellerDto.getEmail(), response.getEmail());
-        assertEquals(sellerDto.getPhone(), response.getPhone());
+        createUser(userDto);
+        SellerResponseDto response = getSellerResponseDto(1L);
+        assertEquals(userDto.getName(), response.getName());
+        assertEquals(userDto.getEmail(), response.getEmail());
+        assertEquals(userDto.getPhone(), response.getPhone());
     }
 
     @Test
     @SneakyThrows
     void addNewSeller_whenEmailNotUnique_thenThrowDuplicateException() {
-        createSeller(sellerDto);
-        SellerDto newSellerDto = SellerDto.builder()
-                .name("Bar")
-                .phone("0123456789")
-                .email("joedoe@email.com")
-                .build();
+        createUser(userDto);
+        UserDto newUserDto = userDto;
 
-        mockMvc.perform(post("/seller/registration")
-                        .content(objectMapper.writeValueAsString(newSellerDto))
+        mockMvc.perform(post("/registration")
+                        .content(objectMapper.writeValueAsString(newUserDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertTrue(result.getResolvedException()
                         instanceof DuplicateException));
@@ -76,23 +77,23 @@ class SellerControllerTest {
 
     @Test
     @SneakyThrows
-    void getSellerByEmail_whenCorrect_thenReturnSeller() {
-        createSeller(sellerDto);
-        String email = "joedoe@email.com";
+    void getSellerById_whenCorrect_thenReturnSeller() {
+        createUser(userDto);
+        final long id = 1;
 
-        SellerResponseDto response = getSeller(email);
-        assertEquals(sellerDto.getName(), response.getName());
-        assertEquals(sellerDto.getEmail(), response.getEmail());
-        assertEquals(sellerDto.getPhone(), response.getPhone());
+        SellerResponseDto response = getSellerResponseDto(id);
+        assertEquals(userDto.getName(), response.getName());
+        assertEquals(userDto.getEmail(), response.getEmail());
+        assertEquals(userDto.getPhone(), response.getPhone());
     }
 
     @Test
     @SneakyThrows
     void getSellerByEmail_whenEmailIsNotCorrect_thenThrowException() {
-        createSeller(sellerDto);
-        String email = "joe@email.com";
+        createUser(userDto);
+        final long id = 2;
 
-        mockMvc.perform(get("/seller/{email}", email)
+        mockMvc.perform(get("/seller/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> assertTrue(result.getResolvedException()
                         instanceof EntityNotFoundException));
@@ -100,16 +101,16 @@ class SellerControllerTest {
 
     @Test
     @SneakyThrows
+    @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void updateSellerByEmail_whenEmailIsCorrect_thenUpdateSeller() {
-        createSeller(sellerDto);
+        createUser(userDto);
         SellerDto updateDto = SellerDto.builder()
                 .name("Bar")
                 .phone("0123456789")
                 .email("foobar@email.com")
                 .build();
-        String email = "joedoe@email.com";
 
-        SellerResponseDto response = updateSeller(email, updateDto);
+        SellerResponseDto response = updateSeller(updateDto);
         assertEquals(updateDto.getName(), response.getName());
         assertEquals(updateDto.getEmail(), response.getEmail());
         assertEquals(updateDto.getPhone(), response.getPhone());
@@ -117,16 +118,16 @@ class SellerControllerTest {
 
     @Test
     @SneakyThrows
+    @WithMockUser(username = "foobar@email.com", authorities = {"seller:write"})
     void updateSellerByEmail_whenEmailIsNotCorrect_thenThrowUserNotFoundException() {
-        createSeller(sellerDto);
+        createUser(userDto);
         SellerDto updateDto = SellerDto.builder()
                 .name("Bar")
                 .phone("0123456789")
                 .email("foobar@email.com")
                 .build();
-        String email = "joe@email.com";
 
-        mockMvc.perform(patch("/seller/account/{email}", email)
+        mockMvc.perform(patch("/seller")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(result -> assertTrue(result.getResolvedException()
@@ -135,25 +136,25 @@ class SellerControllerTest {
 
     @Test
     @SneakyThrows
+    @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void addRequisites_whenOk_returnRequisites() {
-        createSeller(sellerDto);
+        createUser(userDto);
         BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
-        String email = "joedoe@email.com";
 
-        BankRequisitesDto response = addRequisites(email, requisitesDto);
+        BankRequisitesDto response = addRequisites(requisitesDto);
         assertEquals(requisitesDto.getAccount(), response.getAccount());
     }
 
     @Test
     @SneakyThrows
+    @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void updateRequisites_whenOk_returnRequisites() {
-        createSeller(sellerDto);
+        createUser(userDto);
         BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
-        String email = "joedoe@email.com";
-        addRequisites(email, requisitesDto);
+        addRequisites(requisitesDto);
         BankRequisitesDto newRequisitesDto = new BankRequisitesDto(null, "1111111111111111");
 
-        mockMvc.perform(patch("/seller/account/bank/{email}", email)
+        mockMvc.perform(patch("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newRequisitesDto)))
                 .andExpect(status().isOk())
@@ -163,46 +164,20 @@ class SellerControllerTest {
 
     @Test
     @SneakyThrows
+    @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write", "admin:write"})
     void deleteRequisites_whenOk() {
-        createSeller(sellerDto);
+        createUser(userDto);
         BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
-        addRequisites(sellerDto.getEmail(), requisitesDto);
+        addRequisites(requisitesDto);
 
-        mockMvc.perform(delete("/seller/account/bank/{email}", sellerDto.getEmail())
+        mockMvc.perform(delete("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
     }
 
-    SellerResponseDto createSeller(SellerDto sellerDto) throws Exception {
-        MvcResult result = mockMvc.perform(post("/seller/registration")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(sellerDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(sellerDto.getName()))
-                .andExpect(jsonPath("$.email").value(sellerDto.getEmail()))
-                .andExpect(jsonPath("$.phone").value(sellerDto.getPhone()))
-                .andReturn();
-
-        return objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                SellerResponseDto.class
-        );
-    }
-
-    SellerResponseDto getSeller(String email) throws Exception {
-        MvcResult result = mockMvc.perform(get("/seller/{email}", email)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        return objectMapper.readValue(
-                result.getResponse().getContentAsString(),
-                SellerResponseDto.class
-        );
-    }
-
-    SellerResponseDto updateSeller(String email, SellerDto updateDto) throws Exception {
-        MvcResult result = mockMvc.perform(patch("/seller/account/{email}", email)
+    @SneakyThrows
+    SellerResponseDto updateSeller(SellerDto updateDto) {
+        MvcResult result = mockMvc.perform(patch("/seller")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
@@ -217,8 +192,8 @@ class SellerControllerTest {
         );
     }
 
-    BankRequisitesDto addRequisites(String email, BankRequisitesDto requisitesDto) throws Exception {
-        MvcResult result = mockMvc.perform(patch("/seller/account/bank/{email}", email)
+    BankRequisitesDto addRequisites(BankRequisitesDto requisitesDto) throws Exception {
+        MvcResult result = mockMvc.perform(patch("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requisitesDto)))
                 .andExpect(status().isOk())
@@ -230,6 +205,4 @@ class SellerControllerTest {
                 BankRequisitesDto.class
         );
     }
-
 }
-*/

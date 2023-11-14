@@ -20,12 +20,18 @@ public interface ProductMapper {
     ProductResponseDto productToProductResponseDto(Product product);
 
     default Category mapCategoryIdToCategory(ProductDto productDto) {
-        long categoryId = productDto.getCategory();
-        return Category.builder().id(categoryId).build();
+        if (productDto.getCategory() != null) {
+            long categoryId = productDto.getCategory();
+            return Category.builder().id(categoryId).build();
+        }
+        return null;
     }
 
     default Vendor mapVendorIdToVendor(ProductDto productDto) {
-        long vendorId = productDto.getVendor();
-        return Vendor.builder().id(vendorId).build();
+        if (productDto.getVendor() != null) {
+            long vendorId = productDto.getVendor();
+            return Vendor.builder().id(vendorId).build();
+        }
+        return null;
     }
 }

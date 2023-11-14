@@ -22,7 +22,6 @@ import ru.yandex.workshop.main.service.image.ImageService;
 import ru.yandex.workshop.main.service.seller.SellerService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -137,8 +136,8 @@ public class CRUDProductService {
 
     @Transactional(readOnly = true)
     public List<Product> getAllProductsShipped(int from, int size) {
-        return new ArrayList<>(productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
-                PageRequestOverride.of(from, size)));
+        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
+                PageRequestOverride.of(from, size));
     }
 
     public void delete(Long productId) {

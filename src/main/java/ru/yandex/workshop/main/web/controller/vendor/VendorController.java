@@ -48,7 +48,7 @@ public class VendorController {
         return vendorMapper.vendorToVendorResponseDto(response);
     }
 
-    @GetMapping(path = "/vendor")
+    @GetMapping(path = "/search")
     public List<VendorResponseDto> findVendorWithFilers(
             @RequestBody VendorFilter vendorFilter,
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
