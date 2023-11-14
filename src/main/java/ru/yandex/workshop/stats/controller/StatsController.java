@@ -29,7 +29,7 @@ public class StatsController {
 
     private final StatsService statsService;
 
-    //@PreAuthorize("hasAuthority('admin:write')")
+    @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/admin/seller")
     @Operation(summary = "Получение статистики по продажам продавцов админом", description = "Доступ для админа")
     public StatsResponseDto getSellerReportAdmin(
@@ -47,7 +47,7 @@ public class StatsController {
                                 sort));
     }
 
-    //@PreAuthorize("hasAuthority('admin:write')")
+    @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/admin/product")
     @Operation(summary = "Получение статистики по продажам продуктов админом", description = "Доступ для админа")
     public StatsResponseDto getProductReportAdmin(
@@ -65,7 +65,7 @@ public class StatsController {
                                 sort));
     }
 
-    //@PreAuthorize("hasAuthority('seller:write')")
+    @PreAuthorize("hasAuthority('seller:write')")
     @GetMapping(path = "/seller")
     @Operation(summary = "Получение статистики по продажам продуктов продавца", description = "Доступ для продавца")
     public StatsResponseDto getProductsReportSeller(
@@ -85,7 +85,7 @@ public class StatsController {
                                 sort));
     }
 
-    //@PreAuthorize("hasAuthority('seller:write') || hasAuthority('admin:write')")
+    @PreAuthorize("hasAuthority('seller:write') || hasAuthority('admin:write')")
     @PostMapping
     @Operation(summary = "Создание статистики", description = "Доступ для админа и продавца")
     public void createStats() {
