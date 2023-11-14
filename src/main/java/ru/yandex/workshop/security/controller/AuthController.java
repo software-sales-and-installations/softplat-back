@@ -18,6 +18,7 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
 import ru.yandex.workshop.security.dto.JwtRequest;
 import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.message.ExceptionMessage;
@@ -76,7 +77,7 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException {
+    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException, WrongDataDbException {
         log.info(LogMessage.TRY_REGISTRATION.label);
 
         if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
