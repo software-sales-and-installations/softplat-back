@@ -52,7 +52,7 @@ public class VendorController {
     }
 
     @Operation(summary = "Получение списка вендоров с фильтрацией", description = "Доступ для всех")
-    @GetMapping(path = "/vendor")
+    @GetMapping
     public List<VendorResponseDto> findVendorWithFilers(
             @RequestBody VendorFilter vendorFilter,
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
