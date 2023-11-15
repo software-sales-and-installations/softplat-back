@@ -37,6 +37,7 @@ public class UserProductController {
 
     @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
     public ProductResponseDto createProduct(@ApiIgnore Principal principal, @RequestBody @Valid ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
@@ -99,6 +100,7 @@ public class UserProductController {
 
     @Operation(summary = "Добавление/обновление изображения своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/{productId}/image")
     public ProductResponseDto createProductImage(@ApiIgnore Principal principal, @PathVariable @Min(1) Long productId,
                                                  @RequestParam(value = "image") MultipartFile image) {

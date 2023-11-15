@@ -83,6 +83,7 @@ public class VendorController {
 
     @Operation(summary = "Добавление/обновление изображения вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/{vendorId}/image")
     public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
                                                @RequestParam(value = "image") MultipartFile image) {

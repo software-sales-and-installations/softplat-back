@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.basket.BasketDto;
@@ -24,6 +25,7 @@ public class BuyerBasketController {
 
     @Operation(summary = "Добавление продукта в свою корзину", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/basket/{productId}")
     public BasketDto addProductInBasket(@ApiIgnore Principal principal, @PathVariable Long productId,
                                         @RequestParam(defaultValue = "false") Boolean installation) {

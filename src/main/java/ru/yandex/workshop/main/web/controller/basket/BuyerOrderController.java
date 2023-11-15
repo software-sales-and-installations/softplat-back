@@ -3,6 +3,7 @@ package ru.yandex.workshop.main.web.controller.basket;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
@@ -29,6 +30,7 @@ public class BuyerOrderController {
 
     @Operation(summary = "Оформление заказа", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
     public OrderResponseDto addOrder(@ApiIgnore Principal principal, @RequestBody OrderToCreateDto orderToCreateDto) {
         log.debug(LogMessage.TRY_ADD_ORDER.label);

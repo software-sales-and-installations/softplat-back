@@ -75,6 +75,7 @@ public class SellerController {
 
     @Operation(summary = "Обновление своих банковских реквизитов продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PatchMapping("/bank")
     public BankRequisitesDto updateRequisites(@ApiIgnore Principal principal, @RequestBody BankRequisitesDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, principal.getName());
@@ -93,6 +94,7 @@ public class SellerController {
 
     @Operation(summary = "Добавление/обновление изображения своего профиля продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/account/image")
     public SellerResponseDto addSellerImage(@ApiIgnore Principal principal, @RequestParam(value = "image") MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
