@@ -36,12 +36,12 @@ public class BuyerController {
     private final BuyerMapper buyerMapper;
     private final FavoriteMapper favoriteMapper;
 
+    @Operation(summary = "Получение списка покупателей", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping
-    @Operation(summary = "Получение списка покупателей", description = "Доступ для админа")
     public List<BuyerResponseDto> getAllBuyers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
                                                  @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
-        log.debug(LogMessage.TRY_GET_All_SELLERS.label);
+        log.debug(LogMessage.TRY_GET_All_BUYERS.label);
         List<Buyer> response = buyerService.getAllBuyers(minId, pageSize);
         return response.stream()
                 .map(buyerMapper::buyerToBuyerResponseDto)
@@ -69,8 +69,8 @@ public class BuyerController {
 
     @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/favorites/{productId}")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public FavoriteDto createFavorite(@ApiIgnore Principal principal, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", principal.getName(), productId);
         Favorite response = favoriteService.create(principal.getName(), productId);

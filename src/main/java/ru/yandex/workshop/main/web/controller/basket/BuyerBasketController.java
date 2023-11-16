@@ -25,8 +25,8 @@ public class BuyerBasketController {
 
     @Operation(summary = "Добавление продукта в свою корзину", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/basket/{productId}")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public BasketDto addProductInBasket(@ApiIgnore Principal principal, @PathVariable Long productId,
                                         @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_ADD_PRODUCT_IN_BASKET.label, productId);

@@ -33,8 +33,8 @@ public class VendorController {
 
     @Operation(summary = "Добавление вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public VendorResponseDto createVendor(@RequestBody @Validated(New.class) VendorDto vendorDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
         Vendor vendor = service.createVendor(vendorDto);
@@ -74,8 +74,8 @@ public class VendorController {
 
     @Operation(summary = "Удаление вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{vendorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVendor(@PathVariable(name = "vendorId") Long vendorId) {
         log.debug(LogMessage.TRY_ADMIN_DELETE_VENDOR.label);
         service.deleteVendor(vendorId);
@@ -83,8 +83,8 @@ public class VendorController {
 
     @Operation(summary = "Добавление/обновление изображения вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/{vendorId}/image")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
                                                @RequestParam(value = "image") MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);

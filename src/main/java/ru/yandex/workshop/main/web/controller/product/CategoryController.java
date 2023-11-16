@@ -44,8 +44,8 @@ public class CategoryController {
 
     @Operation(summary = "Создание категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_CATEGORY.label);
         Category request = categoryMapper.categoryDtoToCategory(categoryDto);
@@ -66,8 +66,8 @@ public class CategoryController {
 
     @Operation(summary = "Удаление категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{catId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable(name = "catId") Long catId) {
         log.debug(LogMessage.TRY_ADMIN_DELETE_CATEGORY.label, catId);
         service.deleteCategory(catId);

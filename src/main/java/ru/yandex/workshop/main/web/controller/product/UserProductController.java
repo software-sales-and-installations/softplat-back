@@ -37,8 +37,8 @@ public class UserProductController {
 
     @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
-    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
     public ProductResponseDto createProduct(@ApiIgnore Principal principal, @RequestBody @Valid ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         Product request = productMapper.productDtoToProduct(productDto);
