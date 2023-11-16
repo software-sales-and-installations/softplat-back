@@ -169,3 +169,26 @@ CREATE TABLE IF NOT EXISTS favorite
     buyer_email VARCHAR(30) NOT NULL REFERENCES buyer (email) on update cascade on delete cascade,
     product_id  BIGINT      NOT NULL REFERENCES product (id) on update cascade on delete cascade
 );
+
+CREATE OR REPLACE FUNCTION delete_reference_image()
+    RETURNS TRIGGER AS
+'
+    BEGIN
+        IF OLD.image_id IS NOT NULL THEN
+            DELETE FROM image WHERE id = OLD.image_id;
+        END IF;
+        RETURN NULL;
+    END;
+' LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_delete_vendor_image
+    AFTER DELETE ON vendor
+    FOR EACH ROW EXECUTE FUNCTION delete_reference_image();
+
+CREATE TRIGGER trigger_delete_seller_image
+    AFTER DELETE ON seller
+    FOR EACH ROW EXECUTE FUNCTION delete_reference_image();
+
+CREATE TRIGGER trigger_delete_product_image
+    AFTER DELETE ON product
+    FOR EACH ROW EXECUTE FUNCTION delete_reference_image();
