@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
+import ru.yandex.workshop.main.dto.seller.BankRequisitesResponseDto;
 import ru.yandex.workshop.main.dto.user.SellerDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.mapper.SellerMapper;
@@ -67,7 +68,7 @@ public class SellerController {
     @Operation(summary = "Получение банковских реквизитов продавцом по id продавца", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @GetMapping("/bank/{userId}")
-    public BankRequisitesDto getRequisites(@PathVariable Long userId) {
+    public BankRequisitesResponseDto getRequisites(@PathVariable Long userId) {
         log.debug(LogMessage.TRY_SELLER_GET_REQUISITES.label, userId);
         BankRequisites response = bankService.getRequisites(userId);
         return sellerMapper.requisitesToDto(response);
@@ -77,9 +78,11 @@ public class SellerController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping("/bank")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public BankRequisitesDto updateRequisites(@ApiIgnore Principal principal, @RequestBody BankRequisitesDto requisites) {
+    public BankRequisitesResponseDto updateRequisites(@ApiIgnore Principal principal,
+                                                      @RequestBody BankRequisitesDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, principal.getName());
-        BankRequisites response = bankService.updateRequisites(principal.getName(), requisites);
+        BankRequisites response = bankService.updateRequisites(principal.getName(), new BankRequisites(null,
+                requisites.getAccount()));
         return sellerMapper.requisitesToDto(response);
     }
 

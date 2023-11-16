@@ -5,20 +5,20 @@ import org.springframework.stereotype.Component;
 import ru.yandex.workshop.main.model.admin.Admin;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.seller.Seller;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.dto.UserResponseDto;
 import ru.yandex.workshop.security.model.User;
 
 @Mapper(componentModel = "spring")
 @Component
 public interface UserMapper {
-    User userDtoToUser(UserDto userDto);
+    User userDtoToUser(UserCreateDto userCreateDto);
 
-    Admin userDtoToAdmin(UserDto userDto);
+    Admin userDtoToAdmin(UserCreateDto userCreateDto);
 
-    Seller userDtoToSeller(UserDto userDto);
+    Seller userDtoToSeller(UserCreateDto userCreateDto);
 
-    Buyer userDtoToBuyer(UserDto userDto);
+    Buyer userDtoToBuyer(UserCreateDto userCreateDto);
 
     UserResponseDto userToUserResponseDto(User user);
 }

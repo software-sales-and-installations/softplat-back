@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BasketDto {
+public class BasketResponseDto {
     private Long id;
     private Long buyerId;
-    private List<BasketPositionDto> productsInBasket;
+    private List<BasketPositionResponseDto> productsInBasket;
 }

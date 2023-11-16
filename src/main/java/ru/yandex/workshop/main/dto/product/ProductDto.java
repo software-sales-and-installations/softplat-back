@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.dto.product;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.yandex.workshop.main.dto.validation.New;
@@ -47,7 +48,7 @@ public class ProductDto {
 
     Boolean installation;
 
-    Boolean productAvailability;
-
+    @PositiveOrZero
+    @Schema(description = "Обязательно должна быть при создании, если есть возможность купить с установкой")
     Float installationPrice;
 }

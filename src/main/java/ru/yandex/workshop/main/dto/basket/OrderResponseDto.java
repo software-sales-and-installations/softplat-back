@@ -16,7 +16,7 @@ import java.util.List;
 public class OrderResponseDto {
     Long id;
     BuyerResponseDto buyer;
-    List<OrderPositionDto> productsOrdered;
+    List<OrderPositionResponseDto> productsOrdered;
     Float orderAmount;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime productionTime;
