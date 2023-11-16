@@ -12,7 +12,6 @@ import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
-import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.mapper.ImageMapper;
 import ru.yandex.workshop.main.mapper.VendorMapper;
@@ -45,7 +44,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Transactional
     @Override
-    public Vendor changeVendorById(Long vendorId, VendorUpdateDto vendorUpdateDto) {
+    public Vendor changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
         Vendor oldVendor = getVendor(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
