@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.dto.vendor.VendorFilter;
+import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.mapper.VendorMapper;
@@ -52,13 +52,13 @@ public class VendorController {
     }
 
     @Operation(summary = "Получение списка вендоров с фильтрацией", description = "Доступ для всех")
-    @GetMapping
+    @GetMapping("/search")
     public List<VendorResponseDto> findVendorWithFilers(
-            @RequestBody VendorFilter vendorFilter,
+            @RequestBody(required = false) VendorSearchRequestDto vendorSearchRequestDto,
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_VENDORS.label);
-        List<Vendor> response = service.findVendorsWithFilter(vendorFilter, minId, pageSize);
+        List<Vendor> response = service.findVendorsWithFilter(vendorSearchRequestDto, minId, pageSize);
         return response.stream()
                 .map(vendorMapper::vendorToVendorResponseDto)
                 .collect(Collectors.toList());

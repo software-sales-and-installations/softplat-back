@@ -38,7 +38,7 @@ public class PublicProductController {
     @Operation(summary = "Получение списка продуктов/поиск/фильтрация", description = "Доступ для всех")
     @GetMapping(path = "/search")
     public List<ProductResponseDto> searchProducts(
-            @RequestBody @Valid ProductsSearchRequestDto productsSearchRequestDto,
+            @RequestBody(required = false) @Valid ProductsSearchRequestDto productsSearchRequestDto,
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize,
             @RequestParam(name = "sort", defaultValue = "NEWEST") SortBy sort) {
