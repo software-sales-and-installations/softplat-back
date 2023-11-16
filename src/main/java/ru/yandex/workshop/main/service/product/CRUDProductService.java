@@ -38,16 +38,7 @@ public class CRUDProductService {
     private final ImageService imageService;
 
     public Product create(String sellerEmail, Product product) {
-        Seller seller = sellerService.getSeller(sellerEmail);
-        Category category = categoryService.getCategoryById(product.getCategory().getId());
-        Vendor vendor = vendorService.getVendorById(product.getVendor().getId());
-
-        // initProduct...()
-        product.setSeller(seller);
-        product.setCategory(category);
-        product.setVendor(vendor);
-        product.setProductStatus(ProductStatus.DRAFT);
-
+        initProduct(sellerEmail, product);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
@@ -158,6 +149,17 @@ public class CRUDProductService {
     public Product getProductOrThrowException(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    }
+
+    private void initProduct(String sellerEmail, Product product) {
+        Seller seller = sellerService.getSeller(sellerEmail);
+        Category category = categoryService.getCategoryById(product.getCategory().getId());
+        Vendor vendor = vendorService.getVendorById(product.getVendor().getId());
+
+        product.setSeller(seller);
+        product.setCategory(category);
+        product.setVendor(vendor);
+        product.setProductStatus(ProductStatus.DRAFT);
     }
 
     public void checkSellerAccessRights(String email, Long productId) {
