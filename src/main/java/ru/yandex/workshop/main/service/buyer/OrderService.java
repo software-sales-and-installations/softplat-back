@@ -38,7 +38,7 @@ public class OrderService {
         for (Long productBasketId : productBaskets) {
             OrderPosition productOrder = mapper.basketPositionToOrderPosition(
                     basketPositionRepository.findById(productBasketId).orElseThrow(()
-                    -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
+                            -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
             if (productOrder.getProduct().getQuantity() >= productOrder.getQuantity()) {
                 productOrder.setId(null);
                 if (productOrder.getInstallation()) {

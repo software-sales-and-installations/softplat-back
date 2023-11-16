@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.yandex.workshop.main.model.product.License;
+import ru.yandex.workshop.main.model.vendor.Country;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -20,8 +22,8 @@ public class ProductsSearchRequestDto {
     private List<Long> categories;
     private List<Long> sellerIds;
     private List<Long> vendorIds;
-    private Boolean isRussian;
-    private Boolean isDemo;
+    private List<Country> countries;
+    private List<License> licenses;
     private Float priceMin;
     private Float priceMax;
 }
