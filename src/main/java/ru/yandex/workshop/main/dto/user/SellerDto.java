@@ -1,7 +1,6 @@
 package ru.yandex.workshop.main.dto.user;
 
 import lombok.*;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
