@@ -12,6 +12,7 @@ import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorFilter;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
+import ru.yandex.workshop.main.dto.vendor.VendorUpdateDto;
 import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -35,7 +36,7 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public VendorResponseDto createVendor(@RequestBody @Validated(New.class) VendorDto vendorDto) {
+    public VendorResponseDto createVendor(@RequestBody @Valid VendorDto vendorDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
         Vendor vendor = service.createVendor(vendorDto);
         return vendorMapper.vendorToVendorResponseDto(vendor);
@@ -45,14 +46,14 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{vendorId}")
     public VendorResponseDto changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                              @RequestBody @Valid VendorDto vendorUpdateDto) {
+                                              @RequestBody @Valid VendorUpdateDto vendorUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
         Vendor response = service.changeVendorById(vendorId, vendorUpdateDto);
         return vendorMapper.vendorToVendorResponseDto(response);
     }
 
     @Operation(summary = "Получение списка вендоров с фильтрацией", description = "Доступ для всех")
-    @GetMapping(path = "/vendor")
+    @GetMapping
     public List<VendorResponseDto> findVendorWithFilers(
             @RequestBody VendorFilter vendorFilter,
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,

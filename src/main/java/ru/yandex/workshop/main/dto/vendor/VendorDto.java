@@ -10,17 +10,18 @@ import ru.yandex.workshop.main.model.vendor.Country;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VendorDto {
-    @NotBlank(groups = {New.class}, message = "Необходимо указать имя")
-    @Length(min = 2, max = 20, message = "Длина имени должна быть от 2 до 20 символов")
+    @NotBlank(message = "Необходимо указать имя")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[а-я])(?=.*[А-Я]).{2,20}$", message = "Длина навзания компании должна быть от 2 до 20 символов.")
     String name;
-    @NotBlank(groups = {New.class}, message = "Необходимо указать описание")
-    @Length(min = 2, max = 500, message = "Длина имени должна быть от 2 до 500 символов")
+    @NotBlank(message = "Необходимо указать описание")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[а-я])(?=.*[А-Я]).{2,500}$", message = "Длина описания должна быть от 2 до 500 символов.")
     String description;
-    @NotNull(groups = {New.class}, message = "Необходимо выбрать страну")
+    @NotNull(message = "Необходимо выбрать страну")
     Country country;
 }
