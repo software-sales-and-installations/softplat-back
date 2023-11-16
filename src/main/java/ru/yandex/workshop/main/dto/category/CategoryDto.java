@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
 
 @Data
 @Builder
@@ -15,6 +15,6 @@ import javax.validation.constraints.Size;
 public class CategoryDto {
     Long id;
     @NotBlank(message = "Необходимо указать название категории")
-    @Size(min = 2, max = 20, message = "Длина названия должна быть от 2 до 20 символов")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я]{2,20}$", message = "Длина навзания категории должна быть от 2 до 20 символов. Цифры в названии не допускаются.")
     String name;
 }

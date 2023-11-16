@@ -20,6 +20,7 @@ import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
 import ru.yandex.workshop.main.service.seller.SellerService;
+import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,19 +34,29 @@ public class CRUDProductService {
 
     private final ProductRepository productRepository;
     private final SellerService sellerService;
+    private final CategoryService categoryService;
+    private final VendorService vendorService;
     private final ImageService imageService;
 
     public Product create(String sellerEmail, Product product) {
         Seller seller = sellerService.getSeller(sellerEmail);
+        Category category = categoryService.getCategoryById(product.getCategory().getId());
+        Vendor vendor = vendorService.getVendorById(product.getVendor().getId());
+
         product.setSeller(seller);
+        product.setCategory(category);
+        product.setVendor(vendor);
         product.setProductStatus(ProductStatus.DRAFT);
+
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
         if (product.getInstallation() != null && product.getInstallation()
                 && product.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо указать цену установки.");
-        return productRepository.save(product);
+
+        Product response = productRepository.save(product);
+        return getProductOrThrowException(response.getId());
     }
 
     public Product update(String email, Long productId, Product productForUpdate) {

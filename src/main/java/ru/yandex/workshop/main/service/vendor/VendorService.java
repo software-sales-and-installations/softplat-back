@@ -2,7 +2,7 @@ package ru.yandex.workshop.main.service.vendor;
 
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.dto.vendor.VendorFilter;
+import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public interface VendorService {
 
     Vendor changeVendorById(Long vendorId, VendorDto vendorUpdateDto);
 
-    List<Vendor> findVendorsWithFilter(VendorFilter vendorFilter, int from, int size);
+    List<Vendor> findVendorsWithFilter(VendorSearchRequestDto vendorSearchRequestDto, int from, int size);
 
     Vendor getVendorById(Long vendorId);
 

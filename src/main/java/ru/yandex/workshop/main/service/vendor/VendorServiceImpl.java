@@ -4,7 +4,6 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.dto.vendor.VendorFilter;
+import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.mapper.ImageMapper;
 import ru.yandex.workshop.main.mapper.VendorMapper;
@@ -62,7 +61,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public List<Vendor> findVendorsWithFilter(VendorFilter vendorFilter, int from, int size) {
+    public List<Vendor> findVendorsWithFilter(VendorSearchRequestDto vendorSearchRequestDto, int from, int size) {
         PageRequest pageRequest = PageRequestOverride.of(from, size);
 
         QVendor vendor = QVendor.vendor;
@@ -73,14 +72,20 @@ public class VendorServiceImpl implements VendorService {
             return nameExpression.or(descriptionExpression);
         };
 
-        Predicate predicate = QPredicates.builder()
-                .add(vendorFilter.getText(), textPredicateFunction)
-                .add(vendorFilter.getCountries(), vendor.country::in)
-                .buildAnd();
+        Predicate predicate;
+        if (vendorSearchRequestDto != null) {
+            predicate = QPredicates.builder()
+                    .add(vendorSearchRequestDto.getText(), textPredicateFunction)
+                    .add(vendorSearchRequestDto.getCountries(), vendor.country::in)
+                    .buildAnd();
+        } else {
+            predicate = QPredicates.builder().buildAnd();
+        }
 
-        Page<Vendor> vendors = repository.findAll(predicate, pageRequest);
-
-        return new ArrayList<>(vendors.getContent());
+        if (predicate != null) {
+            return new ArrayList<>(repository.findAll(predicate, pageRequest).getContent());
+        }
+        return new ArrayList<>(repository.findAll(pageRequest).getContent());
     }
 
     @Override
