@@ -12,9 +12,9 @@ import javax.validation.constraints.Pattern;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VendorUpdateDto {
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[а-я])(?=.*[А-Я]).{0,20}$", message = "Длина навзания компании должна быть от 2 до 20 символов.")
+    @Pattern(regexp = "^[0-9a-zA-Zа-яА-Я]{2,255}$", message = "Длина названия компании должна быть от 2 до 20 символов.")
     String name;
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[а-я])(?=.*[А-Я]).{0,500}$", message = "Длина описания должна быть от 2 до 500 символов.")
+    @Pattern(regexp = "^[0-9a-zA-Zа-яА-Я-@#$%^&+=!]{2,500}$", message = "Длина описания должна быть от 2 до 500 символов.")
     String description;
     Country country;
 }

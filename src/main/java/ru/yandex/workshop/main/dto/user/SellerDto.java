@@ -1,6 +1,7 @@
 package ru.yandex.workshop.main.dto.user;
 
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
@@ -12,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SellerDto {
-    @Length(min = 2, max = 20, message = "Длина имени должна быть от 2 до 20 символов")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов.")
     private String name;
     @Email(message = "Email должен быть корректным адресом электронной почты")
     @Length(min = 6, max = 30, message = "Длина email должна быть от 6 до 30 символов")
