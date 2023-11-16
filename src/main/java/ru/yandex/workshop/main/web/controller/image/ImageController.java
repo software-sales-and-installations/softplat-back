@@ -20,7 +20,7 @@ public class ImageController {
     @Operation(summary = "Получение изображения по id", description = "Доступ для всех")
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> getImage(@Parameter(description = "Идентификатор уникален для всех изображений на сайте")
-                                               @PathVariable Long id) {
+                                           @PathVariable Long id) {
         return imageService.getImageAsByteArray(id);
     }
 }

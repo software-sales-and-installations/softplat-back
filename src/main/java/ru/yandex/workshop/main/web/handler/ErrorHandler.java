@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.workshop.main.dto.error.ErrorResponse;
 import ru.yandex.workshop.main.exception.*;
 import ru.yandex.workshop.security.exception.UnauthorizedException;
+import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
 
 import java.util.ArrayList;
@@ -83,6 +84,14 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleAccessDenialException(final ImageUploadingError e) {
+        e.printStackTrace();
+        log.error(Arrays.toString(e.getStackTrace()));
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleDbException(final WrongDataDbException e) {
         e.printStackTrace();
         log.error(Arrays.toString(e.getStackTrace()));
         return new ErrorResponse(e.getMessage());

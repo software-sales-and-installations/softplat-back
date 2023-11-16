@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.security.config.WebSecurityConfigurer;
 import ru.yandex.workshop.security.dto.JwtRequest;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.model.Role;
 import ru.yandex.workshop.security.model.Status;
 
@@ -33,7 +33,7 @@ public class SecurityControllerTest {
     @Autowired
     ObjectMapper mapper;
     static JwtRequest jwtRequest;
-    static UserDto admin;
+    static UserCreateDto admin;
 
     @BeforeAll
     static void init() {
@@ -42,7 +42,7 @@ public class SecurityControllerTest {
                 .password("secret")
                 .build();
 
-        admin = UserDto.builder()
+        admin = UserCreateDto.builder()
                 .email("aaa@aaa.ru")
                 .password("secret")
                 .confirmPassword("secret")

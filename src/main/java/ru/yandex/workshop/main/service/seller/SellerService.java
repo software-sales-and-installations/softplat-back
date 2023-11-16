@@ -10,7 +10,6 @@ import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.mapper.SellerMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
@@ -30,15 +29,14 @@ public class SellerService {
     private final SellerRepository sellerRepository;
     private final ImageService imageService;
     private final UserDetailsChangeService userDetailsChangeService;
-    private final SellerMapper sellerMapper;
 
-    public void addSeller(Seller seller) {
+    public Seller addSeller(Seller seller) {
         if (checkIfSellerExistsByEmail(seller.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + seller.getEmail());
 
         seller.setRegistrationTime(LocalDateTime.now());
 
-        sellerRepository.save(seller);
+        return sellerRepository.save(seller);
     }
 
     public Seller updateSeller(String email, Seller sellerForUpdate) {
