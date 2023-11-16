@@ -2,7 +2,6 @@ package ru.yandex.workshop.stats.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,68 +27,58 @@ import java.security.Principal;
 public class StatsController {
 
     private final StatsService statsService;
+    private final StatsMapper statsMapper;
 
+    @Operation(summary = "Получение статистики по продажам продавцов админом", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/admin/seller")
-    @Operation(summary = "Получение статистики по продажам продавцов админом", description = "Доступ для админа")
     public StatsResponseDto getSellerReportAdmin(
-            @RequestBody
             @Parameter(description = "Фильтрация для получения статистики: " +
                     "по категории/продавцу/производителю/дате") StatsFilterAdmin statsFilterAdmin,
             @RequestParam(name = "sort", defaultValue = "popular")
             @Parameter(description = "Условие сортировки для статистики: " +
                     "по количеству продаж/по стоимости") String sort) {
         log.debug(LogMessage.TRY_GET_STATS_SELLER_ADMIN.label);
-        return StatsMapper.INSTANCE.sellerReportToStatsResponseDto(
+        return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getSellerReportAdmin(
                                 statsFilterAdmin,
                                 sort));
     }
 
+    @Operation(summary = "Получение статистики по продажам продуктов админом", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/admin/product")
-    @Operation(summary = "Получение статистики по продажам продуктов админом", description = "Доступ для админа")
     public StatsResponseDto getProductReportAdmin(
-            @RequestBody
             @Parameter(description = "Фильтрация для получения статистики: " +
                     "по категории/производителю/дате") StatsFilterSeller statsFilterSeller,
             @RequestParam(name = "sort", defaultValue = "popular")
             @Parameter(description = "Условие сортировки для статистики: " +
                     "по количеству продаж/по стоимости") String sort) {
         log.debug(LogMessage.TRY_GET_STATS_PRODUCT_ADMIN.label);
-        return StatsMapper.INSTANCE.sellerReportToStatsResponseDto(
+        return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getProductReportAdmin(
                                 statsFilterSeller,
                                 sort));
     }
 
+    @Operation(summary = "Получение статистики по продажам продуктов продавца", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @GetMapping(path = "/seller")
-    @Operation(summary = "Получение статистики по продажам продуктов продавца", description = "Доступ для продавца")
     public StatsResponseDto getProductsReportSeller(
             @ApiIgnore Principal principal,
-            @RequestBody
             @Parameter(description = "Фильтрация для получения статистики: " +
                     "по категории/производителю/дате") StatsFilterSeller statsFilterSeller,
             @RequestParam(name = "sort", defaultValue = "popular")
             @Parameter(description = "Условие сортировки для статистики: " +
                     "по количеству продаж/по стоимости") String sort) {
         log.debug(LogMessage.TRY_GET_STATS_PRODUCT_SELLER.label);
-        return StatsMapper.INSTANCE.sellerReportToStatsResponseDto(
+        return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getProductsReportSeller(
                                 principal.getName(),
                                 statsFilterSeller,
                                 sort));
-    }
-
-    @PreAuthorize("hasAuthority('seller:write') || hasAuthority('admin:write')")
-    @PostMapping
-    @Operation(summary = "Создание статистики", description = "Доступ для админа и продавца")
-    public void createStats() {
-        log.debug(LogMessage.TRY_CREATE_STATS.label);
-        statsService.createStats();
     }
 }

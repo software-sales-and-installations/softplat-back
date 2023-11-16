@@ -8,7 +8,7 @@ import ru.yandex.workshop.main.model.buyer.Buyer;
 import java.util.Optional;
 
 @Repository
-public interface BuyerRepository extends JpaRepository<Buyer, Long>, QuerydslPredicateExecutor<Buyer> {
+public interface BuyerRepository extends JpaRepository<Buyer, Long> {
     Optional<Buyer> findByEmail(String email);
 
     boolean existsByEmail(String email);

@@ -8,6 +8,6 @@ import ru.yandex.workshop.main.model.buyer.Basket;
 import java.util.Optional;
 
 @Repository
-public interface BasketRepository extends JpaRepository<Basket, Long>, QuerydslPredicateExecutor<Basket> {
+public interface BasketRepository extends JpaRepository<Basket, Long> {
     Optional<Basket> findByBuyerId(Long buyerId);
 }

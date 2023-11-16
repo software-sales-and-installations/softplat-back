@@ -4,9 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.workshop.main.model.buyer.Order;
-import ru.yandex.workshop.main.model.buyer.OrderPosition;
-import ru.yandex.workshop.main.service.buyer.OrderService;
+import ru.yandex.workshop.stats.dto.SellerReportEntry;
 import ru.yandex.workshop.stats.dto.StatsFilterAdmin;
 import ru.yandex.workshop.stats.dto.StatsFilterSeller;
 import ru.yandex.workshop.stats.model.*;
@@ -23,14 +21,12 @@ import java.util.stream.Collectors;
 public class StatsService {
 
     private final StatsRepository statsRepository;
-    private final OrderService orderService;
-    private static final Float COMMISSIONS = 0.9F;
 
     @Transactional(readOnly = true)
     public SellerReport getSellerReportAdmin(
             StatsFilterAdmin statsFilterAdmin,
             String sort) {
-        List<Stats> statsPage = getAdminFilterList(statsFilterAdmin);
+        List<Stats> statsPage = getAdminFilterForStatsList(statsFilterAdmin);
         return getSellerReport(sort, statsPage);
     }
 
@@ -38,7 +34,7 @@ public class StatsService {
     public SellerReport getProductReportAdmin(
             StatsFilterSeller statsFilterSeller,
             String sort) {
-        List<Stats> statsPage = getSellerFilterList(statsFilterSeller);
+        List<Stats> statsPage = getSellerFilterForStatsList(statsFilterSeller);
         return getSellerReport(sort, statsPage);
     }
 
@@ -48,7 +44,7 @@ public class StatsService {
             StatsFilterSeller statsFilterSeller,
             String sort) {
 
-        List<Stats> statsPage = getSellerFilterList(statsFilterSeller);
+        List<Stats> statsPage = getSellerFilterForStatsList(statsFilterSeller);
         List<SellerReportEntry> sellerReportEntryList = statsPage
                 .stream()
                 .filter(stats -> stats.getProduct().getSeller().getEmail().equals(email))
@@ -86,26 +82,11 @@ public class StatsService {
                         .reduce(0F, Float::sum));
     }
 
-    public void createStats() {
-        List<Order> ordersList = orderService.getAll();
-        if (!ordersList.isEmpty()) {
-            statsRepository.deleteAll();
-        }
-        for (Order order : ordersList) {
-            List<OrderPosition> productOrderList = order.getProductsOrdered();
-            for (OrderPosition po : productOrderList) {
-                Stats stats = new Stats();
-                stats.setProduct(po.getProduct());
-                stats.setBuyer(order.getBuyer());
-                stats.setDateBuy(order.getProductionTime());
-                stats.setQuantity(po.getQuantity());
-                stats.setAmount(COMMISSIONS * po.getProductAmount());
+    public void createStats(Stats stats) {
                 statsRepository.save(stats);
-            }
-        }
     }
 
-    private List<Stats> getAdminFilterList(StatsFilterAdmin statsFilterAdmin) {
+    private List<Stats> getAdminFilterForStatsList(StatsFilterAdmin statsFilterAdmin) {
         QStats qStats = QStats.stats;
         List<BooleanExpression> booleanExpressions = new ArrayList<>();
 
@@ -138,14 +119,14 @@ public class StatsService {
                     .stream()
                     .reduce(BooleanExpression::and)
                     .get();
-            statsPage = statsRepository.findAll(finalBooleanExp);
+                statsPage = statsRepository.findAll(finalBooleanExp);
         } else {
             statsPage = statsRepository.findAll();
         }
         return statsPage;
     }
 
-    private List<Stats> getSellerFilterList(StatsFilterSeller statsFilterSeller) {
+    private List<Stats> getSellerFilterForStatsList(StatsFilterSeller statsFilterSeller) {
         QStats qStats = QStats.stats;
         List<BooleanExpression> booleanExpressions = new ArrayList<>();
 

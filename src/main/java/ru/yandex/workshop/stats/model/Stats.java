@@ -15,39 +15,29 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = Stats.TABLE_STATS, schema = Stats.SCHEMA_TABLE)
+@Table(name = "statistic", schema = "public")
 public class Stats {
-
-    public static final String TABLE_STATS = "statistic";
-    public static final String SCHEMA_TABLE = "public";
-
-    public static final String STATS_ID = "id";
-    public static final String BUYER_ID = "buyer_id";
-    public static final String PRODUCT_ID = "product_id";
-    public static final String DATE_BUY = "date_buy";
-    public static final String QUANTITY = "quantity";
-    public static final String AMOUNT = "amount";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = STATS_ID)
+    @Column(name = "id")
     Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = BUYER_ID)
+    @JoinColumn(name = "buyer_id")
     Buyer buyer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = PRODUCT_ID)
+    @JoinColumn(name = "product_id")
     Product product;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
-    @Column(name = DATE_BUY)
+    @Column(name = "date_buy")
     LocalDateTime dateBuy;
 
-    @Column(name = QUANTITY)
+    @Column(name = "quantity")
     Integer quantity;
 
-    @Column(name = AMOUNT)
+    @Column(name = "amount")
     Float amount;
 }

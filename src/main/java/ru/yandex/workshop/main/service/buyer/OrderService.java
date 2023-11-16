@@ -13,6 +13,8 @@ import ru.yandex.workshop.main.model.buyer.Order;
 import ru.yandex.workshop.main.model.buyer.OrderPosition;
 import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.OrderRepository;
+import ru.yandex.workshop.stats.model.Stats;
+import ru.yandex.workshop.stats.service.StatsService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +28,9 @@ public class OrderService {
     private final BuyerService buyerService;
     private final BasketPositionRepository basketPositionRepository;
     private final OrderPositionMapper mapper;
+    private final StatsService statsService;
+
+    private static final Float COMMISSIONS = 0.9F;
 
     @Transactional
     public Order createOrder(String email, List<Long> productBaskets) {
@@ -52,7 +57,9 @@ public class OrderService {
         }
         order.setProductsOrdered(productOrderList);
         order.setOrderAmount(wholePrice);
-        return orderRepository.save(order);
+        Order orderSave = orderRepository.save(order);
+        createStats(orderSave);
+        return orderSave;
     }
 
     public Order getOrder(Long orderId) {
@@ -65,7 +72,17 @@ public class OrderService {
         return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.of(0, 20));
     }
 
-    public List<Order> getAll() {
-        return orderRepository.findAll();
+    private void createStats(Order order) {
+        List<OrderPosition> orderPositionList = new ArrayList<>();
+        for (OrderPosition orderPosition : orderPositionList) {
+            Stats stats = new Stats();
+            stats.setProduct(orderPosition.getProduct());
+            stats.setBuyer(order.getBuyer());
+            stats.setDateBuy(order.getProductionTime());
+            stats.setQuantity(orderPosition.getQuantity());
+            stats.setAmount(COMMISSIONS * orderPosition.getProductAmount());
+            statsService.createStats(stats);
+        }
     }
+
 }

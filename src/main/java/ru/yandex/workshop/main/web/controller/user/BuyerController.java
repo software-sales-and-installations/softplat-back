@@ -68,7 +68,7 @@ public class BuyerController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteFavorite(@ApiIgnore Principal principal,
                                @PathVariable Long productId) {
-        log.info(LogMessage.TRY_GET_STATS_SELLER_ADMIN.label, "{}, {}", principal.getName(), productId);
+        log.info(LogMessage.TRY_BUYER_DELETE_FAVORITE.label, "{}, {}", principal.getName(), productId);
         favoriteService.delete(principal.getName(), productId);
     }
 

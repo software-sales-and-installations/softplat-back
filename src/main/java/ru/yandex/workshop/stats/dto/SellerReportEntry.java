@@ -1,4 +1,4 @@
-package ru.yandex.workshop.stats.model;
+package ru.yandex.workshop.stats.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
