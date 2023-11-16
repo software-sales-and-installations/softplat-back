@@ -18,7 +18,7 @@ import ru.yandex.workshop.main.dto.user.BuyerDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.model.Role;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,11 +36,11 @@ class BuyerControllerTest extends CrudOperations {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    private UserDto userDto;
+    private UserCreateDto userDto;
 
     @BeforeEach
     void init() {
-        userDto = UserDto.builder()
+        userDto = UserCreateDto.builder()
                 .name("Joe")
                 .email("joedoe@email.com")
                 .phone("0123456789")
@@ -52,6 +52,7 @@ class BuyerControllerTest extends CrudOperations {
 
     @Test
     @SneakyThrows
+    @WithMockUser(authorities = {"buyer:write"})
     void addNewBuyer_whenCorrect_thenReturnNewBuyer() {
         createUser(userDto);
         BuyerResponseDto response = getBuyerResponseDto(1L);
@@ -65,7 +66,7 @@ class BuyerControllerTest extends CrudOperations {
     @SneakyThrows
     void addNewBuyer_whenEmailNotUnique_thenThrowDuplicateException() {
         createUser(userDto);
-        UserDto newUserDto = userDto;
+        UserCreateDto newUserDto = userDto;
 
         mockMvc.perform(post("/registration")
                         .content(objectMapper.writeValueAsString(newUserDto))
@@ -76,6 +77,7 @@ class BuyerControllerTest extends CrudOperations {
 
     @Test
     @SneakyThrows
+    @WithMockUser(authorities = {"buyer:write"})
     void getBuyerById_whenIdCorrect_thenReturnBuyer() {
         createUser(userDto);
         final long id = 1;
@@ -88,6 +90,7 @@ class BuyerControllerTest extends CrudOperations {
 
     @Test
     @SneakyThrows
+    @WithMockUser(authorities = {"buyer:write"})
     void getBuyerById_whenIdIsNotCorrect_thenThrowException() {
         createUser(userDto);
         final long id = 2;

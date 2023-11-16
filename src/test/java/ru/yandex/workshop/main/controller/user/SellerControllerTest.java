@@ -19,7 +19,7 @@ import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.dto.user.SellerDto;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.model.Role;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,11 +38,11 @@ class SellerControllerTest extends CrudOperations {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    private UserDto userDto;
+    private UserCreateDto userDto;
 
     @BeforeEach
     void init() {
-        userDto = UserDto.builder()
+        userDto = UserCreateDto.builder()
                 .name("Joe")
                 .email("joedoe@email.com")
                 .phone("0123456789")
@@ -66,7 +66,7 @@ class SellerControllerTest extends CrudOperations {
     @SneakyThrows
     void addNewSeller_whenEmailNotUnique_thenThrowDuplicateException() {
         createUser(userDto);
-        UserDto newUserDto = userDto;
+        UserCreateDto newUserDto = userDto;
 
         mockMvc.perform(post("/registration")
                         .content(objectMapper.writeValueAsString(newUserDto))
@@ -139,7 +139,7 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void addRequisites_whenOk_returnRequisites() {
         createUser(userDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
+        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
 
         BankRequisitesDto response = addRequisites(requisitesDto);
         assertEquals(requisitesDto.getAccount(), response.getAccount());
@@ -150,14 +150,14 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void updateRequisites_whenOk_returnRequisites() {
         createUser(userDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
+        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
         addRequisites(requisitesDto);
-        BankRequisitesDto newRequisitesDto = new BankRequisitesDto(null, "1111111111111111");
+        BankRequisitesDto newRequisitesDto = new BankRequisitesDto("1111111111111111");
 
         mockMvc.perform(patch("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newRequisitesDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.account").value(newRequisitesDto.getAccount()))
                 .andReturn();
     }
@@ -167,7 +167,7 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write", "admin:write"})
     void deleteRequisites_whenOk() {
         createUser(userDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto(null, "1234567891234567");
+        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
         addRequisites(requisitesDto);
 
         mockMvc.perform(delete("/seller/bank")
@@ -196,7 +196,7 @@ class SellerControllerTest extends CrudOperations {
         MvcResult result = mockMvc.perform(patch("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requisitesDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.account").value(requisitesDto.getAccount()))
                 .andReturn();
 

@@ -14,8 +14,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.controller.CrudOperations;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.dto.vendor.VendorFilter;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
+import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 
 import java.nio.charset.StandardCharsets;
@@ -79,7 +79,7 @@ class VendorControllerTest extends CrudOperations {
     void findVendorsWithFiltersTest_whenCountryChina_returnListOfVendor1() {
         vendorDto.setCountry(Country.CHINA);
         VendorResponseDto response = createVendor(vendorDto);
-        VendorFilter vendorFilter = new VendorFilter("test", List.of(Country.CHINA));
+        VendorSearchRequestDto vendorFilter = new VendorSearchRequestDto("test", List.of(Country.CHINA));
         List<VendorResponseDto> vendorResponseDtoList = List.of(response);
 
         mvc.perform(get("/vendor/search")

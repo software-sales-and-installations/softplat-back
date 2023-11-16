@@ -1,6 +1,5 @@
 package ru.yandex.workshop.main.service.product;
 
-import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +14,9 @@ import ru.yandex.workshop.main.dto.product.ProductsSearchRequestDto;
 import ru.yandex.workshop.main.dto.product.SortBy;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.model.product.QProduct;
-import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.repository.product.ProductRepository;
 import ru.yandex.workshop.main.util.QPredicates;
 
@@ -57,37 +54,26 @@ public class SearchProductService {
             return nameExpression.or(descriptionExpression);
         };
 
-        Predicate predicate = QPredicates.builder()
-                .add(statusPublishedExpression)
-                .add(productsSearchRequestDto.getText(), textPredicateFunction)
-                .add(productsSearchRequestDto.getSellerIds(), product.seller.id::in)
-                .add(productsSearchRequestDto.getVendorIds(), product.vendor.id::in)
-                .add(productsSearchRequestDto.getCategories(), product.category.id::in)
-                .add(productsSearchRequestDto.getPriceMin(), product.price::goe)
-                .add(productsSearchRequestDto.getPriceMax(), product.price::loe)
-                .buildAnd();
+        Predicate predicate;
+        Page<Product> products;
 
-        if (productsSearchRequestDto.getIsRussian() != null) {
-            BooleanExpression countryExpression;
-            if (productsSearchRequestDto.getIsRussian()) {
-                countryExpression = product.vendor.country.eq(Country.RUSSIA);
-            } else {
-                countryExpression = product.vendor.country.ne(Country.RUSSIA);
-            }
-            predicate = ExpressionUtils.and(predicate, countryExpression);
+        if (productsSearchRequestDto != null) {
+            predicate = QPredicates.builder()
+                    .add(statusPublishedExpression)
+                    .add(productsSearchRequestDto.getText(), textPredicateFunction)
+                    .add(productsSearchRequestDto.getSellerIds(), product.seller.id::in)
+                    .add(productsSearchRequestDto.getVendorIds(), product.vendor.id::in)
+                    .add(productsSearchRequestDto.getCategories(), product.category.id::in)
+                    .add(productsSearchRequestDto.getPriceMin(), product.price::goe)
+                    .add(productsSearchRequestDto.getPriceMax(), product.price::loe)
+                    .add(productsSearchRequestDto.getCountries(), product.vendor.country::in)
+                    .add(productsSearchRequestDto.getLicenses(), product.license::in)
+                    .buildAnd();
+
+            products = productRepository.findAll(predicate, pageRequest);
+        } else {
+            products = productRepository.findAll(pageRequest);
         }
-
-        if (productsSearchRequestDto.getIsDemo() != null) {
-            BooleanExpression licenseExpression;
-            if (productsSearchRequestDto.getIsDemo()) {
-                licenseExpression = product.license.eq(License.DEMO);
-            } else {
-                licenseExpression = product.license.ne(License.DEMO);
-            }
-            predicate = ExpressionUtils.and(predicate, licenseExpression);
-        }
-
-        Page<Product> products = productRepository.findAll(predicate, pageRequest);
 
         return new ArrayList<>(products.getContent());
     }

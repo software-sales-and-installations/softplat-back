@@ -82,7 +82,7 @@ class ImageControllerTest extends CrudOperations {
                         "http://localhost:8080/vendor/{vendorId}/image", vendorId)
                         .file(multipartFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         vendorResponseDto = objectMapper.readValue(
@@ -111,7 +111,7 @@ class ImageControllerTest extends CrudOperations {
                         "http://localhost:8080/seller/account/image")
                         .file(multipartFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         sellerResponseDto = objectMapper.readValue(
@@ -141,7 +141,7 @@ class ImageControllerTest extends CrudOperations {
                         "http://localhost:8080/product/{productId}/image", productId)
                         .file(multipartFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         productResponseDto = objectMapper.readValue(

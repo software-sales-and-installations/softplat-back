@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -12,12 +11,13 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
 import ru.yandex.workshop.security.dto.JwtRequest;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
@@ -65,7 +65,7 @@ public class AuthController {
 
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            return new ResponseEntity<>(ExceptionMessage.INVALID_AUTHENTICATION.label, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(ExceptionMessage.INVALID_AUTHENTICATION.label, HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -76,21 +76,21 @@ public class AuthController {
         securityContextLogoutHandler.logout(request, response, null);
     }
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/registration")
-    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException, WrongDataDbException {
+    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserCreateDto userCreateDto) throws ValidationException, WrongDataDbException {
         log.info(LogMessage.TRY_REGISTRATION.label);
 
-        if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
+        if (!userCreateDto.getPassword().equals(userCreateDto.getConfirmPassword())) {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
 
-        if ((userDto.getRole().equals(Role.SELLER) || userDto.getRole().equals(Role.BUYER)) && (userDto.getPhone() == null || userDto.getPhone().isEmpty()))
+        if ((userCreateDto.getRole().equals(Role.SELLER) || userCreateDto.getRole().equals(Role.BUYER)) && (userCreateDto.getPhone() == null || userCreateDto.getPhone().isEmpty()))
             throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
-        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userDto))));
+        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userCreateDto))));
     }
 
-    @PreAuthorize("hasAuthority('seller:write') and hasAuthority('admin:write') and hasAuthority('buyer:write')")
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);

@@ -15,7 +15,7 @@ import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 
 import java.nio.charset.StandardCharsets;
 
@@ -33,7 +33,7 @@ public class CrudOperations {
     private ObjectMapper objectMapper;
 
     @SneakyThrows
-    public void createUser(UserDto userDto) {
+    public void createUser(UserCreateDto userDto) {
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDto)))
@@ -58,7 +58,7 @@ public class CrudOperations {
         MvcResult result = mockMvc.perform(post("/product")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andReturn();
 
         return objectMapper.readValue(

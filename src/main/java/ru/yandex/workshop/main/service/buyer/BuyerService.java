@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
@@ -12,6 +13,8 @@ import ru.yandex.workshop.main.repository.buyer.BuyerRepository;
 import ru.yandex.workshop.security.service.UserDetailsChangeService;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,12 @@ public class BuyerService {
 
     private final BuyerRepository buyerRepository;
     private final UserDetailsChangeService userDetailsChangeService;
+
+    @Transactional(readOnly = true)
+    public List<Buyer> getAllBuyers(int from, int size) {
+        return buyerRepository.findAll(PageRequestOverride.of(from, size)).stream()
+                .collect(Collectors.toList());
+    }
 
     public Buyer addBuyer(Buyer buyer) {
         if (checkIfUserExistsByEmail(buyer.getEmail()))

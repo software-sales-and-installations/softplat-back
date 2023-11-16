@@ -3,6 +3,7 @@ package ru.yandex.workshop.main.web.controller.basket;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
@@ -30,6 +31,7 @@ public class BuyerOrderController {
     @Operation(summary = "Оформление заказа", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping
+    @ResponseStatus(value = HttpStatus.CREATED)
     public OrderResponseDto addOrder(@ApiIgnore Principal principal, @RequestBody OrderToCreateDto orderToCreateDto) {
         log.debug(LogMessage.TRY_ADD_ORDER.label);
         if (orderToCreateDto.getProductBaskets() == null || orderToCreateDto.getProductBaskets().size() == 0)
@@ -52,7 +54,7 @@ public class BuyerOrderController {
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/{orderId}")
     public OrderResponseDto getOrder(@ApiIgnore Principal principal, @PathVariable long orderId) {
-        log.debug(LogMessage.TRY_ADD_ORDER.label, orderId);
+        log.debug(LogMessage.TRY_GET_ORDER.label, orderId);
         Order response = orderService.getOrder(orderId);
         if (!response.getBuyer().getEmail().equals(principal.getName()))
             throw new WrongConditionException("Ошибка при выполнении запроса. Попробуйте ввести корректный orderId");

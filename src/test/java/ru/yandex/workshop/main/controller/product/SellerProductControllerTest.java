@@ -52,7 +52,6 @@ class SellerProductControllerTest extends CrudOperations {
                 .price(1000.421F)
                 .quantity(5)
                 .installation(true)
-                .productAvailability(true)
                 .installationPrice(10.00F)
                 .build();
     }
@@ -114,6 +113,5 @@ class SellerProductControllerTest extends CrudOperations {
                 result.getResponse().getContentAsString(),
                 ProductResponseDto.class
         );
-
     }
 }

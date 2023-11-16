@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class VendorFilter {
+public class VendorSearchRequestDto {
     String text;
     List<Country> countries;
 }

@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.controller.CrudOperations;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductsSearchRequestDto;
+import ru.yandex.workshop.main.model.vendor.Country;
 
 import java.util.List;
 
@@ -123,7 +124,7 @@ class PublicProductControllerTest extends CrudOperations {
     void whenSearchCountryIsRussian_thenReturnProduct3() {
         String sort = "NEWEST";
         ProductsSearchRequestDto productFilter = new ProductsSearchRequestDto();
-        productFilter.setIsRussian(true);
+        productFilter.setCountries(List.of(Country.RUSSIA));
 
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto3);
@@ -136,7 +137,7 @@ class PublicProductControllerTest extends CrudOperations {
     void whenSearchCountryIsNotRussian_thenReturnProducts1And2() {
         String sort = "NEWEST";
         ProductsSearchRequestDto productFilter = new ProductsSearchRequestDto();
-        productFilter.setIsRussian(false);
+        productFilter.setCountries(List.of(Country.USA));
 
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2);
@@ -168,7 +169,7 @@ class PublicProductControllerTest extends CrudOperations {
         productFilter.setSellerIds(List.of(3L));
         productFilter.setVendorIds(List.of(4L));
         productFilter.setCategories(List.of(5L));
-        productFilter.setIsRussian(true);
+        productFilter.setCountries(List.of(Country.RUSSIA));
 
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
         List<ProductResponseDto> expect = Lists.emptyList();

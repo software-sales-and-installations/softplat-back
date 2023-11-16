@@ -9,7 +9,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.dto.vendor.VendorFilter;
+import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
@@ -70,7 +70,7 @@ class VendorServiceTest {
 
     @Test
     void findVendorAll() {
-        List<Vendor> response = service.findVendorsWithFilter(new VendorFilter(null, List.of(Country.INDIA)), 0, 10);
+        List<Vendor> response = service.findVendorsWithFilter(new VendorSearchRequestDto(null, List.of(Country.INDIA)), 0, 10);
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v where v.country = :country", Vendor.class);
         List<Vendor> vendorList = query.setParameter("country", Country.INDIA).getResultList();
 

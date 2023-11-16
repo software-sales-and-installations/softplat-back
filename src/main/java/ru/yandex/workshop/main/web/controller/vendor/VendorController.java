@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.dto.vendor.VendorFilter;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
+import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -33,8 +33,8 @@ public class VendorController {
 
     @Operation(summary = "Добавление вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public VendorResponseDto createVendor(@RequestBody @Validated(New.class) VendorDto vendorDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
         Vendor vendor = service.createVendor(vendorDto);
@@ -52,13 +52,13 @@ public class VendorController {
     }
 
     @Operation(summary = "Получение списка вендоров с фильтрацией", description = "Доступ для всех")
-    @GetMapping(path = "/search")
+    @GetMapping("/search")
     public List<VendorResponseDto> findVendorWithFilers(
-            @RequestBody VendorFilter vendorFilter,
+            @RequestBody(required = false) VendorSearchRequestDto vendorSearchRequestDto,
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_VENDORS.label);
-        List<Vendor> response = service.findVendorsWithFilter(vendorFilter, minId, pageSize);
+        List<Vendor> response = service.findVendorsWithFilter(vendorSearchRequestDto, minId, pageSize);
         return response.stream()
                 .map(vendorMapper::vendorToVendorResponseDto)
                 .collect(Collectors.toList());
@@ -74,8 +74,8 @@ public class VendorController {
 
     @Operation(summary = "Удаление вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{vendorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVendor(@PathVariable(name = "vendorId") Long vendorId) {
         log.debug(LogMessage.TRY_ADMIN_DELETE_VENDOR.label);
         service.deleteVendor(vendorId);
@@ -84,6 +84,7 @@ public class VendorController {
     @Operation(summary = "Добавление/обновление изображения вендора", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PostMapping(path = "/{vendorId}/image")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
                                                @RequestParam(value = "image") MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
