@@ -16,7 +16,7 @@ import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.service.admin.AdminService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
 import ru.yandex.workshop.main.service.seller.SellerService;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.model.Status;
@@ -36,35 +36,35 @@ public class AuthService {
     @Lazy
     private final PasswordEncoder passwordEncoder;
 
-    public User createNewUser(UserDto userDto) throws WrongDataDbException {
-        if (checkIfUserExistsByEmail(userDto.getEmail()))
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userDto.getEmail());
+    public User createNewUser(UserCreateDto userCreateDto) throws WrongDataDbException {
+        if (checkIfUserExistsByEmail(userCreateDto.getEmail()))
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userCreateDto.getEmail());
 
-        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userDto.setStatus(Status.ACTIVE);
-        User user = User.builder().email(userDto.getEmail()).role(userDto.getRole()).status(userDto.getStatus()).build();
+        userCreateDto.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
+        userCreateDto.setStatus(Status.ACTIVE);
+        User user = User.builder().email(userCreateDto.getEmail()).role(userCreateDto.getRole()).status(userCreateDto.getStatus()).build();
         try {
-            switch (userDto.getRole()) {
+            switch (userCreateDto.getRole()) {
                 case ADMIN:
                     log.info(LogMessage.TRY_ADD_ADMIN.label);
 
-                    Admin admin = adminService.addAdmin(userMapper.userDtoToAdmin(userDto));
+                    Admin admin = adminService.addAdmin(userMapper.userDtoToAdmin(userCreateDto));
                     user.setId(admin.getId());
                     break;
                 case SELLER:
                     log.info(LogMessage.TRY_ADD_SELLER.label);
 
-                    Seller seller = sellerService.addSeller(userMapper.userDtoToSeller(userDto));
+                    Seller seller = sellerService.addSeller(userMapper.userDtoToSeller(userCreateDto));
                     user.setId(seller.getId());
                     break;
                 case BUYER:
                     log.debug(LogMessage.TRY_ADD_BUYER.label);
 
-                    Buyer buyer = buyerService.addBuyer(userMapper.userDtoToBuyer(userDto));
+                    Buyer buyer = buyerService.addBuyer(userMapper.userDtoToBuyer(userCreateDto));
                     user.setId(buyer.getId());
                     break;
             }
-            repository.save(userMapper.userDtoToUser(userDto));
+            repository.save(userMapper.userDtoToUser(userCreateDto));
         } catch (DataIntegrityViolationException e) {
             throw new WrongDataDbException(e.getMessage());
         }

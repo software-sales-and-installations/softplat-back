@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.user.BuyerDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
-import ru.yandex.workshop.main.dto.user.response.FavoriteDto;
+import ru.yandex.workshop.main.dto.user.response.FavoriteResponseDto;
 import ru.yandex.workshop.main.mapper.BuyerMapper;
 import ru.yandex.workshop.main.mapper.FavoriteMapper;
 import ru.yandex.workshop.main.message.LogMessage;
@@ -56,7 +56,7 @@ public class BuyerController {
     @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping("/favorites/{productId}")
-    public FavoriteDto createFavorite(@ApiIgnore Principal principal, @PathVariable Long productId) {
+    public FavoriteResponseDto createFavorite(@ApiIgnore Principal principal, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", principal.getName(), productId);
         Favorite response = favoriteService.create(principal.getName(), productId);
         return favoriteMapper.toFavouriteDto(response);
@@ -75,7 +75,7 @@ public class BuyerController {
     @Operation(summary = "Просмотр избранных товаров", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/favorites")
-    public List<FavoriteDto> getAll(@ApiIgnore Principal principal) {
+    public List<FavoriteResponseDto> getAll(@ApiIgnore Principal principal) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, principal.getName());
         List<Favorite> response = favoriteService.getAll(principal.getName());
         return response.stream()

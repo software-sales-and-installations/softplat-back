@@ -10,7 +10,8 @@ import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderPositionDto {
+public class OrderPositionResponseDto {
+    private Long id;
     private ProductResponseDto productResponseDto;
     private Integer quantity;
     private Boolean installation;

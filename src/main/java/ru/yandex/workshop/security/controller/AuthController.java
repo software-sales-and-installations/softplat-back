@@ -17,7 +17,7 @@ import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
 import ru.yandex.workshop.security.dto.JwtRequest;
-import ru.yandex.workshop.security.dto.UserDto;
+import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
@@ -77,17 +77,17 @@ public class AuthController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserDto userDto) throws ValidationException, WrongDataDbException {
+    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserCreateDto userCreateDto) throws ValidationException, WrongDataDbException {
         log.info(LogMessage.TRY_REGISTRATION.label);
 
-        if (!userDto.getPassword().equals(userDto.getConfirmPassword())) {
+        if (!userCreateDto.getPassword().equals(userCreateDto.getConfirmPassword())) {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
 
-        if ((userDto.getRole().equals(Role.SELLER) || userDto.getRole().equals(Role.BUYER)) && (userDto.getPhone() == null || userDto.getPhone().isEmpty()))
+        if ((userCreateDto.getRole().equals(Role.SELLER) || userCreateDto.getRole().equals(Role.BUYER)) && (userCreateDto.getPhone() == null || userCreateDto.getPhone().isEmpty()))
             throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
-        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userDto))));
+        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userCreateDto))));
     }
 
     @PreAuthorize("hasAuthority('seller:write') and hasAuthority('admin:write') and hasAuthority('buyer:write')")
