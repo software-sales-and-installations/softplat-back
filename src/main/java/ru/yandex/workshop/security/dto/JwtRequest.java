@@ -9,6 +9,7 @@ import ru.yandex.workshop.main.dto.validation.New;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 @Builder
@@ -20,6 +21,12 @@ public class JwtRequest {
     String email;
     @Length(groups = {New.class}, min = 8, max = 40, message = "Пароль должен быть длиной от 8 до 40 символов")
     @NotBlank(message = "Необходимо указать пароль")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,40}$", message = "Пароль должен соответствовать следующим требованиям: " +
+            "1. Использование строчной буквы;" +
+            "2. Использование прописной буквы;" +
+            "3. Использование спец.символа \"@,#,$,%,^,&,+,=,!\";" +
+            "4. Использование цифры от 0 до 9;" +
+            "5. Длина пароля от 8 до 40 символов;")
     String password;
     @NotBlank(groups = {New.class}, message = "Необходимо указать пароль повторно")
     String confirmPassword;

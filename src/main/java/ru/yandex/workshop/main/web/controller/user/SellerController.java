@@ -36,8 +36,8 @@ public class SellerController {
     private final SellerBankService bankService;
     private final SellerMapper sellerMapper;
 
-    @GetMapping
     @Operation(summary = "Получение списка продавцов", description = "Доступ для всех")
+    @GetMapping
     public List<SellerResponseDto> getAllSellers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
                                                  @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_All_SELLERS.label);
@@ -77,6 +77,7 @@ public class SellerController {
     @Operation(summary = "Обновление своих банковских реквизитов продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping("/bank")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public BankRequisitesResponseDto updateRequisites(@ApiIgnore Principal principal,
                                                       @RequestBody BankRequisitesDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, principal.getName());
@@ -97,6 +98,7 @@ public class SellerController {
     @Operation(summary = "Добавление/обновление изображения своего профиля продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping("/account/image")
+    @ResponseStatus(value = HttpStatus.CREATED)
     public SellerResponseDto addSellerImage(@ApiIgnore Principal principal, @RequestParam(value = "image") MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
         Seller response = sellerService.addSellerImage(principal.getName(), image);
@@ -105,8 +107,8 @@ public class SellerController {
 
     @Operation(summary = "Удаление изображения своего профиля продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/account/image")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOwnImage(@ApiIgnore Principal principal) {
         log.debug(LogMessage.TRY_DElETE_IMAGE.label);
         sellerService.deleteSellerImage(principal.getName());
@@ -114,8 +116,8 @@ public class SellerController {
 
     @Operation(summary = "Удаление изображения профиля продавца админом", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{sellerId}/image")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSellerImage(@PathVariable Long sellerId) {
         log.debug(LogMessage.TRY_DElETE_IMAGE.label);
         sellerService.deleteSellerImageBySellerId(sellerId);

@@ -42,7 +42,8 @@ public enum LogMessage {
     TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}"),
     TRY_ADD_ORDER("Попытка создания оплаченного заказа"),
     TRY_GET_ALL_ORDERS("Попытка получить все покупки"),
-    TRY_GET_ORDER("Попытка получить заказ по id {}");
+    TRY_GET_ORDER("Попытка получить заказ по id {}"),
+    TRY_GET_All_BUYERS("Попытка получения всех покупателей");
 
     public final String label;
 
