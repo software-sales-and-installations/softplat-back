@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.exception.ImageUploadingError;
+import ru.yandex.workshop.main.exception.ImageServerUploadException;
 import ru.yandex.workshop.main.mapper.ImageMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.image.Image;
@@ -40,8 +40,8 @@ public class ImageServiceImpl implements ImageService {
                     .build();
             return imageMapper.imageToImageDto(imageRepository.save(image));
         } catch (IOException e) {
-            log.error(ExceptionMessage.IMAGE_UPLOADING_ERROR.label);
-            throw new ImageUploadingError(ExceptionMessage.IMAGE_UPLOADING_ERROR.label);
+            log.error(ExceptionMessage.IMAGE_SERVER_UPLOAD_EXCEPTION.label);
+            throw new ImageServerUploadException(ExceptionMessage.IMAGE_SERVER_UPLOAD_EXCEPTION.label);
         }
     }
 

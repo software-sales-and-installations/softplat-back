@@ -17,6 +17,7 @@ import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.service.product.CRUDProductService;
+import ru.yandex.workshop.main.web.validation.MultipartFileFormat;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -103,7 +104,7 @@ public class UserProductController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/{productId}/image")
     public ProductResponseDto createProductImage(@ApiIgnore Principal principal, @PathVariable @Min(1) Long productId,
-                                                 @RequestParam(value = "image") MultipartFile image) {
+                                                 @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
         productService.checkSellerAccessRights(principal.getName(), productId);
         Product response = productService.createProductImage(productId, image);

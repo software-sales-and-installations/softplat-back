@@ -18,6 +18,7 @@ import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.service.seller.SellerBankService;
 import ru.yandex.workshop.main.service.seller.SellerService;
+import ru.yandex.workshop.main.web.validation.MultipartFileFormat;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -99,7 +100,8 @@ public class SellerController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping("/account/image")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public SellerResponseDto addSellerImage(@ApiIgnore Principal principal, @RequestParam(value = "image") MultipartFile image) {
+    public SellerResponseDto addSellerImage(@ApiIgnore Principal principal,
+                                            @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
         Seller response = sellerService.addSellerImage(principal.getName(), image);
         return sellerMapper.sellerToSellerResponseDto(response);
