@@ -1,5 +1,6 @@
 package ru.yandex.workshop.security.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDto {
+public class UserCreateDto {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
     @Email(message = "Email должен быть корректным адресом электронной почты")
     @Length(min = 6, max = 30, message = "Длина почты должна быть от 6 до 30 символов.")
@@ -38,5 +39,6 @@ public class UserDto {
     String phone;
     @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
+    @Schema(description = "Вспомогательный параметр, не указывается в теле запроса")
     Status status;
 }

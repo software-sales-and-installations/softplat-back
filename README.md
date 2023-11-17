@@ -18,5 +18,4 @@ Repository of the backend part of SoftPlat2048
 
 ### Swagger Documentation
 After starting application:
-- http://localhost:8080/swagger-ui/#/
-- http://localhost:8080/v2/api-docs
+- http://softplat.acceleratorpracticum.ru/swagger-ui/#/

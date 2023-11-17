@@ -23,7 +23,6 @@ import ru.yandex.workshop.main.service.seller.SellerService;
 import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,15 +38,7 @@ public class CRUDProductService {
     private final ImageService imageService;
 
     public Product create(String sellerEmail, Product product) {
-        Seller seller = sellerService.getSeller(sellerEmail);
-        Category category = categoryService.getCategoryById(product.getCategory().getId());
-        Vendor vendor = vendorService.getVendorById(product.getVendor().getId());
-
-        product.setSeller(seller);
-        product.setCategory(category);
-        product.setVendor(vendor);
-        product.setProductStatus(ProductStatus.DRAFT);
-
+        initProduct(sellerEmail, product);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
@@ -55,17 +46,12 @@ public class CRUDProductService {
                 && product.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо указать цену установки.");
 
-        Product response = productRepository.save(product);
-        return getProductOrThrowException(response.getId());
+        return productRepository.save(product);
     }
 
-    public Product update(String email, Long productId, Product productForUpdate) {
+    public Product update(Long productId, Product productForUpdate) {
         Product product = getProductOrThrowException(productId);
-        Seller seller = sellerService.getSeller(email);
 
-        if (!product.getSeller().getId().equals(seller.getId())) {
-            throw new EntityNotFoundException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
-        }
         if (productForUpdate.getName() != null) {
             product.setName(productForUpdate.getName());
         }
@@ -99,7 +85,9 @@ public class CRUDProductService {
         if (productForUpdate.getInstallation() != null && productForUpdate.getInstallation()
                 && productForUpdate.getInstallationPrice() == null)
             throw new WrongConditionException("Необходимо указать цену установки.");
+
         product.setProductStatus(ProductStatus.DRAFT);
+
         return productRepository.save(product);
     }
 
@@ -148,8 +136,8 @@ public class CRUDProductService {
 
     @Transactional(readOnly = true)
     public List<Product> getAllProductsShipped(int from, int size) {
-        return new ArrayList<>(productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
-                PageRequestOverride.of(from, size)));
+        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
+                PageRequestOverride.of(from, size));
     }
 
     public void delete(Long productId) {
@@ -161,6 +149,17 @@ public class CRUDProductService {
     public Product getProductOrThrowException(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    }
+
+    private void initProduct(String sellerEmail, Product product) {
+        Seller seller = sellerService.getSeller(sellerEmail);
+        Category category = categoryService.getCategoryById(product.getCategory().getId());
+        Vendor vendor = vendorService.getVendorById(product.getVendor().getId());
+
+        product.setSeller(seller);
+        product.setCategory(category);
+        product.setVendor(vendor);
+        product.setProductStatus(ProductStatus.DRAFT);
     }
 
     public void checkSellerAccessRights(String email, Long productId) {

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.category.CategoryDto;
+import ru.yandex.workshop.main.dto.category.CategoryResponseDto;
 import ru.yandex.workshop.main.mapper.CategoryMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Category;
@@ -26,48 +27,48 @@ public class CategoryController {
 
     @Operation(summary = "Получение списка категорий", description = "Доступ для всех")
     @GetMapping
-    public List<CategoryDto> findAllCategories() {
+    public List<CategoryResponseDto> findAllCategories() {
         log.debug(LogMessage.TRY_GET_CATEGORY.label);
         List<Category> response = service.findCategoryAll();
         return response.stream()
-                .map(categoryMapper::categoryToCategoryDto)
+                .map(categoryMapper::categoryToCategoryResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Operation(summary = "Получение категории по id", description = "Доступ для всех")
     @GetMapping(path = "/{catId}")
-    public CategoryDto findCategoryById(@PathVariable(name = "catId") Long catId) {
+    public CategoryResponseDto findCategoryById(@PathVariable(name = "catId") Long catId) {
         log.debug(LogMessage.TRY_GET_ID_CATEGORY.label, catId);
         Category response = service.getCategoryById(catId);
-        return categoryMapper.categoryToCategoryDto(response);
+        return categoryMapper.categoryToCategoryResponseDto(response);
     }
 
     @Operation(summary = "Создание категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public CategoryDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public CategoryResponseDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_CATEGORY.label);
         Category request = categoryMapper.categoryDtoToCategory(categoryDto);
         Category response = service.createCategory(request);
-        return categoryMapper.categoryToCategoryDto(response);
+        return categoryMapper.categoryToCategoryResponseDto(response);
     }
 
     @Operation(summary = "Изменение категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{catId}")
-    public CategoryDto changeCategoryById(@PathVariable(name = "catId") Long catId,
+    public CategoryResponseDto changeCategoryById(@PathVariable(name = "catId") Long catId,
                                           @RequestBody @Valid CategoryDto categoryDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_CATEGORY.label, catId);
         Category updateRequest = categoryMapper.categoryDtoToCategory(categoryDto);
         Category response = service.changeCategoryById(catId, updateRequest);
-        return categoryMapper.categoryToCategoryDto(response);
+        return categoryMapper.categoryToCategoryResponseDto(response);
     }
 
     @Operation(summary = "Удаление категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{catId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable(name = "catId") Long catId) {
         log.debug(LogMessage.TRY_ADMIN_DELETE_CATEGORY.label, catId);
         service.deleteCategory(catId);
