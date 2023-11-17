@@ -26,7 +26,7 @@ public class ProductDto {
     String description;
 
     @NotBlank(groups = {New.class}, message = "Необходимо указать версию продукта")
-    @Pattern(regexp = "^[0-9a-zA-Z-@.#$%^&+=!]{2,30}$", message = "Длина версии должна быть от 2 до 30 символов.")
+    @Pattern(regexp = "^[0-9a-z-.,/]{2,30}$", message = "Длина версии должна быть от 2 до 30 символов.")
     String version;
 
     @NotNull(groups = {New.class}, message = "Необходимо указать категорию продукта.")
