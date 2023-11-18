@@ -1,112 +1,106 @@
 package ru.yandex.workshop.main.controller.vendor;
-/*
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.workshop.main.controller.CrudOperations;
 import ru.yandex.workshop.main.dto.vendor.VendorDto;
-import ru.yandex.workshop.main.dto.vendor.VendorFilter;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
+import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Country;
-import ru.yandex.workshop.main.service.vendor.VendorServiceImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@WebMvcTest(controllers = VendorController.class)
-class VendorControllerTest {
-    @MockBean
-    VendorServiceImpl service;
+@SpringBootTest
+@AutoConfigureMockMvc
+@AutoConfigureTestDatabase
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+class VendorControllerTest extends CrudOperations {
+
     @Autowired
     private MockMvc mvc;
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
+    private VendorDto vendorDto;
 
-    static VendorDto vendorDto;
-    static VendorResponseDto vendorResponseDto;
-    static List<VendorResponseDto> vendorResponseDtoList;
-
-    @BeforeAll
-    static void assistant() {
+    @BeforeEach
+    void init() {
         vendorDto = VendorDto.builder().name("test").description("test").country(Country.RUSSIA).build();
-        vendorResponseDto = VendorResponseDto.builder().id(1L).name("test").description("test").country(Country.RUSSIA).build();
-        vendorResponseDtoList = List.of(vendorResponseDto, vendorResponseDto);
     }
 
     @Test
-    void createVendor() throws Exception {
-        when(service.createVendor(any()))
-                .thenReturn(vendorResponseDto);
+    @SneakyThrows
+    @WithMockUser(authorities = {"admin:write"})
+    void createVendor_whenValid_shouldReturnVendorResponseDto() {
+        VendorResponseDto response = createVendor(vendorDto);
 
-        mvc.perform(post("/vendor")
-                        .content(mapper.writeValueAsString(vendorDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
-                .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
+        assertEquals(Long.class, response.getId().getClass());
+        assertEquals(vendorDto.getName(), response.getName());
+        assertEquals(vendorDto.getDescription(), response.getDescription());
+        assertEquals(vendorDto.getCountry(), response.getCountry());
     }
 
     @Test
-    void changeVendorById() throws Exception {
-        when(service.changeVendorById(anyLong(), any()))
-                .thenReturn(vendorResponseDto);
+    @SneakyThrows
+    @WithMockUser(authorities = {"admin:write"})
+    void changeVendorById_whenValid_returnVendorResponseDto() {
+        VendorResponseDto response = createVendor(vendorDto);
 
-        mvc.perform(patch("/vendor/1")
+        mvc.perform(patch("/vendor/{vendorId}", response.getId())
                         .content(mapper.writeValueAsString(vendorDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
-                .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
+                .andExpect(jsonPath("$.id", is(response.getId()), Long.class))
+                .andExpect(jsonPath("$.name", is(response.getName())))
+                .andExpect(jsonPath("$.description", is(response.getDescription())))
+                .andExpect(jsonPath("$.country", is(response.getCountry().toString())));
     }
 
-
     @Test
-    void findVendorsWithFiltersTest() throws Exception {
-        when(service.findVendorAll(any(), anyInt(), anyInt()))
-                .thenReturn(vendorResponseDtoList);
+    @SneakyThrows
+    @WithMockUser(authorities = {"admin:write"})
+    void findVendorsWithFiltersTest_whenCountryChina_returnListOfVendor1() {
+        vendorDto.setCountry(Country.CHINA);
+        VendorResponseDto response = createVendor(vendorDto);
+        VendorSearchRequestDto vendorFilter = new VendorSearchRequestDto("test", List.of(Country.CHINA));
+        List<VendorResponseDto> vendorResponseDtoList = List.of(response);
 
-        mvc.perform(get("/vendor")
+        mvc.perform(get("/vendor/search")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(new VendorFilter("test", List.of(Country.CHINA)))))
+                        .content(mapper.writeValueAsString(vendorFilter)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(vendorResponseDtoList)));
     }
 
     @Test
-    void findVendorById() throws Exception {
-        when(service.findVendorById(anyLong()))
-                .thenReturn(vendorResponseDto);
+    @SneakyThrows
+    @WithMockUser(authorities = {"admin:write"})
+    void findVendorById_whenIdValid_returnVendor1() {
+        long vendorId = createVendor(vendorDto).getId();
+        VendorResponseDto response = getVendorResponseDto(vendorId);
 
-        mvc.perform(get("/vendor/1")
-                        .content(mapper.writeValueAsString(vendorDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(vendorResponseDto.getId()), Long.class))
-                .andExpect(jsonPath("$.name", is(vendorResponseDto.getName())))
-                .andExpect(jsonPath("$.description", is(vendorResponseDto.getDescription())))
-                .andExpect(jsonPath("$.country", is(vendorResponseDto.getCountry().toString())));
+        assertEquals(Long.class, response.getId().getClass());
+        assertEquals(vendorDto.getName(), response.getName());
+        assertEquals(vendorDto.getDescription(), response.getDescription());
+        assertEquals(vendorDto.getCountry(), response.getCountry());
     }
 }
-*/
