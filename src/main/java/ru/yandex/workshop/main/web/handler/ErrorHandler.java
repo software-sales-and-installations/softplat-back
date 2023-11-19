@@ -7,8 +7,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.yandex.workshop.main.dto.error.ErrorResponse;
 import ru.yandex.workshop.main.exception.*;
+import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.security.exception.UnauthorizedException;
 import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
@@ -83,7 +85,15 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleAccessDenialException(final ImageUploadingError e) {
+    public ErrorResponse handleImageServerUploadException(final ImageServerUploadException e) {
+        e.printStackTrace();
+        log.error(Arrays.toString(e.getStackTrace()));
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleImageFormatException(final ImageFormatException e) {
         e.printStackTrace();
         log.error(Arrays.toString(e.getStackTrace()));
         return new ErrorResponse(e.getMessage());
@@ -95,5 +105,13 @@ public class ErrorHandler {
         e.printStackTrace();
         log.error(Arrays.toString(e.getStackTrace()));
         return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMaxSizeException(final MaxUploadSizeExceededException e) {
+        e.printStackTrace();
+        log.error(Arrays.toString(e.getStackTrace()));
+        return new ErrorResponse(ExceptionMessage.IMAGE_SIZE_EXCEED_EXCEPTION.label);
     }
 }
