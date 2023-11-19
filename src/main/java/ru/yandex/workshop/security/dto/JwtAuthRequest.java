@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class JwtRequest {
+public class JwtAuthRequest {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
     @Email(message = "Email должен быть корректным адресом электронной почты")
     @Length(min = 6, max = 30, message = "Адрес электронной почты должен содержать от 6 до 30 символов")

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
-import ru.yandex.workshop.security.dto.JwtRequest;
+import ru.yandex.workshop.security.dto.JwtAuthRequest;
 import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
@@ -51,7 +51,7 @@ public class AuthController {
 
 
     @PostMapping("/auth/login")
-    public ResponseEntity<Object> authorization(@RequestBody @Valid JwtRequest request) {
+    public ResponseEntity<Object> authorization(@RequestBody @Valid JwtAuthRequest request) {
         log.info(LogMessage.TRY_AUTHORIZATION.label);
 
         try {
@@ -92,7 +92,7 @@ public class AuthController {
     }
 
     @PostMapping("/change/pass")
-    public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtRequest request) {
+    public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtAuthRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
         return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(userDetailsChangeService.changePass(request))));
     }

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.yandex.workshop.security.dto.JwtRequest;
+import ru.yandex.workshop.security.dto.JwtAuthRequest;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.message.ExceptionMessage;
@@ -22,7 +22,7 @@ public class UserDetailsChangeService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public User changePass(JwtRequest request) throws WrongRegException {
+    public User changePass(JwtAuthRequest request) throws WrongRegException {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
