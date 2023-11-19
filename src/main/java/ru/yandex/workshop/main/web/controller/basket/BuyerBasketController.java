@@ -39,9 +39,9 @@ public class BuyerBasketController {
     @DeleteMapping("/basket/{productId}")
     public BasketResponseDto removeProductFromBasket(@ApiIgnore Principal principal, @PathVariable Long productId,
                                                      @Parameter(description = "Так как в корзине может лежать два " +
-                                                     "одинаковых товара, но один с установкой, а второй без установки, " +
-                                                     "необходимо выбрать, какой из них удалить")
-                                             @RequestParam(defaultValue = "false") Boolean installation) {
+                                                             "одинаковых товара, но один с установкой, а второй без установки, " +
+                                                             "необходимо выбрать, какой из них удалить")
+                                                     @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_DELETE_PRODUCT_FROM_BASKET.label, productId);
         Basket response = basketService.removeProduct(principal.getName(), productId, installation);
         return basketMapper.basketToBasketDto(response);

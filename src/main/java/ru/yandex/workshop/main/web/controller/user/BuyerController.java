@@ -40,7 +40,7 @@ public class BuyerController {
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping
     public List<BuyerResponseDto> getAllBuyers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
-                                                 @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
+                                               @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_All_BUYERS.label);
         List<Buyer> response = buyerService.getAllBuyers(minId, pageSize);
         return response.stream()
