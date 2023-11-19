@@ -33,7 +33,7 @@ public class UserCreateDto {
     @NotBlank(message = "Необходимо повторно указать пароль")
     String confirmPassword;
     @NotBlank(message = "Необходимо указать имя")
-    @Pattern(regexp = "^[a-zA-Zа-яА-Я]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов. Цифры в имени не допускаются.")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов. Цифры в имени не допускаются.")
     String name;
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
     String phone;

@@ -58,7 +58,7 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{catId}")
     public CategoryResponseDto changeCategoryById(@PathVariable(name = "catId") Long catId,
-                                          @RequestBody @Valid CategoryDto categoryDto) {
+                                                  @RequestBody @Valid CategoryDto categoryDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_CATEGORY.label, catId);
         Category updateRequest = categoryMapper.categoryDtoToCategory(categoryDto);
         Category response = service.changeCategoryById(catId, updateRequest);
