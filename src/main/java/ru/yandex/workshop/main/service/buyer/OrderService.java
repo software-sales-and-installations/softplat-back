@@ -29,7 +29,6 @@ public class OrderService {
     private final BasketPositionRepository basketPositionRepository;
     private final OrderPositionMapper mapper;
     private final StatsService statsService;
-
     private static final Float COMMISSIONS = 0.9F;
 
     @Transactional
@@ -73,14 +72,14 @@ public class OrderService {
     }
 
     private void createStats(Order order) {
-        List<OrderPosition> orderPositionList = new ArrayList<>();
+        List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
             Stats stats = new Stats();
             stats.setProduct(orderPosition.getProduct());
             stats.setBuyer(order.getBuyer());
             stats.setDateBuy(order.getProductionTime());
-            stats.setQuantity(orderPosition.getQuantity());
-            stats.setAmount(COMMISSIONS * orderPosition.getProductAmount());
+            stats.setQuantity((long) orderPosition.getQuantity());
+            stats.setAmount((double) COMMISSIONS * orderPosition.getProductAmount());
             statsService.createStats(stats);
         }
     }

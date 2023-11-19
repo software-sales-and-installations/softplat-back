@@ -12,7 +12,8 @@ public class SellerReportEntry {
 
     String productName;
 
-    Integer quantity;
+    Long quantity;
 
-    Float revenue;
+    Double revenue;
+
 }

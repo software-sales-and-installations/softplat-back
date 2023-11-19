@@ -7,12 +7,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.stats.dto.StatsFilterAdmin;
 import ru.yandex.workshop.stats.dto.StatsFilterSeller;
 import ru.yandex.workshop.stats.dto.StatsResponseDto;
 import ru.yandex.workshop.stats.mapper.StatsMapper;
+import ru.yandex.workshop.stats.model.SortEnum;
 import ru.yandex.workshop.stats.service.StatsService;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -35,9 +39,9 @@ public class StatsController {
     public StatsResponseDto getSellerReportAdmin(
             @Parameter(description = "Фильтрация для получения статистики: " +
                     "по категории/продавцу/производителю/дате") StatsFilterAdmin statsFilterAdmin,
-            @RequestParam(name = "sort", defaultValue = "popular")
+            @RequestParam(name = "sort", defaultValue = "POPULAR")
             @Parameter(description = "Условие сортировки для статистики: " +
-                    "по количеству продаж/по стоимости") String sort) {
+                    "по количеству продаж/по стоимости") SortEnum sort) {
         log.debug(LogMessage.TRY_GET_STATS_SELLER_ADMIN.label);
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService
@@ -52,9 +56,9 @@ public class StatsController {
     public StatsResponseDto getProductReportAdmin(
             @Parameter(description = "Фильтрация для получения статистики: " +
                     "по категории/производителю/дате") StatsFilterSeller statsFilterSeller,
-            @RequestParam(name = "sort", defaultValue = "popular")
+            @RequestParam(name = "sort", defaultValue = "POPULAR")
             @Parameter(description = "Условие сортировки для статистики: " +
-                    "по количеству продаж/по стоимости") String sort) {
+                    "по количеству продаж/по стоимости") SortEnum sort) {
         log.debug(LogMessage.TRY_GET_STATS_PRODUCT_ADMIN.label);
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService
@@ -70,9 +74,9 @@ public class StatsController {
             @ApiIgnore Principal principal,
             @Parameter(description = "Фильтрация для получения статистики: " +
                     "по категории/производителю/дате") StatsFilterSeller statsFilterSeller,
-            @RequestParam(name = "sort", defaultValue = "popular")
+            @RequestParam(name = "sort", defaultValue = "POPULAR")
             @Parameter(description = "Условие сортировки для статистики: " +
-                    "по количеству продаж/по стоимости") String sort) {
+                    "по количеству продаж/по стоимости") SortEnum sort) {
         log.debug(LogMessage.TRY_GET_STATS_PRODUCT_SELLER.label);
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService

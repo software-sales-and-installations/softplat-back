@@ -36,8 +36,8 @@ public class Stats {
     LocalDateTime dateBuy;
 
     @Column(name = "quantity")
-    Integer quantity;
+    Long quantity;
 
     @Column(name = "amount")
-    Float amount;
+    Double amount;
 }

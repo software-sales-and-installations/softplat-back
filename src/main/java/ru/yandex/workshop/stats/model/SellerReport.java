@@ -14,5 +14,5 @@ import java.util.List;
 public class SellerReport {
 
     List<SellerReportEntry> sellerReportEntryList;
-    Float sumRevenue;
+    Double sumRevenue;
 }
