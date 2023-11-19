@@ -16,10 +16,7 @@ insert into CATEGORY (NAME)
 values ('ERM и CRM');
 
 insert into users(email, password, role, status)
-values ('admin@admin.ru',
-        '$2a$12$18vPXf7skVRF667C8uJZ7.WlRxOCuMTbbJIXPVu8iF1tG2LZsrPSe',
-        'ADMIN',
-        'ACTIVE');
+values ('admin@admin.ru', '$2a$12$18vPXf7skVRF667C8uJZ7.WlRxOCuMTbbJIXPVu8iF1tG2LZsrPSe', 'ADMIN', 'ACTIVE');
 
 insert into VENDOR (name, description, country)
 values ('Adobe',
@@ -33,8 +30,3 @@ insert into VENDOR (name, description, country)
 values ('Kaspersky',
         'Международная компания, специализирующаяся на разработке систем защиты от компьютерных вирусов, спама, хакерских атак и прочих киберугроз.',
         'RUSSIA');
-
-insert into VENDOR (name, description, country)
-values ('Adobe',
-        'Приложения от компании Adobe позволяют работать с векторной и растровой графикой, а также с видео и музыкой. На данной странице собраны самые популярные и доступные программы Adobe с ключами активации последних версий, а также версии Repack.',
-        'USA');
