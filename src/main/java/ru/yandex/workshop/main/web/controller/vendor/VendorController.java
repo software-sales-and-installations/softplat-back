@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.validation.New;
-import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.mapper.VendorMapper;
@@ -35,9 +35,9 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public VendorResponseDto createVendor(@RequestBody @Validated(New.class) VendorDto vendorDto) {
+    public VendorResponseDto createVendor(@RequestBody @Validated(New.class) VendorCreateUpdateDto vendorCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
-        Vendor vendor = service.createVendor(vendorDto);
+        Vendor vendor = service.createVendor(vendorCreateUpdateDto);
         return vendorMapper.vendorToVendorResponseDto(vendor);
     }
 
@@ -45,7 +45,7 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{vendorId}")
     public VendorResponseDto changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                              @RequestBody @Valid VendorDto vendorUpdateDto) {
+                                              @RequestBody @Valid VendorCreateUpdateDto vendorUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
         Vendor response = service.changeVendorById(vendorId, vendorUpdateDto);
         return vendorMapper.vendorToVendorResponseDto(response);

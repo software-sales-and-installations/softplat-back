@@ -14,7 +14,7 @@ import javax.validation.constraints.Pattern;
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class VendorDto {
+public class VendorCreateUpdateDto {
     @NotBlank(groups = {New.class}, message = "Необходимо указать имя")
     @Pattern(regexp = "^[0-9a-zA-Zа-яА-Я\\s]{2,255}$", message = "Длина названия компании должна быть от 2 до 20 символов.")
     String name;

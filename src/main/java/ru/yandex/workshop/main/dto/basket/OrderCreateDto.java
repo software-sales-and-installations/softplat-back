@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderToCreateDto {
+public class OrderCreateDto {
     @NotNull(message = "Выберите хотя бы один товар для покупки")
     private List<Long> productBaskets;
 }

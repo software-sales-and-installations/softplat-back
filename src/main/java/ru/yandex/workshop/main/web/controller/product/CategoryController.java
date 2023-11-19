@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.workshop.main.dto.category.CategoryDto;
+import ru.yandex.workshop.main.dto.category.CategoryCreateUpdateDto;
 import ru.yandex.workshop.main.dto.category.CategoryResponseDto;
 import ru.yandex.workshop.main.mapper.CategoryMapper;
 import ru.yandex.workshop.main.message.LogMessage;
@@ -47,9 +47,9 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponseDto createCategory(@RequestBody @Valid CategoryDto categoryDto) {
+    public CategoryResponseDto createCategory(@RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_CATEGORY.label);
-        Category request = categoryMapper.categoryDtoToCategory(categoryDto);
+        Category request = categoryMapper.categoryDtoToCategory(categoryCreateUpdateDto);
         Category response = service.createCategory(request);
         return categoryMapper.categoryToCategoryResponseDto(response);
     }
@@ -58,9 +58,9 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{catId}")
     public CategoryResponseDto changeCategoryById(@PathVariable(name = "catId") Long catId,
-                                          @RequestBody @Valid CategoryDto categoryDto) {
+                                          @RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_CATEGORY.label, catId);
-        Category updateRequest = categoryMapper.categoryDtoToCategory(categoryDto);
+        Category updateRequest = categoryMapper.categoryDtoToCategory(categoryCreateUpdateDto);
         Category response = service.changeCategoryById(catId, updateRequest);
         return categoryMapper.categoryToCategoryResponseDto(response);
     }

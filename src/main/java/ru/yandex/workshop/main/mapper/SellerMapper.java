@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesResponseDto;
-import ru.yandex.workshop.main.dto.user.SellerDto;
+import ru.yandex.workshop.main.dto.user.SellerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
@@ -15,7 +15,7 @@ public interface SellerMapper {
     @Mapping(target = "imageResponseDto", source = "image")
     SellerResponseDto sellerToSellerResponseDto(Seller seller);
 
-    Seller sellerDtoToSeller(SellerDto sellerDto);
+    Seller sellerDtoToSeller(SellerUpdateDto sellerUpdateDto);
 
     default BankRequisitesResponseDto requisitesToDto(BankRequisites requisites) {
         if (requisites == null) return null;

@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.workshop.main.dto.user.BuyerDto;
+import ru.yandex.workshop.main.dto.user.BuyerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.dto.user.response.FavoriteResponseDto;
 import ru.yandex.workshop.main.mapper.BuyerMapper;
@@ -60,9 +60,9 @@ public class BuyerController {
     @Operation(summary = "Обновление данных о себе покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PatchMapping
-    public BuyerResponseDto updateBuyer(@ApiIgnore Principal principal, @RequestBody @Valid BuyerDto buyerDto) {
+    public BuyerResponseDto updateBuyer(@ApiIgnore Principal principal, @RequestBody @Valid BuyerUpdateDto buyerUpdateDto) {
         log.info(LogMessage.TRY_PATCH_BUYER.label, principal.getName());
-        Buyer updateRequest = buyerMapper.buyerDtoToBuyer(buyerDto);
+        Buyer updateRequest = buyerMapper.buyerDtoToBuyer(buyerUpdateDto);
         Buyer response = buyerService.updateBuyer(principal.getName(), updateRequest);
         return buyerMapper.buyerToBuyerResponseDto(response);
     }

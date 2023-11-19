@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminDto {
+public class AdminUpdateDto {
     @NotBlank(message = "Необходимо указать имя")
     @Pattern(regexp = "^[a-zA-Zа-яА-Я]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов.")
     private String name;
