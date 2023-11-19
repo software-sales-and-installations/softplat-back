@@ -18,7 +18,7 @@ import javax.validation.constraints.PositiveOrZero;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductCreateUpdateDto {
     @NotBlank(groups = {New.class}, message = "Необходимо указать имя продукта")
-    @Pattern(regexp = "^[a-zA-Zа-яА-Я-@#$.,%^&+=!\\s]{2,255}$", message = "Неверные символы в названии товара. Длина названия продукта должна быть от 2 до 255 символов. Цифры в названии не допускаются.")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я-.,\\s]{2,255}$", message = "Неверные символы в названии товара. Длина названия продукта должна быть от 2 до 255 символов. Цифры в названии не допускаются.")
     String name;
 
     @NotBlank(groups = {New.class}, message = "Необходимо указать описание продукта")
@@ -26,7 +26,7 @@ public class ProductCreateUpdateDto {
     String description;
 
     @NotBlank(groups = {New.class}, message = "Необходимо указать версию продукта")
-    @Pattern(regexp = "^[0-9a-zA-Z-@.#$%^&+=!]{2,30}$", message = "Длина версии должна быть от 2 до 30 символов.")
+    @Pattern(regexp = "^[0-9a-z-.,/]{2,30}$", message = "Длина версии должна быть от 2 до 30 символов.")
     String version;
 
     @NotNull(groups = {New.class}, message = "Необходимо указать категорию продукта.")

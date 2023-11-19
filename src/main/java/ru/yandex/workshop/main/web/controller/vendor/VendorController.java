@@ -16,6 +16,7 @@ import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.service.vendor.VendorService;
+import ru.yandex.workshop.main.web.validation.MultipartFileFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -86,7 +87,7 @@ public class VendorController {
     @PostMapping(path = "/{vendorId}/image")
     @ResponseStatus(value = HttpStatus.CREATED)
     public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
-                                               @RequestParam(value = "image") MultipartFile image) {
+                                               @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
         Vendor response = service.addVendorImage(vendorId, image);
         return vendorMapper.vendorToVendorResponseDto(response);

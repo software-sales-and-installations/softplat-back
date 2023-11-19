@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class AdminUpdateDto {
     @NotBlank(message = "Необходимо указать имя")
-    @Pattern(regexp = "^[a-zA-Zа-яА-Я]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов.")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов.")
     private String name;
     @NotBlank(message = "Необходимо указать email")
     @Email(message = "Email должен быть корректным адресом электронной почты")
