@@ -7,7 +7,13 @@ public enum ExceptionMessage {
     IMAGE_FORMAT_EXCEPTION("Формат изображения должен быть jpeg или png."),
     NO_IMAGE_CONTENT_EXCEPTION("Необходимо загрузить изображение."),
     IMAGE_SERVER_UPLOAD_EXCEPTION("Ошибка сервера при загрузке изображения."),
-    NO_RIGHTS_EXCEPTION("Продавец не может корректировать чужой продукт!");
+    NO_RIGHTS_EXCEPTION("Продавец не может корректировать чужой продукт!"),
+    WRONG_CONDITION_EXCEPTION("Введены некорректные данные."),
+    UNAUTHORIZED_EXCEPTION("Ошибка авторизации."),
+    VALIDATION_EXCEPTION("Ошибка проверки данных."),
+    ACCESS_EXCEPTION("Ошибка доступа"),
+    DATA_EXCEPTION("Ошибка базы данных."),
+    SIZE_EXCEPTION("Ошибка в размере загружаемых данных");
 
     public final String label;
 

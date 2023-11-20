@@ -15,7 +15,7 @@ public interface VendorMapper {
 
     Vendor vendorDtoToVendor(VendorDto vendorDto);
 
-    @Mapping(target = "imageResponseDto", source = "image")
+    @Mapping(target = "image", source = "image")
     VendorResponseDto vendorToVendorResponseDto(Vendor vendor);
 
     List<VendorResponseDto> vendorToListVendorResponseDto(List<Vendor> vendor);

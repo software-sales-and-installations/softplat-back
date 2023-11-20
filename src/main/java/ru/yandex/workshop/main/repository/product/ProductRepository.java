@@ -15,4 +15,6 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Queryds
     List<Product> findProductBySellerId(Long sellerId, PageRequestOverride pageRequest);
 
     List<Product> findAllByProductStatusOrderByProductionTimeDesc(ProductStatus productStatus, PageRequestOverride pageRequest);
+
+    boolean existsById(Long id);
 }

@@ -1,14 +1,13 @@
 package ru.yandex.workshop.main.dto.error;
 
-import lombok.Getter;
+import lombok.Builder;
 
-@Getter
+import java.time.LocalDateTime;
+
+@Builder
 public class ErrorResponse {
-
-    private final String error;
-
-    public ErrorResponse(String error) {
-        this.error = error;
-    }
-
+    private String message;
+    private String reason;
+    private String status;
+    private LocalDateTime timestamp;
 }

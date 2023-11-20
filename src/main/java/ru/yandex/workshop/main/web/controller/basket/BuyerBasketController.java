@@ -17,7 +17,8 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.security.Principal;
 
 @Slf4j
-@RestController("/buyer")
+@RestController
+@RequestMapping(path = "/buyer")
 @RequiredArgsConstructor
 public class BuyerBasketController {
     private final BasketService basketService;

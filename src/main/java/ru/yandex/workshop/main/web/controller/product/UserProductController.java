@@ -16,7 +16,7 @@ import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.main.service.product.CRUDProductService;
+import ru.yandex.workshop.main.service.product.ProductService;
 import ru.yandex.workshop.main.web.validation.MultipartFileFormat;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Validated
 public class UserProductController {
 
-    private final CRUDProductService productService;
+    private final ProductService productService;
     private final ProductMapper productMapper;
 
     @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")

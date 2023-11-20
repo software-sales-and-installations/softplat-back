@@ -29,7 +29,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class CRUDProductService {
+public class ProductService {
 
     private final ProductRepository productRepository;
     private final SellerService sellerService;
@@ -168,5 +168,9 @@ public class CRUDProductService {
         if (!product.getSeller().getEmail().equals(email)) {
             throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
         }
+    }
+
+    public boolean checkExistsProduct(Long productId) {
+        return productRepository.existsById(productId);
     }
 }
