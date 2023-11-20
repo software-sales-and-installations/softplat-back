@@ -102,7 +102,7 @@ public class UserProductController {
     @Operation(summary = "Добавление/обновление изображения своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(path = "/{productId}/image")
+    @PostMapping(path = "/{productId}/image/create")
     public ProductResponseDto createProductImage(@ApiIgnore Principal principal, @PathVariable @Min(1) Long productId,
                                                  @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
@@ -113,7 +113,7 @@ public class UserProductController {
 
     @Operation(summary = "Удаление изображения карточки товара", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @DeleteMapping(path = "/products/{productId}/image")
+    @PostMapping(path = "/products/{productId}/image/delete")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductImageAdmin(@PathVariable @Min(1) Long productId) {
         log.info(LogMessage.TRY_DElETE_IMAGE.label);

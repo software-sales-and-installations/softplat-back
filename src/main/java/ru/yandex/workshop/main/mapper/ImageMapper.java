@@ -8,7 +8,7 @@ import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.image.ImageResponseDto;
 import ru.yandex.workshop.main.model.image.Image;
 
-@Mapper(componentModel = "spring")
+@Mapper
 @Component
 public interface ImageMapper {
 

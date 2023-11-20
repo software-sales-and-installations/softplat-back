@@ -6,7 +6,7 @@ import ru.yandex.workshop.main.dto.category.CategoryDto;
 import ru.yandex.workshop.main.dto.category.CategoryResponseDto;
 import ru.yandex.workshop.main.model.product.Category;
 
-@Mapper(componentModel = "spring")
+@Mapper
 @Component
 public interface CategoryMapper {
     Category categoryDtoToCategory(CategoryDto categoryDto);

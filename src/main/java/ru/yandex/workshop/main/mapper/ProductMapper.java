@@ -9,7 +9,7 @@ import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
-@Mapper(componentModel = "spring", uses = {ImageMapper.class, SellerMapper.class, VendorMapper.class})
+@Mapper(uses = {ImageMapper.class, SellerMapper.class, VendorMapper.class})
 @Component
 public interface ProductMapper {
 

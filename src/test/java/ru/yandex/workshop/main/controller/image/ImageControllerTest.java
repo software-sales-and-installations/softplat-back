@@ -138,7 +138,7 @@ class ImageControllerTest extends CrudOperations {
         assertNull(productResponseDto.getImage());
 
         MvcResult result = mockMvc.perform(multipart(
-                        "http://localhost:8080/product/{productId}/image", productId)
+                        "http://localhost:8080/product/{productId}/image/create", productId)
                         .file(multipartFile)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())

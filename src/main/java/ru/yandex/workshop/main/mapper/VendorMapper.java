@@ -9,7 +9,7 @@ import ru.yandex.workshop.main.model.vendor.Vendor;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = ImageMapper.class)
+@Mapper(uses = ImageMapper.class)
 @Component
 public interface VendorMapper {
 

@@ -6,7 +6,7 @@ import ru.yandex.workshop.main.dto.user.BuyerDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 
-@Mapper(componentModel = "spring")
+@Mapper
 @Component
 public interface BuyerMapper {
     BuyerResponseDto buyerToBuyerResponseDto(Buyer buyer);
