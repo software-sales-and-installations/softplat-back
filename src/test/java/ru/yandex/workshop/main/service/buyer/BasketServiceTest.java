@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
@@ -56,6 +55,7 @@ class BasketServiceTest {
     private static Buyer buyer;
     private static final String email = "user@user.com";
     private static BasketPosition basketPosition;
+    private static Basket basket;
 
 
     @BeforeEach
@@ -102,7 +102,11 @@ class BasketServiceTest {
                 .productStatus(ProductStatus.PUBLISHED)
                 .build();
 
+
         basketPosition = new BasketPosition(1L, 1L, product, 1, true);
+        List<BasketPosition> basketPositionList = new ArrayList<>();
+        basketPositionList.add(basketPosition);
+        basket = new Basket(1L, 1L, basketPositionList);
     }
 
     @Test
@@ -110,7 +114,7 @@ class BasketServiceTest {
     void getBasketTest_whenEmpty_returnNewBasket() {
         when(buyerService.getBuyerByEmail(anyString())).thenReturn(buyer);
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.empty());
-        when(basketRepository.save(any())).thenReturn(new Basket(1L, 1L, null));
+        when(basketRepository.save(any())).thenReturn(basket);
 
         basketService.getOrCreateBasket(email);
 
@@ -119,7 +123,7 @@ class BasketServiceTest {
         Basket response = basketCaptor.getValue();
 
         assertEquals(1L, response.getBuyerId());
-        assertNull(response.getProductsInBasket());
+        assertEquals(0, response.getProductsInBasket().size());
     }
 
     @Test
@@ -127,9 +131,7 @@ class BasketServiceTest {
     void addProductTest_whenHaveNoProducts_returnBasketDto() {
         when(buyerService.getBuyerByEmail(anyString())).thenReturn(buyer);
         when(productService.getProductById(2L)).thenReturn(product);
-        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(1L, 1L, null)));
-        when(basketPositionRepository.findAllByBasketIdAndProduct_IdAndInstallation(1L, 2L, true))
-                .thenReturn(null);
+        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
 
         basketService.addProduct(email, 2L, true);
 
@@ -139,7 +141,7 @@ class BasketServiceTest {
 
         assertEquals(1L, response.getBasketId());
         assertEquals(product.getId(), response.getProduct().getId());
-        assertEquals(1, response.getQuantity());
+        assertEquals(2, response.getQuantity());
         assertEquals(true, response.getInstallation());
     }
 
@@ -148,9 +150,7 @@ class BasketServiceTest {
     void addProductTest_whenHaveSameProduct_returnBasketDto() {
         when(buyerService.getBuyerByEmail(anyString())).thenReturn(buyer);
         when(productService.getProductById(2L)).thenReturn(product);
-        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(1L, 1L, null)));
-        when(basketPositionRepository.findAllByBasketIdAndProduct_IdAndInstallation(1L, 2L, true))
-                .thenReturn(basketPosition);
+        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
 
         basketService.addProduct(email, 2L, true);
 
@@ -169,10 +169,7 @@ class BasketServiceTest {
     void addProductTest_whenHaveSameProductWithoutInstallation_returnBasketDto() {
         when(buyerService.getBuyerByEmail(anyString())).thenReturn(buyer);
         when(productService.getProductById(2L)).thenReturn(product);
-        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(1L, 1L, null)));
-        when(basketPositionRepository.findAllByBasketIdAndProduct_IdAndInstallation(1L, 2L, false))
-                .thenReturn(null);
-
+        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
         basketService.addProduct(email, 2L, false);
 
         verify(basketPositionRepository).save(basketPositionCaptor.capture());
@@ -188,15 +185,8 @@ class BasketServiceTest {
     @Test
     @SneakyThrows
     void removeProductTest_whenHaveOneProduct_returnBasketDtoWithEmptyProductBaskets() {
-        List<BasketPosition> productBaskets = new ArrayList<>();
-        productBaskets.add(basketPosition);
-
         when(buyerService.getBuyerByEmail(email)).thenReturn(buyer);
-        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
-                1L, 1L, productBaskets)));
-        when(basketPositionRepository.findAllByBasketIdAndProduct_IdAndInstallation(1L, 2L, true))
-                .thenReturn(basketPosition);
-
+        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
         basketService.removeProduct(email, 2L, true);
 
         verify(basketPositionRepository).deleteById(1L);
@@ -205,25 +195,19 @@ class BasketServiceTest {
     @Test
     @SneakyThrows
     void removeProductTest_whenHaveManyProducts_returnBasketDto() {
-        List<BasketPosition> productBaskets = new ArrayList<>();
+        List<BasketPosition> basketPositionList = new ArrayList<>();
         basketPosition.setQuantity(3);
-        productBaskets.add(basketPosition);
+        basketPositionList.add(basketPosition);
+        basket.setProductsInBasket(basketPositionList);
 
         when(buyerService.getBuyerByEmail(email)).thenReturn(buyer);
-        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(new Basket(
-                1L, 1L, productBaskets)));
-        when(basketPositionRepository.findAllByBasketIdAndProduct_IdAndInstallation(1L, 2L, true))
-                .thenReturn(basketPosition);
+        when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
 
         basketService.removeProduct(email, 2L, true);
 
-        verify(basketPositionRepository).save(basketPositionCaptor.capture());
-
-        BasketPosition response = basketPositionCaptor.getValue();
-
-        assertEquals(1L, response.getBasketId());
-        assertEquals(product.getId(), response.getProduct().getId());
-        assertEquals(2, response.getQuantity());
-        assertEquals(true, response.getInstallation());
+        assertEquals(1L, basketPosition.getBasketId());
+        assertEquals(product.getId(), basketPosition.getProduct().getId());
+        assertEquals(2, basketPosition.getQuantity());
+        assertEquals(true, basketPosition.getInstallation());
     }
 }

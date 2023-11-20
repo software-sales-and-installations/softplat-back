@@ -16,7 +16,6 @@ import ru.yandex.workshop.main.controller.CrudOperations;
 import ru.yandex.workshop.main.dto.basket.BasketResponseDto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,7 +38,7 @@ class BuyerBasketControllerTest extends CrudOperations {
         BasketResponseDto basketResponseDto = getBasket();
 
         assertEquals(1L, basketResponseDto.getBuyerId());
-        assertNull(basketResponseDto.getProductsInBasket());
+        assertEquals(0, basketResponseDto.getProductsInBasket().size());
     }
 
     @Test
@@ -86,7 +85,7 @@ class BuyerBasketControllerTest extends CrudOperations {
                 BasketResponseDto.class);
 
         assertEquals(1L, basketResponseDto.getBuyerId());
-        assertEquals(0, basketResponseDto.getProductsInBasket().size());
+        assertEquals(1, basketResponseDto.getProductsInBasket().size());
     }
 
     @Test

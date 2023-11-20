@@ -13,7 +13,6 @@ import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
-import ru.yandex.workshop.main.service.product.CRUDProductService;
 import ru.yandex.workshop.main.service.product.SearchProductService;
 
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ public class BasketService {
     private final BasketPositionRepository basketPositionRepository;
     private final SearchProductService searchProductService;
     private final BuyerService buyerService;
-    private final CRUDProductService productService;
 
     public Basket addProduct(String buyerEmail, Long productId, Boolean installation) {
         Product product = searchProductService.getProductById(productId);
@@ -39,15 +37,13 @@ public class BasketService {
         Basket basket = getOrCreateBasket(buyerEmail);
         List<BasketPosition> productsInBasket = basket.getProductsInBasket();
 
-        // можно доставать BasketPosition прям из Basket, не обращаясь второй раз к БД
-        Optional<BasketPosition> optionalBasketPosition = productsInBasket.stream()
-                .filter(bp -> Objects.equals(bp.getProduct().getId(), productId))
-                .filter(bp -> Objects.equals(bp.getInstallation(), installation))
-                .findFirst();
+        Optional<BasketPosition> optionalBasketPosition
+                = getOptionalBasketPosition(productsInBasket, productId, installation);
 
-        // здесь происходит обновление или создание новой позиции в корзине
         if (optionalBasketPosition.isPresent()) {
             BasketPosition basketPosition = optionalBasketPosition.get();
+            checkIfAddingNewProductPositionIsPossible(basketPosition, product);
+
             basketPosition.setQuantity(basketPosition.getQuantity() + 1);
             updateBasketPosition(productsInBasket, basketPosition);
             basketPositionRepository.save(basketPosition);
@@ -57,17 +53,19 @@ public class BasketService {
             basketPositionRepository.save(basketPosition);
         }
 
-        // добавил логику снижения количества товара в наличии
-        product.setQuantity(product.getQuantity() - 1);
-        productService.update(productId, product);
-
         basketRepository.save(basket);
         return basket;
     }
 
+    private void checkIfAddingNewProductPositionIsPossible(BasketPosition basketPosition, Product product) {
+        if (basketPosition.getQuantity() + 1 > product.getQuantity()) {
+            throw new WrongConditionException("Товара нет в наличии.");
+        }
+    }
+
     private void checkIfProductAvailableForPurchase(Product product, Boolean installation) {
-//        if (product.getProductStatus() != ProductStatus.PUBLISHED)
-//            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+        if (product.getProductStatus() != ProductStatus.PUBLISHED)
+            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         if (!product.getInstallation() && installation)
             throw new WrongConditionException("Для товара не предусмотрена установка.");
         if (product.getQuantity() <= 0)
@@ -85,7 +83,6 @@ public class BasketService {
 
     private void updateBasketPosition(List<BasketPosition> productsInBasket,
                                       BasketPosition updatedBasketPosition) {
-        // выглядит громоздко, но по другому не нашел, как обновить Basket до save()
         for (int i = 0; i < productsInBasket.size(); i++) {
             BasketPosition oldBasketPosition = productsInBasket.get(i);
             if (oldBasketPosition.getId().equals(updatedBasketPosition.getId())) {
@@ -95,11 +92,22 @@ public class BasketService {
         }
     }
 
+    private Optional<BasketPosition> getOptionalBasketPosition(List<BasketPosition> productsInBasket,
+                                                               Long productId,
+                                                               Boolean installation) {
+        return productsInBasket.stream()
+                .filter(bp -> Objects.equals(bp.getProduct().getId(), productId))
+                .filter(bp -> Objects.equals(bp.getInstallation(), installation))
+                .findFirst();
+    }
+
     public Basket removeProduct(String buyerEmail, Long productId, Boolean installation) {
         Basket basket = getOrCreateBasket(buyerEmail);
-        BasketPosition productInBasket = basketPositionRepository.findAllByBasketIdAndProduct_IdAndInstallation(
-                basket.getId(), productId, installation);
-        if (productInBasket != null) {
+        Optional<BasketPosition> optionalBasketPosition
+                = getOptionalBasketPosition(basket.getProductsInBasket(), productId, installation);
+
+        if (optionalBasketPosition.isPresent()) {
+            BasketPosition productInBasket = optionalBasketPosition.get();
             if (productInBasket.getQuantity() == 1) {
                 basketPositionRepository.deleteById(productInBasket.getId());
                 return getBasketOrThrowException(buyerEmail);
