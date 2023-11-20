@@ -40,21 +40,20 @@ public class BasketService {
         Optional<BasketPosition> optionalBasketPosition
                 = getOptionalBasketPosition(productsInBasket, productId, installation);
 
+        BasketPosition basketPosition;
         if (optionalBasketPosition.isPresent()) {
-            BasketPosition basketPosition = optionalBasketPosition.get();
+            basketPosition = optionalBasketPosition.get();
             checkIfAddingNewProductPositionIsPossible(basketPosition, product);
 
             basketPosition.setQuantity(basketPosition.getQuantity() + 1);
             updateBasketPosition(productsInBasket, basketPosition);
-            basketPositionRepository.save(basketPosition);
         } else {
-            BasketPosition basketPosition = createNewBasketPosition(basket, product, installation);
+            basketPosition = createNewBasketPosition(basket, product, installation);
             productsInBasket.add(basketPosition);
-            basketPositionRepository.save(basketPosition);
         }
+        basketPositionRepository.save(basketPosition);
 
-        basketRepository.save(basket);
-        return basket;
+        return basketRepository.save(basket);
     }
 
     private void checkIfAddingNewProductPositionIsPossible(BasketPosition basketPosition, Product product) {

@@ -45,9 +45,9 @@ class BuyerBasketControllerTest extends CrudOperations {
     @SneakyThrows
     @WithMockUser(username = "buyer1@email.ru", authorities = {"buyer:write"})
     void addProductInBasket_whenEmptyBasket_returnBasketResponseDtoWithOneProduct() {
-        addProductInBasket(1L, false);
-        BasketResponseDto basketResponseDto = getBasket();
+        BasketResponseDto basketResponseDto = addProductInBasket(1L, false);
 
+        assertEquals(1L, basketResponseDto.getId());
         assertEquals(1L, basketResponseDto.getBuyerId());
         assertEquals(1, basketResponseDto.getProductsInBasket().size());
         assertEquals(1L, basketResponseDto.getProductsInBasket().get(0).getProductResponseDto().getId());
