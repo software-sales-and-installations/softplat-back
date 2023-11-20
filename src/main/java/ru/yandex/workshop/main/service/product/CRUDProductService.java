@@ -62,13 +62,15 @@ public class CRUDProductService {
             product.setVersion(productForUpdate.getVersion());
         }
         if (productForUpdate.getCategory() != null) {
-            product.setCategory(Category.builder().id(productForUpdate.getCategory().getId()).build());
+            Category category = categoryService.getCategoryById(productForUpdate.getCategory().getId());
+            product.setCategory(category);
         }
         if (productForUpdate.getLicense() != null) {
             product.setLicense(productForUpdate.getLicense());
         }
         if (productForUpdate.getVendor() != null) {
-            product.setVendor(Vendor.builder().id(productForUpdate.getVendor().getId()).build());
+            Vendor vendor = vendorService.getVendorById(productForUpdate.getVendor().getId());
+            product.setVendor(vendor);
         }
         if (productForUpdate.getPrice() != null) {
             product.setPrice(productForUpdate.getPrice());

@@ -6,4 +6,5 @@ import ru.yandex.workshop.main.model.buyer.BasketPosition;
 
 @Repository
 public interface BasketPositionRepository extends JpaRepository<BasketPosition, Long> {
+    BasketPosition findAllByBasketIdAndProduct_IdAndInstallation(Long basketId, Long productId, Boolean installation);
 }

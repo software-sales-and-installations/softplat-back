@@ -18,6 +18,8 @@ public class BasketPosition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(name = "basket_id")
+    Long basketId;
     @ManyToOne
     @JoinColumn(name = "product_id")
     Product product;
