@@ -1,16 +1,17 @@
 package ru.yandex.workshop.main.dto.basket;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BasketResponseDto {
-    private Long id;
-    private Long buyerId;
-    private List<BasketPositionResponseDto> productsInBasket;
+    Long id;
+    Long buyerId;
+    List<BasketPositionResponseDto> productsInBasket;
 }

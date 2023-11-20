@@ -113,7 +113,7 @@ class OrderServiceTest {
                 .installationPrice(10.00F)
                 .build();
 
-        basketPosition = new BasketPosition(1L, product, 2, true);
+        basketPosition = new BasketPosition(1L, 1L, product, 2, true);
 
         orderPosition = OrderPosition.builder()
                 .id(1L)

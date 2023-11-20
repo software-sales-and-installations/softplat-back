@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
+import ru.yandex.workshop.main.dto.basket.BasketResponseDto;
+import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
@@ -142,5 +144,29 @@ public class CrudOperations {
         return objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 ProductResponseDto.class);
+    }
+
+    @SneakyThrows
+    public BasketResponseDto addProductInBasket(long productId, boolean installation) {
+        MvcResult result = mockMvc.perform(post("/buyer/basket/{productId}", productId)
+                        .param("installation", String.valueOf(installation))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        return objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                BasketResponseDto.class);
+    }
+
+    @SneakyThrows
+    public BasketResponseDto getBasket() {
+        MvcResult result = mockMvc.perform(get("/buyer/basket"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                BasketResponseDto.class);
     }
 }

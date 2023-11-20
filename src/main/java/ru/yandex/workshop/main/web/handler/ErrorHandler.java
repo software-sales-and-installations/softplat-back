@@ -114,4 +114,11 @@ public class ErrorHandler {
         log.error(Arrays.toString(e.getStackTrace()));
         return new ErrorResponse(ExceptionMessage.IMAGE_SIZE_EXCEED_EXCEPTION.label);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNotValidValueException(final NotValidValueException e) {
+        e.printStackTrace();
+        return new ErrorResponse(e.getMessage());
+    }
 }
