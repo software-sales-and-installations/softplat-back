@@ -32,7 +32,7 @@ public class BuyerBasketController {
                                                 @RequestParam(defaultValue = "false") Boolean installation) {
         log.debug(LogMessage.TRY_ADD_PRODUCT_IN_BASKET.label, productId);
         Basket response = basketService.addProduct(principal.getName(), productId, installation);
-        return basketMapper.basketToBasketDto(response);
+        return basketMapper.basketToBasketResponseDto(response);
     }
 
     @Operation(summary = "Удаление продукта из своей корзины", description = "Доступ для покупателя")
@@ -45,7 +45,7 @@ public class BuyerBasketController {
                                                      @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_DELETE_PRODUCT_FROM_BASKET.label, productId);
         Basket response = basketService.removeProduct(principal.getName(), productId, installation);
-        return basketMapper.basketToBasketDto(response);
+        return basketMapper.basketToBasketResponseDto(response);
     }
 
     @Operation(summary = "Просмотр своей корзины", description = "Доступ для покупателя")
@@ -54,6 +54,6 @@ public class BuyerBasketController {
     public BasketResponseDto getBasket(@ApiIgnore Principal principal) {
         log.debug(LogMessage.TRY_CHECK_BASKET.label, principal.getName());
         Basket response = basketService.getOrCreateBasket(principal.getName());
-        return basketMapper.basketToBasketDto(response);
+        return basketMapper.basketToBasketResponseDto(response);
     }
 }

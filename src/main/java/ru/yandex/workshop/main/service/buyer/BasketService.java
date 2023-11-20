@@ -13,8 +13,11 @@ import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
+import ru.yandex.workshop.main.service.product.CRUDProductService;
 import ru.yandex.workshop.main.service.product.SearchProductService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -27,25 +30,69 @@ public class BasketService {
     private final BasketPositionRepository basketPositionRepository;
     private final SearchProductService searchProductService;
     private final BuyerService buyerService;
+    private final CRUDProductService productService;
 
     public Basket addProduct(String buyerEmail, Long productId, Boolean installation) {
         Product product = searchProductService.getProductById(productId);
-        if (product.getProductStatus() != ProductStatus.PUBLISHED)
-            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+        checkIfProductAvailableForPurchase(product, installation);
+
+        Basket basket = getOrCreateBasket(buyerEmail);
+        List<BasketPosition> productsInBasket = basket.getProductsInBasket();
+
+        // можно доставать BasketPosition прям из Basket, не обращаясь второй раз к БД
+        Optional<BasketPosition> optionalBasketPosition = productsInBasket.stream()
+                .filter(bp -> Objects.equals(bp.getProduct().getId(), productId))
+                .filter(bp -> Objects.equals(bp.getInstallation(), installation))
+                .findFirst();
+
+        // здесь происходит обновление или создание новой позиции в корзине
+        if (optionalBasketPosition.isPresent()) {
+            BasketPosition basketPosition = optionalBasketPosition.get();
+            basketPosition.setQuantity(basketPosition.getQuantity() + 1);
+            updateBasketPosition(productsInBasket, basketPosition);
+            basketPositionRepository.save(basketPosition);
+        } else {
+            BasketPosition basketPosition = createNewBasketPosition(basket, product, installation);
+            productsInBasket.add(basketPosition);
+            basketPositionRepository.save(basketPosition);
+        }
+
+        // добавил логику снижения количества товара в наличии
+        product.setQuantity(product.getQuantity() - 1);
+        productService.update(productId, product);
+
+        basketRepository.save(basket);
+        return basket;
+    }
+
+    private void checkIfProductAvailableForPurchase(Product product, Boolean installation) {
+//        if (product.getProductStatus() != ProductStatus.PUBLISHED)
+//            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         if (!product.getInstallation() && installation)
             throw new WrongConditionException("Для товара не предусмотрена установка.");
-        if (product.getQuantity() == 0) throw new WrongConditionException("Товара нет в наличии.");
-        Basket basket = getOrCreateBasket(buyerEmail);
-        BasketPosition productInBasket = basketPositionRepository.findAllByBasketIdAndProduct_IdAndInstallation(
-                basket.getId(), productId, installation);
-        if (productInBasket != null) {
-            productInBasket.setQuantity(productInBasket.getQuantity() + 1);
-            basketPositionRepository.save(productInBasket);
-            return getBasketOrThrowException(buyerEmail);
+        if (product.getQuantity() <= 0)
+            throw new WrongConditionException("Товара нет в наличии.");
+    }
+
+    private BasketPosition createNewBasketPosition(Basket basket, Product product, Boolean installation) {
+        return BasketPosition.builder()
+                .basketId(basket.getId())
+                .product(product)
+                .quantity(1)
+                .installation(installation)
+                .build();
+    }
+
+    private void updateBasketPosition(List<BasketPosition> productsInBasket,
+                                      BasketPosition updatedBasketPosition) {
+        // выглядит громоздко, но по другому не нашел, как обновить Basket до save()
+        for (int i = 0; i < productsInBasket.size(); i++) {
+            BasketPosition oldBasketPosition = productsInBasket.get(i);
+            if (oldBasketPosition.getId().equals(updatedBasketPosition.getId())) {
+                productsInBasket.set(i, updatedBasketPosition);
+                break;
+            }
         }
-        basketPositionRepository.save(new BasketPosition(null, basket.getId(),
-                product, 1, installation));
-        return getBasketOrThrowException(buyerEmail);
     }
 
     public Basket removeProduct(String buyerEmail, Long productId, Boolean installation) {
@@ -73,6 +120,7 @@ public class BasketService {
         Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
         return basket.orElseGet(() -> basketRepository.save(Basket.builder()
                 .buyerId(buyer.getId())
+                .productsInBasket(new ArrayList<>())
                 .build()));
     }
 
