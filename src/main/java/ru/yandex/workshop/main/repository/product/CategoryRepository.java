@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.workshop.main.model.product.Category;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<Category, Long>, QuerydslPredicateExecutor<Category> {
+public interface CategoryRepository extends JpaRepository<Category, Long>,
+        QuerydslPredicateExecutor<Category> {
 }

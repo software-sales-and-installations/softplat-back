@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
 @Repository
-public interface VendorRepository extends JpaRepository<Vendor, Long>, QuerydslPredicateExecutor<Vendor> {
+public interface VendorRepository extends JpaRepository<Vendor, Long>,
+        QuerydslPredicateExecutor<Vendor> {
 }
