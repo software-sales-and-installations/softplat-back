@@ -26,7 +26,7 @@ public class BuyerFavoriteService {
     public Favorite create(String buyerEmail, Long productId) {
         if (favoriteRepository.existsByBuyerEmailAndProductId(buyerEmail, productId))
             throw new DuplicateException("Предмет был добавлен в избранное ранее.");
-        if(!buyerService.checkIfUserExistsByEmail(buyerEmail) || !productService.checkExistsProduct(productId))
+        if (!buyerService.checkIfUserExistsByEmail(buyerEmail) || !productService.checkExistsProduct(productId))
             throw new EntityNotFoundException("Введенные данные не корректны.");
 
         Favorite favorite = getFavorite(buyerEmail, productId);
