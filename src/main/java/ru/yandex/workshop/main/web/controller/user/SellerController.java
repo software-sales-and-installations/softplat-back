@@ -80,7 +80,7 @@ public class SellerController {
     @PatchMapping("/bank")
     @ResponseStatus(value = HttpStatus.CREATED)
     public BankRequisitesResponseDto updateRequisites(@ApiIgnore Principal principal,
-                                                      @RequestBody BankRequisitesCreateUpdateDto requisites) {
+                                                      @RequestBody @Valid BankRequisitesCreateUpdateDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, principal.getName());
         BankRequisites response = bankService.updateRequisites(principal.getName(), new BankRequisites(null,
                 requisites.getAccount()));
@@ -88,7 +88,7 @@ public class SellerController {
     }
 
     @Operation(summary = "Удаление своих банковских реквизитов продавцом", description = "Доступ для продавца")
-    @PreAuthorize("hasAuthority('admin:write')")
+    @PreAuthorize("hasAuthority('seller:write')")
     @DeleteMapping("/bank")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRequisites(@ApiIgnore Principal principal) {
