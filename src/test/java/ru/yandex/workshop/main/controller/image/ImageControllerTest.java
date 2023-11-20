@@ -76,7 +76,7 @@ class ImageControllerTest extends CrudOperations {
         long vendorId = vendorResponseDto.getId();
         long imageId = 1;
 
-        assertNull(vendorResponseDto.getImageResponseDto());
+        assertNull(vendorResponseDto.getImage());
 
         MvcResult result = mockMvc.perform(multipart(
                         "http://localhost:8080/vendor/{vendorId}/image", vendorId)
@@ -89,7 +89,7 @@ class ImageControllerTest extends CrudOperations {
                 result.getResponse().getContentAsString(),
                 VendorResponseDto.class);
 
-        ImageResponseDto imageResponseDto = vendorResponseDto.getImageResponseDto();
+        ImageResponseDto imageResponseDto = vendorResponseDto.getImage();
         assertEquals(imageResponseDto.getId(), 1);
         assertEquals(imageResponseDto.getName(), StringUtils.cleanPath(multipartFile.getOriginalFilename()));
         assertEquals(imageResponseDto.getSize(), multipartFile.getSize());
