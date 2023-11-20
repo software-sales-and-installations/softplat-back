@@ -3,7 +3,7 @@ package ru.yandex.workshop.main.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
-import ru.yandex.workshop.main.dto.product.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
@@ -13,23 +13,23 @@ import ru.yandex.workshop.main.model.vendor.Vendor;
 @Component
 public interface ProductMapper {
 
-    @Mapping(target = "category", expression = "java(mapCategoryIdToCategory(productDto))")
-    @Mapping(target = "vendor", expression = "java(mapVendorIdToVendor(productDto))")
-    Product productDtoToProduct(ProductDto productDto);
+    @Mapping(target = "category", expression = "java(mapCategoryIdToCategory(productCreateUpdateDto))")
+    @Mapping(target = "vendor", expression = "java(mapVendorIdToVendor(productCreateUpdateDto))")
+    Product productDtoToProduct(ProductCreateUpdateDto productCreateUpdateDto);
 
     ProductResponseDto productToProductResponseDto(Product product);
 
-    default Category mapCategoryIdToCategory(ProductDto productDto) {
-        if (productDto.getCategory() != null) {
-            long categoryId = productDto.getCategory();
+    default Category mapCategoryIdToCategory(ProductCreateUpdateDto productCreateUpdateDto) {
+        if (productCreateUpdateDto.getCategory() != null) {
+            long categoryId = productCreateUpdateDto.getCategory();
             return Category.builder().id(categoryId).build();
         }
         return null;
     }
 
-    default Vendor mapVendorIdToVendor(ProductDto productDto) {
-        if (productDto.getVendor() != null) {
-            long vendorId = productDto.getVendor();
+    default Vendor mapVendorIdToVendor(ProductCreateUpdateDto productCreateUpdateDto) {
+        if (productCreateUpdateDto.getVendor() != null) {
+            long vendorId = productCreateUpdateDto.getVendor();
             return Vendor.builder().id(vendorId).build();
         }
         return null;

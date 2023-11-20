@@ -18,7 +18,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 class ProductMapperTest {
 
     @Autowired
-    private JacksonTester<ProductDto> jsonProductDto;
+    private JacksonTester<ProductCreateUpdateDto> jsonProductDto;
 
     @Test
     void testItemDto() throws IOException {
@@ -36,7 +36,7 @@ class ProductMapperTest {
                 .country(Country.RUSSIA)
                 .build();
 
-        ProductDto productDto = ProductDto
+        ProductCreateUpdateDto productCreateUpdateDto = ProductCreateUpdateDto
                 .builder()
                 .name("product")
                 .description("description product")
@@ -50,7 +50,7 @@ class ProductMapperTest {
                 .installationPrice(10.00F)
                 .build();
 
-        JsonContent<ProductDto> result = jsonProductDto.write(productDto);
+        JsonContent<ProductCreateUpdateDto> result = jsonProductDto.write(productCreateUpdateDto);
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("product");
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("description product");
         assertThat(result).extractingJsonPathStringValue("$.version").isEqualTo("22");

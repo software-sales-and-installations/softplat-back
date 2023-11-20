@@ -14,13 +14,13 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 @JsonTest
 class VendorMapperTest {
     @Autowired
-    private JacksonTester<VendorDto> jsonVendorDto;
+    private JacksonTester<VendorCreateUpdateDto> jsonVendorDto;
 
     @Test
     void testItemDto() throws IOException {
-        VendorDto vendorDto = VendorDto.builder().name("test").description("test").country(Country.RUSSIA).build();
+        VendorCreateUpdateDto vendorCreateUpdateDto = VendorCreateUpdateDto.builder().name("test").description("test").country(Country.RUSSIA).build();
 
-        JsonContent<VendorDto> result = jsonVendorDto.write(vendorDto);
+        JsonContent<VendorCreateUpdateDto> result = jsonVendorDto.write(vendorCreateUpdateDto);
 
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("test");
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("test");

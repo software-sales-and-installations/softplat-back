@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BuyerDto {
+public class BuyerUpdateDto {
     @Email(message = "Email должен быть корректным адресом электронной почты")
     @Length(min = 6, max = 30, message = "Длина почты должна быть от 6 до 30 символов.")
     private String email;

@@ -13,7 +13,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.controller.CrudOperations;
-import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Country;
@@ -22,9 +22,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -36,33 +37,33 @@ class VendorControllerTest extends CrudOperations {
     private MockMvc mvc;
     @Autowired
     private ObjectMapper mapper;
-    private VendorDto vendorDto;
+    private VendorCreateUpdateDto vendorCreateUpdateDto;
 
     @BeforeEach
     void init() {
-        vendorDto = VendorDto.builder().name("test").description("test").country(Country.RUSSIA).build();
+        vendorCreateUpdateDto = VendorCreateUpdateDto.builder().name("test").description("test").country(Country.RUSSIA).build();
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
     void createVendor_whenValid_shouldReturnVendorResponseDto() {
-        VendorResponseDto response = createVendor(vendorDto);
+        VendorResponseDto response = createVendor(vendorCreateUpdateDto);
 
         assertEquals(Long.class, response.getId().getClass());
-        assertEquals(vendorDto.getName(), response.getName());
-        assertEquals(vendorDto.getDescription(), response.getDescription());
-        assertEquals(vendorDto.getCountry(), response.getCountry());
+        assertEquals(vendorCreateUpdateDto.getName(), response.getName());
+        assertEquals(vendorCreateUpdateDto.getDescription(), response.getDescription());
+        assertEquals(vendorCreateUpdateDto.getCountry(), response.getCountry());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
     void changeVendorById_whenValid_returnVendorResponseDto() {
-        VendorResponseDto response = createVendor(vendorDto);
+        VendorResponseDto response = createVendor(vendorCreateUpdateDto);
 
         mvc.perform(patch("/vendor/{vendorId}", response.getId())
-                        .content(mapper.writeValueAsString(vendorDto))
+                        .content(mapper.writeValueAsString(vendorCreateUpdateDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -77,8 +78,8 @@ class VendorControllerTest extends CrudOperations {
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
     void findVendorsWithFiltersTest_whenCountryChina_returnListOfVendor1() {
-        vendorDto.setCountry(Country.CHINA);
-        VendorResponseDto response = createVendor(vendorDto);
+        vendorCreateUpdateDto.setCountry(Country.CHINA);
+        VendorResponseDto response = createVendor(vendorCreateUpdateDto);
         VendorSearchRequestDto vendorFilter = new VendorSearchRequestDto("test", List.of(Country.CHINA));
         List<VendorResponseDto> vendorResponseDtoList = List.of(response);
 
@@ -95,12 +96,12 @@ class VendorControllerTest extends CrudOperations {
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
     void findVendorById_whenIdValid_returnVendor1() {
-        long vendorId = createVendor(vendorDto).getId();
+        long vendorId = createVendor(vendorCreateUpdateDto).getId();
         VendorResponseDto response = getVendorResponseDto(vendorId);
 
         assertEquals(Long.class, response.getId().getClass());
-        assertEquals(vendorDto.getName(), response.getName());
-        assertEquals(vendorDto.getDescription(), response.getDescription());
-        assertEquals(vendorDto.getCountry(), response.getCountry());
+        assertEquals(vendorCreateUpdateDto.getName(), response.getName());
+        assertEquals(vendorCreateUpdateDto.getDescription(), response.getDescription());
+        assertEquals(vendorCreateUpdateDto.getCountry(), response.getCountry());
     }
 }

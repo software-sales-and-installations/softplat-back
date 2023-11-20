@@ -8,12 +8,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
 import ru.yandex.workshop.main.dto.basket.BasketResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
-import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.security.dto.UserCreateDto;
@@ -42,10 +43,10 @@ public class CrudOperations {
     }
 
     @SneakyThrows
-    public VendorResponseDto createVendor(VendorDto vendorDto) {
+    public VendorResponseDto createVendor(VendorCreateUpdateDto vendorCreateUpdateDto) {
         MvcResult result = mockMvc.perform(post("/vendor")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(vendorDto)))
+                        .content(objectMapper.writeValueAsString(vendorCreateUpdateDto)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -55,10 +56,10 @@ public class CrudOperations {
     }
 
     @SneakyThrows
-    public ProductResponseDto createProduct(ProductDto productDto) {
+    public ProductResponseDto createProduct(ProductCreateUpdateDto productCreateUpdateDto) {
         MvcResult result = mockMvc.perform(post("/product")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(productDto)))
+                        .content(objectMapper.writeValueAsString(productCreateUpdateDto)))
                 .andExpect(status().isCreated())
                 .andReturn();
 

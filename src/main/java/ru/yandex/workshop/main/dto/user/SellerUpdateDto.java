@@ -11,7 +11,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SellerDto {
+public class SellerUpdateDto {
     @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов.")
     private String name;
     @Email(message = "Email должен быть корректным адресом электронной почты")

@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -30,17 +30,17 @@ class VendorServiceTest {
     private final EntityManager em;
     private final VendorService service;
 
-    VendorDto newVendorRequestOne;
-    VendorDto newVendorRequestTwo;
+    VendorCreateUpdateDto newVendorRequestOne;
+    VendorCreateUpdateDto newVendorRequestTwo;
     Vendor newVendorResponseOne;
     Vendor newVendorResponseTwo;
-    VendorDto vendorUpdateDto;
+    VendorCreateUpdateDto vendorUpdateDto;
 
     @BeforeEach
     void assistant() {
-        newVendorRequestOne = VendorDto.builder().name("testOne").description("testOne").country(Country.RUSSIA).build();
-        newVendorRequestTwo = VendorDto.builder().name("testTwo").description("testTwo").country(Country.INDIA).build();
-        vendorUpdateDto = VendorDto.builder().name("newTest").description("newTest").country(Country.USA).build();
+        newVendorRequestOne = VendorCreateUpdateDto.builder().name("testOne").description("testOne").country(Country.RUSSIA).build();
+        newVendorRequestTwo = VendorCreateUpdateDto.builder().name("testTwo").description("testTwo").country(Country.INDIA).build();
+        vendorUpdateDto = VendorCreateUpdateDto.builder().name("newTest").description("newTest").country(Country.USA).build();
 
         newVendorResponseOne = service.createVendor(newVendorRequestOne);
         newVendorResponseTwo = service.createVendor(newVendorRequestTwo);

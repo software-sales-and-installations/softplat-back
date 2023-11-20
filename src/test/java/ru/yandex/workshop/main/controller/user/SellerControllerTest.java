@@ -14,11 +14,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.controller.CrudOperations;
-import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
+import ru.yandex.workshop.main.dto.seller.BankRequisitesCreateUpdateDto;
+import ru.yandex.workshop.main.dto.user.SellerUpdateDto;
+import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
-import ru.yandex.workshop.main.dto.user.SellerDto;
 import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.model.Role;
 
@@ -104,7 +104,7 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void updateSellerByEmail_whenEmailIsCorrect_thenUpdateSeller() {
         createUser(userDto);
-        SellerDto updateDto = SellerDto.builder()
+        SellerUpdateDto updateDto = SellerUpdateDto.builder()
                 .name("Bar")
                 .phone("0123456789")
                 .email("foobar@email.com")
@@ -121,7 +121,7 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "foobar@email.com", authorities = {"seller:write"})
     void updateSellerByEmail_whenEmailIsNotCorrect_thenThrowUserNotFoundException() {
         createUser(userDto);
-        SellerDto updateDto = SellerDto.builder()
+        SellerUpdateDto updateDto = SellerUpdateDto.builder()
                 .name("Bar")
                 .phone("0123456789")
                 .email("foobar@email.com")
@@ -139,9 +139,9 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void addRequisites_whenOk_returnRequisites() {
         createUser(userDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
+        BankRequisitesCreateUpdateDto requisitesDto = new BankRequisitesCreateUpdateDto("1234567891234567");
 
-        BankRequisitesDto response = addRequisites(requisitesDto);
+        BankRequisitesCreateUpdateDto response = addRequisites(requisitesDto);
         assertEquals(requisitesDto.getAccount(), response.getAccount());
     }
 
@@ -150,9 +150,9 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void updateRequisites_whenOk_returnRequisites() {
         createUser(userDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
+        BankRequisitesCreateUpdateDto requisitesDto = new BankRequisitesCreateUpdateDto("1234567891234567");
         addRequisites(requisitesDto);
-        BankRequisitesDto newRequisitesDto = new BankRequisitesDto("1111111111111111");
+        BankRequisitesCreateUpdateDto newRequisitesDto = new BankRequisitesCreateUpdateDto("1111111111111111");
 
         mockMvc.perform(patch("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -167,7 +167,7 @@ class SellerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write", "admin:write"})
     void deleteRequisites_whenOk() {
         createUser(userDto);
-        BankRequisitesDto requisitesDto = new BankRequisitesDto("1234567891234567");
+        BankRequisitesCreateUpdateDto requisitesDto = new BankRequisitesCreateUpdateDto("1234567891234567");
         addRequisites(requisitesDto);
 
         mockMvc.perform(delete("/seller/bank")
@@ -176,7 +176,7 @@ class SellerControllerTest extends CrudOperations {
     }
 
     @SneakyThrows
-    SellerResponseDto updateSeller(SellerDto updateDto) {
+    SellerResponseDto updateSeller(SellerUpdateDto updateDto) {
         MvcResult result = mockMvc.perform(patch("/seller")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
@@ -192,7 +192,7 @@ class SellerControllerTest extends CrudOperations {
         );
     }
 
-    BankRequisitesDto addRequisites(BankRequisitesDto requisitesDto) throws Exception {
+    BankRequisitesCreateUpdateDto addRequisites(BankRequisitesCreateUpdateDto requisitesDto) throws Exception {
         MvcResult result = mockMvc.perform(patch("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requisitesDto)))
@@ -202,7 +202,7 @@ class SellerControllerTest extends CrudOperations {
 
         return objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                BankRequisitesDto.class
+                BankRequisitesCreateUpdateDto.class
         );
     }
 }

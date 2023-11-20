@@ -8,9 +8,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.yandex.workshop.main.dto.seller.BankRequisitesDto;
+import ru.yandex.workshop.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesResponseDto;
-import ru.yandex.workshop.main.dto.user.SellerDto;
+import ru.yandex.workshop.main.dto.user.SellerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.mapper.SellerMapper;
 import ru.yandex.workshop.main.message.LogMessage;
@@ -59,9 +59,9 @@ public class SellerController {
     @Operation(summary = "Обновление данных о себе продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping
-    public SellerResponseDto updateSeller(@ApiIgnore Principal principal, @RequestBody @Valid SellerDto sellerDto) {
+    public SellerResponseDto updateSeller(@ApiIgnore Principal principal, @RequestBody @Valid SellerUpdateDto sellerUpdateDto) {
         log.debug(LogMessage.TRY_PATCH_SELLER.label, principal.getName());
-        Seller updateRequest = sellerMapper.sellerDtoToSeller(sellerDto);
+        Seller updateRequest = sellerMapper.sellerDtoToSeller(sellerUpdateDto);
         Seller response = sellerService.updateSeller(principal.getName(), updateRequest);
         return sellerMapper.sellerToSellerResponseDto(response);
     }
@@ -80,7 +80,7 @@ public class SellerController {
     @PatchMapping("/bank")
     @ResponseStatus(value = HttpStatus.CREATED)
     public BankRequisitesResponseDto updateRequisites(@ApiIgnore Principal principal,
-                                                      @RequestBody BankRequisitesDto requisites) {
+                                                      @RequestBody BankRequisitesCreateUpdateDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, principal.getName());
         BankRequisites response = bankService.updateRequisites(principal.getName(), new BankRequisites(null,
                 requisites.getAccount()));

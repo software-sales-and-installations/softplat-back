@@ -14,14 +14,15 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.controller.CrudOperations;
-import ru.yandex.workshop.main.dto.user.BuyerDto;
+import ru.yandex.workshop.main.dto.user.BuyerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.security.dto.UserCreateDto;
 import ru.yandex.workshop.security.model.Role;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -106,7 +107,7 @@ class BuyerControllerTest extends CrudOperations {
     @WithMockUser(username = "joedoe@email.com",authorities = {"buyer:write"})
     void updateBuyerById_whenIsCorrect_thenUpdateBuyer() {
         createUser(userDto);
-        BuyerDto updateDto = BuyerDto.builder()
+        BuyerUpdateDto updateDto = BuyerUpdateDto.builder()
                 .name("Foo")
                 .build();
 
@@ -122,7 +123,7 @@ class BuyerControllerTest extends CrudOperations {
     @WithMockUser(username = "foobar@email.com",authorities = {"buyer:write"})
     void updateBuyerById_whenIdIsNotCorrect_thenThrowUserNotFoundException() {
         createUser(userDto);
-        BuyerDto updateDto = BuyerDto.builder()
+        BuyerUpdateDto updateDto = BuyerUpdateDto.builder()
                 .name("Bar")
                 .phone("0123456789")
                 .email("foobar@email.com")
@@ -135,7 +136,7 @@ class BuyerControllerTest extends CrudOperations {
                         instanceof EntityNotFoundException));
     }
 
-    BuyerResponseDto updateBuyer(BuyerDto updateDto) throws Exception {
+    BuyerResponseDto updateBuyer(BuyerUpdateDto updateDto) throws Exception {
         MvcResult result = mockMvc.perform(patch("/buyer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))

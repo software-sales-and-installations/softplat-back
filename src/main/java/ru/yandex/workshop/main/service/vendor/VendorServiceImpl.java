@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
 import ru.yandex.workshop.main.dto.image.ImageDto;
-import ru.yandex.workshop.main.dto.vendor.VendorDto;
+import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.mapper.ImageMapper;
@@ -38,13 +38,13 @@ public class VendorServiceImpl implements VendorService {
 
     @Transactional
     @Override
-    public Vendor createVendor(VendorDto vendorDto) {
-        return repository.save(vendorMapper.vendorDtoToVendor(vendorDto));
+    public Vendor createVendor(VendorCreateUpdateDto vendorCreateUpdateDto) {
+        return repository.save(vendorMapper.vendorDtoToVendor(vendorCreateUpdateDto));
     }
 
     @Transactional
     @Override
-    public Vendor changeVendorById(Long vendorId, VendorDto vendorUpdateDto) {
+    public Vendor changeVendorById(Long vendorId, VendorCreateUpdateDto vendorUpdateDto) {
         Vendor oldVendor = getVendor(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
