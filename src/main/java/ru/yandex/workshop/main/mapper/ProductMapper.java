@@ -3,7 +3,7 @@ package ru.yandex.workshop.main.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
-import ru.yandex.workshop.main.dto.product.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.product.Product;
 
@@ -13,7 +13,7 @@ public interface ProductMapper {
 
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "vendor", ignore = true)
-    Product productDtoToProduct(ProductDto productDto);
+    Product productDtoToProduct(ProductCreateUpdateDto productCreateUpdateDto);
 
     ProductResponseDto productToProductResponseDto(Product product);
 

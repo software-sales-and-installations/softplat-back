@@ -8,5 +8,5 @@ import ru.yandex.workshop.main.model.buyer.Basket;
 @Mapper(uses = BasketPositionMapper.class)
 @Component
 public interface BasketMapper {
-    BasketResponseDto basketToBasketDto(Basket basket);
+    BasketResponseDto basketToBasketResponseDto(Basket basket);
 }

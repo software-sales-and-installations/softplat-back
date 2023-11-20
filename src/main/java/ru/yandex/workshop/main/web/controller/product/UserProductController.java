@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.yandex.workshop.main.dto.product.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.exception.WrongConditionException;
@@ -40,11 +40,11 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ProductResponseDto createProduct(@ApiIgnore Principal principal, @RequestBody @Validated(New.class) ProductDto productDto) {
-        log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
-        Product request = productMapper.productDtoToProduct(productDto);
-        long categoryId = productDto.getCategory();
-        long vendorId = productDto.getVendor();
+    public ProductResponseDto createProduct(@ApiIgnore Principal principal, @RequestBody @Validated(New.class) ProductCreateUpdateDto productCreateUpdateDto) {
+        log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productCreateUpdateDto);
+        Product request = productMapper.productDtoToProduct(productCreateUpdateDto);
+        long categoryId = productCreateUpdateDto.getCategory();
+        long vendorId = productCreateUpdateDto.getVendor();
         Product response = productService.create(principal.getName(), request, categoryId, vendorId);
         return productMapper.productToProductResponseDto(response);
     }
@@ -53,7 +53,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}/update")
     public ProductResponseDto updateProduct(@ApiIgnore Principal principal, @PathVariable Long productId,
-                                            @RequestBody @Valid ProductDto productForUpdate) {
+                                            @RequestBody @Valid ProductCreateUpdateDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, principal.getName());
         productService.checkSellerAccessRights(principal.getName(), productId);
         Product updateRequest = productMapper.productDtoToProduct(productForUpdate);

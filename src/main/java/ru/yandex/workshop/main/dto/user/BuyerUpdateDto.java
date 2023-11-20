@@ -10,7 +10,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BuyerDto {
+public class BuyerUpdateDto {
     @Pattern(regexp = "^([a-zA-Z0-9._-]){2,12}+(@[a-zA-Z]{2,8})+(\\.[a-zA-Z]{2,3})$", message = "Длина почты должна быть от 2 до 30 символов.")
     private String email;
     @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов.")
@@ -18,3 +18,4 @@ public class BuyerDto {
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
     private String phone;
 }
+

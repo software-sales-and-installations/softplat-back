@@ -13,7 +13,8 @@ public enum ExceptionMessage {
     VALIDATION_EXCEPTION("Ошибка проверки данных."),
     ACCESS_EXCEPTION("Ошибка доступа"),
     DATA_EXCEPTION("Ошибка базы данных."),
-    SIZE_EXCEPTION("Ошибка в размере загружаемых данных");
+    SIZE_EXCEPTION("Ошибка в размере загружаемых данных"),
+    NOT_VALID_VALUE_EXCEPTION("Недопустимое значение!");
 
     public final String label;
 

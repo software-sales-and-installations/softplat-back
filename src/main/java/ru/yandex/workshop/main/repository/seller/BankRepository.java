@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
 
 @Repository
-public interface BankRepository extends JpaRepository<BankRequisites, Long>, QuerydslPredicateExecutor<BankRequisites> {
+public interface BankRepository extends JpaRepository<BankRequisites, Long>,
+        QuerydslPredicateExecutor<BankRequisites> {
 }

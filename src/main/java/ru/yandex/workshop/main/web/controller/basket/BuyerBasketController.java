@@ -18,7 +18,7 @@ import java.security.Principal;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/buyer")
+@RequestMapping(path = "/buyer/basket")
 @RequiredArgsConstructor
 public class BuyerBasketController {
     private final BasketService basketService;
@@ -26,18 +26,18 @@ public class BuyerBasketController {
 
     @Operation(summary = "Добавление продукта в свою корзину", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @PostMapping("/basket/{productId}")
+    @PostMapping("/{productId}")
     @ResponseStatus(value = HttpStatus.CREATED)
     public BasketResponseDto addProductInBasket(@ApiIgnore Principal principal, @PathVariable Long productId,
                                                 @RequestParam(defaultValue = "false") Boolean installation) {
-        log.info(LogMessage.TRY_ADD_PRODUCT_IN_BASKET.label, productId);
+        log.debug(LogMessage.TRY_ADD_PRODUCT_IN_BASKET.label, productId);
         Basket response = basketService.addProduct(principal.getName(), productId, installation);
-        return basketMapper.basketToBasketDto(response);
+        return basketMapper.basketToBasketResponseDto(response);
     }
 
     @Operation(summary = "Удаление продукта из своей корзины", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @DeleteMapping("/basket/{productId}")
+    @DeleteMapping("/{productId}")
     public BasketResponseDto removeProductFromBasket(@ApiIgnore Principal principal, @PathVariable Long productId,
                                                      @Parameter(description = "Так как в корзине может лежать два " +
                                                              "одинаковых товара, но один с установкой, а второй без установки, " +
@@ -45,15 +45,15 @@ public class BuyerBasketController {
                                                      @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_DELETE_PRODUCT_FROM_BASKET.label, productId);
         Basket response = basketService.removeProduct(principal.getName(), productId, installation);
-        return basketMapper.basketToBasketDto(response);
+        return basketMapper.basketToBasketResponseDto(response);
     }
 
     @Operation(summary = "Просмотр своей корзины", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping("/basket")
+    @GetMapping
     public BasketResponseDto getBasket(@ApiIgnore Principal principal) {
-        log.info(LogMessage.TRY_CHECK_BASKET.label, principal.getName());
-        Basket response = basketService.getBasket(principal.getName());
-        return basketMapper.basketToBasketDto(response);
+        log.debug(LogMessage.TRY_CHECK_BASKET.label, principal.getName());
+        Basket response = basketService.getOrCreateBasket(principal.getName());
+        return basketMapper.basketToBasketResponseDto(response);
     }
 }

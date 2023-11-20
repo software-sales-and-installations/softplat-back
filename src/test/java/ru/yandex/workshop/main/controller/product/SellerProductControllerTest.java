@@ -15,14 +15,15 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.controller.CrudOperations;
-import ru.yandex.workshop.main.dto.product.ProductDto;
+import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,14 +36,14 @@ class SellerProductControllerTest extends CrudOperations {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    private ProductDto productDto;
+    private ProductCreateUpdateDto productCreateUpdateDto;
 
     @BeforeEach
     void init() {
         long vendorId = 1L;
         long categoryId = 1L;
 
-        productDto = ProductDto.builder()
+        productCreateUpdateDto = ProductCreateUpdateDto.builder()
                 .name("Product name")
                 .description("Description product")
                 .version("2.0.0.1")
@@ -60,19 +61,19 @@ class SellerProductControllerTest extends CrudOperations {
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
     void createProduct_whenValid_returnProductResponseDto() {
-        ProductResponseDto productResponseDto = createProduct(productDto);
+        ProductResponseDto productResponseDto = createProduct(productCreateUpdateDto);
 
         assertEquals(Long.class, productResponseDto.getId().getClass());
-        assertEquals(productDto.getName(), productResponseDto.getName());
-        assertEquals(productDto.getDescription(), productResponseDto.getDescription());
-        assertEquals(productDto.getPrice(), productResponseDto.getPrice());
+        assertEquals(productCreateUpdateDto.getName(), productResponseDto.getName());
+        assertEquals(productCreateUpdateDto.getDescription(), productResponseDto.getDescription());
+        assertEquals(productCreateUpdateDto.getPrice(), productResponseDto.getPrice());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
     void updateProductStatusBySeller_whenSent_returnProductResponseDtoWithStatusShipped() {
-        ProductResponseDto createdProductDto = createProduct(productDto);
+        ProductResponseDto createdProductDto = createProduct(productCreateUpdateDto);
         ProductResponseDto updatedProductDto = updateProductStatusBySeller(createdProductDto.getId());
 
         assertEquals(ProductStatus.SHIPPED, updatedProductDto.getProductStatus());
@@ -82,8 +83,8 @@ class SellerProductControllerTest extends CrudOperations {
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
     void updateProductBySeller_whenValid_returnNewProductResponseDto() {
-        ProductResponseDto createdProductDto = createProduct(productDto);
-        ProductDto updateRequestDto = ProductDto.builder()
+        ProductResponseDto createdProductDto = createProduct(productCreateUpdateDto);
+        ProductCreateUpdateDto updateRequestDto = ProductCreateUpdateDto.builder()
                 .name("new name")
                 .description("new description")
                 .build();
@@ -100,13 +101,13 @@ class SellerProductControllerTest extends CrudOperations {
     }
 
     @SneakyThrows
-    private ProductResponseDto updateProduct(ProductDto updateProductDto, long productId) {
+    private ProductResponseDto updateProduct(ProductCreateUpdateDto updateProductCreateUpdateDto, long productId) {
         MvcResult result = mockMvc.perform(patch("/product/{productId}/update", productId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateProductDto)))
+                        .content(objectMapper.writeValueAsString(updateProductCreateUpdateDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(updateProductDto.getName()))
-                .andExpect(jsonPath("$.description").value(updateProductDto.getDescription()))
+                .andExpect(jsonPath("$.name").value(updateProductCreateUpdateDto.getName()))
+                .andExpect(jsonPath("$.description").value(updateProductCreateUpdateDto.getDescription()))
                 .andReturn();
 
         return objectMapper.readValue(
