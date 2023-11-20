@@ -43,7 +43,9 @@ public class UserProductController {
     public ProductResponseDto createProduct(@ApiIgnore Principal principal, @RequestBody @Validated(New.class) ProductDto productDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productDto);
         Product request = productMapper.productDtoToProduct(productDto);
-        Product response = productService.create(principal.getName(), request);
+        long categoryId = productDto.getCategory();
+        long vendorId = productDto.getVendor();
+        Product response = productService.create(principal.getName(), request, categoryId, vendorId);
         return productMapper.productToProductResponseDto(response);
     }
 

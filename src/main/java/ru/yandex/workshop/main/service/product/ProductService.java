@@ -6,13 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
-import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
@@ -38,8 +36,8 @@ public class ProductService {
     private final VendorService vendorService;
     private final ImageService imageService;
 
-    public Product create(String sellerEmail, Product product) {
-        initProduct(sellerEmail, product);
+    public Product create(String sellerEmail, Product product, Long categoryId, Long vendorId) {
+        initProduct(sellerEmail, product, categoryId, vendorId);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
@@ -151,10 +149,10 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private void initProduct(String sellerEmail, Product product) {
+    private void initProduct(String sellerEmail, Product product, long categoryId, long vendorId) {
         Seller seller = sellerService.getSeller(sellerEmail);
-        Category category = categoryService.getCategoryById(product.getCategory().getId());
-        Vendor vendor = vendorService.getVendorById(product.getVendor().getId());
+        Category category = categoryService.getCategoryById(categoryId);
+        Vendor vendor = vendorService.getVendorById(vendorId);
 
         product.setSeller(seller);
         product.setCategory(category);
