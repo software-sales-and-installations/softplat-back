@@ -5,15 +5,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.WrongConditionException;
+import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Basket;
 import ru.yandex.workshop.main.model.buyer.BasketPosition;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.product.Product;
+import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
 import ru.yandex.workshop.main.service.product.SearchProductService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -27,65 +31,110 @@ public class BasketService {
     private final BuyerService buyerService;
 
     public Basket addProduct(String buyerEmail, Long productId, Boolean installation) {
-        Product product = getProduct(productId);
-        if (!product.getInstallation() && installation)
-            throw new WrongConditionException("Для товара не предусмотрена установка.");
-        if (product.getQuantity() == 0) throw new WrongConditionException("Товара нет в наличии.");
-        Basket basket = getBasketByBuyerEmail(buyerEmail);
-        if (basket.getProductsInBasket() == null) {
-            BasketPosition basketPosition = new BasketPosition(null, product, 1, installation);
-            basket.setProductsInBasket(List.of(basketPosition));
-            return basketRepository.save(basket);
+        Product product = searchProductService.getProductById(productId);
+        checkIfProductAvailableForPurchase(product, installation);
+
+        Basket basket = getOrCreateBasket(buyerEmail);
+        List<BasketPosition> productsInBasket = basket.getProductsInBasket();
+
+        Optional<BasketPosition> optionalBasketPosition
+                = getOptionalBasketPosition(productsInBasket, productId, installation);
+
+        BasketPosition basketPosition;
+        if (optionalBasketPosition.isPresent()) {
+            basketPosition = optionalBasketPosition.get();
+            checkIfAddingNewProductPositionIsPossible(basketPosition, product);
+
+            basketPosition.setQuantity(basketPosition.getQuantity() + 1);
+            updateBasketPosition(productsInBasket, basketPosition);
+        } else {
+            basketPosition = createNewBasketPosition(basket, product, installation);
+            productsInBasket.add(basketPosition);
         }
-        for (BasketPosition basketPosition : basket.getProductsInBasket()) {
-            if (basketPosition.getProduct().getId().equals(product.getId()) &&
-                    basketPosition.getProduct().getInstallation().equals(installation)) {
-                basketPosition.setQuantity(basketPosition.getQuantity() + 1);
-                return basketRepository.save(basket);
-            }
-        }
-        BasketPosition basketPosition = new BasketPosition(null, product, 1, installation);
-        basket.getProductsInBasket().add(basketPosition);
+        basketPositionRepository.save(basketPosition);
+
         return basketRepository.save(basket);
     }
 
+    private void checkIfAddingNewProductPositionIsPossible(BasketPosition basketPosition, Product product) {
+        if (basketPosition.getQuantity() + 1 > product.getQuantity()) {
+            throw new WrongConditionException("Товара нет в наличии.");
+        }
+    }
+
+    private void checkIfProductAvailableForPurchase(Product product, Boolean installation) {
+        if (product.getProductStatus() != ProductStatus.PUBLISHED)
+            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+        if (!product.getInstallation() && installation)
+            throw new WrongConditionException("Для товара не предусмотрена установка.");
+        if (product.getQuantity() <= 0)
+            throw new WrongConditionException("Товара нет в наличии.");
+    }
+
+    private BasketPosition createNewBasketPosition(Basket basket, Product product, Boolean installation) {
+        return BasketPosition.builder()
+                .basketId(basket.getId())
+                .product(product)
+                .quantity(1)
+                .installation(installation)
+                .build();
+    }
+
+    private void updateBasketPosition(List<BasketPosition> productsInBasket,
+                                      BasketPosition updatedBasketPosition) {
+        for (int i = 0; i < productsInBasket.size(); i++) {
+            BasketPosition oldBasketPosition = productsInBasket.get(i);
+            if (oldBasketPosition.getId().equals(updatedBasketPosition.getId())) {
+                productsInBasket.set(i, updatedBasketPosition);
+                break;
+            }
+        }
+    }
+
+    private Optional<BasketPosition> getOptionalBasketPosition(List<BasketPosition> productsInBasket,
+                                                               Long productId,
+                                                               Boolean installation) {
+        return productsInBasket.stream()
+                .filter(bp -> Objects.equals(bp.getProduct().getId(), productId))
+                .filter(bp -> Objects.equals(bp.getInstallation(), installation))
+                .findFirst();
+    }
+
     public Basket removeProduct(String buyerEmail, Long productId, Boolean installation) {
-        Basket basket = getBasketByBuyerEmail(buyerEmail);
-        if (basket.getProductsInBasket() != null) {
-            for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
-                BasketPosition basketPosition = basket.getProductsInBasket().get(i);
-                if (basketPosition.getProduct().getId().equals(productId) &&
-                        basketPosition.getProduct().getInstallation().equals(installation)) {
-                    if (basketPosition.getQuantity() == 1) {
-                        basketPositionRepository.deleteById(basketPosition.getId());
-                        basket.getProductsInBasket().remove(i);
-                        if (basket.getProductsInBasket().size() == 0) basket.setProductsInBasket(null);
-                    } else {
-                        basketPosition.setQuantity(basketPosition.getQuantity() - 1);
+        Basket basket = getOrCreateBasket(buyerEmail);
+        Optional<BasketPosition> optionalBasketPosition
+                = getOptionalBasketPosition(basket.getProductsInBasket(), productId, installation);
+
+        if (optionalBasketPosition.isPresent()) {
+            BasketPosition productInBasket = optionalBasketPosition.get();
+            if (productInBasket.getQuantity() == 1) {
+                basketPositionRepository.deleteById(productInBasket.getId());
+                return getBasketOrThrowException(buyerEmail);
+            } else {
+                for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
+                    if (Objects.equals(basket.getProductsInBasket().get(i).getId(), productInBasket.getId())) {
+                        basket.getProductsInBasket().get(i).setQuantity(productInBasket.getQuantity() - 1);
+                        return basketRepository.save(basket);
                     }
-                    return basketRepository.save(basket);
                 }
             }
         }
         throw new WrongConditionException("Ошибка при удалении товара");
     }
 
-    @Transactional(readOnly = true)
-    public Basket getBasket(String buyerEmail) {
-        return getBasketByBuyerEmail(buyerEmail);
-    }
-
-    @Transactional(readOnly = true)
-    public Product getProduct(long id) {
-        return searchProductService.getProductById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public Basket getBasketByBuyerEmail(String email) {
-        Buyer buyer = buyerService.getBuyerByEmail(email);
+    public Basket getOrCreateBasket(String buyerEmail) {
+        Buyer buyer = buyerService.getBuyerByEmail(buyerEmail);
         Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
         return basket.orElseGet(() -> basketRepository.save(Basket.builder()
                 .buyerId(buyer.getId())
+                .productsInBasket(new ArrayList<>())
                 .build()));
+    }
+
+    @Transactional(readOnly = true)
+    public Basket getBasketOrThrowException(String email) {
+        Buyer buyer = buyerService.getBuyerByEmail(email);
+        Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
+        return basket.orElseThrow(() -> new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

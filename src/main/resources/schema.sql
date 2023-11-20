@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS users, buyer, seller, admin, category, vendor, image, basket, "order", statistic, product, requisite CASCADE;
+DROP TABLE IF EXISTS basket_position, order_position, users, buyer, seller, admin, category, vendor, image, basket, "order", statistic, product, requisite CASCADE;
 
 CREATE TABLE IF NOT EXISTS users
 (
