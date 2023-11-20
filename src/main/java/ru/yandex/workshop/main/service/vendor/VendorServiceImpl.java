@@ -16,6 +16,7 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.mapper.ImageMapper;
 import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.vendor.QVendor;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.vendor.VendorRepository;
@@ -34,7 +35,6 @@ public class VendorServiceImpl implements VendorService {
     private final VendorRepository repository;
     private final ImageService imageService;
     private final VendorMapper vendorMapper;
-    private final ImageMapper imageMapper;
 
     @Transactional
     @Override
@@ -109,8 +109,7 @@ public class VendorServiceImpl implements VendorService {
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
-        ImageDto imageDto = imageService.addNewImage(file);
-        vendor.setImage(imageMapper.imageDtoToImage(imageDto));
+        vendor.setImage(imageService.addNewImage(file));
         return vendor;
     }
 

@@ -30,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
     private final ImageMapper imageMapper;
 
     @Override
-    public ImageDto addNewImage(MultipartFile file) {
+    public Image addNewImage(MultipartFile file) {
         try {
             Image image = Image.builder()
                     .name(StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())))
@@ -38,7 +38,7 @@ public class ImageServiceImpl implements ImageService {
                     .bytes(file.getBytes())
                     .size(file.getSize())
                     .build();
-            return imageMapper.imageToImageDto(imageRepository.save(image));
+            return imageRepository.save(image);
         } catch (IOException e) {
             log.error(ExceptionMessage.IMAGE_SERVER_UPLOAD_EXCEPTION.label);
             throw new ImageServerUploadException(ExceptionMessage.IMAGE_SERVER_UPLOAD_EXCEPTION.label);

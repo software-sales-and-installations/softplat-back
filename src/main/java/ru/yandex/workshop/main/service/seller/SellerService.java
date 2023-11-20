@@ -11,6 +11,7 @@ import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.seller.Seller;
 import ru.yandex.workshop.main.repository.seller.SellerRepository;
 import ru.yandex.workshop.main.service.image.ImageService;
@@ -59,8 +60,7 @@ public class SellerService {
         if (seller.getImage() != null) {
             imageService.deleteImageById(seller.getImage().getId());
         }
-        ImageDto imageDto = imageService.addNewImage(file);
-        seller.setImage(imageService.getImageById(imageDto.getId()));
+        seller.setImage(imageService.addNewImage(file));
         return seller;
     }
 

@@ -7,7 +7,7 @@ import ru.yandex.workshop.main.model.image.Image;
 
 public interface ImageService {
 
-    ImageDto addNewImage(MultipartFile file);
+    Image addNewImage(MultipartFile file);
 
     ResponseEntity<byte[]> getImageAsByteArray(Long imageId);
 

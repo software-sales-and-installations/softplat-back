@@ -12,6 +12,7 @@ import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.product.Category;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
@@ -96,8 +97,7 @@ public class ProductService {
         if (product.getImage() != null) {
             imageService.deleteImageById(product.getImage().getId());
         }
-        ImageDto imageDto = imageService.addNewImage(file);
-        product.setImage(imageService.getImageById(imageDto.getId()));
+        product.setImage(imageService.addNewImage(file));
         return product;
     }
 
