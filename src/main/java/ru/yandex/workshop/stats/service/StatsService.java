@@ -12,7 +12,6 @@ import ru.yandex.workshop.stats.model.Stats;
 import ru.yandex.workshop.stats.repository.StatsRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public class StatsService {
             StatsFilterAdmin statsFilterAdmin,
             SortEnum sort) {
         List<SellerReportEntry> statsPage = getReportForAdminSellersList(statsFilterAdmin);
-        return getSellerReportTwo(sort, statsPage);
+        return getSellerReport(sort, statsPage);
     }
 
     @Transactional(readOnly = true)
@@ -36,7 +35,7 @@ public class StatsService {
             StatsFilterSeller statsFilterSeller,
             SortEnum sort) {
         List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, null);
-        return getSellerReportTwo(sort, statsPage);
+        return getSellerReport(sort, statsPage);
     }
 
     @Transactional(readOnly = true)
@@ -45,19 +44,18 @@ public class StatsService {
             StatsFilterSeller statsFilterSeller,
             SortEnum sort) {
         List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, email);
-        return getSellerReportTwo(sort, statsPage);
+        return getSellerReport(sort, statsPage);
     }
 
-    private static SellerReport getSellerReportTwo(SortEnum sort, List<SellerReportEntry> statsPage) {
+    private static SellerReport getSellerReport(SortEnum sort, List<SellerReportEntry> statsPage) {
         List<SellerReportEntry> sellerReportEntryList = statsPage
                 .stream()
                 .sorted((o1, o2) -> {
-                    if (SortEnum.POPULAR.toString().equalsIgnoreCase(sort.toString())) {
+                    if (SortEnum.POPULAR.equals(sort)) {
                         return Long.compare(o2.getQuantity(), o1.getQuantity());
-                    } else if (SortEnum.PRICE.toString().equalsIgnoreCase(sort.toString())) {
+                    } else {
                         return Double.compare(o2.getRevenue(), o1.getRevenue());
                     }
-                    return 0;
                 })
                 .collect(Collectors.toList());
 
@@ -75,15 +73,12 @@ public class StatsService {
         if (statsFilterAdmin.getEnd() == null) {
             statsFilterAdmin.setEnd(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
         }
-        List<SellerReportEntry> statsPage = new ArrayList<>();
+        List<SellerReportEntry> statsPage;
         if (statsFilterAdmin.getSellerIds() != null) {
-            for (Long id : statsFilterAdmin.getSellerIds()) {
-                List<SellerReportEntry> statsList = statsRepository.getStatsByProduct(
-                        id,
-                        statsFilterAdmin.getStart(),
-                        statsFilterAdmin.getEnd());
-                statsPage.addAll(statsList);
-            }
+            statsPage = statsRepository.getStatsByProduct(
+                    statsFilterAdmin.getSellerIds(),
+                    statsFilterAdmin.getStart(),
+                    statsFilterAdmin.getEnd());
         } else {
             statsPage = statsRepository.getAllStats(
                     statsFilterAdmin.getStart(),
@@ -116,5 +111,4 @@ public class StatsService {
     public void createStats(Stats stats) {
         statsRepository.save(stats);
     }
-
 }

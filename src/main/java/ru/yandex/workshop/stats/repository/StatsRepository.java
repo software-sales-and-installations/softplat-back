@@ -17,7 +17,7 @@ public interface StatsRepository extends JpaRepository<Stats, Long>,
     @Query("SELECT new ru.yandex.workshop.stats.dto.SellerReportEntry( " +
             "s.product.name, sum (s.quantity), sum(s.amount)) " +
             "FROM Stats s " +
-            "WHERE s.dateBuy BETWEEN ?1 AND ?2 " +
+            "WHERE s.dateBuy BETWEEN :start AND :end " +
             "GROUP BY s.product.seller.id, s.product.id, s.product.name ")
     List<SellerReportEntry> getAllStats(
             LocalDateTime start,
@@ -26,25 +26,23 @@ public interface StatsRepository extends JpaRepository<Stats, Long>,
     @Query("SELECT new ru.yandex.workshop.stats.dto.SellerReportEntry( " +
             "s.product.name, sum (s.quantity), sum(s.amount)) " +
             "FROM Stats s " +
-            "WHERE s.product.seller.id = ?1 " +
-            "AND s.dateBuy BETWEEN ?2 AND ?3 " +
+            "WHERE s.product.seller.id IN :sellerId " +
+            "AND s.dateBuy BETWEEN :start AND :end " +
             "GROUP BY s.product.seller.id, s.product.id, s.product.name ")
     List<SellerReportEntry> getStatsByProduct(
-            Long sellerId,
+            List<Long> sellerId,
             LocalDateTime start,
             LocalDateTime end);
 
     @Query("SELECT new ru.yandex.workshop.stats.dto.SellerReportEntry( " +
             "s.product.name, sum (s.quantity), sum(s.amount)) " +
             "FROM Stats s " +
-            "WHERE s.product.seller.email = ?1 " +
-            "AND s.dateBuy BETWEEN ?2 AND ?3 " +
+            "WHERE s.product.seller.email IN :email " +
+            "AND s.dateBuy BETWEEN :start AND :end " +
             "GROUP BY s.product.seller.id, s.product.id, s.product.name ")
     List<SellerReportEntry> getAllStatsEmailSeller(
             String email,
             LocalDateTime start,
             LocalDateTime end);
-
-
 }
 
