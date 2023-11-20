@@ -17,7 +17,7 @@ public class OrderResponseDto {
     Long id;
     BuyerResponseDto buyer;
     List<OrderPositionResponseDto> productsOrdered;
-    Float orderAmount;
+    Float orderCost;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime productionTime;
 }

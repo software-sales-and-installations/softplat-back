@@ -34,9 +34,9 @@ public class BuyerOrderController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public OrderResponseDto addOrder(@ApiIgnore Principal principal, @RequestBody OrderCreateDto orderCreateDto) {
         log.debug(LogMessage.TRY_ADD_ORDER.label);
-        if (orderCreateDto.getProductBaskets() == null || orderCreateDto.getProductBaskets().size() == 0)
+        if (orderCreateDto.getBasketPositionIds() == null || orderCreateDto.getBasketPositionIds().size() == 0)
             throw new EntityNotFoundException("Перед оформлением заказа добавьте товары в корзину");
-        Order response = orderService.createOrder(principal.getName(), orderCreateDto.getProductBaskets());
+        Order response = orderService.createOrder(principal.getName(), orderCreateDto.getBasketPositionIds());
         return orderMapper.orderToOrderDto(response);
     }
 

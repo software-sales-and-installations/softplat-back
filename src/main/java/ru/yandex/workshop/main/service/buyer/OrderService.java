@@ -8,10 +8,9 @@ import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.mapper.OrderPositionMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
-import ru.yandex.workshop.main.model.buyer.Buyer;
-import ru.yandex.workshop.main.model.buyer.Order;
-import ru.yandex.workshop.main.model.buyer.OrderPosition;
-import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
+import ru.yandex.workshop.main.model.buyer.*;
+import ru.yandex.workshop.main.model.product.ProductStatus;
+import ru.yandex.workshop.main.repository.buyer.OrderPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.OrderRepository;
 import ru.yandex.workshop.stats.model.Stats;
 import ru.yandex.workshop.stats.service.StatsService;
@@ -19,6 +18,7 @@ import ru.yandex.workshop.stats.service.StatsService;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -26,49 +26,76 @@ import java.util.List;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final BuyerService buyerService;
-    private final BasketPositionRepository basketPositionRepository;
+    private final BasketService basketService;
+    private final OrderPositionRepository orderPositionRepository;
     private final OrderPositionMapper mapper;
     private final StatsService statsService;
     private static final Float COMMISSIONS = 0.9F;
 
-    @Transactional
-    public Order createOrder(String email, List<Long> productBaskets) {
-        Buyer buyer = buyerService.getBuyerByEmail(email);
-        Order order = new Order();
-        order.setBuyer(buyer);
-        order.setProductionTime(LocalDateTime.now());
-        List<OrderPosition> productOrderList = new ArrayList<>();
+    public Order createOrder(String email, List<Long> basketPositionIds) {
+        Order order = createNewEmptyOrder(email);
+        List<OrderPosition> orderPositionList = new ArrayList<>();
         float wholePrice = 0F;
-        for (Long productBasketId : productBaskets) {
-            OrderPosition productOrder = mapper.basketPositionToOrderPosition(
-                    basketPositionRepository.findById(productBasketId).orElseThrow(()
-                            -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)));
-            if (productOrder.getProduct().getQuantity() >= productOrder.getQuantity()) {
-                productOrder.setId(null);
-                if (productOrder.getInstallation()) {
-                    productOrder.setProductAmount(productOrder.getProduct().getPrice() +
-                            productOrder.getProduct().getInstallationPrice());
-                } else productOrder.setProductAmount(productOrder.getProduct().getPrice());
-                wholePrice += productOrder.getProductAmount() * productOrder.getQuantity();
-                productOrderList.add(productOrder);
-            } else
-                throw new WrongConditionException("Товара у продавца осталось меньше, чем в заказе");
+        Basket basket = basketService.getBasketOrThrowException(email);
+
+        for (Long productBasketId : basketPositionIds) {
+            for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
+                BasketPosition positionInBasket = basket.getProductsInBasket().get(i);
+                if (Objects.equals(positionInBasket.getId(), productBasketId)) {
+                    checkIfAvailable(positionInBasket);
+                    OrderPosition orderPosition = mapper.basketPositionToOrderPosition(positionInBasket);
+                    orderPosition.setProductCost(countCost(orderPosition));
+                    wholePrice += orderPosition.getProductCost() * orderPosition.getQuantity();
+                    orderPosition.setOrderId(order.getId());
+                    orderPositionRepository.save(orderPosition);
+                    orderPositionList.add(orderPosition);
+                    basketService.removeBasketPosition(productBasketId);
+                    break;
+                }
+                if (i == basket.getProductsInBasket().size() - 1) {
+                    throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+                }
+            }
         }
-        order.setProductsOrdered(productOrderList);
-        order.setOrderAmount(wholePrice);
+        order.setProductsOrdered(orderPositionList);
+        order.setOrderCost(wholePrice);
         Order orderSave = orderRepository.save(order);
         createStats(orderSave);
         return orderSave;
     }
 
+    private Order createNewEmptyOrder(String email) {
+        Buyer buyer = buyerService.getBuyerByEmail(email);
+        Order order = new Order();
+        order.setBuyer(buyer);
+        order.setProductionTime(LocalDateTime.now());
+        return orderRepository.save(order);
+    }
+
+    private float countCost(OrderPosition orderPosition) {
+        if (orderPosition.getInstallation()) {
+            return orderPosition.getProduct().getPrice() +
+                    orderPosition.getProduct().getInstallationPrice();
+        } else return orderPosition.getProduct().getPrice();
+    }
+
+    private void checkIfAvailable(BasketPosition basketPosition) {
+        if (basketPosition.getProduct().getQuantity() <= basketPosition.getQuantity())
+            throw new WrongConditionException("Товара у продавца осталось меньше, чем в заказе");
+        if (basketPosition.getProduct().getProductStatus() != ProductStatus.PUBLISHED)
+            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+    }
+
+    @Transactional(readOnly = true)
     public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
+    @Transactional(readOnly = true)
     public List<Order> getAllOrders(String email) {
         Buyer buyer = buyerService.getBuyerByEmail(email);
-        return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.of(0, 20));
+        return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.ofSize(20));
     }
 
     private void createStats(Order order) {
@@ -79,7 +106,7 @@ public class OrderService {
             stats.setBuyer(order.getBuyer());
             stats.setDateBuy(order.getProductionTime());
             stats.setQuantity((long) orderPosition.getQuantity());
-            stats.setAmount((double) COMMISSIONS * orderPosition.getProductAmount());
+            stats.setAmount((double) COMMISSIONS * orderPosition.getProductCost());
             statsService.createStats(stats);
         }
     }

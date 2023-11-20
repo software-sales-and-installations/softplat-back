@@ -15,5 +15,5 @@ public class OrderPositionResponseDto {
     private ProductResponseDto productResponseDto;
     private Integer quantity;
     private Boolean installation;
-    private Float productAmount;
+    private Float productCost;
 }

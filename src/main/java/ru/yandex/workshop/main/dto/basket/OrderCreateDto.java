@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class OrderCreateDto {
     @NotNull(message = "Выберите хотя бы один товар для покупки")
-    private List<Long> productBaskets;
+    private List<Long> basketPositionIds;
 }

@@ -26,6 +26,6 @@ public class OrderPosition {
     Integer quantity;
     //стоимость 1 единицы продукта с учетом скидок/бонусов/промокодов/цены за установку
     @Column(name = "amount")
-    Float productAmount;
+    Float productCost;
     Boolean installation;
 }
