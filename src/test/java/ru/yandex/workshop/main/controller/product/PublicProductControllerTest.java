@@ -21,8 +21,8 @@ import ru.yandex.workshop.main.model.vendor.Country;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -39,6 +39,7 @@ class PublicProductControllerTest extends CrudOperations {
     private ProductResponseDto productResponseDto1;
     private ProductResponseDto productResponseDto2;
     private ProductResponseDto productResponseDto3;
+    private ProductResponseDto productResponseDto5;
 
     @BeforeEach
     @SneakyThrows
@@ -46,6 +47,7 @@ class PublicProductControllerTest extends CrudOperations {
         productResponseDto1 = getProductResponseDto(1L);
         productResponseDto2 = getProductResponseDto(2L);
         productResponseDto3 = getProductResponseDto(3L);
+        productResponseDto5 = getProductResponseDto(5L);
     }
 
     @Test
@@ -113,7 +115,7 @@ class PublicProductControllerTest extends CrudOperations {
         productFilter.setText("pRoDucT");
 
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
-        List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto3);
+        List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto3, productResponseDto5);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
         assertEquals(expect.get(1).getName(), actual.get(1).getName());
@@ -127,7 +129,7 @@ class PublicProductControllerTest extends CrudOperations {
         productFilter.setCountries(List.of(Country.RUSSIA));
 
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
-        List<ProductResponseDto> expect = List.of(productResponseDto3);
+        List<ProductResponseDto> expect = List.of(productResponseDto3, productResponseDto5);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
     }
@@ -153,7 +155,7 @@ class PublicProductControllerTest extends CrudOperations {
         ProductsSearchRequestDto productFilter = new ProductsSearchRequestDto();
 
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
-        List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2, productResponseDto3);
+        List<ProductResponseDto> expect = List.of(productResponseDto1, productResponseDto2, productResponseDto3, productResponseDto5);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
         assertEquals(expect.get(1).getName(), actual.get(1).getName());
@@ -183,7 +185,7 @@ class PublicProductControllerTest extends CrudOperations {
         ProductsSearchRequestDto productFilter = new ProductsSearchRequestDto();
 
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort);
-        List<ProductResponseDto> expect = List.of(productResponseDto3, productResponseDto1, productResponseDto2);
+        List<ProductResponseDto> expect = List.of(productResponseDto3, productResponseDto1, productResponseDto2, productResponseDto5);
         assertEquals(expect.size(), actual.size());
         assertEquals(expect.get(0).getName(), actual.get(0).getName());
         assertEquals(expect.get(1).getName(), actual.get(1).getName());

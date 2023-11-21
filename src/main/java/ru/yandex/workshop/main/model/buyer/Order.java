@@ -31,5 +31,5 @@ public class Order {
     List<OrderPosition> productsOrdered = new ArrayList<>();
     //стоимость всего заказа
     @Column(name = "amount")
-    Float orderAmount;
+    Float orderCost;
 }

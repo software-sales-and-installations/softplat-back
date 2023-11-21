@@ -137,4 +137,8 @@ public class BasketService {
         Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
         return basket.orElseThrow(() -> new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
+
+    public void removeBasketPosition(long basketPositionId) {
+        basketPositionRepository.deleteById(basketPositionId);
+    }
 }
