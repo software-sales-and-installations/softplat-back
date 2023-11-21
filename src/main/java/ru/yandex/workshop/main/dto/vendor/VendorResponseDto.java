@@ -14,6 +14,6 @@ public class VendorResponseDto {
     Long id;
     String name;
     String description;
-    ImageResponseDto imageResponseDto;
+    ImageResponseDto image;
     Country country;
 }

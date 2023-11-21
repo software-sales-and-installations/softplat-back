@@ -164,7 +164,7 @@ class SellerControllerTest extends CrudOperations {
 
     @Test
     @SneakyThrows
-    @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write", "admin:write"})
+    @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
     void deleteRequisites_whenOk() {
         createUser(userDto);
         BankRequisitesCreateUpdateDto requisitesDto = new BankRequisitesCreateUpdateDto("1234567891234567");

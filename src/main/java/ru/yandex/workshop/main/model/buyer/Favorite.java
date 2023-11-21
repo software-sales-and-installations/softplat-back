@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "favorite")
@@ -19,7 +20,7 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne
-    @JoinColumn(name = "buyer_email", referencedColumnName = "email")
+    @JoinColumn(name = "buyer_id", referencedColumnName = "id")
     Buyer buyer;
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
