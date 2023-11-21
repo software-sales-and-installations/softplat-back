@@ -53,7 +53,7 @@ public class OrderService {
                     break;
                 }
                 if (i == basket.getProductsInBasket().size() - 1) {
-                    throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+                    throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
                 }
             }
         }
@@ -83,7 +83,7 @@ public class OrderService {
         if (basketPosition.getProduct().getQuantity() <= basketPosition.getQuantity())
             throw new WrongConditionException("Товара у продавца осталось меньше, чем в заказе");
         if (basketPosition.getProduct().getProductStatus() != ProductStatus.PUBLISHED)
-            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
     }
 
     @Transactional(readOnly = true)
