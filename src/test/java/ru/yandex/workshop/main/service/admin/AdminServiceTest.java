@@ -34,7 +34,7 @@ class AdminServiceTest {
     }
 
     @Test
-    void addAdmin_whenAdminAlreadyExists_throwDuplicateException() {
+    void addAdmin_shouldThrowDuplicateException_whenAdminAlreadyExists() {
         when(adminRepository.findByEmail(anyString()))
                 .thenReturn(Optional.of(admin));
 
@@ -43,16 +43,17 @@ class AdminServiceTest {
     }
 
     @Test
-    void addAdmin_whenValid_thenReturnNewAdmin() {
-        when(adminRepository.save(any())).thenReturn(admin);
-
+    void addAdmin_shouldReturnNewAdmin_whenValid() {
         Admin expect = admin;
-        Admin actual = adminRepository.save(admin);
+
+        when(adminRepository.save(any())).thenReturn(admin);
+        Admin actual = adminService.addAdmin(admin);
+
         assertEquals(expect, actual);
     }
 
     @Test
-    void getAdminDto_whenAlreadyExists_throwEntityNotFoundException() {
+    void getAdminDto_shouldThrowEntityNotFoundException_whenEmailNotValid() {
         when(adminRepository.findByEmail(anyString()))
                 .thenReturn(Optional.empty());
 
@@ -61,12 +62,13 @@ class AdminServiceTest {
     }
 
     @Test
-    void getAdminDto_whenValid_thenReturnAdminEntityFromRepository() {
+    void getAdminDto_shouldReturnAdminEntityFromRepository_whenValid() {
+        Admin expect = admin;
+
         when(adminRepository.findByEmail(anyString()))
                 .thenReturn(Optional.of(admin));
-
-        Admin expect = admin;
         Admin actual = adminService.getAdmin(admin.getEmail());
+
         assertEquals(expect, actual);
     }
 }

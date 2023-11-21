@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.dto.product;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -10,8 +11,6 @@ import ru.yandex.workshop.main.model.product.License;
 import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 
-import java.io.IOException;
-
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @JsonTest
@@ -21,7 +20,8 @@ class ProductMapperTest {
     private JacksonTester<ProductCreateUpdateDto> jsonProductDto;
 
     @Test
-    void testItemDto() throws IOException {
+    @SneakyThrows
+    void shouldCorrectlyConvertItemDtoToJson() {
         Category category = Category
                 .builder()
                 .id(1L)
@@ -51,6 +51,7 @@ class ProductMapperTest {
                 .build();
 
         JsonContent<ProductCreateUpdateDto> result = jsonProductDto.write(productCreateUpdateDto);
+
         assertThat(result).extractingJsonPathStringValue("$.name").isEqualTo("product");
         assertThat(result).extractingJsonPathStringValue("$.description").isEqualTo("description product");
         assertThat(result).extractingJsonPathStringValue("$.version").isEqualTo("22");

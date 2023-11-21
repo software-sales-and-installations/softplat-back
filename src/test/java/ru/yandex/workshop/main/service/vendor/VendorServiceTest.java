@@ -47,7 +47,7 @@ class VendorServiceTest {
     }
 
     @Test
-    void createVendor() {
+    void createVendor_shouldReturnVendor_whenRequestDtoIsValid() {
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v WHERE v.id = :vendorId", Vendor.class);
         Vendor vendor = query.setParameter("vendorId", newVendorResponseOne.getId()).getSingleResult();
 
@@ -57,7 +57,7 @@ class VendorServiceTest {
     }
 
     @Test
-    void changeVendorById() {
+    void changeVendorById_shouldReturnUpdatedVendor_whenRequestDtoIsValid() {
         service.changeVendorById(newVendorResponseOne.getId(), vendorUpdateDto);
 
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v WHERE v.id = :vendorId", Vendor.class);
@@ -69,7 +69,7 @@ class VendorServiceTest {
     }
 
     @Test
-    void findVendorAll() {
+    void findVendorAll_shouldReturnListOfVendors_whenSearchCriteria() {
         List<Vendor> response = service.findVendorsWithFilter(new VendorSearchRequestDto(null, List.of(Country.INDIA)), 0, 10);
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v where v.country = :country", Vendor.class);
         List<Vendor> vendorList = query.setParameter("country", Country.INDIA).getResultList();
@@ -82,7 +82,7 @@ class VendorServiceTest {
     }
 
     @Test
-    void findVendorById() {
+    void findVendorById_shouldReturnVendor_whenIdIsValid() {
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v WHERE v.id = :vendorId", Vendor.class);
         Vendor vendor = query.setParameter("vendorId", newVendorResponseOne.getId()).getSingleResult();
 
@@ -92,7 +92,7 @@ class VendorServiceTest {
     }
 
     @Test
-    void deleteVendor() {
+    void deleteVendor_shouldExecuteAndDeleteVendor() {
         service.deleteVendor(newVendorResponseOne.getId());
 
         TypedQuery<Vendor> query = em.createQuery("Select v from Vendor AS v", Vendor.class);

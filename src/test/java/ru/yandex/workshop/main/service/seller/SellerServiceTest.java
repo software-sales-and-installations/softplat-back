@@ -46,7 +46,7 @@ class SellerServiceTest {
     }
 
     @Test
-    void addSeller_whenSellerExists_throwDuplicateException() {
+    void addSeller_shouldThrowDuplicateException_whenSellerAlreadyExists() {
         when(sellerRepository.findByEmail(anyString()))
                 .thenReturn(Optional.of(seller));
 
@@ -57,11 +57,7 @@ class SellerServiceTest {
     @Disabled
     @Test
     @SneakyThrows
-    void addSeller_whenPhoneIsNullOrNotEntered_throwValidationException() {
-        assertThrows(ValidationException.class,
-                () -> sellerService.addSeller(seller));
-
-        seller.setPhone("");
+    void addSeller_shouldThrowValidationException_whenPhoneIsNullOrNotEntered() {
         assertThrows(ValidationException.class,
                 () -> sellerService.addSeller(seller));
     }
@@ -69,26 +65,27 @@ class SellerServiceTest {
     @Disabled
     @Test
     @SneakyThrows
-    void addSeller_whenDescriptionIsNullOrNotEntered_throwValidationException() {
+    void addSeller_shouldThrowValidationException_whenDescriptionIsNullOrNotEntered() {
         seller.setPhone("01234567890");
+
         assertThrows(ValidationException.class,
                 () -> sellerService.addSeller(seller));
     }
 
     @Test
-    void addSeller_whenValid_thenReturnSeller() {
+    void addSeller_shouldReturnSeller_whenRequestDtoIsValid() {
         seller.setPhone("01234567890");
+        Seller expect = seller;
 
         when(sellerRepository.save(any())).thenReturn(seller);
+        Seller actual = sellerService.addSeller(seller);
 
-        Seller expect = seller;
-        Seller actual = sellerRepository.save(seller);
         assertEquals(expect.getEmail(), actual.getEmail());
         assertEquals(expect.getPhone(), actual.getPhone());
     }
 
     @Test
-    void updateSeller_whenEmailNotValid_throwEntityNotFoundException() {
+    void updateSeller_shouldThrowEntityNotFoundException_whenEmailNotValid() {
         when(sellerRepository.findByEmail(anyString()))
                 .thenReturn(Optional.empty());
 
@@ -100,7 +97,7 @@ class SellerServiceTest {
     }
 
     @Test
-    void updateSeller_whenUpdatedEmailExists_throwDuplicateException() {
+    void updateSeller_shouldThrowDuplicateException_whenUpdatedEmailExists() {
         seller.setEmail(updateSeller.getEmail());
 
         when(sellerRepository.findByEmail(anyString()))
@@ -114,37 +111,36 @@ class SellerServiceTest {
     }
 
     @Test
-    void updateSeller_whenValid_thenReturnSellerResponseDto() {
+    void updateSeller_shouldReturnSellerResponseDto_whenValid() {
         seller.setName(updateSeller.getName());
         seller.setPhone(updateSeller.getPhone());
-
-        verify(changeService, never()).changeEmail(anyString(), anyString());
+        Seller expect = seller;
 
         when(sellerRepository.save(any())).thenReturn(seller);
         when(sellerRepository.findByEmail(seller.getEmail()))
                 .thenReturn(Optional.of(seller));
 
-        Seller expect = seller;
+        verify(changeService, never()).changeEmail(anyString(), anyString());
         Seller actual = sellerService.updateSeller(seller.getEmail(), updateSeller);
 
         assertEquals(expect, actual);
     }
 
     @Test
-    void getAllSellers_whenCalled_thenReturnAllSellers() {
+    void getAllSellers_shouldReturnAllSellers() {
         int from = 0;
         int size = 1;
+        List<Seller> expect = List.of(seller);
 
         lenient().when(sellerRepository.findAll(PageRequestOverride.of(from, size)))
                 .thenReturn(new PageImpl<>(List.of(seller)));
-
-        List<Seller> expect = List.of(seller);
         List<Seller> actual = sellerService.getAllSellers(from, size);
+
         assertEquals(expect, actual);
     }
 
     @Test
-    void getSellerDto_whenIdNotValid_throwEntityNotFoundException() {
+    void getSellerDto_shouldThrowEntityNotFoundException_whenIdNotValid_() {
         long sellerId = 1L;
         seller.setId(sellerId);
 
@@ -156,15 +152,15 @@ class SellerServiceTest {
     }
 
     @Test
-    void getSellerDto_whenIdValid_thenReturnSellerResponseDto() {
+    void getSellerDto_shouldReturnSellerResponseDto_whenIdValid() {
         long sellerId = 1L;
         seller.setId(sellerId);
+        Seller expect = seller;
 
         when(sellerRepository.findById(anyLong()))
                 .thenReturn(Optional.of(seller));
-
-        Seller expect = seller;
         Seller actual = sellerService.getSeller(seller.getId());
+
         assertEquals(expect, actual);
     }
 }
