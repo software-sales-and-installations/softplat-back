@@ -26,9 +26,6 @@ public class BuyerFavoriteService {
     public Favorite create(String buyerEmail, Long productId) {
         if (favoriteRepository.existsByBuyerEmailAndProductId(buyerEmail, productId))
             throw new DuplicateException("Предмет был добавлен в избранное ранее.");
-        if (!buyerService.checkIfUserExistsByEmail(buyerEmail) || !productService.checkExistsProduct(productId))
-            throw new EntityNotFoundException("Введенные данные не корректны.");
-
         Favorite favorite = getFavorite(buyerEmail, productId);
         return favoriteRepository.save(favorite);
     }
@@ -45,11 +42,10 @@ public class BuyerFavoriteService {
         return favoriteRepository.findAllByBuyerEmail(buyerEmail);
     }
 
-    @Transactional(readOnly = true)
-    public Favorite getFavorite(String buyerEmail, Long productId) {
+    private Favorite getFavorite(String buyerEmail, Long productId) {
         Favorite favorite = new Favorite();
         favorite.setBuyer(buyerService.getBuyerByEmail(buyerEmail));
-        favorite.setProduct(productService.getProductOrThrowException(productId));
+        favorite.setProduct(productService.getAvailableProduct(productId));
         return favorite;
     }
 }

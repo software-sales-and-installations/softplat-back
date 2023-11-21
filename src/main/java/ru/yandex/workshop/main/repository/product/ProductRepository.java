@@ -13,9 +13,5 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long>,
         QuerydslPredicateExecutor<Product> {
 
-    List<Product> findProductBySellerId(Long sellerId, PageRequestOverride pageRequest);
-
     List<Product> findAllByProductStatusOrderByProductionTimeDesc(ProductStatus productStatus, PageRequestOverride pageRequest);
-
-    boolean existsById(Long id);
 }
