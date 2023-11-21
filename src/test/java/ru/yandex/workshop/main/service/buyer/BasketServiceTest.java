@@ -21,7 +21,7 @@ import ru.yandex.workshop.main.model.vendor.Country;
 import ru.yandex.workshop.main.model.vendor.Vendor;
 import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
-import ru.yandex.workshop.main.service.product.SearchProductService;
+import ru.yandex.workshop.main.service.product.ProductService;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ class BasketServiceTest {
     @Mock
     private BasketRepository basketRepository;
     @Mock
-    private SearchProductService productService;
+    private ProductService productService;
     @Mock
     private BasketPositionRepository basketPositionRepository;
     @Mock
@@ -130,7 +130,7 @@ class BasketServiceTest {
     @SneakyThrows
     void addProductTest_whenHaveNoProducts_returnBasketDto() {
         when(buyerService.getBuyerByEmail(anyString())).thenReturn(buyer);
-        when(productService.getProductById(2L)).thenReturn(product);
+        when(productService.getAvailableProduct(2L)).thenReturn(product);
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
 
         basketService.addProduct(email, 2L, true);
@@ -149,7 +149,7 @@ class BasketServiceTest {
     @SneakyThrows
     void addProductTest_whenHaveSameProduct_returnBasketDto() {
         when(buyerService.getBuyerByEmail(anyString())).thenReturn(buyer);
-        when(productService.getProductById(2L)).thenReturn(product);
+        when(productService.getAvailableProduct(2L)).thenReturn(product);
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
 
         basketService.addProduct(email, 2L, true);
@@ -168,7 +168,7 @@ class BasketServiceTest {
     @SneakyThrows
     void addProductTest_whenHaveSameProductWithoutInstallation_returnBasketDto() {
         when(buyerService.getBuyerByEmail(anyString())).thenReturn(buyer);
-        when(productService.getProductById(2L)).thenReturn(product);
+        when(productService.getAvailableProduct(2L)).thenReturn(product);
         when(basketRepository.findByBuyerId(1L)).thenReturn(Optional.of(basket));
         basketService.addProduct(email, 2L, false);
 

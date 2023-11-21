@@ -10,10 +10,9 @@ import ru.yandex.workshop.main.model.buyer.Basket;
 import ru.yandex.workshop.main.model.buyer.BasketPosition;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.product.Product;
-import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.repository.buyer.BasketPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.BasketRepository;
-import ru.yandex.workshop.main.service.product.SearchProductService;
+import ru.yandex.workshop.main.service.product.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +26,11 @@ import java.util.Optional;
 public class BasketService {
     private final BasketRepository basketRepository;
     private final BasketPositionRepository basketPositionRepository;
-    private final SearchProductService searchProductService;
+    private final ProductService productService;
     private final BuyerService buyerService;
 
     public Basket addProduct(String buyerEmail, Long productId, Boolean installation) {
-        Product product = searchProductService.getProductById(productId);
+        Product product = productService.getAvailableProduct(productId);
         checkIfProductAvailableForPurchase(product, installation);
 
         Basket basket = getOrCreateBasket(buyerEmail);
@@ -63,8 +62,6 @@ public class BasketService {
     }
 
     private void checkIfProductAvailableForPurchase(Product product, Boolean installation) {
-        if (product.getProductStatus() != ProductStatus.PUBLISHED)
-            throw new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         if (!product.getInstallation() && installation)
             throw new WrongConditionException("Для товара не предусмотрена установка.");
         if (product.getQuantity() <= 0)

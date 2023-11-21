@@ -8,7 +8,6 @@ import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Favorite;
-import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.repository.buyer.FavoriteRepository;
 import ru.yandex.workshop.main.service.product.ProductService;
 
@@ -28,8 +27,6 @@ public class BuyerFavoriteService {
         if (favoriteRepository.existsByBuyerEmailAndProductId(buyerEmail, productId))
             throw new DuplicateException("Предмет был добавлен в избранное ранее.");
         Favorite favorite = getFavorite(buyerEmail, productId);
-        if (favorite.getProduct().getProductStatus() != ProductStatus.PUBLISHED)
-            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
         return favoriteRepository.save(favorite);
     }
 
@@ -48,7 +45,7 @@ public class BuyerFavoriteService {
     private Favorite getFavorite(String buyerEmail, Long productId) {
         Favorite favorite = new Favorite();
         favorite.setBuyer(buyerService.getBuyerByEmail(buyerEmail));
-        favorite.setProduct(productService.getProductOrThrowException(productId));
+        favorite.setProduct(productService.getAvailableProduct(productId));
         return favorite;
     }
 }
