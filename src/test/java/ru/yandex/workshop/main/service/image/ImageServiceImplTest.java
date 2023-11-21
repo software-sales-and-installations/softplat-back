@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.repository.image.ImageRepository;
@@ -73,8 +72,8 @@ class ImageServiceImplTest {
     void addNewImage_whenValid_thenReturnImageDto() {
         when(imageRepository.save(any())).thenReturn(image);
 
-        ImageDto expected = ImageDto.builder().name(image.getName()).build();
-        ImageDto actual = imageService.addNewImage(multipartFile);
+        Image expected = Image.builder().name(image.getName()).build();
+        Image actual = imageService.addNewImage(multipartFile);
         assertEquals(expected, actual);
     }
 

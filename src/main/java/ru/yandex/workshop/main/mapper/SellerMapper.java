@@ -9,7 +9,7 @@ import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
 import ru.yandex.workshop.main.model.seller.Seller;
 
-@Mapper(componentModel = "spring", uses = ImageMapper.class)
+@Mapper(uses = ImageMapper.class)
 @Component
 public interface SellerMapper {
     @Mapping(target = "imageResponseDto", source = "image")

@@ -16,7 +16,7 @@ import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.model.product.ProductStatus;
-import ru.yandex.workshop.main.service.product.CRUDProductService;
+import ru.yandex.workshop.main.service.product.ProductService;
 import ru.yandex.workshop.main.web.validation.MultipartFileFormat;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @Validated
 public class UserProductController {
 
-    private final CRUDProductService productService;
+    private final ProductService productService;
     private final ProductMapper productMapper;
 
     @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")
@@ -43,7 +43,9 @@ public class UserProductController {
     public ProductResponseDto createProduct(@ApiIgnore Principal principal, @RequestBody @Validated(New.class) ProductCreateUpdateDto productCreateUpdateDto) {
         log.debug(LogMessage.TRY_CREATE_PRODUCT.label, productCreateUpdateDto);
         Product request = productMapper.productDtoToProduct(productCreateUpdateDto);
-        Product response = productService.create(principal.getName(), request);
+        long categoryId = productCreateUpdateDto.getCategory();
+        long vendorId = productCreateUpdateDto.getVendor();
+        Product response = productService.create(principal.getName(), request, categoryId, vendorId);
         return productMapper.productToProductResponseDto(response);
     }
 
@@ -102,7 +104,7 @@ public class UserProductController {
     @Operation(summary = "Добавление/обновление изображения своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(path = "/{productId}/image")
+    @PostMapping(path = "/{productId}/image/create")
     public ProductResponseDto createProductImage(@ApiIgnore Principal principal, @PathVariable @Min(1) Long productId,
                                                  @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
@@ -113,7 +115,7 @@ public class UserProductController {
 
     @Operation(summary = "Удаление изображения карточки товара", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @DeleteMapping(path = "/products/{productId}/image")
+    @PostMapping(path = "/products/{productId}/image/delete")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteProductImageAdmin(@PathVariable @Min(1) Long productId) {
         log.info(LogMessage.TRY_DElETE_IMAGE.label);

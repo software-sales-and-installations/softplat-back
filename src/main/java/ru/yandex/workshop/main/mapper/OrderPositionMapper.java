@@ -6,7 +6,7 @@ import ru.yandex.workshop.main.dto.basket.OrderPositionResponseDto;
 import ru.yandex.workshop.main.model.buyer.BasketPosition;
 import ru.yandex.workshop.main.model.buyer.OrderPosition;
 
-@Mapper(componentModel = "spring", uses = ProductMapper.class)
+@Mapper(uses = ProductMapper.class)
 public interface OrderPositionMapper {
 
     OrderPosition basketPositionToOrderPosition(BasketPosition productBasket);

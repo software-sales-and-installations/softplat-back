@@ -64,6 +64,7 @@ public class AuthService {
                     user.setId(buyer.getId());
                     break;
             }
+
             repository.save(userMapper.userDtoToUser(userCreateDto));
         } catch (DataIntegrityViolationException e) {
             throw new WrongDataDbException(e.getMessage());

@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.workshop.main.dto.basket.OrderCreateDto;
+import ru.yandex.workshop.main.dto.basket.OrderCreateRequestDto;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
@@ -32,11 +32,11 @@ public class BuyerOrderController {
     @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public OrderResponseDto addOrder(@ApiIgnore Principal principal, @RequestBody OrderCreateDto orderCreateDto) {
+    public OrderResponseDto addOrder(@ApiIgnore Principal principal, @RequestBody OrderCreateRequestDto orderCreateRequestDto) {
         log.debug(LogMessage.TRY_ADD_ORDER.label);
-        if (orderCreateDto.getProductBaskets() == null || orderCreateDto.getProductBaskets().size() == 0)
+        if (orderCreateRequestDto.getProductBaskets() == null || orderCreateRequestDto.getProductBaskets().size() == 0)
             throw new EntityNotFoundException("Перед оформлением заказа добавьте товары в корзину");
-        Order response = orderService.createOrder(principal.getName(), orderCreateDto.getProductBaskets());
+        Order response = orderService.createOrder(principal.getName(), orderCreateRequestDto.getProductBaskets());
         return orderMapper.orderToOrderDto(response);
     }
 
