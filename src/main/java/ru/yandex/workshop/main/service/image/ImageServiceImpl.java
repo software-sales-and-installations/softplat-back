@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.ImageServerUploadException;
-import ru.yandex.workshop.main.mapper.ImageMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.repository.image.ImageRepository;
@@ -27,10 +25,9 @@ import java.util.Objects;
 public class ImageServiceImpl implements ImageService {
 
     private final ImageRepository imageRepository;
-    private final ImageMapper imageMapper;
 
     @Override
-    public ImageDto addNewImage(MultipartFile file) {
+    public Image addNewImage(MultipartFile file) {
         try {
             Image image = Image.builder()
                     .name(StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename())))
@@ -38,7 +35,7 @@ public class ImageServiceImpl implements ImageService {
                     .bytes(file.getBytes())
                     .size(file.getSize())
                     .build();
-            return imageMapper.imageToImageDto(imageRepository.save(image));
+            return imageRepository.save(image);
         } catch (IOException e) {
             log.error(ExceptionMessage.IMAGE_SERVER_UPLOAD_EXCEPTION.label);
             throw new ImageServerUploadException(ExceptionMessage.IMAGE_SERVER_UPLOAD_EXCEPTION.label);

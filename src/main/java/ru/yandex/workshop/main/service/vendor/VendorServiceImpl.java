@@ -9,11 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
-import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.main.mapper.ImageMapper;
 import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.vendor.QVendor;
@@ -34,7 +32,6 @@ public class VendorServiceImpl implements VendorService {
     private final VendorRepository repository;
     private final ImageService imageService;
     private final VendorMapper vendorMapper;
-    private final ImageMapper imageMapper;
 
     @Transactional
     @Override
@@ -109,8 +106,7 @@ public class VendorServiceImpl implements VendorService {
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
-        ImageDto imageDto = imageService.addNewImage(file);
-        vendor.setImage(imageMapper.imageDtoToImage(imageDto));
+        vendor.setImage(imageService.addNewImage(file));
         return vendor;
     }
 

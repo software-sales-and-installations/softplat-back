@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
-import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.AccessDenialException;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
@@ -29,7 +28,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class CRUDProductService {
+public class ProductService {
 
     private final ProductRepository productRepository;
     private final SellerService sellerService;
@@ -37,8 +36,8 @@ public class CRUDProductService {
     private final VendorService vendorService;
     private final ImageService imageService;
 
-    public Product create(String sellerEmail, Product product) {
-        initProduct(sellerEmail, product);
+    public Product create(String sellerEmail, Product product, Long categoryId, Long vendorId) {
+        initProduct(sellerEmail, product, categoryId, vendorId);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
@@ -98,8 +97,7 @@ public class CRUDProductService {
         if (product.getImage() != null) {
             imageService.deleteImageById(product.getImage().getId());
         }
-        ImageDto imageDto = imageService.addNewImage(file);
-        product.setImage(imageService.getImageById(imageDto.getId()));
+        product.setImage(imageService.addNewImage(file));
         return product;
     }
 
@@ -153,10 +151,10 @@ public class CRUDProductService {
                 .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 
-    private void initProduct(String sellerEmail, Product product) {
+    private void initProduct(String sellerEmail, Product product, long categoryId, long vendorId) {
         Seller seller = sellerService.getSeller(sellerEmail);
-        Category category = categoryService.getCategoryById(product.getCategory().getId());
-        Vendor vendor = vendorService.getVendorById(product.getVendor().getId());
+        Category category = categoryService.getCategoryById(categoryId);
+        Vendor vendor = vendorService.getVendorById(vendorId);
 
         product.setSeller(seller);
         product.setCategory(category);
@@ -170,5 +168,9 @@ public class CRUDProductService {
         if (!product.getSeller().getEmail().equals(email)) {
             throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
         }
+    }
+
+    public boolean checkExistsProduct(Long productId) {
+        return productRepository.existsById(productId);
     }
 }

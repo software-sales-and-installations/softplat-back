@@ -94,6 +94,9 @@ public class AuthController {
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtAuthRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
-        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(userDetailsChangeService.changePass(request))));
+        return ResponseEntity.of(
+                Optional.of(userMapper
+                        .userToUserResponseDto(userDetailsChangeService
+                                .changePass(request))));
     }
 }

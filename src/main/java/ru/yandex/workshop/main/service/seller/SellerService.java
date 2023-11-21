@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.configuration.PageRequestOverride;
-import ru.yandex.workshop.main.dto.image.ImageDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
@@ -59,8 +58,7 @@ public class SellerService {
         if (seller.getImage() != null) {
             imageService.deleteImageById(seller.getImage().getId());
         }
-        ImageDto imageDto = imageService.addNewImage(file);
-        seller.setImage(imageService.getImageById(imageDto.getId()));
+        seller.setImage(imageService.addNewImage(file));
         return seller;
     }
 

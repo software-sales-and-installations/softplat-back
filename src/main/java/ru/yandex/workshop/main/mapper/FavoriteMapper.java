@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.workshop.main.dto.user.response.FavoriteResponseDto;
 import ru.yandex.workshop.main.model.buyer.Favorite;
 
-@Mapper(componentModel = "spring")
+@Mapper
 @Component
 public interface FavoriteMapper {
 
