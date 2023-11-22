@@ -12,6 +12,7 @@ import ru.yandex.workshop.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesResponseDto;
 import ru.yandex.workshop.main.dto.user.SellerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
+import ru.yandex.workshop.main.dto.user.response.SellersListResponseDto;
 import ru.yandex.workshop.main.mapper.SellerMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.seller.BankRequisites;
@@ -39,13 +40,14 @@ public class SellerController {
 
     @Operation(summary = "Получение списка продавцов", description = "Доступ для всех")
     @GetMapping
-    public List<SellerResponseDto> getAllSellers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
-                                                 @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
+    public SellersListResponseDto getAllSellers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
+                                                @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_All_SELLERS.label);
-        List<Seller> response = sellerService.getAllSellers(minId, pageSize);
-        return response.stream()
+        List<Seller> sellerList = sellerService.getAllSellers(minId, pageSize);
+        List<SellerResponseDto> response = sellerList.stream()
                 .map(sellerMapper::sellerToSellerResponseDto)
                 .collect(Collectors.toList());
+        return SellersListResponseDto.builder().sellers(response).build();
     }
 
     @Operation(summary = "Получение конкретного продавца по userId", description = "Доступ для всех")

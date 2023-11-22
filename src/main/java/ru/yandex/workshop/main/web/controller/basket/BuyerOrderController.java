@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.basket.OrderCreateDto;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
+import ru.yandex.workshop.main.dto.basket.OrdersListResponseDto;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.mapper.OrderMapper;
@@ -43,11 +44,12 @@ public class BuyerOrderController {
     @Operation(summary = "Список: Мои покупки", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping
-    public List<OrderResponseDto> getAllOrders(@ApiIgnore Principal principal) {
+    public OrdersListResponseDto getAllOrders(@ApiIgnore Principal principal) {
         log.debug(LogMessage.TRY_GET_ALL_ORDERS.label);
-        return orderService.getAllOrders(principal.getName()).stream()
+        List<OrderResponseDto> response = orderService.getAllOrders(principal.getName()).stream()
                 .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
+        return OrdersListResponseDto.builder().orders(response).build();
     }
 
     @Operation(summary = "Получение конкретной покупки", description = "Доступ для покупателя")

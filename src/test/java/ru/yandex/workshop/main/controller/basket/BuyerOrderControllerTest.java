@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.controller.CrudOperations;
 import ru.yandex.workshop.main.dto.basket.OrderCreateDto;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
+import ru.yandex.workshop.main.dto.basket.OrdersListResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 
 import java.util.ArrayList;
@@ -140,9 +141,9 @@ class BuyerOrderControllerTest extends CrudOperations {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<OrderResponseDto> orderResponseDtoList = List.of(objectMapper.readValue(
+        List<OrderResponseDto> orderResponseDtoList = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                OrderResponseDto[].class));
+                OrdersListResponseDto.class).getOrders();
 
         assertEquals(2, orderResponseDtoList.size());
         assertEquals(1L, orderResponseDtoList.get(0).getId());

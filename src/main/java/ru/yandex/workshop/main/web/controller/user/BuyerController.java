@@ -9,7 +9,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.workshop.main.dto.user.BuyerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
+import ru.yandex.workshop.main.dto.user.response.BuyersListResponseDto;
 import ru.yandex.workshop.main.dto.user.response.FavoriteResponseDto;
+import ru.yandex.workshop.main.dto.user.response.FavouritesListResponseDto;
 import ru.yandex.workshop.main.mapper.BuyerMapper;
 import ru.yandex.workshop.main.mapper.FavoriteMapper;
 import ru.yandex.workshop.main.message.LogMessage;
@@ -39,13 +41,14 @@ public class BuyerController {
     @Operation(summary = "Получение списка покупателей", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping
-    public List<BuyerResponseDto> getAllBuyers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
-                                               @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
+    public BuyersListResponseDto getAllBuyers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
+                                              @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_All_BUYERS.label);
-        List<Buyer> response = buyerService.getAllBuyers(minId, pageSize);
-        return response.stream()
+        List<Buyer> buyerList = buyerService.getAllBuyers(minId, pageSize);
+        List<BuyerResponseDto> response = buyerList.stream()
                 .map(buyerMapper::buyerToBuyerResponseDto)
                 .collect(Collectors.toList());
+        return BuyersListResponseDto.builder().buyers(response).build();
     }
 
     @PreAuthorize("hasAuthority('buyer:write') || hasAuthority('admin:write')")
@@ -90,11 +93,12 @@ public class BuyerController {
     @Operation(summary = "Просмотр избранных товаров", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/favorites")
-    public List<FavoriteResponseDto> getAll(@ApiIgnore Principal principal) {
+    public FavouritesListResponseDto getBuyerFavouriteProducts(@ApiIgnore Principal principal) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, principal.getName());
-        List<Favorite> response = favoriteService.getAll(principal.getName());
-        return response.stream()
+        List<Favorite> favoriteList = favoriteService.getAll(principal.getName());
+        List<FavoriteResponseDto> response = favoriteList.stream()
                 .map(favoriteMapper::toFavouriteDto)
                 .collect(Collectors.toList());
+        return FavouritesListResponseDto.builder().favorites(response).build();
     }
 }
