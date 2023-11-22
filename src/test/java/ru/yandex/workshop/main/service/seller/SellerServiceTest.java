@@ -132,7 +132,7 @@ class SellerServiceTest {
         int size = 1;
         List<Seller> expect = List.of(seller);
 
-        lenient().when(sellerRepository.findAll(PageRequestOverride.of(from, size)))
+        when(sellerRepository.findAll(PageRequestOverride.of(from, size)))
                 .thenReturn(new PageImpl<>(List.of(seller)));
         List<Seller> actual = sellerService.getAllSellers(from, size);
 
