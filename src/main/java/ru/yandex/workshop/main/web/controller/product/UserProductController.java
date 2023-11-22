@@ -144,6 +144,6 @@ public class UserProductController {
         List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        return ProductsListResponseDto.builder().products(response).build();
+        return productMapper.toProductsListResponseDto(response);
     }
 }

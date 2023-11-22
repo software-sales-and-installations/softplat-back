@@ -48,7 +48,7 @@ public class BuyerController {
         List<BuyerResponseDto> response = buyerList.stream()
                 .map(buyerMapper::buyerToBuyerResponseDto)
                 .collect(Collectors.toList());
-        return BuyersListResponseDto.builder().buyers(response).build();
+        return buyerMapper.toBuyersListResponseDto(response);
     }
 
     @PreAuthorize("hasAuthority('buyer:write') || hasAuthority('admin:write')")
@@ -99,6 +99,6 @@ public class BuyerController {
         List<FavoriteResponseDto> response = favoriteList.stream()
                 .map(favoriteMapper::toFavouriteDto)
                 .collect(Collectors.toList());
-        return FavouritesListResponseDto.builder().favorites(response).build();
+        return favoriteMapper.toFavouritesListResponseDto(response);
     }
 }

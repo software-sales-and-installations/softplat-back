@@ -64,7 +64,7 @@ public class VendorController {
         List<VendorResponseDto> response = vendorList.stream()
                 .map(vendorMapper::vendorToVendorResponseDto)
                 .collect(Collectors.toList());
-        return VendorsListResponseDto.builder().vendors(response).build();
+        return vendorMapper.toVendorsListResponseDto(response);
     }
 
     @Operation(summary = "Получение вендора по id", description = "Доступ для всех")

@@ -21,8 +21,4 @@ public interface ImageMapper {
                 .path(String.valueOf(image.getId()))
                 .toUriString();
     }
-
-    ImageDto imageToImageDto(Image image);
-
-    Image imageDtoToImage(ImageDto imageDto);
 }

@@ -47,7 +47,7 @@ public class SellerController {
         List<SellerResponseDto> response = sellerList.stream()
                 .map(sellerMapper::sellerToSellerResponseDto)
                 .collect(Collectors.toList());
-        return SellersListResponseDto.builder().sellers(response).build();
+        return sellerMapper.toSellersListResponseDto(response);
     }
 
     @Operation(summary = "Получение конкретного продавца по userId", description = "Доступ для всех")

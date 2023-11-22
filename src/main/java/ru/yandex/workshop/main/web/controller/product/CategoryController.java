@@ -33,7 +33,7 @@ public class CategoryController {
         List<CategoryResponseDto> response = service.findCategoryAll().stream()
                 .map(categoryMapper::categoryToCategoryResponseDto)
                 .collect(Collectors.toList());
-        return CategoriesListResponseDto.builder().categories(response).build();
+        return categoryMapper.toCategoriesListResponseDto(response);
     }
 
     @Operation(summary = "Получение категории по id", description = "Доступ для всех")

@@ -49,7 +49,7 @@ public class BuyerOrderController {
         List<OrderResponseDto> response = orderService.getAllOrders(principal.getName()).stream()
                 .map(orderMapper::orderToOrderDto)
                 .collect(Collectors.toList());
-        return OrdersListResponseDto.builder().orders(response).build();
+        return orderMapper.toOrdersListResponseDto(response);
     }
 
     @Operation(summary = "Получение конкретной покупки", description = "Доступ для покупателя")
