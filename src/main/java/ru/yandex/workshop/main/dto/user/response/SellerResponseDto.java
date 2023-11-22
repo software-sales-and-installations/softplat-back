@@ -17,7 +17,6 @@ public class SellerResponseDto {
     String email;
     String name;
     String phone;
-    String description;
     LocalDateTime registrationTime;
     BankRequisites requisites;
     ImageResponseDto imageResponseDto;

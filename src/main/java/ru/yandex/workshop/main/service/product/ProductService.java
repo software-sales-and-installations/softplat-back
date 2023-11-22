@@ -170,7 +170,12 @@ public class ProductService {
         }
     }
 
-    public boolean checkExistsProduct(Long productId) {
-        return productRepository.existsById(productId);
+    @Transactional(readOnly = true)
+    public Product getAvailableProduct(long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        if (!product.getProductAvailability() || product.getProductStatus() != ProductStatus.PUBLISHED)
+            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+        return product;
     }
 }
