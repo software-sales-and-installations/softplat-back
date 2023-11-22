@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.yandex.workshop.main.dto.error.ErrorResponse;
 import ru.yandex.workshop.main.exception.*;
-import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.security.exception.UnauthorizedException;
 import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
@@ -33,7 +32,6 @@ public class ErrorHandler {
         log.error(Arrays.toString(e.getStackTrace()));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.DUPLICATE_EXCEPTION.label)
                 .status(HttpStatus.CONFLICT.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -46,7 +44,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label)
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -59,7 +56,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
                 .status(HttpStatus.NOT_FOUND.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -72,7 +68,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label)
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -85,7 +80,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.UNAUTHORIZED_EXCEPTION.label)
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -102,7 +96,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.VALIDATION_EXCEPTION.label)
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -115,7 +108,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.ACCESS_EXCEPTION.label)
                 .status(HttpStatus.CONFLICT.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -128,7 +120,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.IMAGE_SERVER_UPLOAD_EXCEPTION.label)
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -141,7 +132,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.IMAGE_FORMAT_EXCEPTION.label)
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -154,7 +144,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.DATA_EXCEPTION.label)
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -167,7 +156,6 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
-                .reason(ExceptionMessage.SIZE_EXCEPTION.label)
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();

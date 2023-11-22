@@ -34,8 +34,10 @@ public class SearchProductService {
 
     @Transactional(readOnly = true)
     public Product getProductById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        return productRepository.findById(productId).orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+                ));
     }
 
     @Transactional(readOnly = true)

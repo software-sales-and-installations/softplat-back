@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class VendorServiceImpl implements VendorService {
@@ -33,16 +33,14 @@ public class VendorServiceImpl implements VendorService {
     private final ImageService imageService;
     private final VendorMapper vendorMapper;
 
-    @Transactional
     @Override
     public Vendor createVendor(VendorCreateUpdateDto vendorCreateUpdateDto) {
         return repository.save(vendorMapper.vendorDtoToVendor(vendorCreateUpdateDto));
     }
 
-    @Transactional
     @Override
     public Vendor changeVendorById(Long vendorId, VendorCreateUpdateDto vendorUpdateDto) {
-        Vendor oldVendor = getVendor(vendorId);
+        Vendor oldVendor = getVendorById(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
             oldVendor.setName(vendorUpdateDto.getName());
@@ -58,6 +56,7 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Vendor> findVendorsWithFilter(VendorSearchRequestDto vendorSearchRequestDto, int from, int size) {
         PageRequest pageRequest = PageRequestOverride.of(from, size);
 
@@ -86,23 +85,23 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Vendor getVendorById(Long vendorId) {
         return repository.findById(vendorId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
-        );
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(vendorId), Vendor.class)
+                ));
     }
 
-    @Transactional
     @Override
     public void deleteVendor(Long vendorId) {
-        getVendor(vendorId);
+        getVendorById(vendorId);
         repository.deleteById(vendorId);
     }
 
-    @Transactional
     @Override
     public Vendor addVendorImage(Long vendorId, MultipartFile file) {
-        Vendor vendor = getVendor(vendorId);
+        Vendor vendor = getVendorById(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
@@ -110,17 +109,11 @@ public class VendorServiceImpl implements VendorService {
         return vendor;
     }
 
-    @Transactional
     @Override
     public void deleteVendorImage(Long vendorId) {
-        Vendor vendor = getVendor(vendorId);
+        Vendor vendor = getVendorById(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
-    }
-
-    private Vendor getVendor(Long vendorId) {
-        return repository.findById(vendorId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

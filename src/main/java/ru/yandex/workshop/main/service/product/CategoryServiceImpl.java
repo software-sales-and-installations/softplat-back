@@ -41,8 +41,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional(readOnly = true)
     public Category getCategoryById(Long catId) {
         return repository.findById(catId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
-        );
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(catId), Category.class)
+                ));
     }
 
     @Override
