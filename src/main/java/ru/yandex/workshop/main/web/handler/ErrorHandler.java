@@ -32,6 +32,7 @@ public class ErrorHandler {
         log.error(Arrays.toString(e.getStackTrace()));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.CONFLICT.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -44,6 +45,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -56,6 +58,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.NOT_FOUND.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -68,6 +71,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -80,6 +84,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -87,18 +92,19 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationErrors(final MethodArgumentNotValidException e) {
+    public List<ErrorResponse> handleValidationErrors(final MethodArgumentNotValidException e) {
         e.printStackTrace();
-        List<String> details = new ArrayList<>();
+        List<ErrorResponse> details = new ArrayList<>();
         for (ObjectError error : e.getBindingResult().getAllErrors()) {
-            details.add(error.getDefaultMessage());
+            details.add(ErrorResponse.builder()
+                    .message(error.getDefaultMessage())
+                    .error(error.getClass().getSimpleName())
+                    .status(HttpStatus.BAD_REQUEST.toString())
+                    .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
+                    .build());
         }
         log.error(String.valueOf(e));
-        return ErrorResponse.builder()
-                .message(e.getMessage())
-                .status(HttpStatus.BAD_REQUEST.toString())
-                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
-                .build();
+        return details;
     }
 
     @ExceptionHandler
@@ -108,6 +114,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.CONFLICT.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -120,6 +127,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -132,6 +140,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -144,6 +153,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
@@ -156,6 +166,7 @@ public class ErrorHandler {
         log.error(String.valueOf(e));
         return ErrorResponse.builder()
                 .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
                 .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
