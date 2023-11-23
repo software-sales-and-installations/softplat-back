@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.model.product;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Cascade;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.workshop.main.model.image.Image;
 import ru.yandex.workshop.main.model.seller.Seller;
@@ -39,6 +40,7 @@ public class Product {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
     Image image;
 
     @OneToOne

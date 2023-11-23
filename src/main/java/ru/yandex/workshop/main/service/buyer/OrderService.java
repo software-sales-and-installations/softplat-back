@@ -89,7 +89,9 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(() ->
-                new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(orderId), Order.class)
+                ));
     }
 
     @Transactional(readOnly = true)

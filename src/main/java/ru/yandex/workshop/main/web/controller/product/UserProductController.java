@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.product.ProductsListResponseDto;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.mapper.ProductMapper;
@@ -135,13 +136,14 @@ public class UserProductController {
     @Operation(summary = "Получение списка товаров на модерацию", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/shipped")
-    public List<ProductResponseDto> getAllProductsShipped(
+    public ProductsListResponseDto getAllProductsShipped(
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SHIPPED.label);
-        List<Product> response = productService.getAllProductsShipped(minId, pageSize);
-        return response.stream()
+        List<Product> productList = productService.getAllProductsShipped(minId, pageSize);
+        List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
+        return productMapper.toProductsListResponseDto(response);
     }
 }

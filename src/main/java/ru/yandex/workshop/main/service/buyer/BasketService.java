@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
 import ru.yandex.workshop.main.model.buyer.Basket;
@@ -132,7 +133,10 @@ public class BasketService {
     public Basket getBasketOrThrowException(String email) {
         Buyer buyer = buyerService.getBuyerByEmail(email);
         Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
-        return basket.orElseThrow(() -> new NullPointerException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        return basket.orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Basket.class)
+                ));
     }
 
     public void removeBasketPosition(long basketPositionId) {

@@ -12,9 +12,11 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.workshop.main.controller.AbstractControllerTest;
+import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
+import ru.yandex.workshop.main.dto.vendor.VendorsListResponseDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 
 import java.nio.charset.StandardCharsets;
@@ -79,15 +81,21 @@ class VendorControllerTest extends AbstractControllerTest {
         vendorCreateUpdateDto.setCountry(Country.CHINA);
         VendorResponseDto response = createVendor(vendorCreateUpdateDto);
         VendorSearchRequestDto vendorFilter = new VendorSearchRequestDto("test", List.of(Country.CHINA));
-        List<VendorResponseDto> expectedVendors = List.of(response);
+        List<VendorResponseDto> expected = List.of(response);
 
-        mvc.perform(get("/vendor/search")
+        MvcResult result = mvc.perform(get("/vendor/search")
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(vendorFilter)))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(expectedVendors)));
+                .andReturn();
+
+        List<VendorResponseDto> actual = mapper.readValue(
+                result.getResponse().getContentAsString(),
+                VendorsListResponseDto.class).getVendors();
+
+        assertEquals(expected, actual);
     }
 
     @Test

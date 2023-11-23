@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.basket.OrderCreateDto;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
+import ru.yandex.workshop.main.dto.basket.OrdersListResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 
 import java.util.ArrayList;
@@ -138,15 +139,15 @@ class BuyerOrderControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<OrderResponseDto> actualOrderResponseDtoList = List.of(objectMapper.readValue(
+        List<OrderResponseDto> orderResponseDtoList = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                OrderResponseDto[].class));
+                OrdersListResponseDto.class).getOrders();
 
-        assertEquals(2, actualOrderResponseDtoList.size());
-        assertEquals(1L, actualOrderResponseDtoList.get(0).getId());
-        assertEquals(2L, actualOrderResponseDtoList.get(1).getId());
-        assertEquals(1, actualOrderResponseDtoList.get(0).getProductsOrdered().size());
-        assertEquals(2, actualOrderResponseDtoList.get(1).getProductsOrdered().size());
+        assertEquals(2, orderResponseDtoList.size());
+        assertEquals(1L, orderResponseDtoList.get(0).getId());
+        assertEquals(2L, orderResponseDtoList.get(1).getId());
+        assertEquals(1, orderResponseDtoList.get(0).getProductsOrdered().size());
+        assertEquals(2, orderResponseDtoList.get(1).getProductsOrdered().size());
     }
 }
 

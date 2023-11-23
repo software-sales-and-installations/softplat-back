@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.product.ProductsListResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductsSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 
@@ -109,11 +110,11 @@ class PublicProductControllerTest extends AbstractControllerTest {
     @MethodSource("productSearchTestArguments")
     @SneakyThrows
     void searchProducts_shouldReturnProducts_whenProductSearchRequestFilterPasses(
-            ProductsSearchRequestDto productFiler,
+            ProductsSearchRequestDto productFilter,
             String sort,
             List<Long> productIds) {
 
-        List<ProductResponseDto> actual = getSearchResultsByFilter(productFiler, sort);
+        List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort).getProducts();
         List<ProductResponseDto> expect = getProductsByIds(productIds);
 
         assertEquals(expect.size(), actual.size());
@@ -139,7 +140,7 @@ class PublicProductControllerTest extends AbstractControllerTest {
         return response;
     }
 
-    private List<ProductResponseDto> getSearchResultsByFilter(ProductsSearchRequestDto productFilter, String sort) throws Exception {
+    private ProductsListResponseDto getSearchResultsByFilter(ProductsSearchRequestDto productFilter, String sort) throws Exception {
         MvcResult result = mockMvc.perform(get("/product/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productFilter))
@@ -149,8 +150,8 @@ class PublicProductControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        return List.of(objectMapper.readValue(
+        return objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                ProductResponseDto[].class));
+                ProductsListResponseDto.class);
     }
 }

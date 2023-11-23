@@ -25,12 +25,14 @@ public class SellerBankService {
     public BankRequisites getRequisites(Long userId) {
         Seller seller = sellerService.getSeller(userId);
         if (seller.getRequisites() == null)
-            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+            throw new EntityNotFoundException(
+                    ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(userId), BankRequisites.class)
+            );
         return seller.getRequisites();
     }
 
     public BankRequisites updateRequisites(String email, BankRequisites requisites) {
-        Seller seller = getSellerFromDatabase(email);
+        Seller seller = sellerService.getSeller(email);
         if (seller.getRequisites() != null) {
             bankRepository.deleteById(seller.getRequisites().getId());
         }
@@ -39,16 +41,13 @@ public class SellerBankService {
     }
 
     public void deleteRequisites(String email) {
-        Seller seller = getSellerFromDatabase(email);
+        Seller seller = sellerService.getSeller(email);
         if (seller.getRequisites() == null)
-            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+            throw new EntityNotFoundException(
+                    ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, BankRequisites.class)
+            );
         bankRepository.delete(seller.getRequisites());
         seller.setRequisites(null);
         sellerRepository.save(seller);
-    }
-
-    private Seller getSellerFromDatabase(String email) {
-        return sellerRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
     }
 }

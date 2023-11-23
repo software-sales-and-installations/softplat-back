@@ -12,6 +12,7 @@ import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
+import ru.yandex.workshop.main.dto.vendor.VendorsListResponseDto;
 import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.vendor.Vendor;
@@ -54,15 +55,16 @@ public class VendorController {
 
     @Operation(summary = "Получение списка вендоров с фильтрацией", description = "Доступ для всех")
     @GetMapping("/search")
-    public List<VendorResponseDto> findVendorWithFilers(
+    public VendorsListResponseDto findVendorWithFilers(
             @RequestBody(required = false) VendorSearchRequestDto vendorSearchRequestDto,
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_VENDORS.label);
-        List<Vendor> response = service.findVendorsWithFilter(vendorSearchRequestDto, minId, pageSize);
-        return response.stream()
+        List<Vendor> vendorList = service.findVendorsWithFilter(vendorSearchRequestDto, minId, pageSize);
+        List<VendorResponseDto> response = vendorList.stream()
                 .map(vendorMapper::vendorToVendorResponseDto)
                 .collect(Collectors.toList());
+        return vendorMapper.toVendorsListResponseDto(response);
     }
 
     @Operation(summary = "Получение вендора по id", description = "Доступ для всех")

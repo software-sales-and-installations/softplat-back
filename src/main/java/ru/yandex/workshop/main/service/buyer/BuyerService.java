@@ -62,15 +62,17 @@ public class BuyerService {
     @Transactional(readOnly = true)
     public Buyer getBuyer(Long userId) {
         return buyerRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
-        );
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(userId), Buyer.class)
+                ));
     }
 
     @Transactional(readOnly = true)
     public Buyer getBuyerByEmail(String email) {
-        return buyerRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        return buyerRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Buyer.class)
+                ));
     }
 
     @Transactional(readOnly = true)

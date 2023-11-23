@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.Favorite;
 import ru.yandex.workshop.main.repository.buyer.FavoriteRepository;
 import ru.yandex.workshop.main.service.product.ProductService;
@@ -38,7 +39,9 @@ public class BuyerFavoriteService {
     @Transactional(readOnly = true)
     public List<Favorite> getAll(String buyerEmail) {
         if (!buyerService.checkIfUserExistsByEmail(buyerEmail))
-            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+            throw new EntityNotFoundException(
+                    ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(buyerEmail, Buyer.class)
+            );
         return favoriteRepository.findAllByBuyerEmail(buyerEmail);
     }
 

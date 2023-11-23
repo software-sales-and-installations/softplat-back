@@ -62,7 +62,8 @@ public class ImageServiceImpl implements ImageService {
     @Transactional(readOnly = true)
     public Image getImageById(Long imageId) {
         return imageRepository.findById(imageId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.name())
-        );
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(imageId), Image.class)
+                ));
     }
 }
