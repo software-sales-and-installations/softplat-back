@@ -71,7 +71,9 @@ public class SellerService {
 
     public void deleteSellerImageBySellerId(Long sellerId) {
         Seller seller = sellerRepository.findById(sellerId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(sellerId), Seller.class)
+                ));
         if (seller.getImage() != null) {
             imageService.deleteImageById(seller.getImage().getId());
         }
@@ -86,14 +88,17 @@ public class SellerService {
     @Transactional(readOnly = true)
     public Seller getSeller(Long userId) {
         return sellerRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
-        );
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(userId), Seller.class)
+                ));
     }
 
     @Transactional(readOnly = true)
     public Seller getSeller(String email) {
-        return sellerRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        return sellerRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Seller.class)
+                ));
     }
 
     private boolean checkIfSellerExistsByEmail(String email) {

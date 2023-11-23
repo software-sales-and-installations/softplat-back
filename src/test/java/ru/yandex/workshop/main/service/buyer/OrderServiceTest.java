@@ -49,27 +49,27 @@ class OrderServiceTest {
 
     @Test
     @SneakyThrows
-    void getOrderTest() {
+    void getOrder_shouldReturnOrder_whenIdIsValid() {
         when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
 
-        Order response = orderService.getOrder(1L);
+        Order actual = orderService.getOrder(1L);
 
-        assertEquals(order.getId(), response.getId());
-        assertEquals(order.getProductionTime(), response.getProductionTime());
-        assertEquals(order.getBuyer().getEmail(), response.getBuyer().getEmail());
+        assertEquals(order.getId(), actual.getId());
+        assertEquals(order.getProductionTime(), actual.getProductionTime());
+        assertEquals(order.getBuyer().getEmail(), actual.getBuyer().getEmail());
     }
 
     @Test
     @SneakyThrows
-    void getAllOrdersTest() {
+    void getAllOrders_shouldReturnListOfOrders() {
         when(buyerService.getBuyerByEmail(email)).thenReturn(buyer);
         when(orderRepository.findAllByBuyer_Id(anyLong(), any())).thenReturn(List.of(order));
 
-        List<Order> response = orderService.getAllOrders(email);
+        List<Order> actual = orderService.getAllOrders(email);
 
-        assertEquals(order.getId(), response.get(0).getId());
-        assertEquals(order.getProductionTime(), response.get(0).getProductionTime());
-        assertEquals(order.getBuyer().getEmail(), response.get(0).getBuyer().getEmail());
+        assertEquals(order.getId(), actual.get(0).getId());
+        assertEquals(order.getProductionTime(), actual.get(0).getProductionTime());
+        assertEquals(order.getBuyer().getEmail(), actual.get(0).getBuyer().getEmail());
     }
 }
 

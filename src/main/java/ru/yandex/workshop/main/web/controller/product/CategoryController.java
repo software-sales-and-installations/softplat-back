@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.workshop.main.dto.category.CategoriesListResponseDto;
 import ru.yandex.workshop.main.dto.category.CategoryCreateUpdateDto;
 import ru.yandex.workshop.main.dto.category.CategoryResponseDto;
 import ru.yandex.workshop.main.mapper.CategoryMapper;
@@ -27,12 +28,12 @@ public class CategoryController {
 
     @Operation(summary = "Получение списка категорий", description = "Доступ для всех")
     @GetMapping
-    public List<CategoryResponseDto> findAllCategories() {
+    public CategoriesListResponseDto findAllCategories() {
         log.debug(LogMessage.TRY_GET_CATEGORY.label);
-        List<Category> response = service.findCategoryAll();
-        return response.stream()
+        List<CategoryResponseDto> response = service.findCategoryAll().stream()
                 .map(categoryMapper::categoryToCategoryResponseDto)
                 .collect(Collectors.toList());
+        return categoryMapper.toCategoriesListResponseDto(response);
     }
 
     @Operation(summary = "Получение категории по id", description = "Доступ для всех")
@@ -58,7 +59,7 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{catId}")
     public CategoryResponseDto changeCategoryById(@PathVariable(name = "catId") Long catId,
-                                          @RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
+                                                  @RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_CATEGORY.label, catId);
         Category updateRequest = categoryMapper.categoryDtoToCategory(categoryCreateUpdateDto);
         Category response = service.changeCategoryById(catId, updateRequest);

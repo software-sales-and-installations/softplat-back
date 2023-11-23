@@ -69,16 +69,17 @@ class ImageServiceImplTest {
     @Disabled
     @Test
     @SneakyThrows
-    void addNewImage_whenValid_thenReturnImageDto() {
+    void addNewImage_shouldReturnImageDto_whenMultipartFileIsValid() {
         when(imageRepository.save(any())).thenReturn(image);
 
         Image expected = Image.builder().name(image.getName()).build();
         Image actual = imageService.addNewImage(multipartFile);
+
         assertEquals(expected, actual);
     }
 
     @Test
-    void getImageAsByteArray_whenImageIdNotValid_throwEntityNotFoundException() {
+    void getImageAsByteArray_shouldThrowEntityNotFoundException_whenImageIdNotValid() {
         long imageId = 1L;
 
         when(imageRepository.findById(anyLong()))
@@ -89,25 +90,26 @@ class ImageServiceImplTest {
     }
 
     @Test
-    void getImageAsByteArray_whenValid_thenReturnResponseWithByteArray() {
+    void getImageAsByteArray_shouldReturnResponseWithByteArray_whenMultipartFileIsValid() {
         when(imageRepository.findById(anyLong()))
                 .thenReturn(Optional.of(image));
 
-        ResponseEntity<byte[]> response = imageService.getImageAsByteArray(1L);
+        ResponseEntity<byte[]> actual = imageService.getImageAsByteArray(1L);
         String contentDisposition = "attachment; filename=\"" + image.getName() + "\"";
-        assertEquals(contentDisposition, response.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION).get(0));
-        assertEquals(MediaType.IMAGE_PNG, response.getHeaders().getContentType());
-        assertArrayEquals(image.getBytes(), response.getBody());
+
+        assertEquals(contentDisposition, actual.getHeaders().get(HttpHeaders.CONTENT_DISPOSITION).get(0));
+        assertEquals(MediaType.IMAGE_PNG, actual.getHeaders().getContentType());
+        assertArrayEquals(image.getBytes(), actual.getBody());
     }
 
     @Test
-    void deleteImageById_whenValid_then() {
+    void deleteImageById_shouldExecuteAndDeleteImage() {
         long imageId = 1L;
 
         when(imageRepository.findById(anyLong()))
                 .thenReturn(Optional.of(image));
-
         imageService.deleteImageById(imageId);
+
         verify(imageRepository).findById(imageId);
         verify(imageRepository).deleteById(imageId);
     }

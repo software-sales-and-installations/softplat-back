@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.model.seller;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Cascade;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.yandex.workshop.main.model.image.Image;
 
@@ -30,8 +31,10 @@ public class Seller {
     LocalDateTime registrationTime;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requisites_id")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
     BankRequisites requisites;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
     Image image;
 }

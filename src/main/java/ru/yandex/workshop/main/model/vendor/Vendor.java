@@ -2,6 +2,7 @@ package ru.yandex.workshop.main.model.vendor;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.Cascade;
 import ru.yandex.workshop.main.model.image.Image;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Vendor {
     String description;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
+    @Cascade(org.hibernate.annotations.CascadeType.DELETE)
     Image image;
     @Enumerated(EnumType.STRING)
     Country country;

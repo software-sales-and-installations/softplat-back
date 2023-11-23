@@ -40,7 +40,7 @@ class BuyerServiceTest {
     }
 
     @Test
-    void addBuyer_whenBuyerExists_throwDuplicateException() {
+    void addBuyer_shouldThrowDuplicateException_whenBuyerExists() {
         when(buyerRepository.findByEmail(anyString()))
                 .thenReturn(Optional.of(buyer));
 
@@ -50,19 +50,19 @@ class BuyerServiceTest {
 
 
     @Test
-    void addBuyer_whenValid_thenReturnBuyer() {
+    void addBuyer_shouldReturnBuyer_whenValid() {
         buyer.setPhone("1234567890");
         buyer.setRegistrationTime(LocalDateTime.now());
+        Buyer expect = buyer;
 
         when(buyerRepository.save(any())).thenReturn(buyer);
+        Buyer actual = buyerService.addBuyer(buyer);
 
-        Buyer actual = buyer;
-        Buyer expect = buyerRepository.save(buyer);
         assertEquals(expect, actual);
     }
 
     @Test
-    void updateBuyer_whenEmailNotValid_throwEntityNotFoundException() {
+    void updateBuyer_shouldThrowEntityNotFoundException_whenEmailNotValid() {
         when(buyerRepository.findByEmail(anyString()))
                 .thenReturn(Optional.empty());
 
@@ -74,7 +74,7 @@ class BuyerServiceTest {
     }
 
     @Test
-    void updateBuyer_whenUpdatedEmailExists_throwDuplicateException() {
+    void updateBuyer_shouldThrowDuplicateException_whenUpdatedEmailExists() {
         buyer.setEmail("email@email.com");
 
         when(buyerRepository.findByEmail(anyString()))
@@ -88,24 +88,23 @@ class BuyerServiceTest {
     }
 
     @Test
-    void updateBuyer_whenValid_thenReturnBuyerResponseDto() {
+    void updateBuyer_shouldReturnBuyerResponseDto_whenValid() {
         buyer.setName(updateBuyer.getName());
         buyer.setPhone(updateBuyer.getPhone());
+        Buyer expect = buyer;
 
         verify(changeService, never()).changeEmail(anyString(), anyString());
-
         when(buyerRepository.save(any())).thenReturn(buyer);
         when(buyerRepository.findByEmail(buyer.getEmail()))
                 .thenReturn(Optional.of(buyer));
 
-        Buyer expect = buyer;
         Buyer actual = buyerService.updateBuyer(buyer.getEmail(), updateBuyer);
 
         assertEquals(expect, actual);
     }
 
     @Test
-    void getBuyer_whenIdNotValid_throwEntityNotFoundException() {
+    void getBuyer_shouldThrowEntityNotFoundException_whenIdNotValid() {
         when(buyerRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
@@ -114,12 +113,13 @@ class BuyerServiceTest {
     }
 
     @Test
-    void getBuyer_whenIdValid_thenReturnBuyerResponseDto() {
+    void getBuyer_shouldReturnBuyerResponseDto_whenIdValid() {
+        Buyer expect = buyer;
+
         when(buyerRepository.findById(anyLong()))
                 .thenReturn(Optional.of(buyer));
-
-        Buyer expect = buyer;
         Buyer actual = buyerService.getBuyer(1L);
+
         assertEquals(expect, actual);
     }
 }

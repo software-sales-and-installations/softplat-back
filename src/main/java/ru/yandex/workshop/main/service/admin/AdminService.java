@@ -28,8 +28,9 @@ public class AdminService {
     public Admin getAdmin(String email) {
         return adminRepository
                 .findByEmail(email).orElseThrow(
-                        () -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label)
-                );
+                        () -> new EntityNotFoundException(
+                                ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Admin.class)
+                        ));
     }
 
     @Transactional(readOnly = true)

@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import ru.yandex.workshop.main.controller.CrudOperations;
+import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.basket.OrderCreateDto;
 import ru.yandex.workshop.main.dto.basket.OrderResponseDto;
+import ru.yandex.workshop.main.dto.basket.OrdersListResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 
 import java.util.ArrayList;
@@ -26,12 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @Sql("/data-test.sql")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class BuyerOrderControllerTest extends CrudOperations {
+class BuyerOrderControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,7 +49,7 @@ class BuyerOrderControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "buyer1@email.ru", authorities = {"buyer:write"})
-    void addOrder_whenHaveOneId_returnOrderResponseDto() {
+    void addOrder_shouldReturnOrderResponseDto_whenHaveOneId() {
         List<Long> basketPositionIds = new ArrayList<>();
         basketPositionIds.add(1L);
 
@@ -72,62 +71,62 @@ class BuyerOrderControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "buyer1@email.ru", authorities = {"buyer:write"})
-    void addOrder_whenHaveTwoIdsAndInstallation_returnOrderResponseDto() {
+    void addOrder_shouldReturnOrderResponseDto_whenHaveTwoIdsAndInstallation() {
         List<Long> basketPositionIds = new ArrayList<>();
         basketPositionIds.add(1L);
         basketPositionIds.add(2L);
 
-        OrderResponseDto orderResponseDto = addOrder(new OrderCreateDto(basketPositionIds));
+        OrderResponseDto actualOrderResponseDto = addOrder(new OrderCreateDto(basketPositionIds));
 
-        ProductResponseDto productResponseDto1 = getProductResponseDto(1L);
+        ProductResponseDto actualProductResponseDto1 = getProductResponseDto(1L);
         ProductResponseDto productResponseDto2 = getProductResponseDto(5L);
 
-        assertEquals(1L, orderResponseDto.getId());
-        assertEquals(1L, orderResponseDto.getBuyer().getId());
-        assertEquals(productResponseDto1.getPrice() * 2 + productResponseDto2.getPrice() +
-                productResponseDto2.getInstallationPrice(), orderResponseDto.getOrderCost());
-        assertNotNull(orderResponseDto.getProductionTime());
-        assertEquals(2, orderResponseDto.getProductsOrdered().size());
+        assertEquals(1L, actualOrderResponseDto.getId());
+        assertEquals(1L, actualOrderResponseDto.getBuyer().getId());
+        assertEquals(actualProductResponseDto1.getPrice() * 2 + productResponseDto2.getPrice() +
+                productResponseDto2.getInstallationPrice(), actualOrderResponseDto.getOrderCost());
+        assertNotNull(actualOrderResponseDto.getProductionTime());
+        assertEquals(2, actualOrderResponseDto.getProductsOrdered().size());
 
-        assertEquals(1L, orderResponseDto.getProductsOrdered().get(0).getProductResponseDto().getId());
-        assertEquals(2, orderResponseDto.getProductsOrdered().get(0).getQuantity());
-        assertEquals(false, orderResponseDto.getProductsOrdered().get(0).getInstallation());
-        assertEquals(productResponseDto1.getPrice(), orderResponseDto.getProductsOrdered().get(0).getProductCost());
+        assertEquals(1L, actualOrderResponseDto.getProductsOrdered().get(0).getProductResponseDto().getId());
+        assertEquals(2, actualOrderResponseDto.getProductsOrdered().get(0).getQuantity());
+        assertEquals(false, actualOrderResponseDto.getProductsOrdered().get(0).getInstallation());
+        assertEquals(actualProductResponseDto1.getPrice(), actualOrderResponseDto.getProductsOrdered().get(0).getProductCost());
 
-        assertEquals(5L, orderResponseDto.getProductsOrdered().get(1).getProductResponseDto().getId());
-        assertEquals(1, orderResponseDto.getProductsOrdered().get(1).getQuantity());
-        assertEquals(true, orderResponseDto.getProductsOrdered().get(1).getInstallation());
+        assertEquals(5L, actualOrderResponseDto.getProductsOrdered().get(1).getProductResponseDto().getId());
+        assertEquals(1, actualOrderResponseDto.getProductsOrdered().get(1).getQuantity());
+        assertEquals(true, actualOrderResponseDto.getProductsOrdered().get(1).getInstallation());
         assertEquals(productResponseDto2.getPrice() + productResponseDto2.getInstallationPrice(),
-                orderResponseDto.getProductsOrdered().get(1).getProductCost());
+                actualOrderResponseDto.getProductsOrdered().get(1).getProductCost());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "buyer1@email.ru", authorities = {"buyer:write"})
-    void getOrder_whenHave_returnOrderResponseDto() {
+    void getOrder_shouldReturnOrderResponseDto_whenHaveOneId() {
         List<Long> basketPositionIds = new ArrayList<>();
         basketPositionIds.add(1L);
         addOrder(new OrderCreateDto(basketPositionIds));
 
-        OrderResponseDto orderResponseDto = getOrder(1L);
+        OrderResponseDto actualOrderResponseDto = getOrder(1L);
 
-        ProductResponseDto productResponseDto = getProductResponseDto(1L);
+        ProductResponseDto actualProductResponseDto = getProductResponseDto(1L);
 
-        assertEquals(1L, orderResponseDto.getId());
-        assertEquals(1L, orderResponseDto.getBuyer().getId());
-        assertEquals(1, orderResponseDto.getProductsOrdered().size());
-        assertEquals(1L, orderResponseDto.getProductsOrdered().get(0).getProductResponseDto().getId());
-        assertEquals(2, orderResponseDto.getProductsOrdered().get(0).getQuantity());
-        assertEquals(false, orderResponseDto.getProductsOrdered().get(0).getInstallation());
-        assertEquals(productResponseDto.getPrice(), orderResponseDto.getProductsOrdered().get(0).getProductCost());
-        assertEquals(productResponseDto.getPrice() * 2, orderResponseDto.getOrderCost());
-        assertNotNull(orderResponseDto.getProductionTime());
+        assertEquals(1L, actualOrderResponseDto.getId());
+        assertEquals(1L, actualOrderResponseDto.getBuyer().getId());
+        assertEquals(1, actualOrderResponseDto.getProductsOrdered().size());
+        assertEquals(1L, actualOrderResponseDto.getProductsOrdered().get(0).getProductResponseDto().getId());
+        assertEquals(2, actualOrderResponseDto.getProductsOrdered().get(0).getQuantity());
+        assertEquals(false, actualOrderResponseDto.getProductsOrdered().get(0).getInstallation());
+        assertEquals(actualProductResponseDto.getPrice(), actualOrderResponseDto.getProductsOrdered().get(0).getProductCost());
+        assertEquals(actualProductResponseDto.getPrice() * 2, actualOrderResponseDto.getOrderCost());
+        assertNotNull(actualOrderResponseDto.getProductionTime());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "buyer1@email.ru", authorities = {"buyer:write"})
-    void getAllOrders_whenHaveTwo_returnListOfOrderResponseDto() {
+    void getAllOrders_shouldReturnListOfOrderResponseDto_whenHaveTwoIds() {
         List<Long> basketPositionIds = new ArrayList<>();
         basketPositionIds.add(1L);
         addOrder(new OrderCreateDto(basketPositionIds));
@@ -140,9 +139,9 @@ class BuyerOrderControllerTest extends CrudOperations {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        List<OrderResponseDto> orderResponseDtoList = List.of(objectMapper.readValue(
+        List<OrderResponseDto> orderResponseDtoList = objectMapper.readValue(
                 result.getResponse().getContentAsString(),
-                OrderResponseDto[].class));
+                OrdersListResponseDto.class).getOrders();
 
         assertEquals(2, orderResponseDtoList.size());
         assertEquals(1L, orderResponseDtoList.get(0).getId());

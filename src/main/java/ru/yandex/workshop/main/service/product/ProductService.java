@@ -147,8 +147,10 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Product getProductOrThrowException(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        return productRepository.findById(productId).orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+                ));
     }
 
     private void initProduct(String sellerEmail, Product product, long categoryId, long vendorId) {
@@ -172,10 +174,14 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Product getAvailableProduct(long productId) {
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        Product product = productRepository.findById(productId).orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+                ));
         if (!product.getProductAvailability() || product.getProductStatus() != ProductStatus.PUBLISHED)
-            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+            throw new EntityNotFoundException(
+                    ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+            );
         return product;
     }
 }
