@@ -12,6 +12,7 @@ import ru.yandex.workshop.main.model.buyer.*;
 import ru.yandex.workshop.main.model.product.ProductStatus;
 import ru.yandex.workshop.main.repository.buyer.OrderPositionRepository;
 import ru.yandex.workshop.main.repository.buyer.OrderRepository;
+import ru.yandex.workshop.main.service.product.ProductService;
 import ru.yandex.workshop.stats.model.Stats;
 import ru.yandex.workshop.stats.service.StatsService;
 
@@ -30,6 +31,8 @@ public class OrderService {
     private final OrderPositionRepository orderPositionRepository;
     private final OrderPositionMapper mapper;
     private final StatsService statsService;
+    private final ProductService productService;
+
     private static final Float COMMISSIONS = 0.9F;
 
     public Order createOrder(String email, List<Long> basketPositionIds) {
@@ -37,6 +40,11 @@ public class OrderService {
         List<OrderPosition> orderPositionList = new ArrayList<>();
         float wholePrice = 0F;
         Basket basket = basketService.getBasketOrThrowException(email);
+
+        if (basketPositionIds.size() == 0) {
+            throw new WrongConditionException(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label
+                    + " : необходимо указать id товарных позиций из корзины для заказа");
+        }
 
         for (Long productBasketId : basketPositionIds) {
             for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
@@ -50,10 +58,15 @@ public class OrderService {
                     orderPositionRepository.save(orderPosition);
                     orderPositionList.add(orderPosition);
                     basketService.removeBasketPosition(productBasketId);
+
+                    productService.updateProductQuantityWhenOrder(positionInBasket.getProduct().getId());
                     break;
                 }
                 if (i == basket.getProductsInBasket().size() - 1) {
-                    throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
+                    throw new EntityNotFoundException(
+                            ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION
+                                    .getMessage(String.valueOf(productBasketId), BasketPosition.class)
+                    );
                 }
             }
         }

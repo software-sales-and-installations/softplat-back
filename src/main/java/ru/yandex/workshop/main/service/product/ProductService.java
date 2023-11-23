@@ -92,6 +92,12 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public void updateProductQuantityWhenOrder(Long productId) {
+        Product product = getProductOrThrowException(productId);
+        product.setQuantity(product.getQuantity() - 1);
+        productRepository.save(product);
+    }
+
     public Product createProductImage(Long productId, MultipartFile file) {
         Product product = getProductOrThrowException(productId);
         if (product.getImage() != null) {
