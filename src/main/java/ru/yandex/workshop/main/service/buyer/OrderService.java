@@ -80,7 +80,7 @@ public class OrderService {
     }
 
     private void checkIfAvailable(BasketPosition basketPosition) {
-        if (basketPosition.getProduct().getQuantity() <= basketPosition.getQuantity())
+        if (basketPosition.getProduct().getQuantity() < basketPosition.getQuantity())
             throw new WrongConditionException("Товара у продавца осталось меньше, чем в заказе");
         if (basketPosition.getProduct().getProductStatus() != ProductStatus.PUBLISHED)
             throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label);
