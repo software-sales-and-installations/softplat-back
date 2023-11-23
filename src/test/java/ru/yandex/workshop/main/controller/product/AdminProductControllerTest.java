@@ -1,19 +1,17 @@
 package ru.yandex.workshop.main.controller.product;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.workshop.main.controller.CrudOperations;
+import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.product.ProductStatus;
@@ -23,17 +21,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @Sql("/data-test.sql")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class AdminProductControllerTest extends CrudOperations {
+class AdminProductControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     private ProductResponseDto productResponseDto;
 
     @BeforeEach
@@ -45,35 +40,35 @@ class AdminProductControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
-    void updateStatusProductAdmin_whenPublished_returnUpdatedDtoWithPublishedStatus() {
+    void updateStatusProductAdmin_shouldReturnUpdatedDtoWithPublishedStatus_whenPublished() {
         long productId = productResponseDto.getId();
         ProductStatus statusUpdate = ProductStatus.PUBLISHED;
-        ProductResponseDto updatedProductResponseDto = updateProductStatusByAdmin(productId, statusUpdate);
+        ProductResponseDto actualProductResponseDto = updateProductStatusByAdmin(productId, statusUpdate);
 
-        assertEquals(productResponseDto.getId(), updatedProductResponseDto.getId());
-        assertEquals(productResponseDto.getName(), updatedProductResponseDto.getName());
-        assertEquals(productResponseDto.getDescription(), updatedProductResponseDto.getDescription());
-        assertEquals(statusUpdate, updatedProductResponseDto.getProductStatus());
+        assertEquals(productResponseDto.getId(), actualProductResponseDto.getId());
+        assertEquals(productResponseDto.getName(), actualProductResponseDto.getName());
+        assertEquals(productResponseDto.getDescription(), actualProductResponseDto.getDescription());
+        assertEquals(statusUpdate, actualProductResponseDto.getProductStatus());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
-    void updateStatusProductAdmin_whenRejected_returnUpdatedDtoWithRejectedStatus() {
+    void updateStatusProductAdmin_shouldReturnUpdatedDtoWithRejectedStatus_whenRejected() {
         long productId = productResponseDto.getId();
         ProductStatus statusUpdate = ProductStatus.REJECTED;
-        ProductResponseDto updatedProductResponseDto = updateProductStatusByAdmin(productId, statusUpdate);
+        ProductResponseDto actualProductResponseDto = updateProductStatusByAdmin(productId, statusUpdate);
 
-        assertEquals(productResponseDto.getId(), updatedProductResponseDto.getId());
-        assertEquals(productResponseDto.getName(), updatedProductResponseDto.getName());
-        assertEquals(productResponseDto.getDescription(), updatedProductResponseDto.getDescription());
-        assertEquals(statusUpdate, updatedProductResponseDto.getProductStatus());
+        assertEquals(productResponseDto.getId(), actualProductResponseDto.getId());
+        assertEquals(productResponseDto.getName(), actualProductResponseDto.getName());
+        assertEquals(productResponseDto.getDescription(), actualProductResponseDto.getDescription());
+        assertEquals(statusUpdate, actualProductResponseDto.getProductStatus());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
-    void deleteProductAdmin_whenOk_deleteProduct() {
+    void deleteProductAdmin_shouldDeleteProduct() {
         long productId = productResponseDto.getId();
 
         mockMvc.perform(delete("/product/{productId}", productId)

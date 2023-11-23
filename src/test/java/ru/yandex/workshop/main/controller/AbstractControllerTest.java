@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CrudOperations {
+public abstract class AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
