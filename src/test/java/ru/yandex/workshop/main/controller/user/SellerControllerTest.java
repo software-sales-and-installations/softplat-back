@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import ru.yandex.workshop.main.controller.CrudOperations;
+import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.yandex.workshop.main.dto.user.SellerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.SellerResponseDto;
@@ -28,11 +27,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class SellerControllerTest extends CrudOperations {
+class SellerControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,17 +52,19 @@ class SellerControllerTest extends CrudOperations {
 
     @Test
     @SneakyThrows
-    void addNewSeller_whenCorrect_thenReturnNewSeller() {
+    void addNewSeller_shouldReturnNewSeller_whenRequestDtoIsValid() {
         createUser(userDto);
-        SellerResponseDto response = getSellerResponseDto(1L);
-        assertEquals(userDto.getName(), response.getName());
-        assertEquals(userDto.getEmail(), response.getEmail());
-        assertEquals(userDto.getPhone(), response.getPhone());
+
+        SellerResponseDto actual = getSellerResponseDto(1L);
+
+        assertEquals(userDto.getName(), actual.getName());
+        assertEquals(userDto.getEmail(), actual.getEmail());
+        assertEquals(userDto.getPhone(), actual.getPhone());
     }
 
     @Test
     @SneakyThrows
-    void addNewSeller_whenEmailNotUnique_thenThrowDuplicateException() {
+    void addNewSeller_shouldThrowDuplicateException_whenEmailNotUnique() {
         createUser(userDto);
         UserCreateDto newUserDto = userDto;
 
@@ -77,19 +77,20 @@ class SellerControllerTest extends CrudOperations {
 
     @Test
     @SneakyThrows
-    void getSellerById_whenCorrect_thenReturnSeller() {
+    void getSellerById_shouldReturnSeller_whenIdCorrect() {
         createUser(userDto);
         final long id = 1;
 
-        SellerResponseDto response = getSellerResponseDto(id);
-        assertEquals(userDto.getName(), response.getName());
-        assertEquals(userDto.getEmail(), response.getEmail());
-        assertEquals(userDto.getPhone(), response.getPhone());
+        SellerResponseDto actual = getSellerResponseDto(id);
+
+        assertEquals(userDto.getName(), actual.getName());
+        assertEquals(userDto.getEmail(), actual.getEmail());
+        assertEquals(userDto.getPhone(), actual.getPhone());
     }
 
     @Test
     @SneakyThrows
-    void getSellerByEmail_whenEmailIsNotCorrect_thenThrowException() {
+    void getSellerByEmail_shouldThrowException_whenEmailIsNotCorrect() {
         createUser(userDto);
         final long id = 2;
 
@@ -102,7 +103,7 @@ class SellerControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
-    void updateSellerByEmail_whenEmailIsCorrect_thenUpdateSeller() {
+    void updateSellerByEmail_shouldReturnUpdatedSeller_whenEmailIsCorrect() {
         createUser(userDto);
         SellerUpdateDto updateDto = SellerUpdateDto.builder()
                 .name("Bar")
@@ -110,16 +111,17 @@ class SellerControllerTest extends CrudOperations {
                 .email("foobar@email.com")
                 .build();
 
-        SellerResponseDto response = updateSeller(updateDto);
-        assertEquals(updateDto.getName(), response.getName());
-        assertEquals(updateDto.getEmail(), response.getEmail());
-        assertEquals(updateDto.getPhone(), response.getPhone());
+        SellerResponseDto actual = updateSeller(updateDto);
+
+        assertEquals(updateDto.getName(), actual.getName());
+        assertEquals(updateDto.getEmail(), actual.getEmail());
+        assertEquals(updateDto.getPhone(), actual.getPhone());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "foobar@email.com", authorities = {"seller:write"})
-    void updateSellerByEmail_whenEmailIsNotCorrect_thenThrowUserNotFoundException() {
+    void updateSellerByEmail_shouldThrowUserNotFoundException_whenEmailIsNotCorrect() {
         createUser(userDto);
         SellerUpdateDto updateDto = SellerUpdateDto.builder()
                 .name("Bar")
@@ -137,18 +139,19 @@ class SellerControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
-    void addRequisites_whenOk_returnRequisites() {
+    void addRequisites_shouldReturnRequisites_whenRequestDtoIsValid() {
         createUser(userDto);
         BankRequisitesCreateUpdateDto requisitesDto = new BankRequisitesCreateUpdateDto("1234567891234567");
 
-        BankRequisitesCreateUpdateDto response = addRequisites(requisitesDto);
-        assertEquals(requisitesDto.getAccount(), response.getAccount());
+        BankRequisitesCreateUpdateDto actual = addRequisites(requisitesDto);
+
+        assertEquals(requisitesDto.getAccount(), actual.getAccount());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
-    void updateRequisites_whenOk_returnRequisites() {
+    void updateRequisites_shouldReturnUpdatedRequisites_whenRequestDtoIsValid() {
         createUser(userDto);
         BankRequisitesCreateUpdateDto requisitesDto = new BankRequisitesCreateUpdateDto("1234567891234567");
         addRequisites(requisitesDto);
@@ -165,7 +168,7 @@ class SellerControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "joedoe@email.com", authorities = {"seller:write"})
-    void deleteRequisites_whenOk() {
+    void deleteRequisites_shouldExecuteAndReturnStatusNoContent() {
         createUser(userDto);
         BankRequisitesCreateUpdateDto requisitesDto = new BankRequisitesCreateUpdateDto("1234567891234567");
         addRequisites(requisitesDto);
@@ -192,7 +195,8 @@ class SellerControllerTest extends CrudOperations {
         );
     }
 
-    BankRequisitesCreateUpdateDto addRequisites(BankRequisitesCreateUpdateDto requisitesDto) throws Exception {
+    @SneakyThrows
+    BankRequisitesCreateUpdateDto addRequisites(BankRequisitesCreateUpdateDto requisitesDto) {
         MvcResult result = mockMvc.perform(patch("/seller/bank")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requisitesDto)))

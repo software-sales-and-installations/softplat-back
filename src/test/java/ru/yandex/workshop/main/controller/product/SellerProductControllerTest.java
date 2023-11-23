@@ -7,14 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import ru.yandex.workshop.main.controller.CrudOperations;
+import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.product.ProductCreateUpdateDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.model.product.License;
@@ -25,12 +24,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @Sql("/data-test.sql")
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class SellerProductControllerTest extends CrudOperations {
+class SellerProductControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,7 +58,7 @@ class SellerProductControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
-    void createProduct_whenValid_returnProductResponseDto() {
+    void createProduct_shouldReturnProduct_whenRequestDtoIsValid() {
         ProductResponseDto productResponseDto = createProduct(productCreateUpdateDto);
 
         assertEquals(Long.class, productResponseDto.getId().getClass());
@@ -72,7 +70,7 @@ class SellerProductControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
-    void updateProductStatusBySeller_whenSent_returnProductResponseDtoWithStatusShipped() {
+    void updateProductStatusBySeller_shouldReturnProductResponseDtoWithStatusShipped() {
         ProductResponseDto createdProductDto = createProduct(productCreateUpdateDto);
         ProductResponseDto updatedProductDto = updateProductStatusBySeller(createdProductDto.getId());
 
@@ -82,7 +80,7 @@ class SellerProductControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
-    void updateProductBySeller_whenValid_returnNewProductResponseDto() {
+    void updateProductBySeller_shouldReturnNewProductResponseDto() {
         ProductResponseDto createdProductDto = createProduct(productCreateUpdateDto);
         ProductCreateUpdateDto updateRequestDto = ProductCreateUpdateDto.builder()
                 .name("new name")
@@ -90,14 +88,14 @@ class SellerProductControllerTest extends CrudOperations {
                 .build();
 
         long productId = createdProductDto.getId();
-        ProductResponseDto updatedProductResponseDto = updateProduct(updateRequestDto, productId);
+        ProductResponseDto actualProductResponseDto = updateProduct(updateRequestDto, productId);
 
-        assertEquals(updatedProductResponseDto.getName(), updateRequestDto.getName());
-        assertEquals(updatedProductResponseDto.getDescription(), updateRequestDto.getDescription());
-        assertEquals(updatedProductResponseDto.getId(), createdProductDto.getId());
-        assertEquals(updatedProductResponseDto.getSeller().getId(), createdProductDto.getSeller().getId());
-        assertEquals(updatedProductResponseDto.getVendor().getId(), createdProductDto.getVendor().getId());
-        assertEquals(updatedProductResponseDto.getCategory().getId(), createdProductDto.getCategory().getId());
+        assertEquals(actualProductResponseDto.getName(), updateRequestDto.getName());
+        assertEquals(actualProductResponseDto.getDescription(), updateRequestDto.getDescription());
+        assertEquals(actualProductResponseDto.getId(), createdProductDto.getId());
+        assertEquals(actualProductResponseDto.getSeller().getId(), createdProductDto.getSeller().getId());
+        assertEquals(actualProductResponseDto.getVendor().getId(), createdProductDto.getVendor().getId());
+        assertEquals(actualProductResponseDto.getCategory().getId(), createdProductDto.getCategory().getId());
     }
 
     @SneakyThrows

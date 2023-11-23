@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import ru.yandex.workshop.main.controller.CrudOperations;
+import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.user.BuyerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.exception.DuplicateException;
@@ -27,11 +26,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class BuyerControllerTest extends CrudOperations {
+class BuyerControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,18 +52,20 @@ class BuyerControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"buyer:write"})
-    void addNewBuyer_whenCorrect_thenReturnNewBuyer() {
+    void addNewBuyer_shouldReturnNewBuyer_whenRequestDtoIsValid() {
         createUser(userDto);
-        BuyerResponseDto response = getBuyerResponseDto(1L);
-        assertEquals(1, response.getId());
-        assertEquals(userDto.getName(), response.getName());
-        assertEquals(userDto.getEmail(), response.getEmail());
-        assertEquals(userDto.getPhone(), response.getPhone());
+
+        BuyerResponseDto actualBuyer = getBuyerResponseDto(1L);
+
+        assertEquals(1, actualBuyer.getId());
+        assertEquals(userDto.getName(), actualBuyer.getName());
+        assertEquals(userDto.getEmail(), actualBuyer.getEmail());
+        assertEquals(userDto.getPhone(), actualBuyer.getPhone());
     }
 
     @Test
     @SneakyThrows
-    void addNewBuyer_whenEmailNotUnique_thenThrowDuplicateException() {
+    void addNewBuyer_shouldThrowDuplicateException_whenEmailNotUnique() {
         createUser(userDto);
         UserCreateDto newUserDto = userDto;
 
@@ -79,20 +79,20 @@ class BuyerControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"buyer:write"})
-    void getBuyerById_whenIdCorrect_thenReturnBuyer() {
+    void getBuyerById_shouldReturnBuyer_whenIdCorrect() {
         createUser(userDto);
         final long id = 1;
 
-        BuyerResponseDto response = getBuyerResponseDto(id);
-        assertEquals(userDto.getName(), response.getName());
-        assertEquals(userDto.getEmail(), response.getEmail());
-        assertEquals(userDto.getPhone(), response.getPhone());
+        BuyerResponseDto actual = getBuyerResponseDto(id);
+        assertEquals(userDto.getName(), actual.getName());
+        assertEquals(userDto.getEmail(), actual.getEmail());
+        assertEquals(userDto.getPhone(), actual.getPhone());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"buyer:write"})
-    void getBuyerById_whenIdIsNotCorrect_thenThrowException() {
+    void getBuyerById_shouldThrowException_whenIdIsNotCorrect() {
         createUser(userDto);
         final long id = 2;
 
@@ -105,23 +105,24 @@ class BuyerControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(username = "joedoe@email.com",authorities = {"buyer:write"})
-    void updateBuyerById_whenIsCorrect_thenUpdateBuyer() {
+    void updateBuyerById_shouldUpdateBuyer_whenRequestDtoIsValid() {
         createUser(userDto);
         BuyerUpdateDto updateDto = BuyerUpdateDto.builder()
                 .name("Foo")
                 .build();
 
-        BuyerResponseDto response = updateBuyer(updateDto);
-        assertEquals(1, response.getId());
-        assertEquals(updateDto.getName(), response.getName());
-        assertEquals(userDto.getEmail(), response.getEmail());
-        assertEquals(userDto.getPhone(), response.getPhone());
+        BuyerResponseDto actual = updateBuyer(updateDto);
+
+        assertEquals(1, actual.getId());
+        assertEquals(updateDto.getName(), actual.getName());
+        assertEquals(userDto.getEmail(), actual.getEmail());
+        assertEquals(userDto.getPhone(), actual.getPhone());
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "foobar@email.com",authorities = {"buyer:write"})
-    void updateBuyerById_whenIdIsNotCorrect_thenThrowUserNotFoundException() {
+    void updateBuyerById_shouldThrowUserNotFoundException_whenIdIsNotCorrect() {
         createUser(userDto);
         BuyerUpdateDto updateDto = BuyerUpdateDto.builder()
                 .name("Bar")

@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -16,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.StringUtils;
-import ru.yandex.workshop.main.controller.CrudOperations;
+import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.image.ImageResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
@@ -32,11 +31,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Sql("/data-test.sql")
-@SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class ImageControllerTest extends CrudOperations {
+class ImageControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -72,7 +70,7 @@ class ImageControllerTest extends CrudOperations {
     @Test
     @SneakyThrows
     @WithMockUser(authorities = {"admin:write"})
-    void shouldAddImageToVendor() {
+    void createVendorImage_shouldAddImageToVendor_whenMultipartFileIsValid() {
         long vendorId = vendorResponseDto.getId();
         long imageId = 1;
 
@@ -89,20 +87,20 @@ class ImageControllerTest extends CrudOperations {
                 result.getResponse().getContentAsString(),
                 VendorResponseDto.class);
 
-        ImageResponseDto imageResponseDto = vendorResponseDto.getImage();
-        assertEquals(imageResponseDto.getId(), 1);
-        assertEquals(imageResponseDto.getName(), StringUtils.cleanPath(multipartFile.getOriginalFilename()));
-        assertEquals(imageResponseDto.getSize(), multipartFile.getSize());
-        assertEquals(imageResponseDto.getContentType(), multipartFile.getContentType());
+        ImageResponseDto actualImageResponseDto = vendorResponseDto.getImage();
+        assertEquals(actualImageResponseDto.getId(), 1);
+        assertEquals(actualImageResponseDto.getName(), StringUtils.cleanPath(multipartFile.getOriginalFilename()));
+        assertEquals(actualImageResponseDto.getSize(), multipartFile.getSize());
+        assertEquals(actualImageResponseDto.getContentType(), multipartFile.getContentType());
 
         String expectedUrl = String.format("http://localhost:8080/image/%s", imageId);
-        assertEquals(imageResponseDto.getUrl(), expectedUrl);
+        assertEquals(actualImageResponseDto.getUrl(), expectedUrl);
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
-    void shouldAddImageToSeller() {
+    void createSellerImage_shouldAddImageToSeller_whenMultipartFileIsValid() {
         long imageId = 1;
 
         assertNull(sellerResponseDto.getImageResponseDto());
@@ -118,20 +116,20 @@ class ImageControllerTest extends CrudOperations {
                 result.getResponse().getContentAsString(),
                 SellerResponseDto.class);
 
-        ImageResponseDto imageResponseDto = sellerResponseDto.getImageResponseDto();
-        assertEquals(imageResponseDto.getId(), 1);
-        assertEquals(imageResponseDto.getName(), StringUtils.cleanPath(multipartFile.getOriginalFilename()));
-        assertEquals(imageResponseDto.getSize(), multipartFile.getSize());
-        assertEquals(imageResponseDto.getContentType(), multipartFile.getContentType());
+        ImageResponseDto actualImageResponseDto = sellerResponseDto.getImageResponseDto();
+        assertEquals(actualImageResponseDto.getId(), 1);
+        assertEquals(actualImageResponseDto.getName(), StringUtils.cleanPath(multipartFile.getOriginalFilename()));
+        assertEquals(actualImageResponseDto.getSize(), multipartFile.getSize());
+        assertEquals(actualImageResponseDto.getContentType(), multipartFile.getContentType());
 
         String expectedUrl = String.format("http://localhost:8080/image/%s", imageId);
-        assertEquals(imageResponseDto.getUrl(), expectedUrl);
+        assertEquals(actualImageResponseDto.getUrl(), expectedUrl);
     }
 
     @Test
     @SneakyThrows
     @WithMockUser(username = "seller1@email.ru", authorities = {"seller:write"})
-    void shouldAddProductImage() {
+    void createProductImage_shouldAddProductImage_whenMultipartFileIsValid() {
         long productId = productResponseDto.getId();
         long imageId = 1;
 
@@ -148,13 +146,13 @@ class ImageControllerTest extends CrudOperations {
                 result.getResponse().getContentAsString(),
                 ProductResponseDto.class);
 
-        ImageResponseDto imageResponseDto = productResponseDto.getImage();
-        assertEquals(imageResponseDto.getId(), 1);
-        assertEquals(imageResponseDto.getName(), StringUtils.cleanPath(multipartFile.getOriginalFilename()));
-        assertEquals(imageResponseDto.getSize(), multipartFile.getSize());
-        assertEquals(imageResponseDto.getContentType(), multipartFile.getContentType());
+        ImageResponseDto actualImageResponseDto = productResponseDto.getImage();
+        assertEquals(actualImageResponseDto.getId(), 1);
+        assertEquals(actualImageResponseDto.getName(), StringUtils.cleanPath(multipartFile.getOriginalFilename()));
+        assertEquals(actualImageResponseDto.getSize(), multipartFile.getSize());
+        assertEquals(actualImageResponseDto.getContentType(), multipartFile.getContentType());
 
         String expectedUrl = String.format("http://localhost:8080/image/%s", imageId);
-        assertEquals(imageResponseDto.getUrl(), expectedUrl);
+        assertEquals(actualImageResponseDto.getUrl(), expectedUrl);
     }
 }
