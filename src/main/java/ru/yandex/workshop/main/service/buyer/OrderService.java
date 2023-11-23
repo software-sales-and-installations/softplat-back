@@ -72,6 +72,9 @@ public class OrderService {
                 }
             }
         }
+        if (orderPositionList.size() != basketPositionIds.size())
+            throw new WrongConditionException("Выбраны некорректные позиции товаров.");
+
         order.setProductsOrdered(orderPositionList);
         order.setOrderCost(wholePrice);
         Order orderSave = orderRepository.save(order);
