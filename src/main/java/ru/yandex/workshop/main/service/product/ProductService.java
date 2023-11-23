@@ -92,9 +92,9 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public void updateProductQuantityWhenOrder(Long productId) {
+    public void updateProductQuantityWhenOrder(Long productId, Integer orderQuantity) {
         Product product = getProductOrThrowException(productId);
-        product.setQuantity(product.getQuantity() - 1);
+        product.setQuantity(product.getQuantity() - orderQuantity);
         productRepository.save(product);
     }
 

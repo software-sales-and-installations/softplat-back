@@ -59,7 +59,9 @@ public class OrderService {
                     orderPositionList.add(orderPosition);
                     basketService.removeBasketPosition(productBasketId);
 
-                    productService.updateProductQuantityWhenOrder(positionInBasket.getProduct().getId());
+                    productService.updateProductQuantityWhenOrder(
+                            positionInBasket.getProduct().getId(),
+                            positionInBasket.getQuantity());
                     break;
                 }
                 if (i == basket.getProductsInBasket().size() - 1) {
