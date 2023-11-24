@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.workshop.main.dto.validation.New;
 import ru.yandex.workshop.main.exception.EntityNotFoundException;
+import ru.yandex.workshop.main.exception.WrongConditionException;
 import ru.yandex.workshop.security.config.JwtTokenProvider;
 import ru.yandex.workshop.security.dto.JwtAuthRequest;
 import ru.yandex.workshop.security.dto.UserCreateDto;
-import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.message.ExceptionMessage;
@@ -32,7 +32,6 @@ import ru.yandex.workshop.security.service.UserDetailsChangeService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.xml.bind.ValidationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -58,7 +57,8 @@ public class AuthController {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
             Map<Object, Object> response = new HashMap<>();
-            User user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+            User user = repository.findByEmail(request.getEmail()).orElseThrow(() ->
+                    new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
             String token = jwtTokenProvider.generateToken(request.getEmail(), user.getRole().name());
             response.put("email", user.getEmail());
             response.put("token", token);
@@ -79,15 +79,17 @@ public class AuthController {
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/registration")
-    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserCreateDto userCreateDto) throws ValidationException, WrongDataDbException {
+    public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserCreateDto userCreateDto) {
         log.info(LogMessage.TRY_REGISTRATION.label);
 
         if (!userCreateDto.getPassword().equals(userCreateDto.getConfirmPassword())) {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
 
-        if ((userCreateDto.getRole().equals(Role.SELLER) || userCreateDto.getRole().equals(Role.BUYER)) && (userCreateDto.getPhone() == null || userCreateDto.getPhone().isEmpty()))
-            throw new ValidationException("Необходимо указать номер телефона. Телефонный номер должен начинаться с +7, затем - 10 цифр.");
+        if ((userCreateDto.getRole().equals(Role.SELLER) || userCreateDto.getRole().equals(Role.BUYER)) &&
+                (userCreateDto.getPhone() == null || userCreateDto.getPhone().isEmpty()))
+            throw new WrongConditionException("Необходимо указать номер телефона. " +
+                    "Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
         return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userCreateDto))));
     }
