@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS "order"
     amount          FLOAT,
     buyer_id        BIGINT NOT NULL,
     CONSTRAINT pk_order PRIMARY KEY (id),
-    CONSTRAINT fk_order_buyer FOREIGN KEY (buyer_id) REFERENCES buyer (id)
+    CONSTRAINT fk_order_buyer FOREIGN KEY (buyer_id) REFERENCES buyer (id) on update cascade on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS statistic

@@ -9,6 +9,7 @@ import ru.yandex.workshop.main.model.buyer.OrderPosition;
 @Mapper(uses = ProductMapper.class)
 public interface OrderPositionMapper {
 
+    @Mapping(target = "id", ignore = true)
     OrderPosition basketPositionToOrderPosition(BasketPosition productBasket);
 
     @Mapping(target = "productResponseDto", source = "product")
