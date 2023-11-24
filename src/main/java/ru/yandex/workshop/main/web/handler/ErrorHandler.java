@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import ru.yandex.workshop.main.dto.error.ErrorResponse;
 import ru.yandex.workshop.main.exception.*;
 import ru.yandex.workshop.security.exception.UnauthorizedException;
-import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.exception.WrongRegException;
 
 import java.time.LocalDateTime;
@@ -136,19 +135,6 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleImageFormatException(final ImageFormatException e) {
-        e.printStackTrace();
-        log.error(String.valueOf(e));
-        return ErrorResponse.builder()
-                .message(e.getMessage())
-                .error(e.getClass().getSimpleName())
-                .status(HttpStatus.BAD_REQUEST.toString())
-                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
-                .build();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleDbException(final WrongDataDbException e) {
         e.printStackTrace();
         log.error(String.valueOf(e));
         return ErrorResponse.builder()

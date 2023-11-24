@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Transactional;
 import ru.yandex.workshop.main.exception.DuplicateException;
 import ru.yandex.workshop.main.message.ExceptionMessage;
@@ -17,7 +18,6 @@ import ru.yandex.workshop.main.service.admin.AdminService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
 import ru.yandex.workshop.main.service.seller.SellerService;
 import ru.yandex.workshop.security.dto.UserCreateDto;
-import ru.yandex.workshop.security.exception.WrongDataDbException;
 import ru.yandex.workshop.security.mapper.UserMapper;
 import ru.yandex.workshop.security.model.Status;
 import ru.yandex.workshop.security.model.User;
@@ -36,7 +36,7 @@ public class AuthService {
     @Lazy
     private final PasswordEncoder passwordEncoder;
 
-    public User createNewUser(UserCreateDto userCreateDto) throws WrongDataDbException {
+    public User createNewUser(UserCreateDto userCreateDto) {
         if (checkIfUserExistsByEmail(userCreateDto.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userCreateDto.getEmail());
 
@@ -66,8 +66,8 @@ public class AuthService {
             }
 
             repository.save(userMapper.userDtoToUser(userCreateDto));
-        } catch (DataIntegrityViolationException e) {
-            throw new WrongDataDbException(e.getMessage());
+        } catch (DataIntegrityViolationException | UnexpectedRollbackException e) {
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userCreateDto.getPhone());
         }
 
         return user;
