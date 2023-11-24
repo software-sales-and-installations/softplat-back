@@ -7,7 +7,8 @@ public enum ExceptionMessage {
     IMAGE_FORMAT_EXCEPTION("Формат изображения должен быть jpeg или png."),
     NO_IMAGE_CONTENT_EXCEPTION("Необходимо загрузить изображение."),
     IMAGE_SERVER_UPLOAD_EXCEPTION("Ошибка сервера при загрузке изображения."),
-    NO_RIGHTS_EXCEPTION("Продавец не может корректировать чужой продукт!");
+    NO_RIGHTS_EXCEPTION("Продавец не может корректировать чужой продукт!"),
+    NOT_VALID_VALUE_EXCEPTION("Недопустимое значение!");
 
     public final String label;
 

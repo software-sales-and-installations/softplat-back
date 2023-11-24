@@ -1,6 +1,5 @@
 package ru.yandex.workshop.main.model.product;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,81 +16,61 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = Product.TABLE_PRODUCTS, schema = Product.SCHEMA_TABLE)
+@Table(name = "product", schema = "public")
 public class Product {
-
-    public static final String TABLE_PRODUCTS = "product";
-    public static final String SCHEMA_TABLE = "public";
-
-    public static final String PRODUCT_ID = "id";
-    public static final String PRODUCT_NAME = "name";
-    public static final String PRODUCT_DESCRIPTION = "description";
-    public static final String PRODUCT_VERSION = "version";
-    public static final String PRODUCT_TIME = "production_time";
-    public static final String IMAGE_ID = "image_id";
-    public static final String CATEGORY_ID = "category_id";
-    public static final String PRODUCT_LICENSE = "license";
-    public static final String VENDOR_ID = "vendor_id";
-    public static final String SELLER_ID = "seller_id";
-    public static final String PRODUCT_PRICE = "price";
-    public static final String PRODUCT_QUANTITY = "quantity";
-    public static final String PRODUCT_INSTALLATION = "installation";
-    public static final String PRODUCT_STATUS = "status";
-    public static final String PRODUCT_AVAILABILITY = "availability";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = PRODUCT_ID)
+    @Column(name = "id")
     Long id;
 
-    @Column(name = PRODUCT_NAME)
+    @Column(name = "name")
     String name;
 
-    @Column(name = PRODUCT_DESCRIPTION)
+    @Column(name = "description")
     String description;
 
-    @Column(name = PRODUCT_VERSION)
+    @Column(name = "version")
     String version;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss", iso = DateTimeFormat.ISO.DATE_TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = PRODUCT_TIME)
+    @Column(name = "production_time")
     LocalDateTime productionTime;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = IMAGE_ID)
+    @JoinColumn(name = "image_id")
     Image image;
 
     @OneToOne
-    @JoinColumn(name = CATEGORY_ID)
+    @JoinColumn(name = "category_id")
     Category category;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = PRODUCT_LICENSE)
+    @Column(name = "license")
     License license;
 
     @OneToOne
-    @JoinColumn(name = VENDOR_ID)
+    @JoinColumn(name = "vendor_id")
     Vendor vendor;
 
     @OneToOne
-    @JoinColumn(name = SELLER_ID)
+    @JoinColumn(name = "seller_id")
     Seller seller;
 
-    @Column(name = PRODUCT_PRICE)
+    @Column(name = "price")
     Float price;
 
-    @Column(name = PRODUCT_QUANTITY)
+    @Column(name = "quantity")
     Integer quantity;
 
-    @Column(name = PRODUCT_INSTALLATION)
+    @Column(name = "installation")
     Boolean installation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = PRODUCT_STATUS)
+    @Column(name = "status")
     ProductStatus productStatus;
 
-    @Column(name = PRODUCT_AVAILABILITY)
+    @Column(name = "availability")
     Boolean productAvailability;
 
     @Column(name = "installation_price")

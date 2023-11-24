@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.workshop.main.model.image.Image;
 
 @Repository
-public interface ImageRepository extends JpaRepository<Image, Long>, QuerydslPredicateExecutor<Image> {
+public interface ImageRepository extends JpaRepository<Image, Long>,
+        QuerydslPredicateExecutor<Image> {
 }

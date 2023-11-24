@@ -10,7 +10,8 @@ import ru.yandex.workshop.main.model.product.ProductStatus;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long>, QuerydslPredicateExecutor<Product> {
+public interface ProductRepository extends JpaRepository<Product, Long>,
+        QuerydslPredicateExecutor<Product> {
 
     List<Product> findProductBySellerId(Long sellerId, PageRequestOverride pageRequest);
 

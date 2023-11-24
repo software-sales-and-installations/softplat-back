@@ -8,6 +8,7 @@ import ru.yandex.workshop.main.model.seller.Seller;
 import java.util.Optional;
 
 @Repository
-public interface SellerRepository extends JpaRepository<Seller, Long>, QuerydslPredicateExecutor<Seller> {
+public interface SellerRepository extends JpaRepository<Seller, Long>,
+        QuerydslPredicateExecutor<Seller> {
     Optional<Seller> findByEmail(String email);
 }
