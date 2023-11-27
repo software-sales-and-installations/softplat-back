@@ -1,6 +1,6 @@
-drop table if exists users , admin, statistic, order_position,
-    "order", basket_position, product, seller, requisite,
-    category , vendor, image , basket , buyer, favorite cascade;
+-- drop table if exists users , admin, statistic, order_position,
+--     "order", basket_position, product, seller, requisite,
+--     category , vendor, image , basket , buyer, favorite cascade;
 
 CREATE TABLE IF NOT EXISTS users
 (
