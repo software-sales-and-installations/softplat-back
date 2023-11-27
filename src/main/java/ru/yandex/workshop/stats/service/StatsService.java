@@ -74,7 +74,7 @@ public class StatsService {
             statsFilterAdmin.setEnd(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
         }
         List<SellerReportEntry> statsPage;
-        if (statsFilterAdmin.getSellerIds() != null) {
+        if (statsFilterAdmin.getSellerIds() != null && !statsFilterAdmin.getSellerIds().isEmpty()) {
             statsPage = statsRepository.getStatsByProduct(
                     statsFilterAdmin.getSellerIds(),
                     statsFilterAdmin.getStart(),

@@ -138,7 +138,6 @@ class OrderServiceTest {
         verify(orderRepository).save(argumentCaptor.capture());
 
         Order captorValue = argumentCaptor.getValue();
-
         assertEquals(1L, captorValue.getBuyer().getId());
         assertEquals(email, captorValue.getBuyer().getEmail());
         assertEquals(buyer.getName(), captorValue.getBuyer().getName());
