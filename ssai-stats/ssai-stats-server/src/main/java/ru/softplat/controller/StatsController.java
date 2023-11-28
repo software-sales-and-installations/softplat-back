@@ -8,19 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
 import ru.softplat.StatsFilterAdmin;
 import ru.softplat.StatsFilterSeller;
 import ru.softplat.StatsResponseDto;
 import ru.softplat.mapper.StatsMapper;
 import ru.softplat.message.LogMessage;
 import ru.softplat.model.SortEnum;
+import ru.softplat.model.Stats;
 import ru.softplat.service.StatsService;
-import springfox.documentation.annotations.ApiIgnore;
-
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,7 +66,7 @@ public class StatsController {
     @PreAuthorize("hasAuthority('seller:write')")
     @GetMapping(path = "/seller")
     public StatsResponseDto getProductsReportSeller(
-            @ApiIgnore Principal principal,
+            @RequestHeader Long sellerId,
             @Parameter(description = "Фильтрация для получения статистики: " +
                     "по категории/производителю/дате") StatsFilterSeller statsFilterSeller,
             @RequestParam(name = "sort", defaultValue = "POPULAR")
@@ -81,23 +76,14 @@ public class StatsController {
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getProductsReportSeller(
-                                principal.getName(),
+                                sellerId,
                                 statsFilterSeller,
                                 sort));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('buyer:write')")
-    public void createStats(HttpServletRequest request) {
-        List<OrderPosition> orderPositionList = order.getProductsOrdered();
-        for (OrderPosition orderPosition : orderPositionList) {
-            Stats stats = new Stats();
-            stats.setProduct(orderPosition.getProduct());
-            stats.setBuyer(order.getBuyer());
-            stats.setDateBuy(order.getProductionTime());
-            stats.setQuantity((long) orderPosition.getQuantity());
-            stats.setAmount((double) COMMISSIONS * orderPosition.getProductCost());
-            statsService.createStats(stats);
-        }
+    public void createStat(Stats stats) {
+        statsService.createStats(stats);
     }
 }

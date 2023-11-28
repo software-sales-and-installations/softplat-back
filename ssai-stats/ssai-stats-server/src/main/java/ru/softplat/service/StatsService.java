@@ -3,8 +3,16 @@ package ru.softplat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.SellerReportEntry;
+import ru.softplat.StatsFilterAdmin;
+import ru.softplat.StatsFilterSeller;
+import ru.softplat.model.SellerReport;
+import ru.softplat.model.SortEnum;
+import ru.softplat.model.Stats;
+import ru.softplat.repository.StatsRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +22,7 @@ import java.util.stream.Collectors;
 public class StatsService {
 
     private final StatsRepository statsRepository;
+    private static final Float COMMISSIONS = 0.9F;
 
     @Transactional(readOnly = true)
     public SellerReport getSellerReportAdmin(
@@ -33,10 +42,10 @@ public class StatsService {
 
     @Transactional(readOnly = true)
     public SellerReport getProductsReportSeller(
-            String email,
+            Long sellerId,
             StatsFilterSeller statsFilterSeller,
             SortEnum sort) {
-        List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, email);
+        List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, sellerId);
         return getSellerReport(sort, statsPage);
     }
 
@@ -80,7 +89,7 @@ public class StatsService {
         return statsPage;
     }
 
-    private List<SellerReportEntry> getReportSellerList(StatsFilterSeller statsFilterSeller, String email) {
+    private List<SellerReportEntry> getReportSellerList(StatsFilterSeller statsFilterSeller, Long sellerId) {
         if (statsFilterSeller.getStart() == null) {
             statsFilterSeller.setStart(LocalDateTime.now().minusMonths(3).withHour(0).withMinute(0).withSecond(0));
         }
@@ -88,13 +97,13 @@ public class StatsService {
             statsFilterSeller.setEnd(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
         }
         List<SellerReportEntry> allStats;
-        if (email == null) {
+        if (sellerId == null) {
             allStats = statsRepository.getAllStats(
                     statsFilterSeller.getStart(),
                     statsFilterSeller.getEnd());
         } else {
-            allStats = statsRepository.getAllStatsEmailSeller(
-                    email,
+            allStats = statsRepository.getStatsByProduct(
+                    Collections.singletonList(sellerId),
                     statsFilterSeller.getStart(),
                     statsFilterSeller.getEnd());
         }
@@ -102,6 +111,7 @@ public class StatsService {
     }
 
     public void createStats(Stats stats) {
+        stats.setAmount(COMMISSIONS * stats.getAmount());
         statsRepository.save(stats);
     }
 }

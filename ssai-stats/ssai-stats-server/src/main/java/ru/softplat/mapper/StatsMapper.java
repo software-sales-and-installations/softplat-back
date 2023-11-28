@@ -2,8 +2,8 @@ package ru.softplat.mapper;
 
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
-import ru.yandex.workshop.stats.dto.StatsResponseDto;
-import ru.yandex.workshop.stats.model.SellerReport;
+import ru.softplat.StatsResponseDto;
+import ru.softplat.model.SellerReport;
 
 @Mapper(componentModel = "spring", uses = StatsMapper.class)
 @Component

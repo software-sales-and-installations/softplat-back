@@ -14,10 +14,11 @@ import ru.softplat.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.exception.EntityNotFoundException;
 import ru.softplat.mapper.VendorMapper;
 import ru.softplat.message.ExceptionMessage;
+import ru.softplat.model.vendor.QVendor;
 import ru.softplat.model.vendor.Vendor;
 import ru.softplat.repository.vendor.VendorRepository;
 import ru.softplat.service.image.ImageService;
-
+import ru.softplat.util.QPredicates;
 
 import java.util.ArrayList;
 import java.util.List;

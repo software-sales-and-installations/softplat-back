@@ -3,8 +3,6 @@ package ru.softplat.model;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.yandex.workshop.main.model.buyer.Buyer;
-import ru.yandex.workshop.main.model.product.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "statistic", schema = "public")
+@Table(name = "statistic")
 public class Stats {
 
     @Id
@@ -25,11 +23,11 @@ public class Stats {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id")
-    Buyer buyer;
+    StatBuyer buyer;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    Product product;
+    StatProduct product;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @Column(name = "date_buy")

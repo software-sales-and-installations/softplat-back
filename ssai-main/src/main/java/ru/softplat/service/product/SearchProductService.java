@@ -15,8 +15,10 @@ import ru.softplat.dto.product.SortBy;
 import ru.softplat.exception.EntityNotFoundException;
 import ru.softplat.message.ExceptionMessage;
 import ru.softplat.model.product.Product;
+import ru.softplat.model.product.ProductStatus;
+import ru.softplat.model.product.QProduct;
 import ru.softplat.repository.product.ProductRepository;
-
+import ru.softplat.util.QPredicates;
 
 import java.util.ArrayList;
 import java.util.List;

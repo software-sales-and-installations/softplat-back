@@ -14,7 +14,6 @@ import ru.softplat.model.seller.Seller;
 import ru.softplat.repository.seller.SellerRepository;
 import ru.softplat.service.image.ImageService;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 public class SellerService {
     private final SellerRepository sellerRepository;
     private final ImageService imageService;
-    private final UserDetailsChangeService userDetailsChangeService;
+    //private final UserDetailsChangeService userDetailsChangeService;
 
     public Seller addSeller(Seller seller) {
         if (checkIfSellerExistsByEmail(seller.getEmail()))
@@ -42,12 +41,12 @@ public class SellerService {
         Seller seller = getSeller(email);
 
         if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
-        if (sellerForUpdate.getEmail() != null) {
+        /*if (sellerForUpdate.getEmail() != null) {
             if (checkIfSellerExistsByEmail(sellerForUpdate.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + sellerForUpdate.getEmail());
             userDetailsChangeService.changeEmail(seller.getEmail(), sellerForUpdate.getEmail());
             seller.setEmail(sellerForUpdate.getEmail());
-        }
+        }*/
         if (sellerForUpdate.getPhone() != null) seller.setPhone(sellerForUpdate.getPhone());
 
         return sellerRepository.save(seller);

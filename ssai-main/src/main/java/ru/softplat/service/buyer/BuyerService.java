@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class BuyerService {
 
     private final BuyerRepository buyerRepository;
-    private final UserDetailsChangeService userDetailsChangeService;
+    //private final UserDetailsChangeService userDetailsChangeService;
 
     @Transactional(readOnly = true)
     public List<Buyer> getAllBuyers(int from, int size) {
@@ -45,12 +45,12 @@ public class BuyerService {
         if (updateRequest.getName() != null) {
             oldBuyer.setName(updateRequest.getName());
         }
-        if (updateRequest.getEmail() != null) {
+        /*if (updateRequest.getEmail() != null) {
             if (checkIfUserExistsByEmail(updateRequest.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + updateRequest.getEmail());
             userDetailsChangeService.changeEmail(oldBuyer.getEmail(), updateRequest.getEmail());
             oldBuyer.setEmail(updateRequest.getEmail());
-        }
+        }*/
         if (updateRequest.getPhone() != null) {
             oldBuyer.setPhone(updateRequest.getPhone());
         }

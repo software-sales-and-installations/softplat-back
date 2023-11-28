@@ -3,14 +3,17 @@ package ru.softplat.service.buyer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.configuration.PageRequestOverride;
 import ru.softplat.exception.EntityNotFoundException;
 import ru.softplat.exception.WrongConditionException;
 import ru.softplat.mapper.OrderPositionMapper;
 import ru.softplat.message.ExceptionMessage;
 import ru.softplat.model.buyer.*;
+import ru.softplat.model.product.ProductStatus;
 import ru.softplat.repository.buyer.OrderPositionRepository;
 import ru.softplat.repository.buyer.OrderRepository;
 import ru.softplat.service.product.ProductService;
+import ru.softplat.web.client.StatClient;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,8 +30,7 @@ public class OrderService {
     private final OrderPositionRepository orderPositionRepository;
     private final OrderPositionMapper mapper;
     private final ProductService productService;
-
-    private static final Float COMMISSIONS = 0.9F;
+    private final StatClient statClient;
 
     public Order createOrder(String email, List<Long> basketPositionIds) {
         Order order = createNewEmptyOrder(email);
@@ -116,13 +118,7 @@ public class OrderService {
     private void createStats(Order order) {
         List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
-            Stats stats = new Stats();
-            stats.setProduct(orderPosition.getProduct());
-            stats.setBuyer(order.getBuyer());
-            stats.setDateBuy(order.getProductionTime());
-            stats.setQuantity((long) orderPosition.getQuantity());
-            stats.setAmount((double) COMMISSIONS * orderPosition.getProductCost());
-            statsService.createStats(stats);
+            statClient.postStat(mapper.orderPositionToStatDto(orderPosition));
         }
     }
 
