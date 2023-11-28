@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import ru.softplat.StatsFilterAdmin;
 import ru.softplat.StatsFilterSeller;
 import ru.softplat.StatsResponseDto;
+import ru.softplat.create.StatsCreateDto;
 import ru.softplat.mapper.StatsMapper;
 import ru.softplat.message.LogMessage;
 import ru.softplat.model.SortEnum;
-import ru.softplat.model.Stats;
 import ru.softplat.service.StatsService;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -83,7 +85,8 @@ public class StatsController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('buyer:write')")
-    public void createStat(Stats stats) {
-        statsService.createStats(stats);
+    public void createStat(@RequestBody @Valid StatsCreateDto statsCreateDto) {
+        log.debug("Попытка создания статистики");
+        statsService.createStats(statsMapper.statsCreateDtoToStats(statsCreateDto));
     }
 }
