@@ -1,0 +1,39 @@
+package ru.softplat.dto.product;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import ru.softplat.dto.image.ImageResponseDto;
+import ru.softplat.dto.user.response.SellerResponseDto;
+import ru.softplat.dto.vendor.VendorResponseDto;
+import ru.softplat.model.product.Category;
+import ru.softplat.model.product.License;
+import ru.softplat.model.product.ProductStatus;
+
+import java.time.LocalDateTime;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class ProductResponseDto {
+    Long id;
+    String name;
+    String description;
+    String version;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime productionTime;
+    ImageResponseDto image;
+    Category category;
+    License license;
+    VendorResponseDto vendor;
+    SellerResponseDto seller;
+    Float price;
+    Integer quantity;
+    Boolean installation;
+    ProductStatus productStatus;
+    Boolean productAvailability;
+    Float installationPrice;
+}
