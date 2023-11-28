@@ -10,8 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import ru.yandex.workshop.security.exception.JwtAuthenticationException;
-import ru.yandex.workshop.security.message.ExceptionMessage;
+import ru.softplat.exception.JwtAuthenticationException;
+import ru.softplat.message.ExceptionMessage;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;

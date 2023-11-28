@@ -4,8 +4,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.yandex.workshop.security.model.Role;
-import ru.yandex.workshop.security.model.Status;
+import ru.softplat.model.Role;
+import ru.softplat.model.Status;
 
 @Data
 @Builder

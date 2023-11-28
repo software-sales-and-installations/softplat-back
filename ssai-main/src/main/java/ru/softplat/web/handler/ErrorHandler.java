@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import ru.yandex.workshop.main.dto.error.ErrorResponse;
-import ru.yandex.workshop.main.exception.*;
-import ru.yandex.workshop.security.exception.UnauthorizedException;
-import ru.yandex.workshop.security.exception.WrongRegException;
+import ru.softplat.dto.error.ErrorResponse;
+import ru.softplat.exception.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

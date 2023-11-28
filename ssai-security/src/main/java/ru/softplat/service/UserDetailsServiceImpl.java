@@ -6,10 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.yandex.workshop.main.exception.EntityNotFoundException;
-import ru.yandex.workshop.security.message.ExceptionMessage;
-import ru.yandex.workshop.security.model.UserSecurity;
-import ru.yandex.workshop.security.repository.UserRepository;
+import ru.softplat.message.ExceptionMessage;
+import ru.softplat.model.UserSecurity;
+import ru.softplat.repository.UserRepository;
 
 @Service("userDetailsServiceImpl")
 @RequiredArgsConstructor

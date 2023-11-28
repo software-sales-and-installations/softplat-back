@@ -14,11 +14,12 @@ import ru.softplat.message.ExceptionMessage;
 import ru.softplat.model.product.Category;
 import ru.softplat.model.product.Product;
 import ru.softplat.model.product.ProductStatus;
+import ru.softplat.model.seller.Seller;
 import ru.softplat.model.vendor.Vendor;
 import ru.softplat.repository.product.ProductRepository;
 import ru.softplat.service.image.ImageService;
 import ru.softplat.service.seller.SellerService;
-
+import ru.softplat.service.vendor.VendorService;
 
 import java.time.LocalDateTime;
 import java.util.List;

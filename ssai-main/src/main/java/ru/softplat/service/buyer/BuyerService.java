@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.configuration.PageRequestOverride;
 import ru.softplat.exception.DuplicateException;
+import ru.softplat.exception.EntityNotFoundException;
 import ru.softplat.message.ExceptionMessage;
 import ru.softplat.model.buyer.Buyer;
 import ru.softplat.repository.buyer.BuyerRepository;

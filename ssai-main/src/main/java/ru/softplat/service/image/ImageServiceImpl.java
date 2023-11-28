@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import ru.softplat.exception.EntityNotFoundException;
+import ru.softplat.exception.ImageServerUploadException;
+import ru.softplat.message.ExceptionMessage;
+import ru.softplat.model.image.Image;
+import ru.softplat.repository.image.ImageRepository;
 
 import java.io.IOException;
 import java.util.Objects;

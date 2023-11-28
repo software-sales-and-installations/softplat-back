@@ -4,6 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.exception.EntityNotFoundException;
+import ru.softplat.message.ExceptionMessage;
+import ru.softplat.model.seller.BankRequisites;
+import ru.softplat.model.seller.Seller;
+import ru.softplat.repository.seller.BankRepository;
+import ru.softplat.repository.seller.SellerRepository;
 
 @Service
 @Transactional

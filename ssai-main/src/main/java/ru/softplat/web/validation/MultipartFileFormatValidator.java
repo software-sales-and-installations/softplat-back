@@ -1,8 +1,8 @@
 package ru.softplat.web.validation;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.yandex.workshop.main.exception.ImageFormatException;
-import ru.yandex.workshop.main.message.ExceptionMessage;
+import ru.softplat.exception.ImageFormatException;
+import ru.softplat.message.ExceptionMessage;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
