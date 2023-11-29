@@ -12,10 +12,11 @@
     <groupId>ru.softplat</groupId>
     <artifactId>ssai-stats</artifactId>
     <packaging>pom</packaging>
+
     <modules>
-        <module>ssai-stats-client</module>
         <module>ssai-stats-dto</module>
         <module>ssai-stats-server</module>
+        <module>ssai-stats-client</module>
     </modules>
 
     <properties>

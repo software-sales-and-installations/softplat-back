@@ -11,6 +11,11 @@
 
     <groupId>ru.softplat</groupId>
     <artifactId>ssai-security</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>ssai-security-server</module>
+        <module>ssai-security-dto</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

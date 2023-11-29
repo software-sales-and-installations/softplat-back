@@ -1,17 +1,40 @@
 version: '3.1'
 services:
+  security-db:
+    image: postgres:14-alpine
+    container_name: db_security_container
+    ports:
+      - "6543:5432"
+    environment:
+      - POSTGRES_DB=softplat-security
+      - POSTGRES_USER=softplat-security
+      - POSTGRES_PASSWORD=softplat-security
+
+  security-service:
+    build: ./ssai-security/ssai-security-server
+    image: security_image
+    container_name: security_container
+    ports:
+      - "7070:7070"
+    depends_on:
+      - security-db
+    environment:
+      - MAIN_STRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/softplat-security
+      - MAIN_POSTGRES_USER=softplat-security
+      - MAIN_POSTGRES_PASSWORD=softplat-security
+
   stats-db:
     image: postgres:14-alpine
     container_name: db_stats_container
     ports:
       - "6541:5432"
     environment:
-      - POSTGRES_DB=stats
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=stats
+      - POSTGRES_DB=softplat-stats
+      - POSTGRES_USER=softplat-stats
+      - POSTGRES_PASSWORD=softplat-stats
 
   stats-server:
-    build: ./ewm-stats/ewm-stats-server
+    build: ./ssai-stats/ssai-stats-server
     image: stats_server_image
     container_name: stats_server_container
     ports:
@@ -19,29 +42,29 @@ services:
     depends_on:
       - stats-db
     environment:
-      - STATS_STRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
-      - STATS_POSTGRES_USER=postgres
-      - STATS_POSTGRES_PASSWORD=stats
+      - STATS_STRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/softplat-stats
+      - STATS_POSTGRES_USER=softplat-stats
+      - STATS_POSTGRES_PASSWORD=stasoftplat-statsts
 
-  ewm-db:
+  main-db:
     image: postgres:14-alpine
-    container_name: db_ewm_container
+    container_name: db_main_container
     ports:
       - "6543:5432"
     environment:
-      - POSTGRES_DB=main
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=main
+      - POSTGRES_DB=softplat-main
+      - POSTGRES_USER=softplat-main
+      - POSTGRES_PASSWORD=softplat-main
 
-  ewm-service:
-    build: ./ewm-main
-    image: ewm_image
-    container_name: ewm_container
+  ssai-service:
+    build: ./ssai-main/ssai-main-server
+    image: main_image
+    container_name: main_container
     ports:
       - "8080:8080"
     depends_on:
-      - ewm-db
+      - main-db
     environment:
-      - MAIN_STRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/main
-      - MAIN_POSTGRES_USER=postgres
-      - MAIN_POSTGRES_PASSWORD=main
+      - MAIN_STRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/softplat-main
+      - MAIN_POSTGRES_USER=softplat-main
+      - MAIN_POSTGRES_PASSWORD=softplat-main

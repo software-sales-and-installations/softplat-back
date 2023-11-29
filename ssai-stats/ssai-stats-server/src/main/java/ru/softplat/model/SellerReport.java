@@ -2,7 +2,7 @@ package ru.softplat.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.softplat.SellerReportEntry;
+import ru.softplat.security.dto.SellerReportEntry;
 
 import java.util.List;
 

@@ -2,8 +2,8 @@ package ru.softplat.mapper;
 
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
-import ru.softplat.StatsResponseDto;
-import ru.softplat.create.StatsCreateDto;
+import ru.softplat.security.dto.StatsResponseDto;
+import ru.softplat.stats.dto.StatsCreateDto;
 import ru.softplat.model.SellerReport;
 import ru.softplat.model.Stats;
 

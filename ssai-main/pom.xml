@@ -11,6 +11,13 @@
 
     <groupId>ru.softplat</groupId>
     <artifactId>ssai-main</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>ssai-main-server</module>
+        <module>ssai-main-dto</module>
+        <module>ssai-main-client</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

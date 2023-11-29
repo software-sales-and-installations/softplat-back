@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.softplat.StatsFilterAdmin;
-import ru.softplat.StatsFilterSeller;
-import ru.softplat.StatsResponseDto;
-import ru.softplat.create.StatsCreateDto;
+import ru.softplat.security.dto.StatsFilterAdmin;
+import ru.softplat.security.dto.StatsFilterSeller;
+import ru.softplat.security.dto.StatsResponseDto;
+import ru.softplat.stats.dto.StatsCreateDto;
 import ru.softplat.mapper.StatsMapper;
 import ru.softplat.message.LogMessage;
 import ru.softplat.model.SortEnum;
@@ -84,7 +84,6 @@ public class StatsController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('buyer:write')")
     public void createStat(@RequestBody @Valid StatsCreateDto statsCreateDto) {
         log.debug("Попытка создания статистики");
         statsService.createStats(statsMapper.statsCreateDtoToStats(statsCreateDto));
