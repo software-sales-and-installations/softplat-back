@@ -3,9 +3,9 @@ package ru.softplat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.security.dto.SellerReportEntry;
-import ru.softplat.security.dto.StatsFilterAdmin;
-import ru.softplat.security.dto.StatsFilterSeller;
+import ru.softplat.dto.SellerReportEntry;
+import ru.softplat.dto.StatsFilterAdmin;
+import ru.softplat.dto.StatsFilterSeller;
 import ru.softplat.model.SellerReport;
 import ru.softplat.model.SortEnum;
 import ru.softplat.model.Stats;
@@ -112,6 +112,6 @@ public class StatsService {
 
     public void createStats(Stats stats) {
         stats.setAmount(COMMISSIONS * stats.getAmount());
-        statsRepository.save(stats);
+        statsRepository.save(stats); //TODO настроить сохранение с учетом новых сущностей
     }
 }

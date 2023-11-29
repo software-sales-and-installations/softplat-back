@@ -1,4 +1,4 @@
-package ru.softplat.security.dto;
+package ru.softplat.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

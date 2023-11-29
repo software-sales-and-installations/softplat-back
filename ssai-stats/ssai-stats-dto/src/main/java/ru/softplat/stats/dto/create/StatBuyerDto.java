@@ -1,4 +1,4 @@
-package ru.softplat.security.dto.create;
+package ru.softplat.stats.dto.create;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -6,17 +6,15 @@ import lombok.experimental.FieldDefaults;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatProductDto {
+public class StatBuyerDto {
     @NotNull
     Long id;
     @NotBlank
     String name;
-    @NotNull
-    StatSellerDto seller;
 }

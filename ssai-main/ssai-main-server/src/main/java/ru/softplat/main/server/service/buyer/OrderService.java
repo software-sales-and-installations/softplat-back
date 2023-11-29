@@ -1,19 +1,18 @@
 package ru.softplat.main.server.service.buyer;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.main.server.model.buyer.*;
-import ru.softplat.main.server.repository.buyer.OrderPositionRepository;
-import ru.softplat.main.server.repository.buyer.OrderRepository;
-import ru.softplat.main.server.service.product.ProductService;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.OrderPositionMapper;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.buyer.*;
 import ru.softplat.main.server.model.product.ProductStatus;
-import ru.softplat.main.server.web.client.StatClientt;
+import ru.softplat.main.server.repository.buyer.OrderPositionRepository;
+import ru.softplat.main.server.repository.buyer.OrderRepository;
+import ru.softplat.main.server.service.product.ProductService;
 import ru.softplat.stats.client.model.StatsClient;
 
 import java.time.LocalDateTime;
@@ -119,8 +118,7 @@ public class OrderService {
     private void createStats(Order order) {
         List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
-            statClient.addStats(new HttpEntity<>(mapper.orderPositionToStatDto(orderPosition))) ;
+            statClient.addStats(mapper.orderPositionToStatDto(orderPosition)) ;
         }
     }
-
 }
