@@ -3,9 +3,9 @@ package ru.softplat.main.server.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
+import ru.softplat.main.dto.user.response.FavoriteResponseDto;
+import ru.softplat.main.dto.user.response.FavouritesListResponseDto;
 import ru.softplat.main.server.model.buyer.Favorite;
-import ru.softplat.dto.user.response.FavoriteResponseDto;
-import ru.softplat.dto.user.response.FavouritesListResponseDto;
 
 import java.util.List;
 

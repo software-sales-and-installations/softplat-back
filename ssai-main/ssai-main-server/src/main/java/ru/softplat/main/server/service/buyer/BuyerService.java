@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.main.server.repository.buyer.BuyerRepository;
-import ru.server.configuration.PageRequestOverride;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.buyer.Buyer;
+import ru.softplat.main.server.repository.buyer.BuyerRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,8 +39,8 @@ public class BuyerService {
         return buyerRepository.save(buyer);
     }
 
-    public Buyer updateBuyer(String email, Buyer updateRequest) {
-        Buyer oldBuyer = getBuyerByEmail(email);
+    public Buyer updateBuyer(long userId, Buyer updateRequest) {
+        Buyer oldBuyer = getBuyer(userId);
 
         if (updateRequest.getName() != null) {
             oldBuyer.setName(updateRequest.getName());
@@ -74,8 +74,7 @@ public class BuyerService {
                 ));
     }
 
-    @Transactional(readOnly = true)
-    public boolean checkIfUserExistsByEmail(String email) {
+    private boolean checkIfUserExistsByEmail(String email) {
         return buyerRepository.findByEmail(email).isPresent();
     }
 }

@@ -12,17 +12,18 @@ import ru.softplat.stats.dto.StatsCreateDto;
 @Service
 @Slf4j
 public class StatsClient extends BaseClient {
+    private static final String API_PREFIX = "/stats";
 
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
-                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
+                        .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                         .build()
         );
     }
 
     public void addStats(StatsCreateDto statsCreateDto) {
-        post("/stats", statsCreateDto);
+        post("", statsCreateDto);
     }
 }

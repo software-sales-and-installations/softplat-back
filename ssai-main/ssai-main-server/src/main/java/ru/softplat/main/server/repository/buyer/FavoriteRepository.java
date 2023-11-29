@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
-    List<Favorite> findAllByBuyerEmail(String buyerEmail);
+    List<Favorite> findAllByBuyerId(Long buyerId);
 
-    boolean existsByBuyerEmailAndProductId(String buyerEmail, Long productId);
+    boolean existsByBuyerIdAndProductId(Long buyerId, Long productId);
 }
 
