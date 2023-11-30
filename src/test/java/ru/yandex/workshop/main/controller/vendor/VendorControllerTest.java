@@ -4,29 +4,37 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.yandex.workshop.main.controller.AbstractControllerTest;
 import ru.yandex.workshop.main.dto.vendor.VendorCreateUpdateDto;
 import ru.yandex.workshop.main.dto.vendor.VendorResponseDto;
 import ru.yandex.workshop.main.dto.vendor.VendorSearchRequestDto;
 import ru.yandex.workshop.main.dto.vendor.VendorsListResponseDto;
+import ru.yandex.workshop.main.mapper.VendorMapper;
 import ru.yandex.workshop.main.model.vendor.Country;
+import ru.yandex.workshop.main.model.vendor.Vendor;
+import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
@@ -37,6 +45,10 @@ class VendorControllerTest extends AbstractControllerTest {
     private MockMvc mvc;
     @Autowired
     private ObjectMapper mapper;
+    @Mock
+    private VendorService vendorService;
+    @Mock
+    private VendorMapper vendorMapper;
     private VendorCreateUpdateDto vendorCreateUpdateDto;
 
     @BeforeEach
@@ -109,5 +121,74 @@ class VendorControllerTest extends AbstractControllerTest {
         assertEquals(vendorCreateUpdateDto.getName(), actual.getName());
         assertEquals(vendorCreateUpdateDto.getDescription(), actual.getDescription());
         assertEquals(vendorCreateUpdateDto.getCountry(), actual.getCountry());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"admin:write"})
+    @SneakyThrows
+    public void testCreateVendorImage_whenImageAdded_thenReturnVendorResponseDto() {
+        Long vendorId = 1L;
+        MockMultipartFile image = new MockMultipartFile("image", "test.png",
+                MediaType.IMAGE_PNG_VALUE, "test-image-content".getBytes());
+        Vendor vendor = new Vendor();
+        VendorResponseDto vendorResponseDto = new VendorResponseDto();
+
+        when(vendorService.addVendorImage(ArgumentMatchers.eq(vendorId), ArgumentMatchers.any())).thenReturn(vendor);
+        when(vendorMapper.vendorToVendorResponseDto(ArgumentMatchers.any(Vendor.class))).thenReturn(vendorResponseDto);
+
+        mvc.perform(multipart("/vendor/{vendorId}/image", vendorId)
+                        .file(image))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"admin:write"})
+    @SneakyThrows
+    public void testCreateVendorImage_whenImageNotProvided_thenReturnBadRequest() {
+        Long vendorId = 1L;
+
+        mvc.perform(multipart("/vendor/{vendorId}/image", vendorId))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"admin:write"})
+    @SneakyThrows
+    public void testCreateVendorImage_whenImageFormatNotValid_thenReturnBadRequest() {
+        Long vendorId = 1L;
+        MockMultipartFile image = new MockMultipartFile("image", "test.txt",
+                MediaType.TEXT_PLAIN_VALUE, "test-image-content".getBytes());
+
+        mvc.perform(multipart("/vendor/{vendorId}/image", vendorId)
+                        .file(image))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"admin:write"})
+    @SneakyThrows
+    public void testCreateVendorImage_whenImageSizeExceeds2MBSize_thenReturnIsCreated() {
+        Long vendorId = 1L;
+        byte[] largeImageContent = new byte[2 * 1024 * 1024];
+        MockMultipartFile image = new MockMultipartFile("image", "2MB-test.png",
+                MediaType.IMAGE_PNG_VALUE, largeImageContent);
+
+        mvc.perform(multipart("/vendor/{vendorId}/image", vendorId)
+                        .file(image))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(authorities = {"admin:write"})
+    @SneakyThrows
+    public void testCreateVendorImage_whenImageSizeExceedsMaxSize_thenReturnPayloadTooLarge() {
+        Long vendorId = 1L;
+        byte[] largeImageContent = new byte[5 * 1024 * 1024 + 100];
+        MockMultipartFile image = new MockMultipartFile("image", "large-test.png",
+                MediaType.IMAGE_PNG_VALUE, largeImageContent);
+
+        mvc.perform(multipart("/vendor/{vendorId}/image", vendorId)
+                        .file(image))
+                .andExpect(status().isPayloadTooLarge());
     }
 }
