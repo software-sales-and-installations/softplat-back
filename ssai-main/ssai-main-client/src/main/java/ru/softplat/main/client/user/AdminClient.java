@@ -11,7 +11,6 @@ import ru.softplat.main.client.BaseClient;
 import ru.softplat.security.dto.UserCreateMainDto;
 
 @Service
-@Slf4j
 public class AdminClient extends BaseClient {
     private static final String API_PREFIX = "/admin";
 

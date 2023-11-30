@@ -2,10 +2,10 @@ package ru.softplat.main.server.mapper;
 
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
+import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
+import ru.softplat.main.dto.vendor.VendorResponseDto;
+import ru.softplat.main.dto.vendor.VendorsListResponseDto;
 import ru.softplat.main.server.model.vendor.Vendor;
-import ru.softplat.dto.vendor.VendorCreateUpdateDto;
-import ru.softplat.dto.vendor.VendorResponseDto;
-import ru.softplat.dto.vendor.VendorsListResponseDto;
 
 import java.util.List;
 

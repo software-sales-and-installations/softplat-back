@@ -1,8 +1,8 @@
 package ru.softplat.main.server.service.vendor;
 
 import org.springframework.web.multipart.MultipartFile;
-import ru.softplat.dto.vendor.VendorCreateUpdateDto;
-import ru.softplat.dto.vendor.VendorSearchRequestDto;
+import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
+import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.main.server.model.vendor.Vendor;
 
 
