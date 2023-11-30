@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import ru.server.exception.*;
-import ru.softplat.dto.error.ErrorResponse;
-import ru.softplat.exception.*;
+import ru.softplat.main.dto.error.ErrorResponse;
+import ru.softplat.security.server.exception.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -77,19 +76,6 @@ public class ErrorHandler {
         }
         log.error(String.valueOf(e));
         return details;
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleAccessDenialException(final AccessDenialException e) {
-        e.printStackTrace();
-        log.error(String.valueOf(e));
-        return ErrorResponse.builder()
-                .message(e.getMessage())
-                .error(e.getClass().getSimpleName())
-                .status(HttpStatus.CONFLICT.toString())
-                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
-                .build();
     }
 
     @ExceptionHandler
