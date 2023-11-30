@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.softplat.model.product.License;
-import ru.softplat.model.vendor.Country;
+import ru.softplat.main.dto.vendor.Country;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.PositiveOrZero;

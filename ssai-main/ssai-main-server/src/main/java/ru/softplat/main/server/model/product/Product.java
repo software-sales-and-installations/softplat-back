@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.softplat.main.dto.product.License;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.seller.Seller;

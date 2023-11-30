@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.softplat.main.dto.validation.New;
-import ru.softplat.model.vendor.Country;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

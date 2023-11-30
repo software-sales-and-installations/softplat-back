@@ -1,4 +1,4 @@
-package ru.softplat.main.server.model.vendor;
+package ru.softplat.main.dto.vendor;
 
 public enum Country {
     RUSSIA("Russia"),

@@ -3,9 +3,10 @@ package ru.softplat.main.dto.product;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.softplat.main.dto.vendor.VendorResponseDto;
+import ru.softplat.main.dto.category.CategoryResponseDto;
 import ru.softplat.main.dto.image.ImageResponseDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
+import ru.softplat.main.dto.vendor.VendorResponseDto;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +24,7 @@ public class ProductResponseDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     LocalDateTime productionTime;
     ImageResponseDto image;
-    Category category;
+    CategoryResponseDto category;
     License license;
     VendorResponseDto vendor;
     SellerResponseDto seller;

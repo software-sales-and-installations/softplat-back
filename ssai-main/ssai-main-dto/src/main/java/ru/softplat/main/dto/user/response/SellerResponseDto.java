@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.softplat.main.dto.image.ImageResponseDto;
-import ru.softplat.model.seller.BankRequisites;
+import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +18,6 @@ public class SellerResponseDto {
     String name;
     String phone;
     LocalDateTime registrationTime;
-    BankRequisites requisites;
+    BankRequisitesResponseDto requisites;
     ImageResponseDto imageResponseDto;
 }

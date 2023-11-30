@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.softplat.main.dto.validation.New;
-import ru.softplat.model.product.License;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

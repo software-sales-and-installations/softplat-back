@@ -3,6 +3,7 @@ package ru.softplat.main.server.model.vendor;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
+import ru.softplat.main.dto.vendor.Country;
 import ru.softplat.main.server.model.image.Image;
 
 import javax.persistence.*;

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.softplat.main.dto.image.ImageResponseDto;
-import ru.softplat.model.vendor.Country;
 
 @Data
 @Builder
