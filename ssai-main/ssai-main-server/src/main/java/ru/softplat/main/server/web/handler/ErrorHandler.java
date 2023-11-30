@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import ru.server.exception.*;
-import ru.softplat.dto.error.ErrorResponse;
-import ru.softplat.exception.*;
-import ru.softplat.main.server.exception.*;
+import ru.softplat.main.dto.error.ErrorResponse;
+import ru.softplat.main.server.exception.AccessDenialException;
+import ru.softplat.main.server.exception.DuplicateException;
+import ru.softplat.main.server.exception.EntityNotFoundException;
+import ru.softplat.main.server.exception.WrongConditionException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,32 +90,6 @@ public class ErrorHandler {
                 .message(e.getMessage())
                 .error(e.getClass().getSimpleName())
                 .status(HttpStatus.CONFLICT.toString())
-                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
-                .build();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleImageServerUploadException(final ImageServerUploadException e) {
-        e.printStackTrace();
-        log.error(String.valueOf(e));
-        return ErrorResponse.builder()
-                .message(e.getMessage())
-                .error(e.getClass().getSimpleName())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
-                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
-                .build();
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleImageFormatException(final ImageFormatException e) {
-        e.printStackTrace();
-        log.error(String.valueOf(e));
-        return ErrorResponse.builder()
-                .message(e.getMessage())
-                .error(e.getClass().getSimpleName())
-                .status(HttpStatus.BAD_REQUEST.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
     }

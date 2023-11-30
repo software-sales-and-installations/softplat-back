@@ -32,11 +32,11 @@ public class OrderService {
     private final ProductService productService;
     private final StatsClient statClient;
 
-    public Order createOrder(String email, List<Long> basketPositionIds) {
-        Order order = createNewEmptyOrder(email);
+    public Order createOrder(long userId, List<Long> basketPositionIds) {
+        Order order = createNewEmptyOrder(userId);
         List<OrderPosition> orderPositionList = new ArrayList<>();
         float wholePrice = 0F;
-        Basket basket = basketService.getBasketOrThrowException(email);
+        Basket basket = basketService.getBasketOrThrowException(userId);
 
         if (basketPositionIds.size() == 0) {
             throw new WrongConditionException(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label
@@ -64,7 +64,7 @@ public class OrderService {
                 if (i == basket.getProductsInBasket().size() - 1) {
                     throw new EntityNotFoundException(
                             ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION
-                                    .getMessage(String.valueOf(productBasketId), BasketPosition.class)
+                                    .getMessage(productBasketId, BasketPosition.class)
                     );
                 }
             }
@@ -79,8 +79,8 @@ public class OrderService {
         return orderSave;
     }
 
-    private Order createNewEmptyOrder(String email) {
-        Buyer buyer = buyerService.getBuyerByEmail(email);
+    private Order createNewEmptyOrder(long userId) {
+        Buyer buyer = buyerService.getBuyer(userId);
         Order order = new Order();
         order.setBuyer(buyer);
         order.setProductionTime(LocalDateTime.now());
@@ -105,13 +105,13 @@ public class OrderService {
     public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(() ->
                 new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(orderId), Order.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(orderId, Order.class)
                 ));
     }
 
     @Transactional(readOnly = true)
-    public List<Order> getAllOrders(String email) {
-        Buyer buyer = buyerService.getBuyerByEmail(email);
+    public List<Order> getAllOrders(long userId) {
+        Buyer buyer = buyerService.getBuyer(userId);
         return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.ofSize(20));
     }
 
