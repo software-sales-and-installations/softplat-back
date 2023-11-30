@@ -5,6 +5,7 @@ public enum LogMessage {
     TRY_GET_BUYER("Попытка получения покупателя по id: {}"),
     TRY_ADD_SELLER("Попытка добавления нового продавца."),
     TRY_GET_PRODUCTS_FILTER("Попытка получения списка продуктов с учетом фильтра."),
+    TRY_GET_SIMILAR_PRODUCTS("Попытка получения списка похожих продуктов."),
     TRY_PATCH_SELLER("Попытка изменения продавца по email: {}"),
     TRY_GET_SELLER("Попытка получения продавца по id: {}"),
     TRY_GET_All_SELLERS("Попытка получения списка продавцов"),

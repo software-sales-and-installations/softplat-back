@@ -50,4 +50,16 @@ public class PublicProductController {
                 .collect(Collectors.toList());
         return productMapper.toProductsListResponseDto(response);
     }
+
+    @Operation(summary = "Получения списка похожих товаров", description = "Доступ для всех")
+    @GetMapping(path = "/similar")
+    public ProductsListResponseDto getSimilarProducts(@RequestParam Long vendorId,
+                                                      @RequestParam Long categoryId) {
+        log.debug(LogMessage.TRY_GET_SIMILAR_PRODUCTS.label);
+        List<Product> productList = productService.getSimilarProducts(vendorId, categoryId);
+        List<ProductResponseDto> response = productList.stream()
+                .map(productMapper::productToProductResponseDto)
+                .collect(Collectors.toList());
+        return productMapper.toProductsListResponseDto(response);
+    }
 }

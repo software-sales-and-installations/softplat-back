@@ -79,4 +79,21 @@ public class SearchProductService {
 
         return new ArrayList<>(products.getContent());
     }
+
+    @Transactional(readOnly = true)
+    public List<Product> getSimilarProducts(long vendorId, long categoryId) {
+        final int from = 0;
+        final int size = 5;
+        Sort sortBy = Sort.by("productionTime").descending();
+        PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
+
+        QProduct product = QProduct.product;
+        Predicate predicate = QPredicates.builder()
+                .add(vendorId, product.vendor.id::eq)
+                .add(categoryId, product.category.id::eq)
+                .buildOr();
+
+        Page<Product> products = productRepository.findAll(predicate, pageRequest);
+        return new ArrayList<>(products.getContent());
+    }
 }

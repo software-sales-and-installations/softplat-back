@@ -14,4 +14,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
         QuerydslPredicateExecutor<Product> {
 
     List<Product> findAllByProductStatusOrderByProductionTimeDesc(ProductStatus productStatus, PageRequestOverride pageRequest);
+    List<Product> findAllByVendorIdOrCategoryIdOrderByProductionTimeDesc(
+            long vendorId,
+            long categoryId,
+            PageRequestOverride pageRequestOverride);
 }
