@@ -81,17 +81,24 @@ public class SearchProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getSimilarProducts(long vendorId, long categoryId) {
-        final int from = 0;
-        final int size = 5;
+    public List<Product> getSimilarProducts(long productId) {
+        int from = 0;
+        int size = 5;
         Sort sortBy = Sort.by("productionTime").descending();
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
 
-        QProduct product = QProduct.product;
+        Product product = getProductById(productId);
+        QProduct qProduct = QProduct.product;
+        BooleanExpression statusPublishedExpression = qProduct.productStatus.eq(ProductStatus.PUBLISHED);
+
         Predicate predicate = QPredicates.builder()
-                .add(vendorId, product.vendor.id::eq)
-                .add(categoryId, product.category.id::eq)
-                .buildOr();
+                .add(statusPublishedExpression)
+                .add(productId, qProduct.id::ne)
+                .add(QPredicates.builder()
+                        .add(product.getVendor().getId(), qProduct.vendor.id::eq)
+                        .add(product.getCategory().getId(), qProduct.category.id::eq)
+                        .buildOr())
+                .buildAnd();
 
         Page<Product> products = productRepository.findAll(predicate, pageRequest);
         return new ArrayList<>(products.getContent());

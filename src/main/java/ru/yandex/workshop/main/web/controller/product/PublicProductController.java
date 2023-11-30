@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.workshop.main.dto.product.ProductResponseDto;
-import ru.yandex.workshop.main.dto.product.ProductsListResponseDto;
-import ru.yandex.workshop.main.dto.product.ProductsSearchRequestDto;
-import ru.yandex.workshop.main.dto.product.SortBy;
+import ru.yandex.workshop.main.dto.product.*;
 import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.product.Product;
@@ -52,11 +49,10 @@ public class PublicProductController {
     }
 
     @Operation(summary = "Получения списка похожих товаров", description = "Доступ для всех")
-    @GetMapping(path = "/similar")
-    public ProductsListResponseDto getSimilarProducts(@RequestParam Long vendorId,
-                                                      @RequestParam Long categoryId) {
+    @GetMapping(path = "/{productId}/similar")
+    public ProductsListResponseDto getSimilarProducts(@PathVariable Long productId) {
         log.debug(LogMessage.TRY_GET_SIMILAR_PRODUCTS.label);
-        List<Product> productList = productService.getSimilarProducts(vendorId, categoryId);
+        List<Product> productList = productService.getSimilarProducts(productId);
         List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());

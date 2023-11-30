@@ -106,6 +106,15 @@ class PublicProductControllerTest extends AbstractControllerTest {
         );
     }
 
+    static Stream<Arguments> similarProductsTestArguments() {
+        return Stream.of(
+                Arguments.of(1L, Lists.emptyList()),
+                Arguments.of(2L, List.of(3L)),
+                Arguments.of(3L, List.of(2L, 5L)),
+                Arguments.of(5L, List.of(3L))
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("productSearchTestArguments")
     @SneakyThrows
@@ -117,6 +126,25 @@ class PublicProductControllerTest extends AbstractControllerTest {
         List<ProductResponseDto> actual = getSearchResultsByFilter(productFilter, sort).getProducts();
         List<ProductResponseDto> expect = getProductsByIds(productIds);
 
+        performAssertions(actual, expect);
+    }
+
+    @ParameterizedTest
+    @MethodSource("similarProductsTestArguments")
+    @SneakyThrows
+    void getSimilarProducts_shouldReturnSimilarProducts_whenSimilarProductRequestPasses(
+            long productId,
+            List<Long> productIds) {
+
+        List<ProductResponseDto> actual = getSimilarProducts(productId).getProducts();
+        List<ProductResponseDto> expect = getProductsByIds(productIds);
+
+        performAssertions(actual, expect);
+    }
+
+
+
+    private void performAssertions(List<ProductResponseDto> actual, List<ProductResponseDto> expect) {
         assertEquals(expect.size(), actual.size());
 
         for (int i = 0; i < expect.size(); i++) {
@@ -140,13 +168,26 @@ class PublicProductControllerTest extends AbstractControllerTest {
         return response;
     }
 
-    private ProductsListResponseDto getSearchResultsByFilter(ProductsSearchRequestDto productFilter, String sort) throws Exception {
+    @SneakyThrows
+    private ProductsListResponseDto getSearchResultsByFilter(ProductsSearchRequestDto productFilter, String sort) {
         MvcResult result = mockMvc.perform(get("/product/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productFilter))
                         .param("minId", "0")
                         .param("pageSize", "20")
                         .param("sort", sort))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                ProductsListResponseDto.class);
+    }
+
+    @SneakyThrows
+    private ProductsListResponseDto getSimilarProducts(long productId) {
+        MvcResult result = mockMvc.perform(get("/product/{productId}/similar", productId)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
