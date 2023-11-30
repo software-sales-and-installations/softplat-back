@@ -27,11 +27,11 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
-    public Admin getAdmin(String email) {
+    public Admin getAdmin(Long adminId) {
         return adminRepository
-                .findByEmail(email).orElseThrow(
+                .findById(adminId).orElseThrow(
                         () -> new EntityNotFoundException(
-                                ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Admin.class)
+                                ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(adminId.toString(), Admin.class)
                         ));
     }
 
