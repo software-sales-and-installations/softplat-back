@@ -1,4 +1,4 @@
-package ru.softplat.main.server.model.product;
+package ru.softplat.main.dto.product;
 
 public enum ProductStatus {
     DRAFT("Черновик"),

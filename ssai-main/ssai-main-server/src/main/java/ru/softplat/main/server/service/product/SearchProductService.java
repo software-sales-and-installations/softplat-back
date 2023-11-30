@@ -9,15 +9,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.main.server.repository.product.ProductRepository;
-import ru.server.configuration.PageRequestOverride;
-import ru.softplat.dto.product.ProductsSearchRequestDto;
-import ru.softplat.dto.product.SortBy;
+import ru.softplat.main.dto.product.ProductStatus;
+import ru.softplat.main.dto.product.ProductsSearchRequestDto;
+import ru.softplat.main.dto.product.SortBy;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.product.Product;
-import ru.softplat.main.server.model.product.ProductStatus;
-import ru.softplat.model.product.QProduct;
+import ru.softplat.main.server.model.product.QProduct;
+import ru.softplat.main.server.repository.product.ProductRepository;
 import ru.softplat.main.server.util.QPredicates;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class SearchProductService {
     public Product getProductById(Long productId) {
         return productRepository.findById(productId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class)
                 ));
     }
 

@@ -3,9 +3,9 @@ package ru.softplat.main.server.repository.product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
-import ru.server.configuration.PageRequestOverride;
+import ru.softplat.main.dto.product.ProductStatus;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.model.product.Product;
-import ru.softplat.main.server.model.product.ProductStatus;
 
 import java.util.List;
 

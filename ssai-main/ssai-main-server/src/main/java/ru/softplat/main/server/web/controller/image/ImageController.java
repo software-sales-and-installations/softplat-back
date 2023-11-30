@@ -1,7 +1,5 @@
 package ru.softplat.main.server.web.controller.image;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +15,8 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @Operation(summary = "Получение изображения по id", description = "Доступ для всех")
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getImage(@Parameter(description = "Идентификатор уникален для всех изображений на сайте")
-                                           @PathVariable Long id) {
+    public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
         return imageService.getImageAsByteArray(id);
     }
 }

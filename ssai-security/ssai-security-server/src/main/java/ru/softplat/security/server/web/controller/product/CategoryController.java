@@ -4,66 +4,54 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.softplat.dto.category.CategoriesListResponseDto;
-import ru.softplat.dto.category.CategoryCreateUpdateDto;
-import ru.softplat.dto.category.CategoryResponseDto;
-import ru.softplat.main.server.mapper.CategoryMapper;
-import ru.softplat.main.server.message.LogMessage;
-import ru.softplat.main.server.model.product.Category;
-import ru.softplat.main.server.service.product.CategoryServiceImpl;
+import ru.softplat.main.client.product.CategoryClient;
+import ru.softplat.main.dto.category.CategoryCreateUpdateDto;
+import ru.softplat.security.server.message.LogMessage;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Validated
 @RequestMapping("/category")
 public class CategoryController {
-    private final CategoryServiceImpl service;
-    private final CategoryMapper categoryMapper;
+    private final CategoryClient categoryClient;
 
     @Operation(summary = "Получение списка категорий", description = "Доступ для всех")
     @GetMapping
-    public CategoriesListResponseDto findAllCategories() {
+    public ResponseEntity<Object> findAllCategories() {
         log.debug(LogMessage.TRY_GET_CATEGORY.label);
-        List<CategoryResponseDto> response = service.findCategoryAll().stream()
-                .map(categoryMapper::categoryToCategoryResponseDto)
-                .collect(Collectors.toList());
-        return categoryMapper.toCategoriesListResponseDto(response);
+        return categoryClient.getAllCategories();
     }
 
     @Operation(summary = "Получение категории по id", description = "Доступ для всех")
     @GetMapping(path = "/{catId}")
-    public CategoryResponseDto findCategoryById(@PathVariable(name = "catId") Long catId) {
+    public ResponseEntity<Object> findCategoryById(@PathVariable(name = "catId") Long catId) {
         log.debug(LogMessage.TRY_GET_ID_CATEGORY.label, catId);
-        Category response = service.getCategoryById(catId);
-        return categoryMapper.categoryToCategoryResponseDto(response);
+        return categoryClient.getCategory(catId);
     }
 
     @Operation(summary = "Создание категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponseDto createCategory(@RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
+    public ResponseEntity<Object> createCategory(@RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_CATEGORY.label);
-        Category request = categoryMapper.categoryDtoToCategory(categoryCreateUpdateDto);
-        Category response = service.createCategory(request);
-        return categoryMapper.categoryToCategoryResponseDto(response);
+        return categoryClient.createCategory(categoryCreateUpdateDto);
     }
 
     @Operation(summary = "Изменение категории", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{catId}")
-    public CategoryResponseDto changeCategoryById(@PathVariable(name = "catId") Long catId,
+    public ResponseEntity<Object> changeCategoryById(@PathVariable(name = "catId") Long catId,
                                                   @RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_CATEGORY.label, catId);
-        Category updateRequest = categoryMapper.categoryDtoToCategory(categoryCreateUpdateDto);
-        Category response = service.changeCategoryById(catId, updateRequest);
-        return categoryMapper.categoryToCategoryResponseDto(response);
+        return categoryClient.updateCategory(catId, categoryCreateUpdateDto);
     }
 
     @Operation(summary = "Удаление категории", description = "Доступ для админа")
@@ -72,6 +60,6 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable(name = "catId") Long catId) {
         log.debug(LogMessage.TRY_ADMIN_DELETE_CATEGORY.label, catId);
-        service.deleteCategory(catId);
+        categoryClient.deleteCategory(catId);
     }
 }

@@ -5,9 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.softplat.main.server.repository.product.ProductRepository;
-import ru.softplat.main.server.service.vendor.VendorService;
-import ru.server.configuration.PageRequestOverride;
+import ru.softplat.main.dto.product.ProductStatus;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.AccessDenialException;
 import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
@@ -15,11 +14,12 @@ import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.product.Category;
 import ru.softplat.main.server.model.product.Product;
-import ru.softplat.main.server.model.product.ProductStatus;
 import ru.softplat.main.server.model.seller.Seller;
 import ru.softplat.main.server.model.vendor.Vendor;
+import ru.softplat.main.server.repository.product.ProductRepository;
 import ru.softplat.main.server.service.image.ImageService;
 import ru.softplat.main.server.service.seller.SellerService;
+import ru.softplat.main.server.service.vendor.VendorService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,8 +36,8 @@ public class ProductService {
     private final VendorService vendorService;
     private final ImageService imageService;
 
-    public Product create(String sellerEmail, Product product, Long categoryId, Long vendorId) {
-        initProduct(sellerEmail, product, categoryId, vendorId);
+    public Product create(long sellerId, Product product, Long categoryId, Long vendorId) {
+        initProduct(sellerId, product, categoryId, vendorId);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
@@ -155,12 +155,12 @@ public class ProductService {
     public Product getProductOrThrowException(Long productId) {
         return productRepository.findById(productId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class)
                 ));
     }
 
-    private void initProduct(String sellerEmail, Product product, long categoryId, long vendorId) {
-        Seller seller = sellerService.getSeller(sellerEmail);
+    private void initProduct(long sellerId, Product product, long categoryId, long vendorId) {
+        Seller seller = sellerService.getSeller(sellerId);
         Category category = categoryService.getCategoryById(categoryId);
         Vendor vendor = vendorService.getVendorById(vendorId);
 
@@ -170,10 +170,10 @@ public class ProductService {
         product.setProductStatus(ProductStatus.DRAFT);
     }
 
-    public void checkSellerAccessRights(String email, Long productId) {
+    public void checkSellerAccessRights(long sellerId, Long productId) {
         Product product = getProductOrThrowException(productId);
 
-        if (!product.getSeller().getEmail().equals(email)) {
+        if (!product.getSeller().getId().equals(sellerId)) {
             throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_EXCEPTION.label);
         }
     }
@@ -182,11 +182,11 @@ public class ProductService {
     public Product getAvailableProduct(long productId) {
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class)
                 ));
         if (!product.getProductAvailability() || product.getProductStatus() != ProductStatus.PUBLISHED)
             throw new EntityNotFoundException(
-                    ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
+                    ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class)
             );
         return product;
     }

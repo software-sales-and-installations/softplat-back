@@ -3,10 +3,10 @@ package ru.softplat.main.server.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
+import ru.softplat.main.dto.product.ProductCreateUpdateDto;
+import ru.softplat.main.dto.product.ProductResponseDto;
+import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.server.model.product.Product;
-import ru.softplat.dto.product.ProductCreateUpdateDto;
-import ru.softplat.dto.product.ProductResponseDto;
-import ru.softplat.dto.product.ProductsListResponseDto;
 
 import java.util.List;
 
