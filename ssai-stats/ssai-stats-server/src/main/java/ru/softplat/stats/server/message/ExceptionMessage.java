@@ -1,4 +1,4 @@
-package ru.softplat.message;
+package ru.softplat.stats.server.message;
 
 public enum ExceptionMessage {
     ENTITY_NOT_FOUND_EXCEPTION("Требуемая запись c ID (или email) %s и типом %s не найдена."),

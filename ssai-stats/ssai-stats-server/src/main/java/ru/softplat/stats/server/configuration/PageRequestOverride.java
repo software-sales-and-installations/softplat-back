@@ -1,4 +1,4 @@
-package ru.softplat.configuration;
+package ru.softplat.stats.server.configuration;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

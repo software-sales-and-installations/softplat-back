@@ -23,7 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
+<dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -166,6 +166,7 @@
             <artifactId>httpclient</artifactId>
         </dependency>
     </dependencies>
+</dependencyManagement>
 
     <build>
         <plugins>

@@ -1,4 +1,4 @@
-package ru.softplat.dto;
+package ru.softplat.stats.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

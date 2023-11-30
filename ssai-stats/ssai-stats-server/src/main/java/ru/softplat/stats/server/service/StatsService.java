@@ -1,15 +1,15 @@
-package ru.softplat.service;
+package ru.softplat.stats.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.dto.SellerReportEntry;
-import ru.softplat.dto.StatsFilterAdmin;
-import ru.softplat.dto.StatsFilterSeller;
-import ru.softplat.model.SellerReport;
-import ru.softplat.model.SortEnum;
-import ru.softplat.model.Stats;
-import ru.softplat.repository.StatsRepository;
+import ru.softplat.stats.server.repository.StatsRepository;
+import ru.softplat.stats.server.dto.SellerReportEntry;
+import ru.softplat.stats.dto.StatsFilterAdmin;
+import ru.softplat.stats.dto.StatsFilterSeller;
+import ru.softplat.stats.server.model.SellerReport;
+import ru.softplat.stats.dto.SortEnum;
+import ru.softplat.stats.server.model.Stats;
 
 import java.time.LocalDateTime;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package ru.softplat.message;
+package ru.softplat.stats.server.message;
 
 public enum LogMessage {
     TRY_PATCH_BUYER("Попытка изменения покупателя по email: {}"),

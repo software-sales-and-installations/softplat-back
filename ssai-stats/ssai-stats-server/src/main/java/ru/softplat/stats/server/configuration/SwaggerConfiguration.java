@@ -1,4 +1,4 @@
-package ru.softplat.configuration;
+package ru.softplat.stats.server.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

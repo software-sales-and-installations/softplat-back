@@ -1,4 +1,4 @@
-package ru.softplat.model;
+package ru.softplat.stats.server.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -14,8 +14,8 @@ import javax.persistence.Table;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "stat_seller")
-public class StatSeller {
+@Table(name = "stat_buyer")
+public class StatBuyer {
     @Id
     Long id;
     String name;

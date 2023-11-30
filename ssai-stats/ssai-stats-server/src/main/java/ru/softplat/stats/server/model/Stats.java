@@ -1,4 +1,4 @@
-package ru.softplat.model;
+package ru.softplat.stats.server.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

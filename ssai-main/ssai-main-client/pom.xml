@@ -25,6 +25,7 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>ru.softplat.main.dto</groupId>
             <artifactId>ssai-main-dto</artifactId>

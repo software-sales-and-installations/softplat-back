@@ -1,4 +1,4 @@
-package ru.softplat.controller;
+package ru.softplat.stats.server.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.softplat.dto.StatsFilterAdmin;
-import ru.softplat.dto.StatsFilterSeller;
-import ru.softplat.dto.StatsResponseDto;
-import ru.softplat.mapper.StatsMapper;
-import ru.softplat.message.LogMessage;
-import ru.softplat.model.SortEnum;
-import ru.softplat.service.StatsService;
+import ru.softplat.stats.dto.StatsFilterAdmin;
+import ru.softplat.stats.dto.StatsFilterSeller;
+import ru.softplat.stats.server.dto.StatsResponseDto;
+import ru.softplat.stats.server.mapper.StatsMapper;
+import ru.softplat.stats.server.message.LogMessage;
+import ru.softplat.stats.dto.SortEnum;
+import ru.softplat.stats.server.service.StatsService;
 import ru.softplat.stats.dto.StatsCreateDto;
 
 import javax.validation.Valid;

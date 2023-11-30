@@ -26,6 +26,7 @@
     </properties>
 
 
+    <dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -201,6 +202,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
