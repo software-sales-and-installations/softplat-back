@@ -9,6 +9,10 @@
         <version>2.5.8</version>
         <relativePath/>
     </parent>
+
+    <groupId>ru.yandex</groupId>
+    <artifactId>workshop</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>softplat-back</name>
@@ -18,10 +22,6 @@
         <module>ssai-main</module>
         <module>ssai-stats</module>
     </modules>
-
-    <groupId>ru.yandex</groupId>
-    <artifactId>workshop</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
 
     <properties>
         <java.version>11</java.version>

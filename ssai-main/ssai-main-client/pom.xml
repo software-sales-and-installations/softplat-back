@@ -19,6 +19,7 @@
     </properties>
 
     <dependencies>
+<!--       Modules -->
         <dependency>
             <groupId>ru.softplat.security.dto</groupId>
             <artifactId>ssai-security-dto</artifactId>
@@ -32,5 +33,27 @@
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+
+        <!--        -->
     </dependencies>
 </project>
