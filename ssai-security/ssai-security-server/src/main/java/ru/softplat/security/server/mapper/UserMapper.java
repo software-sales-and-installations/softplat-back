@@ -2,8 +2,9 @@ package ru.softplat.security.server.mapper;
 
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
+import ru.softplat.security.dto.UserCreateMainDto;
 import ru.softplat.security.server.dto.UserCreateDto;
-import ru.softplat.dto.UserResponseDto;
+import ru.softplat.security.server.dto.UserResponseDto;
 import ru.softplat.security.server.model.User;
 
 
@@ -12,11 +13,7 @@ import ru.softplat.security.server.model.User;
 public interface UserMapper {
     User userDtoToUser(UserCreateDto userCreateDto);
 
-//    Admin userDtoToAdmin(UserCreateDto userCreateDto);
-//
-//    Seller userDtoToSeller(UserCreateDto userCreateDto);
-//
-//    Buyer userDtoToBuyer(UserCreateDto userCreateDto);
+    UserCreateMainDto userToUserMain(UserCreateDto userCreateDto);
 
     UserResponseDto userToUserResponseDto(User user);
 }

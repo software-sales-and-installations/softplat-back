@@ -11,7 +11,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
-import ru.softplat.main.dto.user.UserCreateMainDto;
+import ru.softplat.security.dto.UserCreateMainDto;
 
 import java.util.Map;
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.softplat.security.server.config.JwtTokenProvider;
 import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.dto.UserCreateDto;
+import ru.softplat.security.server.dto.UserResponseDto;
 import ru.softplat.security.server.exception.WrongConditionException;
 import ru.softplat.security.server.exception.WrongRegException;
 import ru.softplat.security.server.mapper.UserMapper;
@@ -51,7 +52,7 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<Object> authorization(@RequestBody @Valid JwtAuthRequest request) {
-        log.info(LogMessage.TRY_AUTHORIZATION.label);
+//        log.info(LogMessage.TRY_AUTHORIZATION.label);
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -72,7 +73,8 @@ public class AuthController {
 
     @PostMapping("/auth/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-        log.info(LogMessage.TRY_LOGOUT.label);
+//        log.info(LogMessage.TRY_LOGOUT.label);
+
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
     }
@@ -80,7 +82,7 @@ public class AuthController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/registration")
     public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserCreateDto userCreateDto) {
-        log.info(LogMessage.TRY_REGISTRATION.label);
+//        log.info(LogMessage.TRY_REGISTRATION.label);
 
         if (!userCreateDto.getPassword().equals(userCreateDto.getConfirmPassword())) {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
@@ -91,13 +93,12 @@ public class AuthController {
             throw new WrongConditionException("Необходимо указать номер телефона. " +
                     "Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
-//        return ResponseEntity.of(Optional.of(userMapper.userToUserResponseDto(authService.createNewUser(userCreateDto))));
-    return null;
+        return authService.createNewUser(userCreateDto);
     }
 
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtAuthRequest request) {
-        log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
+//        log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
         return ResponseEntity.of(
                 Optional.of(userMapper
                         .userToUserResponseDto(userDetailsChangeService

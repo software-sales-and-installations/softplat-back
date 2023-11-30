@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
+import ru.softplat.security.dto.UserCreateMainDto;
+
 @Service
 @Slf4j
 public class AdminClient extends BaseClient {
@@ -20,6 +22,10 @@ public class AdminClient extends BaseClient {
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                         .build()
         );
+    }
+
+    public ResponseEntity<Object> addAdmin(UserCreateMainDto admin) {
+        return post("", admin);
     }
 
     public ResponseEntity<Object> getAdminById(Long adminId) {

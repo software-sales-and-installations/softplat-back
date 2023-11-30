@@ -1,4 +1,4 @@
-package ru.softplat.main.dto.user;
+package ru.softplat.security.dto;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreateMainDto {
-
     String email;
     String name;
     String phone;

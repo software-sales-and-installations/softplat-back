@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
-import ru.softplat.main.dto.user.UserCreateMainDto;
+import ru.softplat.security.dto.UserCreateMainDto;
 
 import java.util.Map;
 

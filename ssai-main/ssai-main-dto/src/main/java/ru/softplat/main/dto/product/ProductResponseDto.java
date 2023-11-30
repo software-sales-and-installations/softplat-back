@@ -6,9 +6,6 @@ import lombok.experimental.FieldDefaults;
 import ru.softplat.main.dto.vendor.VendorResponseDto;
 import ru.softplat.main.dto.image.ImageResponseDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
-import ru.softplat.model.product.Category;
-import ru.softplat.model.product.License;
-import ru.softplat.model.product.ProductStatus;
 
 import java.time.LocalDateTime;
 
