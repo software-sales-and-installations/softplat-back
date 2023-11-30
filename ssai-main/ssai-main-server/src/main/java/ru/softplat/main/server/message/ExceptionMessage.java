@@ -22,8 +22,8 @@ public enum ExceptionMessage {
         this.label = label;
     }
 
-    public String getMessage(String idOrEmail, Class<?> entityClass) {
+    public String getMessage(long id, Class<?> entityClass) {
         String entityType = entityClass.getSimpleName();
-        return String.format(label, idOrEmail, entityType);
+        return String.format(label, id, entityType);
     }
 }

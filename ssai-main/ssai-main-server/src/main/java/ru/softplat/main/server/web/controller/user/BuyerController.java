@@ -50,7 +50,7 @@ public class BuyerController {
     }
 
     @PatchMapping
-    public BuyerResponseDto updateBuyer(@RequestHeader long userId, @RequestBody BuyerUpdateDto buyerUpdateDto) {
+    public BuyerResponseDto updateBuyer(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody BuyerUpdateDto buyerUpdateDto) {
         Buyer updateRequest = buyerMapper.buyerDtoToBuyer(buyerUpdateDto);
         Buyer response = buyerService.updateBuyer(userId, updateRequest);
         return buyerMapper.buyerToBuyerResponseDto(response);
@@ -58,20 +58,20 @@ public class BuyerController {
 
     @PostMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public FavoriteResponseDto createFavorite(@RequestHeader long userId, @PathVariable Long productId) {
+    public FavoriteResponseDto createFavorite(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
         Favorite response = favoriteService.create(userId, productId);
         return favoriteMapper.toFavouriteDto(response);
     }
 
     @DeleteMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteFavorite(@RequestHeader long userId,
+    public void deleteFavorite(@RequestHeader("X-Sharer-User-Id") long userId,
                                @PathVariable Long productId) {
         favoriteService.delete(userId, productId);
     }
 
     @GetMapping("/favorites")
-    public FavouritesListResponseDto getBuyerFavouriteProducts(@RequestHeader long userId) {
+    public FavouritesListResponseDto getBuyerFavouriteProducts(@RequestHeader("X-Sharer-User-Id") long userId) {
         List<Favorite> favoriteList = favoriteService.getAll(userId);
         List<FavoriteResponseDto> response = favoriteList.stream()
                 .map(favoriteMapper::toFavouriteDto)

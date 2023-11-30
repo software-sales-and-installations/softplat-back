@@ -3,12 +3,13 @@ package ru.softplat.main.server.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
+import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
+import ru.softplat.main.dto.user.SellerUpdateDto;
+import ru.softplat.main.dto.user.UserCreateMainDto;
+import ru.softplat.main.dto.user.response.SellerResponseDto;
+import ru.softplat.main.dto.user.response.SellersListResponseDto;
 import ru.softplat.main.server.model.seller.BankRequisites;
 import ru.softplat.main.server.model.seller.Seller;
-import ru.softplat.dto.seller.BankRequisitesResponseDto;
-import ru.softplat.dto.user.SellerUpdateDto;
-import ru.softplat.dto.user.response.SellerResponseDto;
-import ru.softplat.dto.user.response.SellersListResponseDto;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface SellerMapper {
     SellerResponseDto sellerToSellerResponseDto(Seller seller);
 
     Seller sellerDtoToSeller(SellerUpdateDto sellerUpdateDto);
+
+    Seller userCreateDtoToSeller(UserCreateMainDto userCreateMainDto);
 
     default BankRequisitesResponseDto requisitesToDto(BankRequisites requisites) {
         if (requisites == null) return null;

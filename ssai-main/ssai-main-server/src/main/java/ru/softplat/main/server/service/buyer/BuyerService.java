@@ -31,8 +31,9 @@ public class BuyerService {
     }
 
     public Buyer addBuyer(Buyer buyer) {
-        if (checkIfUserExistsByEmail(buyer.getEmail()))
+        if (checkIfBuyerExistsByEmail(buyer.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + buyer.getEmail());
+        //TODO должно быть в секьюрити только, можно удалить дублирование
 
         buyer.setRegistrationTime(LocalDateTime.now());
 
@@ -46,7 +47,7 @@ public class BuyerService {
             oldBuyer.setName(updateRequest.getName());
         }
         /*if (updateRequest.getEmail() != null) {
-            if (checkIfUserExistsByEmail(updateRequest.getEmail()))
+            if (checkIfBuyerExistsByEmail(updateRequest.getEmail()))
                 throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + updateRequest.getEmail());
             userDetailsChangeService.changeEmail(oldBuyer.getEmail(), updateRequest.getEmail());
             oldBuyer.setEmail(updateRequest.getEmail());
@@ -62,19 +63,11 @@ public class BuyerService {
     public Buyer getBuyer(Long userId) {
         return buyerRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(userId), Buyer.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(userId, Buyer.class)
                 ));
     }
 
-    @Transactional(readOnly = true)
-    public Buyer getBuyerByEmail(String email) {
-        return buyerRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Buyer.class)
-                ));
-    }
-
-    private boolean checkIfUserExistsByEmail(String email) {
+    private boolean checkIfBuyerExistsByEmail(String email) {
         return buyerRepository.findByEmail(email).isPresent();
     }
 }
