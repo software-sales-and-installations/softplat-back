@@ -2,11 +2,10 @@ package ru.softplat.main.server.mapper;
 
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
+import ru.softplat.main.dto.category.CategoriesListResponseDto;
+import ru.softplat.main.dto.category.CategoryCreateUpdateDto;
+import ru.softplat.main.dto.category.CategoryResponseDto;
 import ru.softplat.main.server.model.product.Category;
-import ru.softplat.dto.category.CategoriesListResponseDto;
-import ru.softplat.dto.category.CategoryCreateUpdateDto;
-import ru.softplat.dto.category.CategoryResponseDto;
-
 
 import java.util.List;
 

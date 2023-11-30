@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.softplat.main.server.service.image.ImageService;
+import ru.softplat.main.client.image.ImageClient;
 
 @RestController
 @RequestMapping(path = "/image")
 @RequiredArgsConstructor
 public class ImageController {
 
-    private final ImageService imageService;
+    private final ImageClient imageClient;
 
     @Operation(summary = "Получение изображения по id", description = "Доступ для всех")
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getImage(@Parameter(description = "Идентификатор уникален для всех изображений на сайте")
+    public ResponseEntity<Object> getImage(@Parameter(description = "Идентификатор уникален для всех изображений на сайте")
                                            @PathVariable Long id) {
-        return imageService.getImageAsByteArray(id);
+        return imageClient.getImage(id);
     }
 }

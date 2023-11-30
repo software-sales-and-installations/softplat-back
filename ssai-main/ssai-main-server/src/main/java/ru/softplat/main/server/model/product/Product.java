@@ -4,10 +4,10 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.softplat.main.server.model.vendor.Vendor;
+import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.seller.Seller;
-
+import ru.softplat.main.server.model.vendor.Vendor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

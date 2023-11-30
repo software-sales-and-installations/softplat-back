@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import ru.softplat.main.server.repository.image.ImageRepository;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.ImageServerUploadException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.image.Image;
+import ru.softplat.main.server.repository.image.ImageRepository;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -63,7 +63,7 @@ public class ImageServiceImpl implements ImageService {
     public Image getImageById(Long imageId) {
         return imageRepository.findById(imageId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(imageId), Image.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(imageId, Image.class)
                 ));
     }
 }
