@@ -4,9 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.main.server.repository.buyer.BasketPositionRepository;
-import ru.softplat.main.server.repository.buyer.BasketRepository;
-import ru.softplat.main.server.service.product.ProductService;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.message.ExceptionMessage;
@@ -14,6 +11,9 @@ import ru.softplat.main.server.model.buyer.Basket;
 import ru.softplat.main.server.model.buyer.BasketPosition;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.repository.buyer.BasketPositionRepository;
+import ru.softplat.main.server.repository.buyer.BasketRepository;
+import ru.softplat.main.server.service.product.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +30,11 @@ public class BasketService {
     private final ProductService productService;
     private final BuyerService buyerService;
 
-    public Basket addProduct(String buyerEmail, Long productId, Boolean installation) {
+    public Basket addProduct(Long buyerId, Long productId, Boolean installation) {
         Product product = productService.getAvailableProduct(productId);
         checkIfProductAvailableForPurchase(product, installation);
 
-        Basket basket = getOrCreateBasket(buyerEmail);
+        Basket basket = getOrCreateBasket(buyerId);
         List<BasketPosition> productsInBasket = basket.getProductsInBasket();
 
         Optional<BasketPosition> optionalBasketPosition
@@ -98,8 +98,8 @@ public class BasketService {
                 .findFirst();
     }
 
-    public Basket removeProduct(String buyerEmail, Long productId, Boolean installation) {
-        Basket basket = getOrCreateBasket(buyerEmail);
+    public Basket removeProduct(Long buyerId, Long productId, Boolean installation) {
+        Basket basket = getOrCreateBasket(buyerId);
         Optional<BasketPosition> optionalBasketPosition
                 = getOptionalBasketPosition(basket.getProductsInBasket(), productId, installation);
 
@@ -107,7 +107,7 @@ public class BasketService {
             BasketPosition productInBasket = optionalBasketPosition.get();
             if (productInBasket.getQuantity() == 1) {
                 basketPositionRepository.deleteById(productInBasket.getId());
-                return getBasketOrThrowException(buyerEmail);
+                return getBasketOrThrowException(buyerId);
             } else {
                 for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
                     if (Objects.equals(basket.getProductsInBasket().get(i).getId(), productInBasket.getId())) {
@@ -120,8 +120,8 @@ public class BasketService {
         throw new WrongConditionException("Ошибка при удалении товара");
     }
 
-    public Basket getOrCreateBasket(String buyerEmail) {
-        Buyer buyer = buyerService.getBuyerByEmail(buyerEmail);
+    public Basket getOrCreateBasket(Long buyerId) {
+        Buyer buyer = buyerService.getBuyer(buyerId);
         Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
         return basket.orElseGet(() -> basketRepository.save(Basket.builder()
                 .buyerId(buyer.getId())
@@ -130,12 +130,12 @@ public class BasketService {
     }
 
     @Transactional(readOnly = true)
-    public Basket getBasketOrThrowException(String email) {
-        Buyer buyer = buyerService.getBuyerByEmail(email);
+    public Basket getBasketOrThrowException(Long buyerId) {
+        Buyer buyer = buyerService.getBuyer(buyerId);
         Optional<Basket> basket = basketRepository.findByBuyerId(buyer.getId());
         return basket.orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Basket.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(buyerId, Basket.class)
                 ));
     }
 
