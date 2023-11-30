@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
-import ru.softplat.main.server.repository.seller.SellerRepository;
-import ru.softplat.main.server.service.image.ImageService;
-import ru.server.configuration.PageRequestOverride;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.seller.Seller;
+import ru.softplat.main.server.repository.seller.SellerRepository;
+import ru.softplat.main.server.service.image.ImageService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,14 +31,15 @@ public class SellerService {
     public Seller addSeller(Seller seller) {
         if (checkIfSellerExistsByEmail(seller.getEmail()))
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + seller.getEmail());
+//TODO должно быть в секьюрити только, можно удалить дублирование
 
         seller.setRegistrationTime(LocalDateTime.now());
 
         return sellerRepository.save(seller);
     }
 
-    public Seller updateSeller(String email, Seller sellerForUpdate) {
-        Seller seller = getSeller(email);
+    public Seller updateSeller(Long userId, Seller sellerForUpdate) {
+        Seller seller = getSeller(userId);
 
         if (sellerForUpdate.getName() != null) seller.setName(sellerForUpdate.getName());
         /*if (sellerForUpdate.getEmail() != null) {
@@ -52,8 +53,8 @@ public class SellerService {
         return sellerRepository.save(seller);
     }
 
-    public Seller addSellerImage(String email, MultipartFile file) {
-        Seller seller = getSeller(email);
+    public Seller addSellerImage(Long userId, MultipartFile file) {
+        Seller seller = getSeller(userId);
         if (seller.getImage() != null) {
             imageService.deleteImageById(seller.getImage().getId());
         }
@@ -61,18 +62,8 @@ public class SellerService {
         return seller;
     }
 
-    public void deleteSellerImage(String email) {
-        Seller seller = getSeller(email);
-        if (seller.getImage() != null) {
-            imageService.deleteImageById(seller.getImage().getId());
-        }
-    }
-
-    public void deleteSellerImageBySellerId(Long sellerId) {
-        Seller seller = sellerRepository.findById(sellerId).orElseThrow(
-                () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(sellerId), Seller.class)
-                ));
+    public void deleteSellerImage(Long userId) {
+        Seller seller = getSeller(userId);
         if (seller.getImage() != null) {
             imageService.deleteImageById(seller.getImage().getId());
         }
@@ -88,15 +79,7 @@ public class SellerService {
     public Seller getSeller(Long userId) {
         return sellerRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(userId), Seller.class)
-                ));
-    }
-
-    @Transactional(readOnly = true)
-    public Seller getSeller(String email) {
-        return sellerRepository.findByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email, Seller.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(userId, Seller.class)
                 ));
     }
 

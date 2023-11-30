@@ -43,7 +43,7 @@ public class BuyerController {
     @Operation(summary = "Обновление данных о себе покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PatchMapping
-    public ResponseEntity<Object> updateBuyer(@RequestHeader long userId, @RequestBody @Valid BuyerUpdateDto buyerUpdateDto) {
+    public ResponseEntity<Object> updateBuyer(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid BuyerUpdateDto buyerUpdateDto) {
         log.info(LogMessage.TRY_PATCH_BUYER.label, userId);
         return buyerClient.updateBuyer(userId, buyerUpdateDto);
     }
@@ -52,7 +52,7 @@ public class BuyerController {
     @PreAuthorize("hasAuthority('buyer:write')")
     @PostMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<Object> createFavorite(@RequestHeader long userId, @PathVariable Long productId) {
+    public ResponseEntity<Object> createFavorite(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", userId, productId);
         return buyerClient.createFavourite(userId, productId);
     }
@@ -61,7 +61,7 @@ public class BuyerController {
     @PreAuthorize("hasAuthority('buyer:write')")
     @DeleteMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteFavorite(@RequestHeader long userId,
+    public void deleteFavorite(@RequestHeader("X-Sharer-User-Id") long userId,
                                @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_DELETE_FAVORITE.label, "{}, {}", userId, productId);
         buyerClient.deleteFavourite(userId, productId);
@@ -70,7 +70,7 @@ public class BuyerController {
     @Operation(summary = "Просмотр избранных товаров", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @GetMapping("/favorites")
-    public ResponseEntity<Object> getBuyerFavouriteProducts(@RequestHeader long userId) {
+    public ResponseEntity<Object> getBuyerFavouriteProducts(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, userId);
         return buyerClient.getFavourites(userId);
     }
