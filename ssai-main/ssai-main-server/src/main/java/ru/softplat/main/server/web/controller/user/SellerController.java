@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
-import ru.softplat.main.dto.user.UserCreateMainDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.dto.user.response.SellersListResponseDto;
 import ru.softplat.main.server.mapper.SellerMapper;
@@ -15,6 +14,7 @@ import ru.softplat.main.server.model.seller.BankRequisites;
 import ru.softplat.main.server.model.seller.Seller;
 import ru.softplat.main.server.service.seller.SellerBankService;
 import ru.softplat.main.server.service.seller.SellerService;
+import ru.softplat.security.dto.UserCreateMainDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

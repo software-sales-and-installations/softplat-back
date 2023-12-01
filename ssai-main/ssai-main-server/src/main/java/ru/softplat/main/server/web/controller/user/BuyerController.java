@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
-import ru.softplat.main.dto.user.UserCreateMainDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
 import ru.softplat.main.dto.user.response.BuyersListResponseDto;
 import ru.softplat.main.dto.user.response.FavoriteResponseDto;
@@ -15,6 +14,7 @@ import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Favorite;
 import ru.softplat.main.server.service.buyer.BuyerFavoriteService;
 import ru.softplat.main.server.service.buyer.BuyerService;
+import ru.softplat.security.dto.UserCreateMainDto;
 
 import java.util.List;
 import java.util.stream.Collectors;

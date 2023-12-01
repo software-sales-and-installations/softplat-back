@@ -18,7 +18,7 @@ import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
-public class ErrorHandler {
+public class SecurityErrorHandler {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @ExceptionHandler

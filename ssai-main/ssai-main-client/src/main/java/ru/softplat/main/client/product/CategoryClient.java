@@ -1,6 +1,5 @@
 package ru.softplat.main.client.product;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -11,7 +10,6 @@ import ru.softplat.main.client.BaseClient;
 import ru.softplat.main.dto.category.CategoryCreateUpdateDto;
 
 @Service
-@Slf4j
 public class CategoryClient extends BaseClient {
     private static final String API_PREFIX = "/category";
 

@@ -1,6 +1,5 @@
 package ru.softplat.main.client.user;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,7 +13,6 @@ import ru.softplat.security.dto.UserCreateMainDto;
 import java.util.Map;
 
 @Service
-@Slf4j
 public class BuyerClient extends BaseClient {
     private static final String API_PREFIX = "/buyer";
 

@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ru.yandex</groupId>
+        <groupId>ru.softplat</groupId>
         <artifactId>workshop</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>ru.softplat</groupId>
     <artifactId>ssai-stats</artifactId>
     <packaging>pom</packaging>
 
@@ -24,5 +24,6 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <start-class>ru.softplat.stats.server.StatsApp</start-class>
     </properties>
 </project>

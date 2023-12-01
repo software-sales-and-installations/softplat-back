@@ -5,11 +5,11 @@ import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
-import ru.softplat.main.dto.user.UserCreateMainDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.dto.user.response.SellersListResponseDto;
 import ru.softplat.main.server.model.seller.BankRequisites;
 import ru.softplat.main.server.model.seller.Seller;
+import ru.softplat.security.dto.UserCreateMainDto;
 
 import java.util.List;
 

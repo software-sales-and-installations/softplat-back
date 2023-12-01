@@ -9,7 +9,7 @@ import ru.softplat.main.server.model.buyer.Favorite;
 
 import java.util.List;
 
-@Mapper
+@Mapper(uses = ProductMapper.class)
 @Component
 public interface FavoriteMapper {
     @Mapping(target = "userId", source = "model.buyer.id")

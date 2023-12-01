@@ -10,9 +10,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.security.server.message.LogMessage;
-import ru.softplat.stats.client.model.StatsClient;
-import ru.softplat.stats.dto.StatsFilterAdmin;
+import ru.softplat.stats.client.client.StatsClient;
 import ru.softplat.stats.dto.SortEnum;
+import ru.softplat.stats.dto.StatsFilterAdmin;
 import ru.softplat.stats.dto.StatsFilterSeller;
 
 

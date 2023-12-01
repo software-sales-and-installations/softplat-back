@@ -8,9 +8,11 @@
         <groupId>ru.softplat</groupId>
         <artifactId>ssai-stats</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ssai-stats-dto</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -27,6 +29,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>5.3.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
     </dependencies>
 

@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.main.server.repository.product.CategoryRepository;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.product.Category;
+import ru.softplat.main.server.repository.product.CategoryRepository;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -42,7 +42,7 @@ public class CategoryServiceImpl implements CategoryService {
     public Category getCategoryById(Long catId) {
         return repository.findById(catId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(catId), Category.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(catId, Category.class)
                 ));
     }
 

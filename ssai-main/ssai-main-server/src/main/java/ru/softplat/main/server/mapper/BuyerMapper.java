@@ -3,10 +3,10 @@ package ru.softplat.main.server.mapper;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
-import ru.softplat.main.dto.user.UserCreateMainDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
 import ru.softplat.main.dto.user.response.BuyersListResponseDto;
 import ru.softplat.main.server.model.buyer.Buyer;
+import ru.softplat.security.dto.UserCreateMainDto;
 
 import java.util.List;
 

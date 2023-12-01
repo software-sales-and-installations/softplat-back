@@ -7,9 +7,11 @@
         <groupId>ru.softplat</groupId>
         <artifactId>ssai-main</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ssai-main-dto</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>

@@ -14,6 +14,7 @@ import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.mapper.VendorMapper;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.vendor.QVendor;
 import ru.softplat.main.server.model.vendor.Vendor;
 import ru.softplat.main.server.repository.vendor.VendorRepository;
 import ru.softplat.main.server.service.image.ImageService;
@@ -88,7 +89,7 @@ public class VendorServiceImpl implements VendorService {
     public Vendor getVendorById(Long vendorId) {
         return repository.findById(vendorId).orElseThrow(
                 () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(vendorId), Vendor.class)
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(vendorId, Vendor.class)
                 ));
     }
 
