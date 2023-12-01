@@ -50,9 +50,13 @@ public class PublicProductController {
 
     @Operation(summary = "Получения списка похожих товаров", description = "Доступ для всех")
     @GetMapping(path = "/{productId}/similar")
-    public ProductsListResponseDto getSimilarProducts(@PathVariable Long productId) {
+    public ProductsListResponseDto getSimilarProducts(
+            @PathVariable Long productId,
+            @RequestParam(name = "minId", defaultValue = "0") int minId,
+            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
+    ) {
         log.debug(LogMessage.TRY_GET_SIMILAR_PRODUCTS.label);
-        List<Product> productList = productService.getSimilarProducts(productId);
+        List<Product> productList = productService.getSimilarProducts(productId, minId, pageSize);
         List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());

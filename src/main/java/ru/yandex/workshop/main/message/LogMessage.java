@@ -41,6 +41,7 @@ public enum LogMessage {
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
     TRY_BUYER_DELETE_FAVORITE("Попытка удаления данных из избранного"),
     TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}"),
+    TRY_BUYER_GET_RECOMMENDATIONS("Попытка получения рекомендаций по id покупателя: {}"),
     TRY_ADD_ORDER("Попытка создания оплаченного заказа"),
     TRY_GET_ALL_ORDERS("Попытка получить все покупки"),
     TRY_GET_ORDER("Попытка получить заказ по id {}"),

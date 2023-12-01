@@ -20,11 +20,9 @@ import ru.yandex.workshop.main.dto.product.ProductsListResponseDto;
 import ru.yandex.workshop.main.dto.product.ProductsSearchRequestDto;
 import ru.yandex.workshop.main.model.vendor.Country;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -142,32 +140,6 @@ class PublicProductControllerTest extends AbstractControllerTest {
         performAssertions(actual, expect);
     }
 
-
-
-    private void performAssertions(List<ProductResponseDto> actual, List<ProductResponseDto> expect) {
-        assertEquals(expect.size(), actual.size());
-
-        for (int i = 0; i < expect.size(); i++) {
-            assertEquals(expect.get(i).getName(), actual.get(i).getName());
-            assertEquals(expect.get(i).getDescription(), actual.get(i).getDescription());
-            assertEquals(expect.get(i).getVersion(), actual.get(i).getVersion());
-            assertEquals(expect.get(i).getProductionTime(), actual.get(i).getProductionTime());
-            assertEquals(expect.get(i).getCategory().getId(), actual.get(i).getCategory().getId());
-            assertEquals(expect.get(i).getLicense(), actual.get(i).getLicense());
-            assertEquals(expect.get(i).getVendor().getId(), actual.get(i).getVendor().getId());
-            assertEquals(expect.get(i).getSeller().getId(), actual.get(i).getSeller().getId());
-            assertEquals(expect.get(i).getPrice(), actual.get(i).getPrice());
-            assertEquals(expect.get(i).getQuantity(), actual.get(i).getQuantity());
-            assertEquals(expect.get(i).getProductStatus(), actual.get(i).getProductStatus());
-        }
-    }
-
-    private List<ProductResponseDto> getProductsByIds(List<Long> productIds) {
-        List<ProductResponseDto> response = new ArrayList<>();
-        for (Long id : productIds) response.add(getProductResponseDto(id));
-        return response;
-    }
-
     @SneakyThrows
     private ProductsListResponseDto getSearchResultsByFilter(ProductsSearchRequestDto productFilter, String sort) {
         MvcResult result = mockMvc.perform(get("/product/search")
@@ -187,7 +159,9 @@ class PublicProductControllerTest extends AbstractControllerTest {
     @SneakyThrows
     private ProductsListResponseDto getSimilarProducts(long productId) {
         MvcResult result = mockMvc.perform(get("/product/{productId}/similar", productId)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("minId", "0")
+                        .param("pageSize", "5"))
                 .andExpect(status().isOk())
                 .andReturn();
 

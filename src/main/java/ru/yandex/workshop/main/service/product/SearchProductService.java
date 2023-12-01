@@ -81,9 +81,7 @@ public class SearchProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getSimilarProducts(long productId) {
-        int from = 0;
-        int size = 5;
+    public List<Product> getSimilarProducts(long productId, int from, int size) {
         Sort sortBy = Sort.by("productionTime").descending();
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
 

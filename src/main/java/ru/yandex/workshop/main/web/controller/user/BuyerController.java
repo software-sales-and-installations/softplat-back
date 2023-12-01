@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.workshop.main.dto.product.ProductResponseDto;
+import ru.yandex.workshop.main.dto.product.ProductsListResponseDto;
 import ru.yandex.workshop.main.dto.user.BuyerUpdateDto;
 import ru.yandex.workshop.main.dto.user.response.BuyerResponseDto;
 import ru.yandex.workshop.main.dto.user.response.BuyersListResponseDto;
@@ -14,9 +16,11 @@ import ru.yandex.workshop.main.dto.user.response.FavoriteResponseDto;
 import ru.yandex.workshop.main.dto.user.response.FavouritesListResponseDto;
 import ru.yandex.workshop.main.mapper.BuyerMapper;
 import ru.yandex.workshop.main.mapper.FavoriteMapper;
+import ru.yandex.workshop.main.mapper.ProductMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.buyer.Buyer;
 import ru.yandex.workshop.main.model.buyer.Favorite;
+import ru.yandex.workshop.main.model.product.Product;
 import ru.yandex.workshop.main.service.buyer.BuyerFavoriteService;
 import ru.yandex.workshop.main.service.buyer.BuyerService;
 import springfox.documentation.annotations.ApiIgnore;
@@ -37,6 +41,7 @@ public class BuyerController {
     private final BuyerFavoriteService favoriteService;
     private final BuyerMapper buyerMapper;
     private final FavoriteMapper favoriteMapper;
+    private final ProductMapper productMapper;
 
     @Operation(summary = "Получение списка покупателей", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
@@ -100,5 +105,21 @@ public class BuyerController {
                 .map(favoriteMapper::toFavouriteDto)
                 .collect(Collectors.toList());
         return favoriteMapper.toFavouritesListResponseDto(response);
+    }
+
+    @Operation(summary = "Просмотр рекомендаций товаров", description = "Доступ для покупателя")
+    @PreAuthorize("hasAuthority('buyer:write')")
+    @GetMapping("/recommendations")
+    public ProductsListResponseDto getProductRecommendations(
+            @ApiIgnore Principal principal,
+            @RequestParam(name = "minId", defaultValue = "0") int minId,
+            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
+    ) {
+        log.info(LogMessage.TRY_BUYER_GET_RECOMMENDATIONS.label, principal.getName());
+        List<Product> productList = favoriteService.getRecommendations(principal.getName(), minId, pageSize);
+        List<ProductResponseDto> response = productList.stream()
+                .map(productMapper::productToProductResponseDto)
+                .collect(Collectors.toList());
+        return productMapper.toProductsListResponseDto(response);
     }
 }

@@ -22,7 +22,7 @@ import ru.yandex.workshop.main.service.seller.SellerService;
 import ru.yandex.workshop.main.service.vendor.VendorService;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -189,5 +189,10 @@ public class ProductService {
                     ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(String.valueOf(productId), Product.class)
             );
         return product;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> getProductsByIds(List<Long> productIds) {
+        return productRepository.findAllById(productIds);
     }
 }
