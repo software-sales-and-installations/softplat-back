@@ -15,6 +15,7 @@ import ru.yandex.workshop.main.mapper.OrderMapper;
 import ru.yandex.workshop.main.message.LogMessage;
 import ru.yandex.workshop.main.model.buyer.Order;
 import ru.yandex.workshop.main.service.buyer.OrderService;
+import ru.yandex.workshop.main.service.email.EmailService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.security.Principal;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 public class BuyerOrderController {
     private final OrderService orderService;
     private final OrderMapper orderMapper;
+    private final EmailService emailService;
 
     @Operation(summary = "Оформление заказа", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
@@ -38,6 +40,9 @@ public class BuyerOrderController {
         if (orderCreateDto.getBasketPositionIds() == null || orderCreateDto.getBasketPositionIds().size() == 0)
             throw new EntityNotFoundException("Перед оформлением заказа добавьте товары в корзину");
         Order response = orderService.createOrder(principal.getName(), orderCreateDto.getBasketPositionIds());
+
+        log.debug(LogMessage.TRY_SEND_ORDER_CONFIRM_EMAIL.label);
+        emailService.sendOrderConfirmationEmails(response);
         return orderMapper.orderToOrderDto(response);
     }
 

@@ -1,9 +1,6 @@
 package ru.yandex.workshop.main.dto.basket;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ru.yandex.workshop.main.dto.product.ProductResponseDto;
 
 @AllArgsConstructor

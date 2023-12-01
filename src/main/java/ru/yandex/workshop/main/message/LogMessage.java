@@ -47,7 +47,8 @@ public enum LogMessage {
     TRY_GET_STATS_SELLER_ADMIN("Попытка получения статистики по продавцам админом"),
     TRY_GET_STATS_PRODUCT_ADMIN("Попытка получения статистики по продукту админом"),
     TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом"),
-    TRY_CREATE_STATS("Попытка доздания статистики");
+    TRY_CREATE_STATS("Попытка доздания статистики"),
+    TRY_SEND_ORDER_CONFIRM_EMAIL("Попытка отправки email о созданнии заказа на email провадца");
 
 
     public final String label;
