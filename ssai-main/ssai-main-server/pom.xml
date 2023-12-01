@@ -9,33 +9,26 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <groupId>ru.softplat.main.server</groupId>
     <artifactId>ssai-main-server</artifactId>
-
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
 <!--      Modules  -->
         <dependency>
-            <groupId>ru.softplat.stats.client</groupId>
+            <groupId>ru.softplat</groupId>
             <artifactId>ssai-stats-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>ru.softplat.main.dto</groupId>
+            <groupId>ru.softplat</groupId>
             <artifactId>ssai-main-dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
-            <groupId>ru.softplat.security.dto</groupId>
+            <groupId>ru.softplat</groupId>
             <artifactId>ssai-security-dto</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
