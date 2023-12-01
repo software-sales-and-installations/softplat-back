@@ -1,5 +1,6 @@
 package ru.yandex.workshop.main.web.validation;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 import ru.yandex.workshop.main.exception.ImageFormatException;
 import ru.yandex.workshop.main.exception.ImagePayloadTooLargeException;
@@ -9,7 +10,15 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class MultipartFileFormatValidator implements ConstraintValidator<MultipartFileFormat, MultipartFile> {
-    public static final long MAX_SIZE_IMAGE = 5 * 1024 * 1024;
+    @Value("${multipart.image.max-file-size}")
+    private String maxFileSizeConfig;
+    private static final long MEGABYTE = 1024 * 1024;
+    private long maxFileSize;
+
+    @Override
+    public void initialize(MultipartFileFormat constraintAnnotation) {
+        maxFileSize = parseMaxFileSize(maxFileSizeConfig);
+    }
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext context) {
@@ -24,10 +33,15 @@ public class MultipartFileFormatValidator implements ConstraintValidator<Multipa
 
         long fileSize = file.getSize();
 
-        if (fileSize > MAX_SIZE_IMAGE) {
-            throw new ImagePayloadTooLargeException("Размер изображения должен быть не больше 5 мегабайт.");
+        if (fileSize > maxFileSize) {
+            throw new ImagePayloadTooLargeException(ExceptionMessage.IMAGE_SIZE_EXCEED_EXCEPTION.label);
         }
 
         return true;
+    }
+
+
+    private long parseMaxFileSize(String maxFileSizeConfig) {
+        return Long.parseLong(maxFileSizeConfig) * MEGABYTE;
     }
 }
