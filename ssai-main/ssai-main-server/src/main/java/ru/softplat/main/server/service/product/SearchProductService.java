@@ -79,4 +79,31 @@ public class SearchProductService {
 
         return new ArrayList<>(products.getContent());
     }
+
+    @Transactional(readOnly = true)
+    public List<Product> getSimilarProducts(long productId, int from, int size) {
+        Sort sortBy = Sort.by("productionTime").descending();
+        PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
+
+        Product product = getProductById(productId);
+        QProduct qProduct = QProduct.product;
+        BooleanExpression statusPublishedExpression = qProduct.productStatus.eq(ProductStatus.PUBLISHED);
+
+        Predicate predicate = QPredicates.builder()
+                .add(statusPublishedExpression)
+                .add(productId, qProduct.id::ne)
+                .add(QPredicates.builder()
+                        .add(product.getVendor().getId(), qProduct.vendor.id::eq)
+                        .add(product.getCategory().getId(), qProduct.category.id::eq)
+                        .buildOr())
+                .buildAnd();
+
+        Page<Product> products = productRepository.findAll(predicate, pageRequest);
+        return new ArrayList<>(products.getContent());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> getProductsByIds(List<Long> productIds) {
+        return productRepository.findAllById(productIds);
+    }
 }

@@ -36,4 +36,17 @@ public class PublicProductController {
                 .collect(Collectors.toList());
         return productMapper.toProductsListResponseDto(response);
     }
+
+    @GetMapping(path = "/{productId}/similar")
+    public ProductsListResponseDto getSimilarProducts(
+            @PathVariable Long productId,
+            @RequestParam(name = "minId", defaultValue = "0") int minId,
+            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
+    ) {
+        List<Product> productList = productService.getSimilarProducts(productId, minId, pageSize);
+        List<ProductResponseDto> response = productList.stream()
+                .map(productMapper::productToProductResponseDto)
+                .collect(Collectors.toList());
+        return productMapper.toProductsListResponseDto(response);
+    }
 }

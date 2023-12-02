@@ -2,12 +2,16 @@ package ru.softplat.main.server.service.buyer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.model.buyer.Favorite;
+import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.repository.buyer.FavoriteRepository;
 import ru.softplat.main.server.service.product.ProductService;
+import ru.softplat.main.server.service.product.SearchProductService;
 
 import java.util.List;
 
@@ -20,6 +24,7 @@ public class BuyerFavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final BuyerService buyerService;
     private final ProductService productService;
+    private final SearchProductService searchProductService;
 
     public Favorite create(long userId, Long productId) {
         if (favoriteRepository.existsByBuyerIdAndProductId(userId, productId))
@@ -44,5 +49,13 @@ public class BuyerFavoriteService {
         favorite.setBuyer(buyerService.getBuyer(userId));
         favorite.setProduct(productService.getAvailableProduct(productId));
         return favorite;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> getRecommendations(long userId, int from, int size) {
+        PageRequest page = PageRequestOverride.of(from, size);
+        buyerService.getBuyer(userId);
+        List<Long> recommendations = favoriteRepository.getRecommendations(userId, page);
+        return searchProductService.getProductsByIds(recommendations);
     }
 }
