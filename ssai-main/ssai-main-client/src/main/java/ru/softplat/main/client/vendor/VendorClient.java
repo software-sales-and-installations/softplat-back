@@ -18,7 +18,7 @@ public class VendorClient extends BaseClient {
     private static final String API_PREFIX = "/vendor";
 
     @Autowired
-    public VendorClient(@Value("${main-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public VendorClient(@Value("${main-server.url:http://localhost:8080}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))

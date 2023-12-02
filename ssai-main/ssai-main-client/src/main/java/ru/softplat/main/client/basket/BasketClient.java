@@ -15,7 +15,7 @@ public class BasketClient extends BaseClient {
     private static final String API_PREFIX = "/basket";
 
     @Autowired
-    public BasketClient(@Value("${main-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public BasketClient(@Value("${main-server.url:http://localhost:8080}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))

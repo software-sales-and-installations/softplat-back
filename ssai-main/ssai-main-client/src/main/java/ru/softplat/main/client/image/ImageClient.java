@@ -13,7 +13,7 @@ public class ImageClient extends BaseClient {
     private static final String API_PREFIX = "/image";
 
     @Autowired
-    public ImageClient(@Value("${main-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public ImageClient(@Value("${main-server.url:http://localhost:8080}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))

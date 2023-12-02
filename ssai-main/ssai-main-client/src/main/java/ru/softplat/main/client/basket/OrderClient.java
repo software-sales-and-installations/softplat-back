@@ -14,7 +14,7 @@ public class OrderClient extends BaseClient {
     private static final String API_PREFIX = "/orders";
 
     @Autowired
-    public OrderClient(@Value("${main-server.url}") String serverUrl, RestTemplateBuilder builder) {
+    public OrderClient(@Value("${main-server.url:http://localhost:8080}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
