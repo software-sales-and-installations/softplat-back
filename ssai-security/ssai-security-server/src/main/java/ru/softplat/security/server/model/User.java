@@ -26,4 +26,6 @@ public class User {
     Role role;
     @Enumerated(EnumType.STRING)
     Status status;
+    @Column(name = "id_main")
+    Long idMain;
 }

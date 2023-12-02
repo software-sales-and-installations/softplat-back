@@ -38,4 +38,5 @@ public class UserCreateDto {
     Role role;
     @Schema(description = "Вспомогательный параметр, не указывается в теле запроса")
     Status status;
+    Long idMain;
 }
