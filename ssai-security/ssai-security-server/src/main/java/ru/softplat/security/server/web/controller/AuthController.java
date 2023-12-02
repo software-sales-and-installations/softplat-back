@@ -58,6 +58,7 @@ public class AuthController {
             User user = repository.findByEmail(request.getEmail()).orElseThrow(() ->
                     new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
             String token = jwtTokenProvider.generateToken(request.getEmail(), user.getRole().name());
+            response.put("id", user.getIdMain());
             response.put("email", user.getEmail());
             response.put("token", token);
             response.put("role", user.getRole());

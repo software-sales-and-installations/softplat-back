@@ -32,10 +32,10 @@ public class BuyerBasketController {
     @PreAuthorize("hasAuthority('buyer:write')")
     @DeleteMapping("/{productId}")
     public ResponseEntity<Object> removeProductFromBasket(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                                     @Parameter(description = "Так как в корзине может лежать два " +
-                                                             "одинаковых товара, но один с установкой, а второй без установки, " +
-                                                             "необходимо выбрать, какой из них удалить")
-                                                     @RequestParam(defaultValue = "false") Boolean installation) {
+                                                          @Parameter(description = "Так как в корзине может лежать два " +
+                                                                  "одинаковых товара, но один с установкой, а второй без установки, " +
+                                                                  "необходимо выбрать, какой из них удалить")
+                                                          @RequestParam(defaultValue = "false") Boolean installation) {
         log.info(LogMessage.TRY_DELETE_PRODUCT_FROM_BASKET.label, productId);
         return basketClient.removeProductFromBasket(userId, productId, installation);
     }

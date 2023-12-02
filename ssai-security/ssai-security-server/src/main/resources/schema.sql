@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS users
     password VARCHAR(255) NOT NULL,
     role     VARCHAR(20)  NOT NULL,
     status   VARCHAR(20)  NOT NULL,
+    id_main  BIGINT       NOT NULL,
     CONSTRAINT pk_users PRIMARY KEY (id),
     CONSTRAINT uq_users_email UNIQUE (email)
 );

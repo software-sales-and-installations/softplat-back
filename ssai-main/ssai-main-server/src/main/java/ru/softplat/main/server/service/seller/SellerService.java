@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class SellerService {
     private final SellerRepository sellerRepository;
     private final ImageService imageService;
-    //private final UserDetailsChangeService userDetailsChangeService;
 
     public Seller addSeller(Seller seller) {
         if (checkIfSellerExistsByEmail(seller.getEmail()))

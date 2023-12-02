@@ -70,7 +70,7 @@ public class SellerController {
     @PatchMapping("/bank")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> updateRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                      @RequestBody @Valid BankRequisitesCreateUpdateDto requisites) {
+                                                   @RequestBody @Valid BankRequisitesCreateUpdateDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, userId);
         return sellerClient.updateRequisites(userId, requisites);
     }
@@ -89,7 +89,7 @@ public class SellerController {
     @PostMapping("/account/image")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> addSellerImage(@RequestHeader("X-Sharer-User-Id") long userId,
-                                            @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
+                                                 @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
         return sellerClient.addSellerImage(userId, image);
     }

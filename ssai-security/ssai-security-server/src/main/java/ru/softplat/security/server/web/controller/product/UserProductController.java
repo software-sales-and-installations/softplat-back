@@ -43,7 +43,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}")
     public ResponseEntity<Object> updateProduct(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                            @RequestBody @Valid ProductCreateUpdateDto productForUpdate) {
+                                                @RequestBody @Valid ProductCreateUpdateDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, userId);
         return productClient.updateProduct(userId, productId, productForUpdate);
     }
@@ -89,7 +89,7 @@ public class UserProductController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/{productId}/image")
     public ResponseEntity<Object> createProductImage(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable @Min(1) Long productId,
-                                                 @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
+                                                     @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
         return productClient.addProductImage(userId, productId, image);
     }

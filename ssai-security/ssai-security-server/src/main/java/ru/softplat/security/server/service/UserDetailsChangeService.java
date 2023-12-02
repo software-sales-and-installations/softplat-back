@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.exception.WrongRegException;
 import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
-import ru.softplat.security.server.repository.UserRepository;
-import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.model.User;
+import ru.softplat.security.server.repository.UserRepository;
 
 
 @Slf4j
