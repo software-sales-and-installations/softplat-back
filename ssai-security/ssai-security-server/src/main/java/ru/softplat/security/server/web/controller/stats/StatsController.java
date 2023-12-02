@@ -2,7 +2,6 @@ package ru.softplat.security.server.web.controller.stats;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import ru.softplat.stats.dto.StatsFilterSeller;
 @RequestMapping("/stats")
 @Slf4j
 @Validated
-@Tag(name = "StatsController", description = "Контроллер предназначен для работы со статистикой")
 public class StatsController {
 
     private final StatsClient statsClient;
