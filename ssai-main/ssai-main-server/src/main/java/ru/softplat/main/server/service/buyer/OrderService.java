@@ -13,7 +13,7 @@ import ru.softplat.main.server.model.buyer.*;
 import ru.softplat.main.server.repository.buyer.OrderPositionRepository;
 import ru.softplat.main.server.repository.buyer.OrderRepository;
 import ru.softplat.main.server.service.product.ProductService;
-import ru.softplat.stats.client.client.StatsClient;
+import ru.softplat.stats.client.StatsClient;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

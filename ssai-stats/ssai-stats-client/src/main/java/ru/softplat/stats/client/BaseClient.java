@@ -1,4 +1,4 @@
-package ru.softplat.stats.client.client;
+package ru.softplat.stats.client;
 
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;

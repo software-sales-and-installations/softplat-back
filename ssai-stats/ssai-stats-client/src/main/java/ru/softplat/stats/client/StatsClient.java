@@ -1,4 +1,4 @@
-package ru.softplat.stats.client.client;
+package ru.softplat.stats.client;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
