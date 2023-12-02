@@ -1,4 +1,4 @@
-package ru.softplat.security.server.web;
+package ru.softplat.security.server.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.softplat.security.server.config.JwtTokenProvider;
 import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.dto.UserCreateDto;
-import ru.softplat.security.server.dto.UserResponseDto;
 import ru.softplat.security.server.exception.WrongConditionException;
 import ru.softplat.security.server.exception.WrongRegException;
 import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
-import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.model.New;
 import ru.softplat.security.server.model.Role;
 import ru.softplat.security.server.model.User;

@@ -118,7 +118,7 @@ public class OrderService {
     private void createStats(Order order) {
         List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
-            statClient.addStats(mapper.orderPositionToStatDto(orderPosition)) ;
+            statClient.addStats(mapper.orderPositionToStatDto(orderPosition));
         }
     }
 }

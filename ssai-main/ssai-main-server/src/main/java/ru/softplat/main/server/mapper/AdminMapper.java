@@ -10,5 +10,6 @@ import ru.softplat.security.dto.UserCreateMainDto;
 @Component
 public interface AdminMapper {
     Admin adminFromUserCreateMainDto(UserCreateMainDto userCreateMainDto);
+
     AdminResponseDto adminToAdminResponseDto(Admin admin);
 }

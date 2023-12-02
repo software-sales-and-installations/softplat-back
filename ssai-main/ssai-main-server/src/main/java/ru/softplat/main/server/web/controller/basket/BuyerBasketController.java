@@ -14,7 +14,7 @@ import ru.softplat.main.server.service.buyer.BasketService;
 public class BuyerBasketController {
     private final BasketService basketService;
     private final BasketMapper basketMapper;
-    
+
     @PostMapping("/{productId}")
     @ResponseStatus(value = HttpStatus.CREATED)
     public BasketResponseDto addProductInBasket(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,

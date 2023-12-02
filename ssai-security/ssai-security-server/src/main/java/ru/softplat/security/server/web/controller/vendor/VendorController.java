@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.vendor.VendorClient;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
-import ru.softplat.main.dto.vendor.VendorResponseDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.model.New;
@@ -19,8 +18,6 @@ import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

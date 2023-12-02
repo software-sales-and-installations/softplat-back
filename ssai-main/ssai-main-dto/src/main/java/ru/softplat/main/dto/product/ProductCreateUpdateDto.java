@@ -17,11 +17,13 @@ import javax.validation.constraints.PositiveOrZero;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductCreateUpdateDto {
     @NotBlank(groups = {New.class}, message = "Необходимо указать имя продукта")
-    @Pattern(regexp = "^[a-zA-Zа-яА-Я-.,\\s]{2,255}$", message = "Неверные символы в названии товара. Длина названия продукта должна быть от 2 до 255 символов. Цифры в названии не допускаются.")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я-.,\\s]{2,255}$", message = "Неверные символы в названии товара. " +
+            "Длина названия продукта должна быть от 2 до 255 символов. Цифры в названии не допускаются.")
     String name;
 
     @NotBlank(groups = {New.class}, message = "Необходимо указать описание продукта")
-    @Pattern(regexp = "[0-9a-zA-Zа-яА-Я-@#$.,%^&+=!\\s]{2,500}$", message = "Длина описания должна быть от 2 до 500 символов.")
+    @Pattern(regexp = "[0-9a-zA-Zа-яА-Я-@#$.,%^&+=!\\s]{2,500}$",
+            message = "Длина описания должна быть от 2 до 500 символов.")
     String description;
 
     @NotBlank(groups = {New.class}, message = "Необходимо указать версию продукта")

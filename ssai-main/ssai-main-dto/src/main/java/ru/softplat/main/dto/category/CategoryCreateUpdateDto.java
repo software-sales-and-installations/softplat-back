@@ -14,6 +14,7 @@ import javax.validation.constraints.Pattern;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryCreateUpdateDto {
     @NotBlank(message = "Необходимо указать название категории")
-    @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$", message = "Длина названия категории должна быть от 2 до 20 символов. Цифры в названии не допускаются.")
+    @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$",
+            message = "Длина названия категории должна быть от 2 до 20 символов. Цифры в названии не допускаются.")
     String name;
 }
