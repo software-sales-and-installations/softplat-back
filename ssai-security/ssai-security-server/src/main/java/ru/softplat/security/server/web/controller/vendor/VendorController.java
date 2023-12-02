@@ -41,7 +41,7 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{vendorId}")
     public ResponseEntity<Object> changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                              @RequestBody @Valid VendorCreateUpdateDto vendorUpdateDto) {
+                                                   @RequestBody @Valid VendorCreateUpdateDto vendorUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
 
         return vendorClient.changeVendorById(vendorId, vendorUpdateDto);
@@ -81,7 +81,7 @@ public class VendorController {
     @PostMapping(path = "/{vendorId}/image")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
-                                               @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
+                                                    @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
 
         return vendorClient.createVendorImage(vendorId, image);

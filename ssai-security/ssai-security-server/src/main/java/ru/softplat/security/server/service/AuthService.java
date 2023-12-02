@@ -18,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.client.user.AdminClient;
 import ru.softplat.main.client.user.BuyerClient;
 import ru.softplat.main.client.user.SellerClient;
-import ru.softplat.main.dto.user.response.BuyerResponseDto;
-import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.security.server.dto.UserCreateDto;
 import ru.softplat.security.server.exception.DuplicateException;
 import ru.softplat.security.server.mapper.UserMapper;
@@ -80,20 +78,24 @@ public class AuthService {
                 case SELLER:
                     log.info(LogMessage.TRY_ADD_SELLER.label);
                     response = sellerClient.createSeller(userMapper.userToUserMain(userCreateDto));
-                    if(response.getStatusCode().equals(HttpStatus.OK)) {
+                    if (response.getStatusCode().equals(HttpStatus.OK)) {
                         userCreateDto.setIdMain(Long.parseLong(response.getBody().toString().substring(response.getBody().toString().indexOf("=") + 1, response.getBody().toString().indexOf(","))));
+                    } else {
+                        throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
                     }
                     break;
                 case BUYER:
                     log.debug(LogMessage.TRY_ADD_BUYER.label);
                     response = buyerClient.createBuyer(userMapper.userToUserMain(userCreateDto));
-                    if(response.getStatusCode().equals(HttpStatus.OK)) {
+                    if (response.getStatusCode().equals(HttpStatus.OK)) {
                         userCreateDto.setIdMain(Long.parseLong(response.getBody().toString().substring(response.getBody().toString().indexOf("=") + 1, response.getBody().toString().indexOf(","))));
+                    } else {
+                        throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
                     }
                     break;
             }
             repository.save(userMapper.userDtoToUser(userCreateDto));
-        } catch (DataIntegrityViolationException | UnexpectedRollbackException e) {
+        } catch (DataIntegrityViolationException | UnexpectedRollbackException | DuplicateException e) {
             throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + userCreateDto.getPhone());
         }
 

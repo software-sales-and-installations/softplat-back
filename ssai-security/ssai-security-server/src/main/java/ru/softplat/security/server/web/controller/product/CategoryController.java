@@ -49,7 +49,7 @@ public class CategoryController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{catId}")
     public ResponseEntity<Object> changeCategoryById(@PathVariable(name = "catId") Long catId,
-                                                  @RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
+                                                     @RequestBody @Valid CategoryCreateUpdateDto categoryCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_CATEGORY.label, catId);
         return categoryClient.updateCategory(catId, categoryCreateUpdateDto);
     }

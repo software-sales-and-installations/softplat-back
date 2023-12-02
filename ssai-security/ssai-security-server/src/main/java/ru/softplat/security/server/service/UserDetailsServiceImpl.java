@@ -6,10 +6,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.security.server.repository.UserRepository;
 import ru.softplat.security.server.exception.EntityNotFoundException;
 import ru.softplat.security.server.message.ExceptionMessage;
 import ru.softplat.security.server.model.UserSecurity;
+import ru.softplat.security.server.repository.UserRepository;
 
 @Service("userDetailsServiceImpl")
 @RequiredArgsConstructor
