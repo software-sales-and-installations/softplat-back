@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.softplat.main.server.model.buyer.Favorite;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
@@ -14,6 +15,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     List<Favorite> findAllByBuyerId(Long buyerId);
 
     boolean existsByBuyerIdAndProductId(Long buyerId, Long productId);
+
+    Optional<Favorite> findByBuyerIdAndProductId(Long buyerId, Long productId);
 
     @Query("SELECT f.product.id " +
             "FROM Favorite f " +
