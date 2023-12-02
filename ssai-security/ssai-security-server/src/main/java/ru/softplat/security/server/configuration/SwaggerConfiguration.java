@@ -16,8 +16,12 @@ public class SwaggerConfiguration {
     public Docket mainApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("ru.yandex.workshop.main.web.controller")
-                        .or(RequestHandlerSelectors.basePackage("ru.yandex.workshop.security.controller")))
+                .apis(RequestHandlerSelectors.basePackage("ru.softplat.security.server.dto")
+                        .or(RequestHandlerSelectors.basePackage("ru.softplat.security.server.web.controller"))
+                        .or(RequestHandlerSelectors.basePackage("ru.softplat.security.dto"))
+                        .or(RequestHandlerSelectors.basePackage("ru.softplat.stats.dto"))
+                        .or(RequestHandlerSelectors.basePackage("ru.softplat.main.dto"))
+                        .or(RequestHandlerSelectors.basePackage("ru.softplat.stats.server.dto")))
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());
