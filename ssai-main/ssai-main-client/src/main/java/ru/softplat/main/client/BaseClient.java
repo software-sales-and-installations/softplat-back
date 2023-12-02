@@ -16,7 +16,7 @@ public class BaseClient {
     }
 
     protected ResponseEntity<Object> get(String path) {
-        return get(path);
+        return makeAndSendRequest(HttpMethod.GET, path, null, null, null);
     }
 
     protected ResponseEntity<Object> get(String path, long userId) {

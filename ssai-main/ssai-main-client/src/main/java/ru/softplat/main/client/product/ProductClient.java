@@ -55,8 +55,11 @@ public class ProductClient extends BaseClient {
         return patch("/" + productId + "/send", userId);
     }
 
-    public ResponseEntity<Object> updateStatusProductAdmin(long productId, ProductStatus productStatus) {
-        return patch("/" + productId + "/moderation", productStatus);
+    public ResponseEntity<Object> updateStatusProductAdmin(long productId, ProductStatus status) {
+        Map<String, Object> parameters = Map.of(
+                "status", status
+        );
+        return patch("/" + productId + "/moderation?status={status}", null, parameters, null);
     }
 
     public void deleteProductAdmin(long productId) {
