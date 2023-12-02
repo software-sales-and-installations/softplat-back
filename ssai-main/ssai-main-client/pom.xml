@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>ssai-main-client</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
 <!--       Modules -->

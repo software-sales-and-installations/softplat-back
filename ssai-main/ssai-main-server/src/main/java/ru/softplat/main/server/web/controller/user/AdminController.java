@@ -2,10 +2,7 @@ package ru.softplat.main.server.web.controller.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.dto.user.response.AdminResponseDto;
 import ru.softplat.main.server.mapper.AdminMapper;
 import ru.softplat.main.server.message.LogMessage;
@@ -28,7 +25,7 @@ public class AdminController {
         return adminMapper.adminToAdminResponseDto(response);
     }
 
-    @GetMapping
+    @PostMapping
     public AdminResponseDto addAdmin(UserCreateMainDto userCreateMainDto) {
         Admin response = adminService.addAdmin(adminMapper.adminFromUserCreateMainDto(userCreateMainDto));
         return adminMapper.adminToAdminResponseDto(response);
