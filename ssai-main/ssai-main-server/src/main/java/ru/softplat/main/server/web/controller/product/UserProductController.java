@@ -11,6 +11,7 @@ import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.service.product.ProductService;
+import ru.softplat.main.server.service.product.SearchProductService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class UserProductController {
 
     private final ProductService productService;
+    private final SearchProductService searchProductService;
     private final ProductMapper productMapper;
 
     @PostMapping
@@ -98,6 +100,8 @@ public class UserProductController {
         List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response);
+        ProductsListResponseDto productsListResponseDto = productMapper.toProductsListResponseDto(response);
+        productsListResponseDto.setTotalProducts(searchProductService.getTotalProductsCount(ProductStatus.SHIPPED));
+        return productsListResponseDto;
     }
 }

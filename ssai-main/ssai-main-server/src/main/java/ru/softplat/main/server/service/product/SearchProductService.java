@@ -106,4 +106,11 @@ public class SearchProductService {
     public List<Product> getProductsByIds(List<Long> productIds) {
         return productRepository.findAllById(productIds);
     }
+
+    @Transactional(readOnly = true)
+    public long getTotalProductsCount(ProductStatus status) {
+        if (status == null)
+            return productRepository.count();
+        return productRepository.countAllByProductStatus(status);
+    }
 }

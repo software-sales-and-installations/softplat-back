@@ -2,10 +2,7 @@ package ru.softplat.main.server.web.controller.product;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.softplat.main.dto.product.ProductResponseDto;
-import ru.softplat.main.dto.product.ProductsListResponseDto;
-import ru.softplat.main.dto.product.ProductsSearchRequestDto;
-import ru.softplat.main.dto.product.SortBy;
+import ru.softplat.main.dto.product.*;
 import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.service.product.SearchProductService;
@@ -34,7 +31,12 @@ public class PublicProductController {
         List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response);
+        ProductsListResponseDto productsListResponseDto = productMapper.toProductsListResponseDto(response);
+        if (productsSearchRequestDto == null)
+            productsListResponseDto.setTotalProducts(productService.getTotalProductsCount(null));
+        else
+            productsListResponseDto.setTotalProducts(productService.getTotalProductsCount(ProductStatus.PUBLISHED));
+        return productsListResponseDto;
     }
 
     @GetMapping(path = "/{productId}/similar")
@@ -47,6 +49,8 @@ public class PublicProductController {
         List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response);
+        ProductsListResponseDto productsListResponseDto = productMapper.toProductsListResponseDto(response);
+        productsListResponseDto.setTotalProducts(productService.getTotalProductsCount(ProductStatus.PUBLISHED));
+        return productsListResponseDto;
     }
 }
