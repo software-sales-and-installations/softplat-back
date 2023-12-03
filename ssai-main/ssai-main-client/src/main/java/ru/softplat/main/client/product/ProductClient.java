@@ -44,7 +44,7 @@ public class ProductClient extends BaseClient {
                 "pageSize", pageSize,
                 "sort", sort
         );
-        return get("/search?minId={minId}&pageSize={pageSize}&sort={sort}", parameters, productsSearchRequestDto);
+        return post("/search?minId={minId}&pageSize={pageSize}&sort={sort}", null, parameters, productsSearchRequestDto);
     }
 
     public ResponseEntity<Object> updateProduct(long userId, long productId, ProductCreateUpdateDto productCreateUpdateDto) {
