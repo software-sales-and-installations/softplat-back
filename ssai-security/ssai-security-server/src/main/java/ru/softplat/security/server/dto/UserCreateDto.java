@@ -33,10 +33,12 @@ public class UserCreateDto {
     @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов. Цифры в имени не допускаются.")
     String name;
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
+    @Schema(description = "Обязательный параметр для покупателя и продавца")
     String phone;
     @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
     @Schema(description = "Вспомогательный параметр, не указывается в теле запроса")
     Status status;
+    @Schema(description = "Вспомогательный параметр, не указывается в теле запроса")
     Long idMain;
 }
