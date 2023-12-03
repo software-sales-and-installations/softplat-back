@@ -87,6 +87,6 @@ public class ProductClient extends BaseClient {
                 "minId", minId,
                 "pageSize", pageSize
         );
-        return get("/search?minId={minId}&pageSize={pageSize}", parameters);
+        return get("/shipped?minId={minId}&pageSize={pageSize}", parameters);
     }
 }
