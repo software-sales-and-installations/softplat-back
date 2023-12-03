@@ -37,13 +37,14 @@ public class ProductService {
     private final ImageService imageService;
 
     public Product create(long sellerId, Product product, Long categoryId, Long vendorId) {
+        if (product.getInstallation() != null && product.getInstallation()
+                && product.getInstallationPrice() == null)
+            throw new WrongConditionException("Необходимо указать цену установки.");
+
         initProduct(sellerId, product, categoryId, vendorId);
         if (product.getQuantity() > 0) {
             product.setProductAvailability(true);
         }
-        if (product.getInstallation() != null && product.getInstallation()
-                && product.getInstallationPrice() == null)
-            throw new WrongConditionException("Необходимо указать цену установки.");
 
         return productRepository.save(product);
     }
@@ -64,8 +65,8 @@ public class ProductService {
             Category category = categoryService.getCategoryById(productForUpdate.getCategory().getId());
             product.setCategory(category);
         }
-        if (productForUpdate.getLicense() != null) {
-            product.setLicense(productForUpdate.getLicense());
+        if (productForUpdate.getHasDemo() != null) {
+            product.setHasDemo(productForUpdate.getHasDemo());
         }
         if (productForUpdate.getVendor() != null) {
             Vendor vendor = vendorService.getVendorById(productForUpdate.getVendor().getId());

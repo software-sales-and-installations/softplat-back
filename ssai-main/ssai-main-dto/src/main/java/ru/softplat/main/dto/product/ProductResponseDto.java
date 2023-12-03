@@ -25,7 +25,7 @@ public class ProductResponseDto {
     LocalDateTime productionTime;
     ImageResponseDto image;
     CategoryResponseDto category;
-    License license;
+    Boolean hasDemo;
     VendorResponseDto vendor;
     SellerResponseDto seller;
     Float price;

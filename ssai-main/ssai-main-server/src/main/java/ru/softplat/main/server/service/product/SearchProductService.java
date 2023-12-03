@@ -69,7 +69,6 @@ public class SearchProductService {
                     .add(productsSearchRequestDto.getPriceMin(), product.price::goe)
                     .add(productsSearchRequestDto.getPriceMax(), product.price::loe)
                     .add(productsSearchRequestDto.getCountries(), product.vendor.country::in)
-                    .add(productsSearchRequestDto.getLicenses(), product.license::in)
                     .buildAnd();
 
             products = productRepository.findAll(predicate, pageRequest);
