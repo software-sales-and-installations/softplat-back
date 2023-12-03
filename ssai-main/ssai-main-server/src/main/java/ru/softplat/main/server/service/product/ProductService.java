@@ -14,6 +14,7 @@ import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.product.Category;
 import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.model.seller.Seller;
 import ru.softplat.main.server.model.vendor.Vendor;
 import ru.softplat.main.server.repository.product.ProductRepository;
@@ -142,9 +143,13 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getAllProductsShipped(int from, int size) {
-        return productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
+    public ProductList getAllProductsShipped(int from, int size) {
+        List<Product> products = productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
                 PageRequestOverride.of(from, size));
+        return ProductList.builder()
+                .products(products)
+                .count(productRepository.countAllByProductStatus(ProductStatus.SHIPPED))
+                .build();
     }
 
     public void delete(Long productId) {

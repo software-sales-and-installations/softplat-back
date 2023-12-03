@@ -2,9 +2,13 @@ package ru.softplat.main.server.web.controller.product;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.softplat.main.dto.product.*;
+import ru.softplat.main.dto.product.ProductResponseDto;
+import ru.softplat.main.dto.product.ProductsListResponseDto;
+import ru.softplat.main.dto.product.ProductsSearchRequestDto;
+import ru.softplat.main.dto.product.SortBy;
 import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.product.SearchProductService;
 
 import java.util.List;
@@ -27,16 +31,11 @@ public class PublicProductController {
     public ProductsListResponseDto searchProducts(
             @RequestBody(required = false) ProductsSearchRequestDto productsSearchRequestDto,
             @RequestParam int minId, @RequestParam int pageSize, @RequestParam SortBy sort) {
-        List<Product> productList = productService.getProductsByFilter(productsSearchRequestDto, minId, pageSize, sort);
-        List<ProductResponseDto> response = productList.stream()
+        ProductList productList = productService.getProductsByFilter(productsSearchRequestDto, minId, pageSize, sort);
+        List<ProductResponseDto> response = productList.getProducts().stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        ProductsListResponseDto productsListResponseDto = productMapper.toProductsListResponseDto(response);
-        if (productsSearchRequestDto == null)
-            productsListResponseDto.setTotalProducts(productService.getTotalProductsCount(null));
-        else
-            productsListResponseDto.setTotalProducts(productService.getTotalProductsCount(ProductStatus.PUBLISHED));
-        return productsListResponseDto;
+        return productMapper.toProductsListResponseDto(response, productList.getCount());
     }
 
     @GetMapping(path = "/{productId}/similar")
@@ -45,12 +44,10 @@ public class PublicProductController {
             @RequestParam(name = "minId", defaultValue = "0") int minId,
             @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
     ) {
-        List<Product> productList = productService.getSimilarProducts(productId, minId, pageSize);
-        List<ProductResponseDto> response = productList.stream()
+        ProductList productList = productService.getSimilarProducts(productId, minId, pageSize);
+        List<ProductResponseDto> response = productList.getProducts().stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        ProductsListResponseDto productsListResponseDto = productMapper.toProductsListResponseDto(response);
-        productsListResponseDto.setTotalProducts(productService.getTotalProductsCount(ProductStatus.PUBLISHED));
-        return productsListResponseDto;
+        return productMapper.toProductsListResponseDto(response, productList.getCount());
     }
 }

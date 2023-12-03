@@ -94,6 +94,6 @@ public class BuyerController {
         List<ProductResponseDto> response = productList.stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response);
+        return productMapper.toProductsListResponseDto(response, pageSize);
     }
 }
