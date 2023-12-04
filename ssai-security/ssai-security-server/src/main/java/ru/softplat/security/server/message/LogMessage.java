@@ -4,6 +4,7 @@ public enum LogMessage {
     TRY_PATCH_BUYER("Попытка изменения покупателя по id: {}"),
     TRY_GET_BUYER("Попытка получения покупателя по id: {}"),
     TRY_ADD_SELLER("Попытка добавления нового продавца."),
+    TRY_GET_SIMILAR_PRODUCTS("Попытка получения списка похожих продуктов."),
     TRY_GET_PRODUCTS_FILTER("Попытка получения списка продуктов с учетом фильтра."),
     TRY_PATCH_SELLER("Попытка изменения продавца по id: {}"),
     TRY_GET_SELLER("Попытка получения продавца по id: {}"),
@@ -34,7 +35,9 @@ public enum LogMessage {
     TRY_DElETE_IMAGE("Попытка удаления изображения"),
     TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
     TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
-    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
+    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаления из корзины продукта с id {}."),
+    TRY_DELETE_BASKET_POSITION("Попытка удаления из корзины позиции с id {}."),
+    TRY_CLEAR_BASKET("Попытка очистки корзины пользователем с id {}."),
     TRY_ADD_ADMIN("Попытка добавить нового админа"),
     TRY_ADD_BUYER("Попытка добавить нового покупателя"),
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
@@ -43,11 +46,11 @@ public enum LogMessage {
     TRY_ADD_ORDER("Попытка создания оплаченного заказа"),
     TRY_GET_ALL_ORDERS("Попытка получить все покупки"),
     TRY_GET_ORDER("Попытка получить заказ по id {}"),
+    TRY_BUYER_GET_RECOMMENDATIONS("Попытка получения рекомендаций по id покупателя: {}"),
     TRY_GET_All_BUYERS("Попытка получения всех покупателей"),
     TRY_GET_STATS_SELLER_ADMIN("Попытка получения статистики по продавцам админом"),
     TRY_GET_STATS_PRODUCT_ADMIN("Попытка получения статистики по продукту админом"),
-    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом"),
-    TRY_CREATE_STATS("Попытка доздания статистики");
+    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом");
 
 
     public final String label;

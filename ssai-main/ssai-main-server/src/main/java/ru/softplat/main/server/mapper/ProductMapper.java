@@ -20,7 +20,7 @@ public interface ProductMapper {
 
     ProductResponseDto productToProductResponseDto(Product product);
 
-    default ProductsListResponseDto toProductsListResponseDto(List<ProductResponseDto> products) {
-        return ProductsListResponseDto.builder().products(products).build();
+    default ProductsListResponseDto toProductsListResponseDto(List<ProductResponseDto> products, long count) {
+        return ProductsListResponseDto.builder().products(products).totalProducts(count).build();
     }
 }

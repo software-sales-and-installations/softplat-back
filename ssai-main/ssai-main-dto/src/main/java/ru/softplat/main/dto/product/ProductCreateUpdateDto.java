@@ -33,8 +33,7 @@ public class ProductCreateUpdateDto {
     @NotNull(groups = {New.class}, message = "Необходимо указать категорию продукта.")
     Long category;
 
-    @NotNull(groups = {New.class}, message = "Необходимо указать тип лицензии.")
-    License license;
+    Boolean hasDemo;
 
     @NotNull(groups = {New.class}, message = "Необходимо указать вендора продукта.")
     Long vendor;

@@ -13,5 +13,8 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long>,
         QuerydslPredicateExecutor<Product> {
 
-    List<Product> findAllByProductStatusOrderByProductionTimeDesc(ProductStatus productStatus, Pageable pageRequest);
+    List<Product> findAllByProductStatusOrderByProductionTimeDesc(ProductStatus productStatus,
+                                                                  Pageable pageRequest);
+
+    long countAllByProductStatus(ProductStatus status);
 }

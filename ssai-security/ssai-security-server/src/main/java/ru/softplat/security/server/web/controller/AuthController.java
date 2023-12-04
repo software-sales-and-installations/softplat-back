@@ -17,7 +17,6 @@ import ru.softplat.security.server.config.JwtTokenProvider;
 import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.dto.UserCreateDto;
 import ru.softplat.security.server.exception.WrongConditionException;
-import ru.softplat.security.server.exception.WrongRegException;
 import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
 import ru.softplat.security.server.model.New;
@@ -82,10 +81,6 @@ public class AuthController {
     @PostMapping("/registration")
     public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserCreateDto userCreateDto) {
 //        log.info(LogMessage.TRY_REGISTRATION.label);
-
-        if (!userCreateDto.getPassword().equals(userCreateDto.getConfirmPassword())) {
-            throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
-        }
 
         if ((userCreateDto.getRole().equals(Role.SELLER) || userCreateDto.getRole().equals(Role.BUYER)) &&
                 (userCreateDto.getPhone() == null || userCreateDto.getPhone().isEmpty()))

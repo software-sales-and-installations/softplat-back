@@ -39,4 +39,15 @@ public class PublicProductController {
         log.debug(LogMessage.TRY_GET_PRODUCTS_FILTER.label);
         return productClient.searchProducts(productsSearchRequestDto, minId, pageSize, sort);
     }
+
+    @Operation(summary = "Получения списка похожих товаров", description = "Доступ для всех")
+    @GetMapping(path = "/{productId}/similar")
+    public ResponseEntity<Object> getSimilarProducts(
+            @PathVariable Long productId,
+            @RequestParam(name = "minId", defaultValue = "0") int minId,
+            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
+    ) {
+        log.debug(LogMessage.TRY_GET_SIMILAR_PRODUCTS.label);
+        return productClient.getSimilarProducts(productId, minId, pageSize);
+    }
 }

@@ -89,4 +89,20 @@ public class ProductClient extends BaseClient {
         );
         return get("/shipped?minId={minId}&pageSize={pageSize}", parameters);
     }
+
+    public ResponseEntity<Object> getSimilarProducts(long productId, int minId, int pageSize) {
+        Map<String, Object> parameters = Map.of(
+                "minId", minId,
+                "pageSize", pageSize
+        );
+        return get("/" + productId + "/similar?minId={minId}&pageSize={pageSize}", parameters);
+    }
+
+    public ResponseEntity<Object> getProductRecommendations(long userId, int minId, int pageSize) {
+        Map<String, Object> parameters = Map.of(
+                "minId", minId,
+                "pageSize", pageSize
+        );
+        return get("/recommendations?minId={minId}&pageSize={pageSize}", userId, parameters);
+    }
 }

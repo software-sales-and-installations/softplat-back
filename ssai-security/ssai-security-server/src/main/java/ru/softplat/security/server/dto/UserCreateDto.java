@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import ru.softplat.security.server.model.Role;
 import ru.softplat.security.server.model.Status;
+import ru.softplat.security.server.web.validation.NotPopularPassword;
+import ru.softplat.security.server.web.validation.PasswordNotContainsEmail;
+import ru.softplat.security.server.web.validation.PasswordSameConfirmPassword;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,6 +17,8 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @Builder
+@PasswordNotContainsEmail
+@PasswordSameConfirmPassword
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreateDto {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
@@ -26,6 +31,7 @@ public class UserCreateDto {
             "3. Использование спец.символа \"@,#,$,%,^,&,+,=,!\";" +
             "4. Использование цифры от 0 до 9;" +
             "5. Длина пароля от 8 до 40 символов;")
+    @NotPopularPassword
     String password;
     @NotBlank(message = "Необходимо повторно указать пароль")
     String confirmPassword;

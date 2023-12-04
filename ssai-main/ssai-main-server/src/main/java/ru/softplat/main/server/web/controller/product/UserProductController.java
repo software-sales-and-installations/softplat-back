@@ -10,6 +10,7 @@ import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.product.ProductService;
 
 import java.util.List;
@@ -94,10 +95,10 @@ public class UserProductController {
     @GetMapping(path = "/shipped")
     public ProductsListResponseDto getAllProductsShipped(
             @RequestParam int minId, @RequestParam int pageSize) {
-        List<Product> productList = productService.getAllProductsShipped(minId, pageSize);
-        List<ProductResponseDto> response = productList.stream()
+        ProductList productList = productService.getAllProductsShipped(minId, pageSize);
+        List<ProductResponseDto> response = productList.getProducts().stream()
                 .map(productMapper::productToProductResponseDto)
                 .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response);
+        return productMapper.toProductsListResponseDto(response, productList.getCount());
     }
 }
