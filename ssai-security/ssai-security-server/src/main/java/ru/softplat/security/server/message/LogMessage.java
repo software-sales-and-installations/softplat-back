@@ -50,7 +50,13 @@ public enum LogMessage {
     TRY_GET_All_BUYERS("Попытка получения всех покупателей"),
     TRY_GET_STATS_SELLER_ADMIN("Попытка получения статистики по продавцам админом"),
     TRY_GET_STATS_PRODUCT_ADMIN("Попытка получения статистики по продукту админом"),
-    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом");
+    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом"),
+    TRY_CREATE_COMMENT("Попытка опубликовать комментарий к товару покупателем: {}"),
+    TRY_UPDATE_COMMENT("Попытка обновления комментария к товару покупателем: {}"),
+    TRY_DELETE_COMMENT_BUYER("Попытка удаления комментария к товару покупателем"),
+    TRY_DELETE_COMMENT_ADMIN("Попытка удаления комментария к товару администратором"),
+    TRY_GET_COMMENT_PUBLIC("Попытка просмотра комментария к товару пользователем"),
+    TRY_GET_ALL_COMMENTS_PUBLIC("Попытка просмотра всех комментариев к товару пользователем");
 
 
     public final String label;
