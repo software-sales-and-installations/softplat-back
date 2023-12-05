@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Length;
-import ru.softplat.security.server.model.New;
+import ru.softplat.main.dto.validation.New;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
