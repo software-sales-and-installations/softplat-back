@@ -8,6 +8,7 @@ import ru.softplat.main.dto.product.ProductCreateUpdateDto;
 import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.dto.product.ProductsListResponseDto;
+import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.ImageMapper;
 import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.image.Image;
@@ -15,6 +16,7 @@ import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.complaint.ComplaintService;
 import ru.softplat.main.server.service.product.ProductService;
+import ru.softplat.stats.client.StatsClient;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +27,7 @@ public class UserProductController {
     private final ProductMapper productMapper;
     private final ImageMapper imageMapper;
     private final ComplaintService complaintService;
+    private final StatsClient statsClient;
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -109,5 +112,12 @@ public class UserProductController {
             @RequestParam int minId, @RequestParam int pageSize, @RequestParam ProductStatus status) {
         ProductList productList = productService.getAllProductsSellerByStatus(userId, minId, pageSize, status);
         return productMapper.toProductsListResponseDto(productList);
+    }
+
+    @PostMapping("/{productId}/demo")
+    public void loadDemo(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long productId) {
+        Product product = productService.getAvailableProduct(productId);
+        if (!product.getHasDemo()) throw new WrongConditionException("Скачивание демо не предусмотрено");
+        statsClient.addDemoStats(userId, productId);
     }
 }

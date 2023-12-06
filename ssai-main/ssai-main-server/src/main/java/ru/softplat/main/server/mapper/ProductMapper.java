@@ -8,6 +8,7 @@ import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.product.ProductList;
+import ru.softplat.stats.dto.create.StatProductDto;
 
 @Mapper(uses = {ImageMapper.class, SellerMapper.class, VendorMapper.class})
 @Component
@@ -21,4 +22,6 @@ public interface ProductMapper {
 
     @Mapping(source = "count", target = "totalProducts")
     ProductsListResponseDto toProductsListResponseDto(ProductList products);
+
+    StatProductDto productToStatProduct(Product product);
 }

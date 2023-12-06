@@ -11,7 +11,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class StatsResponseDto {
-
-    List<SellerReportEntry> sellerReportEntryList;
+    List<ReportEntryDto> reportEntryDtoList;
     Float sumRevenue;
+    Float profit;
 }

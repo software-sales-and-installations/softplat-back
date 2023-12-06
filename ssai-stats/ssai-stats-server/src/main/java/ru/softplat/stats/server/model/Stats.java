@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "statistic")
+@Table(name = "statistic_product")
 public class Stats {
 
     @Id
@@ -34,8 +34,14 @@ public class Stats {
     LocalDateTime dateBuy;
 
     @Column(name = "quantity")
-    Long quantity;
+    Integer quantity;
 
-    @Column(name = "amount")
-    Double amount;
+    @Column(name = "profit")
+    Double profit;
+
+    @Column(name = "profit_seller")
+    Double profitSeller;
+
+    @Column(name = "profit_admin")
+    Double profitAdmin;
 }
