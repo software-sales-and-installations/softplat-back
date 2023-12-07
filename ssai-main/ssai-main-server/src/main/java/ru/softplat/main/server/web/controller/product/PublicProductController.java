@@ -27,7 +27,7 @@ public class PublicProductController {
         return productMapper.productToProductResponseDto(response);
     }
 
-    @GetMapping(path = "/search")
+    @PostMapping(path = "/search")
     public ProductsListResponseDto searchProducts(
             @RequestBody(required = false) ProductsSearchRequestDto productsSearchRequestDto,
             @RequestParam int minId, @RequestParam int pageSize, @RequestParam SortBy sort) {

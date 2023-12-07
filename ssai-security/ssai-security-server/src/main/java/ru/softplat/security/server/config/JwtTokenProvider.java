@@ -15,6 +15,7 @@ import ru.softplat.security.server.message.ExceptionMessage;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
@@ -36,7 +37,7 @@ public class JwtTokenProvider {
 
     @PostConstruct
     protected void init() {
-        secret = Base64.getEncoder().encodeToString(secret.getBytes());
+        secret = Base64.getEncoder().encodeToString(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String username, String role) {
