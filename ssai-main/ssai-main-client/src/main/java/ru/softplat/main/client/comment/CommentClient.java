@@ -9,6 +9,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
 import ru.softplat.main.dto.comment.CommentCreateUpdateDto;
 
+import java.util.Map;
+
 @Component
 public class CommentClient extends BaseClient {
     private static final String API_PREFIX = "/comment";
@@ -31,18 +33,22 @@ public class CommentClient extends BaseClient {
     }
 
     public ResponseEntity<Object> deleteCommentByAuthor(Long userId, Long commentId) {
-        return delete("/comments/" + commentId + "/delete", userId);
+        return delete("/" + commentId + "/delete", userId);
     }
 
     public ResponseEntity<Object> deleteCommentByAdmin(Long commentId) {
-        return delete("/" + commentId + "/delete");
+        return delete("/" + commentId);
     }
 
     public ResponseEntity<Object> getCommentById(Long commentId) {
         return get("/" + commentId);
     }
 
-    public ResponseEntity<Object> getAllComments(Long productId) {
-        return get("/comments/" + productId);
+    public ResponseEntity<Object> getAllComments(long productId, int minId, int pageSize) {
+        Map<String, Object> parameters = Map.of(
+                "minId", minId,
+                "pageSize", pageSize
+        );
+        return get("/" + productId + "/product?minId={minId}&pageSize={pageSize}", parameters);
     }
 }

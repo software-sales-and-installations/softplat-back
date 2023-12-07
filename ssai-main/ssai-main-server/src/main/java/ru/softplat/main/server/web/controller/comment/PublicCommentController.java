@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.softplat.main.dto.comment.CommentListResponseDto;
 import ru.softplat.main.dto.comment.CommentResponseDto;
@@ -27,9 +28,11 @@ public class PublicCommentController {
         return commentMapper.commentToCommentResponseDto(response);
     }
 
-    @GetMapping(path = "/comments/{productId}")
-    public CommentListResponseDto getAllComments(@PathVariable Long productId) {
-        List<Comment> commentList = commentService.getAllComments(productId);
+    @GetMapping(path = "/{productId}/product")
+    public CommentListResponseDto getAllComments(@PathVariable Long productId,
+                                                 @RequestParam int minId,
+                                                 @RequestParam int pageSize) {
+        List<Comment> commentList = commentService.getAllComments(productId, minId, pageSize);
         List<CommentResponseDto> response = commentList.stream()
                 .map(commentMapper::commentToCommentResponseDto)
                 .collect(Collectors.toList());

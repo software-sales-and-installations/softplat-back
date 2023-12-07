@@ -43,7 +43,7 @@ public class UserCommentController {
         return commentMapper.commentToCommentResponseDto(response);
     }
 
-    @DeleteMapping(path = "/comments/{commentId}/delete")
+    @DeleteMapping(path = "/{commentId}/delete")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteCommentByAuthor(@RequestHeader("X-Sharer-User-Id") long userId,
                                       @PathVariable Long commentId) {
@@ -51,7 +51,7 @@ public class UserCommentController {
         commentService.deleteComment(commentId);
     }
 
-    @DeleteMapping(path = "/{commentId}/delete")
+    @DeleteMapping(path = "/{commentId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteCommentByAdmin(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);

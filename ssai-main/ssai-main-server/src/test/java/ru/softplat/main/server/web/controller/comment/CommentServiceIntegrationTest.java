@@ -46,10 +46,11 @@ public class CommentServiceIntegrationTest {
     void getAllComments_shouldReturnThreeComments_whenPostedByBuyers() {
         // given
         initComments();
+        int from = 0, size = 5;
 
         // then
         List<Comment> expect = List.of(comment3, comment2, comment1);
-        List<Comment> actual = commentService.getAllComments(product1.getId());
+        List<Comment> actual = commentService.getAllComments(product1.getId(), from, size);
 
         performAssertions(expect, actual);
     }

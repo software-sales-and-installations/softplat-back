@@ -56,7 +56,11 @@ public enum LogMessage {
     TRY_DELETE_COMMENT_BUYER("Попытка удаления комментария к товару покупателем"),
     TRY_DELETE_COMMENT_ADMIN("Попытка удаления комментария к товару администратором"),
     TRY_GET_COMMENT_PUBLIC("Попытка просмотра комментария к товару пользователем"),
-    TRY_GET_ALL_COMMENTS_PUBLIC("Попытка просмотра всех комментариев к товару пользователем");
+    TRY_GET_ALL_COMMENTS_PUBLIC("Попытка просмотра всех комментариев к товару пользователем"),
+    TRY_AUTHORIZATION("Попытка авторизации пользователя email:{}"),
+    TRY_LOGOUT("Попытка выйти из приложения"),
+    TRY_REGISTRATION("Попытка зарегистрировать пользователя"),
+    TRY_CHANGE_PASSWORD("Попытка сменить пароль");
 
 
     public final String label;

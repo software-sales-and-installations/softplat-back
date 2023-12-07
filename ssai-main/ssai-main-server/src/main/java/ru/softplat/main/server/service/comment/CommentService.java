@@ -1,8 +1,11 @@
 package ru.softplat.main.server.service.comment;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.AccessDenialException;
 import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
@@ -86,8 +89,10 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
-    public List<Comment> getAllComments(long productId) {
-        return commentRepository.findAllByProductIdOrderByDateDesc(productId);
+    public List<Comment> getAllComments(long productId, int minId, int pageSize) {
+        Sort sort = Sort.by("date").descending();
+        PageRequest page = PageRequestOverride.of(minId, pageSize, sort);
+        return commentRepository.findAllByProductId(productId, page);
     }
 
     @Transactional(readOnly = true)

@@ -55,7 +55,7 @@ public class UserCommentController {
 
     @Operation(summary = " Удаление комментария к продукту покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @DeleteMapping(path = "/comments/{commentId}/delete")
+    @DeleteMapping(path = "/{commentId}/delete")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<Object> deleteCommentByAuthor(@RequestHeader("X-Sharer-User-Id") long userId,
                                       @PathVariable Long commentId) {
@@ -65,7 +65,7 @@ public class UserCommentController {
 
     @Operation(summary = " Удаление комментария к продукту админом", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @DeleteMapping(path = "/{commentId}/delete")
+    @DeleteMapping(path = "/{commentId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<Object> deleteCommentByAdmin(@PathVariable Long commentId) {
         log.debug(LogMessage.TRY_DELETE_COMMENT_ADMIN.label);
