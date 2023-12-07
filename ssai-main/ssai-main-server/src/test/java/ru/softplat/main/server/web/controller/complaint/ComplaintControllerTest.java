@@ -15,23 +15,19 @@ import ru.softplat.main.server.model.complaint.Complaint;
 import ru.softplat.main.server.service.complaint.ComplaintService;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
-import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ComplaintControllerBuyerTest {
+class ComplaintControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,8 +40,8 @@ class ComplaintControllerBuyerTest {
 
     @Test
     @SneakyThrows
-    void testCreateComplaintWhenValidReasonThenReturnComplaintDto() {
-        String reason = "PIRATED_SOFTWARE";
+    void testCreateComplaint_whenValidReason_thenReturnComplaintDto() {
+        String reason = "Мошенничество со стороны продавца";
         CompliantDto complaintDto = CompliantDto.builder()
                 .reason(reason)
                 .createdAt(LocalDateTime.now())
@@ -62,7 +58,7 @@ class ComplaintControllerBuyerTest {
 
     @Test
     @SneakyThrows
-    void testCreateComplaintWhenInvalidReasonThenReturnBadRequest() {
+    void testCreateComplaint_whenInvalidReason_thenReturnBadRequest() {
         String invalidReason = "INVALID_REASON";
 
         mockMvc.perform(post("/complaint/buyer/{userId}/{productId}/complaint", 1L, 1L)
@@ -72,16 +68,5 @@ class ComplaintControllerBuyerTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongConditionException))
                 .andExpect(result -> assertEquals("Неверно указана причина жалобы.",
                         result.getResolvedException().getMessage()));
-    }
-
-    @Test
-    @SneakyThrows
-    void testGetAllComplaintReasonsThenReturnComplaintReasons() {
-        List<String> complaintReasons = Arrays.asList("PIRATED_SOFTWARE", "SELLER_FRAUD", "SOFTWARE_NOT_WORKING");
-
-        mockMvc.perform(get("/complaint/buyer/complaints"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$", hasItems(complaintReasons.toArray())));
     }
 }

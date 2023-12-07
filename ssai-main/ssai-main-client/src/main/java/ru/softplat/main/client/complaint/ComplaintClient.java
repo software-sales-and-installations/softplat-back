@@ -11,18 +11,14 @@ import ru.softplat.main.client.BaseClient;
 import java.util.Map;
 
 @Service
-public class ComplaintBuyerClient extends BaseClient {
-    private static final String API_PREFIX = "complaint/buyer";
+public class ComplaintClient extends BaseClient {
+    private static final String API_PREFIX = "/complaint";
 
     @Autowired
-    public ComplaintBuyerClient(@Value("${main-server.url:http://localhost:8080}") String serverUrl, RestTemplateBuilder builder) {
+    public ComplaintClient(@Value("${main-server.url:http://localhost:8080}") String serverUrl, RestTemplateBuilder builder) {
         super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))
                 .build());
-    }
-
-    public ResponseEntity<Object> getAllComplaintReasons() {
-        return get("/complaints");
     }
 
     public ResponseEntity<Object> createComplaint(Long userId, Long productId, String reason) {
@@ -32,6 +28,14 @@ public class ComplaintBuyerClient extends BaseClient {
                 "reason", reason
         );
 
-        return post("/{userId}/{productId}/complaint", parameters);
+        return post("/buyer/" + userId + "/" + productId + "/complaint", parameters);
+    }
+
+    public ResponseEntity<Object> getComplaintListForAdmin() {
+        return get("admin/complaints");
+    }
+
+    public ResponseEntity<Object> getComplaintListForSeller(Long userId) {
+        return get("/seller/" + userId + "/complaints", userId);
     }
 }
