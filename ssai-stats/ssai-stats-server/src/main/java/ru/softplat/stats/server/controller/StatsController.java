@@ -13,6 +13,7 @@ import ru.softplat.stats.server.mapper.StatsMapper;
 import ru.softplat.stats.server.service.StatsService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,7 +49,7 @@ public class StatsController {
     public StatsResponseDto getProductsReportSeller(
             @RequestHeader Long sellerId,
             @RequestBody StatsFilterSeller statsFilterSeller,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) {
+            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getProductsReportSeller(

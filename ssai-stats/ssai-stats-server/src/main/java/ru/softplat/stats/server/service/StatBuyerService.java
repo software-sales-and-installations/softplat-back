@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.stats.server.model.StatBuyer;
-import ru.softplat.stats.server.model.Stats;
 import ru.softplat.stats.server.repository.StatBuyerRepository;
 
 @Service

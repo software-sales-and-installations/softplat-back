@@ -3,17 +3,16 @@ package ru.softplat.stats.server.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.stats.server.repository.StatBuyerRepository;
-import ru.softplat.stats.server.repository.StatProductRepository;
-import ru.softplat.stats.server.repository.StatSellerRepository;
-import ru.softplat.stats.server.repository.StatsRepository;
-import ru.softplat.stats.server.dto.SellerReportEntry;
+import ru.softplat.stats.dto.SortEnum;
 import ru.softplat.stats.dto.StatsFilterAdmin;
 import ru.softplat.stats.dto.StatsFilterSeller;
+import ru.softplat.stats.server.dto.SellerReportEntry;
 import ru.softplat.stats.server.model.SellerReport;
-import ru.softplat.stats.dto.SortEnum;
 import ru.softplat.stats.server.model.Stats;
+import ru.softplat.stats.server.repository.StatsRepository;
+import ru.softplat.stats.server.util.ApachePOI;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +28,7 @@ public class StatsService {
     private final StatProductService statProductService;
     private final StatSellerService statSellerService;
 
+    private ApachePOI apachePOI;
     private static final Float COMMISSIONS = 0.9F;
 
     @Transactional(readOnly = true)
@@ -51,9 +51,12 @@ public class StatsService {
     public SellerReport getProductsReportSeller(
             Long sellerId,
             StatsFilterSeller statsFilterSeller,
-            SortEnum sort) {
+            SortEnum sort) throws IOException {
         List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, sellerId);
-        return getSellerReport(sort, statsPage);
+        //apachePOI.createFile(statsPage);
+        SellerReport sellerReport = getSellerReport(sort, statsPage);
+        apachePOI.createFile(sellerReport);
+        return sellerReport;
     }
 
     private static SellerReport getSellerReport(SortEnum sort, List<SellerReportEntry> statsPage) {
