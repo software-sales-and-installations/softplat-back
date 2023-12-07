@@ -12,8 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.user.SellerClient;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
+import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.message.LogMessage;
-import ru.softplat.security.server.model.New;
 import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
 import javax.validation.Valid;
@@ -45,7 +46,8 @@ public class SellerController {
     @Operation(summary = "Обновление данных о себе продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping
-    public ResponseEntity<Object> updateSeller(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid SellerUpdateDto sellerUpdateDto) {
+    public ResponseEntity<Object> updateSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+                                               @RequestBody @Valid SellerUpdateDto sellerUpdateDto) {
         log.debug(LogMessage.TRY_PATCH_SELLER.label, userId);
         return sellerClient.updateSeller(userId, sellerUpdateDto);
     }
@@ -80,7 +82,7 @@ public class SellerController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping("/bank")
     public ResponseEntity<Object> updateRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                   @RequestBody @Valid BankRequisitesCreateUpdateDto requisites) {
+                                                   @RequestBody @Validated(Update.class) BankRequisitesCreateUpdateDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, userId);
         return sellerClient.updateRequisites(userId, requisites);
     }

@@ -37,7 +37,11 @@ public class SellerBankService {
         Seller seller = sellerService.getSeller(userId);
         BankRequisites requisites = seller.getRequisites();
         if (requisitesForUpdate.getInn() != null) requisites.setInn(requisitesForUpdate.getInn());
-        if (requisitesForUpdate.getLegalForm() != null) requisites.setLegalForm(requisitesForUpdate.getLegalForm());
+        if (requisitesForUpdate.getLegalForm() != null) {
+            requisites.setLegalForm(requisitesForUpdate.getLegalForm());
+            if (requisites.getLegalForm() == LegalForm.IP) requisites.setOgrn(null);
+            else requisites.setOgrnip(null);
+        }
         if (requisitesForUpdate.getAccount() != null) requisites.setAccount(requisitesForUpdate.getAccount());
         if (requisitesForUpdate.getBik() != null) requisites.setBik(requisitesForUpdate.getBik());
         if (requisitesForUpdate.getKpp() != null) requisites.setKpp(requisitesForUpdate.getKpp());

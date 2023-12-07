@@ -51,7 +51,8 @@ public class SellerController {
     }
 
     @PatchMapping
-    public SellerResponseDto updateSeller(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody SellerUpdateDto sellerUpdateDto) {
+    public SellerResponseDto updateSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @RequestBody SellerUpdateDto sellerUpdateDto) {
         Seller updateRequest = sellerMapper.sellerDtoToSeller(sellerUpdateDto);
         Seller response = sellerService.updateSeller(userId, updateRequest);
         return sellerMapper.sellerToSellerResponseDto(response);
