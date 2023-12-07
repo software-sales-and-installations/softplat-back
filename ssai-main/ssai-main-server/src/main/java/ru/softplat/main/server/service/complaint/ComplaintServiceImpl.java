@@ -56,8 +56,6 @@ public class ComplaintServiceImpl implements ComplaintService {
 
         checkComplaintsMustBeLessThanTen(product);
 
-        product.setComplaintCount(product.getComplaintCount() + 1);
-
         Complaint newComplaint = Complaint.builder()
                 .seller(product.getSeller())
                 .createdAt(now())
@@ -79,6 +77,8 @@ public class ComplaintServiceImpl implements ComplaintService {
             product.setProductAvailability(Boolean.FALSE);
             product.setProductStatus(ProductStatus.REJECTED);
             productRepository.save(product);
+        } else {
+            product.setComplaintCount(product.getComplaintCount() + 1);
         }
     }
 }
