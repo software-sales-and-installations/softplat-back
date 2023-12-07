@@ -54,6 +54,8 @@ public class ComplaintServiceImpl implements ComplaintService {
         Order order = orderRepository.findOrderByBuyerIdAndProductId(userId, productId).orElseThrow(() ->
                 new EntityNotFoundException(ExceptionMessage.NOT_VALID_COMPLAINT_PRODUCT_EXCEPTION.label));
 
+        product.setComplaintCount(product.getComplaintCount() + 1);
+
         checkComplaintsMustBeLessThanTen(product);
 
         Complaint newComplaint = Complaint.builder()
@@ -73,12 +75,10 @@ public class ComplaintServiceImpl implements ComplaintService {
     //Если на товар поступило от 10 жалоб и выше, карточка товара
     //снимается с продажи на маркетплейсе и перестает отображаться для покупателей.
     private void checkComplaintsMustBeLessThanTen(Product product) {
-        if (product.getComplaintCount() >= 9) {
+        if (product.getComplaintCount() >= 10) {
             product.setProductAvailability(Boolean.FALSE);
             product.setProductStatus(ProductStatus.REJECTED);
             productRepository.save(product);
-        } else {
-            product.setComplaintCount(product.getComplaintCount() + 1);
         }
     }
 }
