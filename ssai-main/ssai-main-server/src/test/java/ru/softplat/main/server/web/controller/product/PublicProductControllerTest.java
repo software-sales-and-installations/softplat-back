@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
@@ -171,7 +172,7 @@ class PublicProductControllerTest extends AbstractControllerTest {
 
     @SneakyThrows
     private ProductsListResponseDto getSearchResultsByFilter(ProductsSearchRequestDto productFilter, String sort) {
-        MvcResult result = mockMvc.perform(get("/product/search")
+        MvcResult result = mockMvc.perform(post("/product/search")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productFilter))
                         .param("minId", "0")

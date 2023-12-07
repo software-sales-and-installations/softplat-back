@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -27,8 +29,4 @@ public class CommentCreateUpdateDto {
     @DecimalMax(value = "5.0", message = "Оценка должна быть ниже или равна 5.0", groups = {New.class, Update.class})
     @NotNull(groups = {New.class}, message = "Необходимо указать оценку товара от 1 до 5.")
     Float rating;
-
-    public interface New {}
-
-    public interface Update {}
 }

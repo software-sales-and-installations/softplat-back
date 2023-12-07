@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.softplat.main.dto.comment.CommentCreateUpdateDto;
+import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.server.exception.AccessDenialException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.model.buyer.Buyer;
@@ -72,8 +73,7 @@ class CommentServiceUnitTest {
         CommentCreateUpdateDto request = CommentCreateUpdateDto.builder().text("comment").build();
 
         // when
-        Set<ConstraintViolation<CommentCreateUpdateDto>> violations
-                = validator.validate(request, CommentCreateUpdateDto.New.class);
+        Set<ConstraintViolation<CommentCreateUpdateDto>> violations = validator.validate(request, New.class);
 
         // then
         assertEquals(1, violations.size());

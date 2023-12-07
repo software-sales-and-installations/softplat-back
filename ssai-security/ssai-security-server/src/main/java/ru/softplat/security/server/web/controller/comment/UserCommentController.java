@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.softplat.main.client.comment.CommentClient;
 import ru.softplat.main.dto.comment.CommentCreateUpdateDto;
+import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.message.LogMessage;
 
 @RestController
@@ -35,7 +37,7 @@ public class UserCommentController {
     public ResponseEntity<Object> createComment(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @PathVariable Long productId,
-            @RequestBody @Validated(CommentCreateUpdateDto.New.class) CommentCreateUpdateDto createDto
+            @RequestBody @Validated(New.class) CommentCreateUpdateDto createDto
     ) {
         log.debug(LogMessage.TRY_CREATE_COMMENT.label, createDto);
         return commentClient.createComment(createDto, userId, productId);
@@ -47,7 +49,7 @@ public class UserCommentController {
     public ResponseEntity<Object> updateCommentByAuthor(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @PathVariable Long commentId,
-            @RequestBody @Validated(CommentCreateUpdateDto.Update.class) CommentCreateUpdateDto updateDto
+            @RequestBody @Validated(Update.class) CommentCreateUpdateDto updateDto
     ) {
         log.debug(LogMessage.TRY_UPDATE_COMMENT.label, updateDto);
         return commentClient.updateCommentByAuthor(updateDto, userId, commentId);
@@ -58,7 +60,7 @@ public class UserCommentController {
     @DeleteMapping(path = "/{commentId}/delete")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<Object> deleteCommentByAuthor(@RequestHeader("X-Sharer-User-Id") long userId,
-                                      @PathVariable Long commentId) {
+                                                        @PathVariable Long commentId) {
         log.debug(LogMessage.TRY_DELETE_COMMENT_BUYER.label);
         return commentClient.deleteCommentByAuthor(userId, commentId);
     }
