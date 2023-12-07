@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.config.JwtTokenProvider;
 import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.dto.UserCreateDto;
@@ -49,7 +50,7 @@ public class AuthController {
 
 
     @PostMapping("/auth/login")
-    public ResponseEntity<Object> authorization(@RequestBody @Valid JwtAuthRequest request) {
+    public ResponseEntity<Object> authorization(@RequestBody @Validated(Update.class) JwtAuthRequest request) {
         log.info(LogMessage.TRY_AUTHORIZATION.label, request.getEmail());
 
         try {
