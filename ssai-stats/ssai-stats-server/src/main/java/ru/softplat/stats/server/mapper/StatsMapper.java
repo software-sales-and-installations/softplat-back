@@ -14,4 +14,5 @@ public interface StatsMapper {
     StatsResponseDto sellerReportToStatsResponseDto(SellerReport sellerReport);
 
     Stats statsCreateDtoToStats(StatsCreateDto statsCreateDto);
+
 }

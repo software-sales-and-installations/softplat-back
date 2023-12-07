@@ -3,6 +3,9 @@ package ru.softplat.stats.server.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.stats.server.repository.StatBuyerRepository;
+import ru.softplat.stats.server.repository.StatProductRepository;
+import ru.softplat.stats.server.repository.StatSellerRepository;
 import ru.softplat.stats.server.repository.StatsRepository;
 import ru.softplat.stats.server.dto.SellerReportEntry;
 import ru.softplat.stats.dto.StatsFilterAdmin;
@@ -22,6 +25,10 @@ import java.util.stream.Collectors;
 public class StatsService {
 
     private final StatsRepository statsRepository;
+    private final StatBuyerService statBuyerService;
+    private final StatProductService statProductService;
+    private final StatSellerService statSellerService;
+
     private static final Float COMMISSIONS = 0.9F;
 
     @Transactional(readOnly = true)
@@ -112,6 +119,9 @@ public class StatsService {
 
     public void createStats(Stats stats) {
         stats.setAmount(COMMISSIONS * stats.getAmount());
-        statsRepository.save(stats); //TODO настроить сохранение с учетом новых сущностей
+        statsRepository.save(stats);
+        statBuyerService.createStatBuyer(stats.getBuyer());
+        statProductService.createStatProduct(stats.getProduct());
+        statSellerService.createStatSeller(stats.getProduct().getSeller());
     }
 }
