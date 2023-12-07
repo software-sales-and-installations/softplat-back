@@ -45,7 +45,7 @@ public class ComplaintControllerBuyer {
         List<String> complaintReasons = new ArrayList<>();
 
         for (ComplaintReason complaintReason : ComplaintReason.values()) {
-            complaintReasons.add(complaintReason.getReason());
+            complaintReasons.add(complaintReason.name());
         }
 
         return complaintReasons;
@@ -54,7 +54,7 @@ public class ComplaintControllerBuyer {
 
     private boolean isValidComplaintReason(String reason) {
         for (ComplaintReason complaintReason : ComplaintReason.values()) {
-            if (complaintReason.getReason().equalsIgnoreCase(reason)) {
+            if (complaintReason.name().equalsIgnoreCase(reason)) {
                 return true;
             }
         }

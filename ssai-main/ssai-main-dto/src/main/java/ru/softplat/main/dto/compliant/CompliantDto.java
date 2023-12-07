@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CompliantDto {
     String reason;
