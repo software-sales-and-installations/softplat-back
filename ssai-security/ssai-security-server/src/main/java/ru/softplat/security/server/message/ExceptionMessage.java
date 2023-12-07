@@ -9,7 +9,8 @@ public enum ExceptionMessage {
     IMAGE_SIZE_EXCEED_EXCEPTION("Размер изображения должен не превышать 5 мб."),
     IMAGE_FORMAT_EXCEPTION("Формат изображения должен быть jpeg или png."),
     NO_IMAGE_CONTENT_EXCEPTION("Необходимо загрузить изображение."),
-    DUPLICATE_EXCEPTION("Пользователь с указанным логином уже существует.");
+    DUPLICATE_EXCEPTION("Пользователь с указанным логином уже существует."),
+    COMPLAINT_REASON_EXCEPTION("Неверно указана причина жалобы.");
 
     public final String label;
 

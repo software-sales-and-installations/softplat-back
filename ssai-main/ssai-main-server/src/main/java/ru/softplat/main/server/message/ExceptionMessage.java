@@ -11,7 +11,9 @@ public enum ExceptionMessage {
     ACCESS_EXCEPTION("Ошибка доступа"),
     DATA_EXCEPTION("Ошибка базы данных."),
     SIZE_EXCEPTION("Ошибка в размере загружаемых данных"),
-    NOT_VALID_VALUE_EXCEPTION("Недопустимое значение!");
+    NOT_VALID_VALUE_EXCEPTION("Недопустимое значение!"),
+    NOT_VALID_COMPLAINT_PRODUCT_EXCEPTION("Можно оставить жалобу только на тот товар, который приобретен"),
+    COMPLAINT_REASON_EXCEPTION("Неверно указана причина жалобы.");
 
     public final String label;
 

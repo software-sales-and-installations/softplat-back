@@ -77,4 +77,7 @@ public class Product {
 
     @Column(name = "installation_price")
     Float installationPrice;
+
+    @Column(name = "complaint_count")
+    Long complaintCount;
 }

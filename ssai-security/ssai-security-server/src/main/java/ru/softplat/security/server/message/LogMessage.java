@@ -50,7 +50,11 @@ public enum LogMessage {
     TRY_GET_All_BUYERS("Попытка получения всех покупателей"),
     TRY_GET_STATS_SELLER_ADMIN("Попытка получения статистики по продавцам админом"),
     TRY_GET_STATS_PRODUCT_ADMIN("Попытка получения статистики по продукту админом"),
-    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом");
+    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом"),
+    TRY_GET_ALL_COMPLAINTS_ADMIN("Попытка получения всех жалоб админом"),
+    TRY_ADD_COMPLAINT_BUYER("Попытка создания жалобы покупателем"),
+    TRY_GET_LIST_COMPLAINTS_BUYER("Попытка получения списка жалоб покупателем"),
+    TRY_GET_ALL_COMPLAINTS_SELLER("Попытка получения всех жалоб продавцом");
 
 
     public final String label;
