@@ -42,9 +42,7 @@ public class SearchProductService {
 
     @Transactional(readOnly = true)
     public ProductList getProductsByFilter(ProductsSearchRequestDto productsSearchRequestDto, int from, int size, SortBy sort) {
-        Sort sortBy = (sort.equals(SortBy.NEWEST)) ?
-                Sort.by("productionTime").descending() : Sort.by("price").ascending();
-
+        Sort sortBy = getSort(sort);
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
 
         QProduct product = QProduct.product;
@@ -113,5 +111,16 @@ public class SearchProductService {
     @Transactional(readOnly = true)
     public List<Product> getProductsByIds(List<Long> productIds) {
         return productRepository.findAllById(productIds);
+    }
+
+    private Sort getSort(SortBy sort) {
+        switch (sort) {
+            case PRICE:
+                return Sort.by("price").ascending();
+            case RATING:
+                return Sort.by("rating").descending();
+            default:
+                return Sort.by("productionTime").descending();
+        }
     }
 }
