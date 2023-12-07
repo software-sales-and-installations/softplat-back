@@ -20,6 +20,7 @@ import ru.softplat.security.server.dto.UserCreateDto;
 import ru.softplat.security.server.exception.WrongConditionException;
 import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
+import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.model.Role;
 import ru.softplat.security.server.model.User;
 import ru.softplat.security.server.repository.UserRepository;
@@ -49,7 +50,7 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity<Object> authorization(@RequestBody @Valid JwtAuthRequest request) {
-//        log.info(LogMessage.TRY_AUTHORIZATION.label);
+        log.info(LogMessage.TRY_AUTHORIZATION.label, request.getEmail());
 
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
@@ -71,7 +72,7 @@ public class AuthController {
 
     @PostMapping("/auth/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
-//        log.info(LogMessage.TRY_LOGOUT.label);
+        log.info(LogMessage.TRY_LOGOUT.label);
 
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         securityContextLogoutHandler.logout(request, response, null);
@@ -80,7 +81,7 @@ public class AuthController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/registration")
     public ResponseEntity<Object> createNewUser(@RequestBody @Valid UserCreateDto userCreateDto) {
-//        log.info(LogMessage.TRY_REGISTRATION.label);
+        log.info(LogMessage.TRY_REGISTRATION.label);
 
         if ((userCreateDto.getRole().equals(Role.SELLER) || userCreateDto.getRole().equals(Role.BUYER)) &&
                 (userCreateDto.getPhone() == null || userCreateDto.getPhone().isEmpty()))
@@ -92,7 +93,7 @@ public class AuthController {
 
     @PostMapping("/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtAuthRequest request) {
-//        log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
+        log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
         return ResponseEntity.of(
                 Optional.of(userMapper
                         .userToUserResponseDto(userDetailsChangeService

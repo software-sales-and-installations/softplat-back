@@ -50,7 +50,11 @@ public enum LogMessage {
     TRY_GET_All_BUYERS("Попытка получения всех покупателей"),
     TRY_GET_STATS_SELLER_ADMIN("Попытка получения статистики по продавцам админом"),
     TRY_GET_STATS_PRODUCT_ADMIN("Попытка получения статистики по продукту админом"),
-    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом");
+    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом"),
+    TRY_AUTHORIZATION("Попытка авторизации пользователя email:{}"),
+    TRY_LOGOUT("Попытка выйти из приложения"),
+    TRY_REGISTRATION("Попытка зарегистрировать пользователя"),
+    TRY_CHANGE_PASSWORD("Попытка сменить пароль");
 
 
     public final String label;
