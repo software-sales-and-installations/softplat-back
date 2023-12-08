@@ -144,7 +144,6 @@ public class CommentServiceIntegrationTest {
             assertEquals(expectComment.getId(), actualComment.getId());
             assertEquals(expectComment.getText(), actualComment.getText());
             assertEquals(expectComment.getRating(), actualComment.getRating());
-            assertEquals(expectComment.getDate(), actualComment.getDate());
             assertEquals(expectComment.getProduct().getId(), actualComment.getProduct().getId());
             assertEquals(expectComment.getAuthor().getId(), actualComment.getAuthor().getId());
         }

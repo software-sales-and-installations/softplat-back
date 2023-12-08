@@ -9,6 +9,7 @@ import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.dto.user.response.SellersListResponseDto;
+import ru.softplat.main.server.mapper.BankRequisitesMapper;
 import ru.softplat.main.server.mapper.SellerMapper;
 import ru.softplat.main.server.model.seller.BankRequisites;
 import ru.softplat.main.server.model.seller.Seller;
@@ -26,6 +27,7 @@ public class SellerController {
     private final SellerService sellerService;
     private final SellerBankService bankService;
     private final SellerMapper sellerMapper;
+    private final BankRequisitesMapper requisitesMapper;
 
     @PostMapping
     public SellerResponseDto addSeller(@RequestBody UserCreateMainDto userCreateMainDto) {
@@ -49,25 +51,40 @@ public class SellerController {
     }
 
     @PatchMapping
-    public SellerResponseDto updateSeller(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody SellerUpdateDto sellerUpdateDto) {
+    public SellerResponseDto updateSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @RequestBody SellerUpdateDto sellerUpdateDto) {
         Seller updateRequest = sellerMapper.sellerDtoToSeller(sellerUpdateDto);
         Seller response = sellerService.updateSeller(userId, updateRequest);
         return sellerMapper.sellerToSellerResponseDto(response);
     }
 
     @GetMapping("/bank")
-    public BankRequisitesResponseDto getRequisites(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public BankRequisitesResponseDto getRequisitesSeller(@RequestHeader("X-Sharer-User-Id") Long userId) {
         BankRequisites response = bankService.getRequisites(userId);
-        return sellerMapper.requisitesToDto(response);
-    } //TODO разделить логику админа и продавца
+        return requisitesMapper.requisitesToDto(response);
+    }
+
+    @GetMapping("/bank/{userId}")
+    public BankRequisitesResponseDto getRequisitesAdmin(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        BankRequisites response = bankService.getRequisites(userId);
+        return requisitesMapper.requisitesToDto(response);
+    }
+
+    @PostMapping("/bank")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public BankRequisitesResponseDto addRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                      @RequestBody BankRequisitesCreateUpdateDto requisites) {
+        BankRequisites response = bankService.addRequisites(userId,
+                requisitesMapper.createUpdateDtoToRequisites(requisites));
+        return requisitesMapper.requisitesToDto(response);
+    }
 
     @PatchMapping("/bank")
-    @ResponseStatus(value = HttpStatus.CREATED)
     public BankRequisitesResponseDto updateRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
                                                       @RequestBody BankRequisitesCreateUpdateDto requisites) {
-        BankRequisites response = bankService.updateRequisites(userId, new BankRequisites(null,
-                requisites.getAccount()));
-        return sellerMapper.requisitesToDto(response);
+        BankRequisites response = bankService.updateRequisites(userId,
+                requisitesMapper.createUpdateDtoToRequisites(requisites));
+        return requisitesMapper.requisitesToDto(response);
     }
 
     @DeleteMapping("/bank")

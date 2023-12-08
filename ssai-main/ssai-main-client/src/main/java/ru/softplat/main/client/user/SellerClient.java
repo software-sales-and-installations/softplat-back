@@ -59,6 +59,10 @@ public class SellerClient extends BaseClient {
         delete("/bank", userId);
     }
 
+    public ResponseEntity<Object> addRequisites(long userId, BankRequisitesCreateUpdateDto requisites) {
+        return post("/bank", userId, requisites);
+    }
+
     public ResponseEntity<Object> updateRequisites(long userId, BankRequisitesCreateUpdateDto requisites) {
         return patch("/bank", userId, requisites);
     }
