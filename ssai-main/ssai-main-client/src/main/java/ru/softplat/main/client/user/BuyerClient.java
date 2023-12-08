@@ -56,4 +56,12 @@ public class BuyerClient extends BaseClient {
     public ResponseEntity<Object> getFavourites(long userId) {
         return get("/favorites", userId);
     }
+
+    public ResponseEntity<Object> getRecommendations(long userId, int minId, int pageSize) {
+        Map<String, Object> parameters = Map.of(
+                "minId", minId,
+                "pageSize", pageSize
+        );
+        return get("/recommendations", userId, parameters);
+    }
 }

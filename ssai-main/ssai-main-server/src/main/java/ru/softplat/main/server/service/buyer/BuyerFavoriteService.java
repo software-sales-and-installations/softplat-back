@@ -9,6 +9,7 @@ import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Favorite;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.repository.buyer.FavoriteRepository;
@@ -58,8 +59,8 @@ public class BuyerFavoriteService {
     @Transactional(readOnly = true)
     public List<Product> getRecommendations(long userId, int from, int size) {
         PageRequest page = PageRequestOverride.of(from, size);
-        buyerService.getBuyer(userId);
-        List<Long> recommendations = favoriteRepository.getRecommendations(userId, page);
+        Buyer buyer = buyerService.getBuyer(userId);
+        List<Long> recommendations = favoriteRepository.getRecommendations(buyer.getId(), page);
         return searchProductService.getProductsByIds(recommendations);
     }
 }
