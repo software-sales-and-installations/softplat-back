@@ -77,4 +77,7 @@ public class Product {
 
     @Column(name = "installation_price")
     Float installationPrice;
+
+    @Column(name = "average_rating")
+    Float rating;
 }

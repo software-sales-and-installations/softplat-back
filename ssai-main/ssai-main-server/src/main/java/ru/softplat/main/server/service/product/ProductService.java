@@ -176,6 +176,7 @@ public class ProductService {
         product.setProductStatus(ProductStatus.DRAFT);
     }
 
+    @Transactional(readOnly = true)
     public void checkSellerAccessRights(long sellerId, Long productId) {
         Product product = getProductOrThrowException(productId);
 
@@ -195,5 +196,37 @@ public class ProductService {
                     ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class)
             );
         return product;
+    }
+
+    public void updateProductRatingOnCommentCreate(long productId, float rating, long ratingCount) {
+        Product product = getAvailableProduct(productId);
+        if (product.getRating() == null || ratingCount == 0) {
+            product.setRating(rating);
+        } else {
+            Float averageRating = product.getRating();
+            Float newRating = (ratingCount * averageRating + rating) / (ratingCount + 1);
+            product.setRating(newRating);
+        }
+        productRepository.save(product);
+    }
+
+    public void updateProductRatingOnCommentDelete(long productId, float rating, long ratingCount) {
+        Product product = getAvailableProduct(productId);
+        if (ratingCount == 1) {
+            product.setRating(null);
+        } else {
+            Float averageRating = product.getRating();
+            Float newRating = (ratingCount * averageRating - rating) / (ratingCount - 1);
+            product.setRating(newRating);
+        }
+        productRepository.save(product);
+    }
+
+    public void updateProductRatingOnPatch(long productId, float ratingUpdate, long ratingCount, float oldRating) {
+        Product product = getAvailableProduct(productId);
+        Float averageRating = product.getRating();
+        Float newRating = (ratingCount * averageRating - oldRating + ratingUpdate) / ratingCount;
+        product.setRating(newRating);
+        productRepository.save(product);
     }
 }
