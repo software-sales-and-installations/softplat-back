@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.user.SellerClient;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
+import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
@@ -44,7 +46,8 @@ public class SellerController {
     @Operation(summary = "Обновление данных о себе продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping
-    public ResponseEntity<Object> updateSeller(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid SellerUpdateDto sellerUpdateDto) {
+    public ResponseEntity<Object> updateSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+                                               @RequestBody @Valid SellerUpdateDto sellerUpdateDto) {
         log.debug(LogMessage.TRY_PATCH_SELLER.label, userId);
         return sellerClient.updateSeller(userId, sellerUpdateDto);
     }
@@ -65,12 +68,21 @@ public class SellerController {
         return sellerClient.getRequisitesAdmin(userId);
     }
 
+    @Operation(summary = "Добавление своих банковских реквизитов продавцом", description = "Доступ для продавца")
+    @PreAuthorize("hasAuthority('seller:write')")
+    @PostMapping("/bank")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ResponseEntity<Object> addRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                   @RequestBody @Validated(New.class) BankRequisitesCreateUpdateDto requisites) {
+        log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, userId);
+        return sellerClient.addRequisites(userId, requisites);
+    }
+
     @Operation(summary = "Обновление своих банковских реквизитов продавцом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping("/bank")
-    @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> updateRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                   @RequestBody @Valid BankRequisitesCreateUpdateDto requisites) {
+                                                   @RequestBody @Validated(Update.class) BankRequisitesCreateUpdateDto requisites) {
         log.debug(LogMessage.TRY_SELLER_PATCH_REQUISITES.label, userId);
         return sellerClient.updateRequisites(userId, requisites);
     }
