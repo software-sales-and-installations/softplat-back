@@ -1,5 +1,7 @@
 package ru.softplat.security.server.web.controller.basket;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.basket.OrderClient;
 import ru.softplat.main.dto.basket.OrderCreateDto;
+import ru.softplat.main.dto.basket.OrderResponseDto;
+import ru.softplat.main.dto.basket.OrdersListResponseDto;
 import ru.softplat.security.server.message.LogMessage;
 
 import javax.persistence.EntityNotFoundException;
@@ -23,9 +27,10 @@ import javax.validation.Valid;
 public class BuyerOrderController {
     private final OrderClient orderClient;
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = OrderResponseDto.class)})
     @Operation(summary = "Оформление заказа", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @PostMapping
+    @PostMapping(produces = "application/json")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> addOrder(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid OrderCreateDto orderCreateDto) {
         log.debug(LogMessage.TRY_ADD_ORDER.label);
@@ -34,17 +39,19 @@ public class BuyerOrderController {
         return orderClient.addOrder(userId, orderCreateDto);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = OrdersListResponseDto.class)})
     @Operation(summary = "Список: Мои покупки", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public ResponseEntity<Object> getAllOrders(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.debug(LogMessage.TRY_GET_ALL_ORDERS.label);
         return orderClient.getAllOrders(userId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = OrderResponseDto.class)})
     @Operation(summary = "Получение конкретной покупки", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping("/{orderId}")
+    @GetMapping(path = "/{orderId}", produces = "application/json")
     public ResponseEntity<Object> getOrder(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long orderId) {
         log.debug(LogMessage.TRY_GET_ORDER.label, orderId);
         return orderClient.getOrder(userId, orderId);
