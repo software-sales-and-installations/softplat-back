@@ -4,14 +4,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import ru.softplat.main.dto.compliant.ComplaintListResponseDto;
-import ru.softplat.main.dto.compliant.CompliantDto;
+import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
+import ru.softplat.main.dto.compliant.CompliantResponseDto;
 import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.complaint.Complaint;
-import ru.softplat.main.server.model.complaint.ComplaintReason;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.seller.BankRequisites;
 import ru.softplat.main.server.model.seller.Seller;
@@ -39,19 +39,19 @@ class ComplaintMapperTest {
                 .buyer(Buyer.builder().id(2L).build())
                 .product(Product.builder().id(3L).build())
                 .seller(Seller.builder().id(4L).build())
-                .reason(ComplaintReason.PIRATED_SOFTWARE)
+                .reason(ComplaintReasonRequest.PIRATED_SOFTWARE)
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        CompliantDto complaintDto = complaintMapper.complaintToComplaintDto(complaint);
+        CompliantResponseDto complaintDto = complaintMapper.complaintToComplaintDto(complaint);
         assertNotNull(complaintDto);
-        assertEquals(complaint.getReason().toString(), complaintDto.getReason());
+        assertEquals(complaint.getReason(), complaintDto.getReason());
     }
 
     @Test
     void testComplaintDtoToComplaint() {
-        CompliantDto complaintDto = CompliantDto.builder()
-                .reason(ComplaintReason.SELLER_FRAUD.name())
+        CompliantResponseDto complaintDto = CompliantResponseDto.builder()
+                .reason(ComplaintReasonRequest.SELLER_FRAUD)
                 .buyer(BuyerResponseDto.builder().build())
                 .product(ProductResponseDto.builder().id(3L).build())
                 .seller(SellerResponseDto.builder().id(4L).build())
@@ -61,7 +61,7 @@ class ComplaintMapperTest {
         Complaint complaint = complaintMapper.complaintDtoToComplaint(complaintDto);
 
         assertNotNull(complaint);
-        assertEquals(ComplaintReason.SELLER_FRAUD, complaint.getReason());
+        assertEquals(ComplaintReasonRequest.SELLER_FRAUD, complaint.getReason());
     }
 
     @Test
@@ -80,9 +80,9 @@ class ComplaintMapperTest {
 
     @Test
     void testToComplaintListResponseDto() {
-        List<CompliantDto> complaints = Collections.singletonList(
-                CompliantDto.builder()
-                        .reason(ComplaintReason.SOFTWARE_NOT_WORKING.getReason())
+        List<CompliantResponseDto> complaints = Collections.singletonList(
+                CompliantResponseDto.builder()
+                        .reason(ComplaintReasonRequest.SOFTWARE_NOT_WORKING)
                         .buyer(BuyerResponseDto.builder().id(2L).build())
                         .product(ProductResponseDto.builder().id(3L).build())
                         .seller(SellerResponseDto.builder().id(4L).build())

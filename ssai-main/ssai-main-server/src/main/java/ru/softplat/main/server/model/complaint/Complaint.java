@@ -3,6 +3,7 @@ package ru.softplat.main.server.model.complaint;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Order;
 import ru.softplat.main.server.model.product.Product;
@@ -41,7 +42,7 @@ public class Complaint {
     Order order;
 
     @Enumerated(EnumType.STRING)
-    ComplaintReason reason;
+    ComplaintReasonRequest reason;
 
     @DateTimeFormat
     @Column(name = "created_at")

@@ -13,10 +13,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CompliantDto {
+public class CompliantResponseDto {
     Long id;
-    String reason;
+    ComplaintReasonRequest reason;
     BuyerResponseDto buyer;
     ProductResponseDto product;
     SellerResponseDto seller;

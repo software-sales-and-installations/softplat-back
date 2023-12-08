@@ -7,8 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
-
-import java.util.Map;
+import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
 
 @Service
 public class ComplaintClient extends BaseClient {
@@ -21,18 +20,12 @@ public class ComplaintClient extends BaseClient {
                 .build());
     }
 
-    public ResponseEntity<Object> createComplaint(Long userId, Long productId, String reason) {
-        Map<String, Object> parameters = Map.of(
-                "userId", userId,
-                "productId", productId,
-                "reason", reason
-        );
-
-        return post("/buyer/" + userId + "/" + productId + "/complaint", parameters);
+    public ResponseEntity<Object> createComplaint(Long userId, Long productId, ComplaintReasonRequest reason) {
+        return post("/buyer/" + userId + "/" + productId + "/complaint&reason={reason}", reason);
     }
 
     public ResponseEntity<Object> getComplaintListForAdmin() {
-        return get("admin/complaints");
+        return get("");
     }
 
     public ResponseEntity<Object> getComplaintListForSeller(Long userId) {

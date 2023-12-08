@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ComplaintListResponseDto {
-    List<CompliantDto> complaints;
+    List<CompliantResponseDto> complaints;
 }

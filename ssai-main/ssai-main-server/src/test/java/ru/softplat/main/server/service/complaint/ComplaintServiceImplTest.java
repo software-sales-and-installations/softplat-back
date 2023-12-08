@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Order;
@@ -88,7 +89,7 @@ class ComplaintServiceImplTest {
     void testCreateComplaint_whenEntitiesExist_thenReturnComplaint() {
         Long userId = 1L;
         Long productId = 1L;
-        String reason = "SELLER_FRAUD";
+        ComplaintReasonRequest complaintReasonRequest = ComplaintReasonRequest.SELLER_FRAUD;
         Buyer buyer = mock(Buyer.class);
         Product product = mock(Product.class);
         when(buyerRepository.findById(userId)).thenReturn(Optional.of(buyer));
@@ -97,20 +98,20 @@ class ComplaintServiceImplTest {
         when(product.getComplaintCount()).thenReturn(0L);
         when(complaintRepository.save(any(Complaint.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Complaint result = complaintService.createComplaint(userId, productId, reason);
+        Complaint result = complaintService.createComplaint(userId, productId, complaintReasonRequest);
 
         verify(productRepository).save(product);
         verify(complaintRepository).save(any(Complaint.class));
         assertThat(result.getBuyer()).isEqualTo(buyer);
         assertThat(result.getProduct()).isEqualTo(product);
-        assertThat(result.getReason().name()).isEqualTo(reason);
+        assertThat(result.getReason()).isEqualTo(complaintReasonRequest);
     }
 
     @Test
     void testCreateComplaint_whenUserDoesNotExist_thenThrowEntityNotFoundException() {
         Long userId = 1L;
         Long productId = 1L;
-        String reason = "SELLER_FRAUD";
+        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
         when(buyerRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> complaintService.createComplaint(userId, productId, reason));
@@ -120,7 +121,7 @@ class ComplaintServiceImplTest {
     void testCreateComplaint_whenProductDoesNotExist_thenThrowEntityNotFoundException() {
         Long userId = 1L;
         Long productId = 1L;
-        String reason = "SELLER_FRAUD";
+        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
         when(buyerRepository.findById(userId)).thenReturn(Optional.of(mock(Buyer.class)));
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
@@ -131,7 +132,7 @@ class ComplaintServiceImplTest {
     void testCreateComplaint_whenOrderDoesNotExist_thenThrowEntityNotFoundException() {
         Long userId = 1L;
         Long productId = 1L;
-        String reason = "SELLER_FRAUD";
+        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
         when(buyerRepository.findById(userId)).thenReturn(Optional.of(mock(Buyer.class)));
         when(productRepository.findById(productId)).thenReturn(Optional.of(mock(Product.class)));
         when(orderRepository.findOrderByBuyerIdAndProductId(userId, productId)).thenReturn(Optional.empty());

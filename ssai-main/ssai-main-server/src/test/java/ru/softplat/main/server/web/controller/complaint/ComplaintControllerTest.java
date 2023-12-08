@@ -6,18 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.softplat.main.dto.compliant.CompliantDto;
-import ru.softplat.main.server.exception.WrongConditionException;
+import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
+import ru.softplat.main.dto.compliant.CompliantResponseDto;
 import ru.softplat.main.server.mapper.ComplaintMapper;
 import ru.softplat.main.server.model.complaint.Complaint;
 import ru.softplat.main.server.service.complaint.ComplaintService;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -41,19 +38,19 @@ class ComplaintControllerTest {
     @Test
     @SneakyThrows
     void testCreateComplaint_whenValidReason_thenReturnComplaintDto() {
-        String reason = "Мошенничество со стороны продавца";
-        CompliantDto complaintDto = CompliantDto.builder()
+        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
+        CompliantResponseDto complaintDto = CompliantResponseDto.builder()
                 .reason(reason)
                 .createdAt(LocalDateTime.now())
                 .build();
         Complaint complaint = new Complaint();
-        when(complaintService.createComplaint(anyLong(), anyLong(), any(String.class))).thenReturn(complaint);
+        when(complaintService.createComplaint(anyLong(), anyLong(), any(ComplaintReasonRequest.class))).thenReturn(complaint);
         when(complaintMapper.complaintToComplaintDto(any(Complaint.class))).thenReturn(complaintDto);
 
         mockMvc.perform(post("/complaint/buyer/{userId}/{productId}/complaint", 1L, 1L)
-                        .content(reason))
+                        .param("reason", reason.toString()))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.reason").value(reason));
+                .andExpect(jsonPath("$.reason").value(reason.toString()));
     }
 
     @Test
@@ -62,11 +59,7 @@ class ComplaintControllerTest {
         String invalidReason = "INVALID_REASON";
 
         mockMvc.perform(post("/complaint/buyer/{userId}/{productId}/complaint", 1L, 1L)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .content(invalidReason))
-                .andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongConditionException))
-                .andExpect(result -> assertEquals("Неверно указана причина жалобы.",
-                        result.getResolvedException().getMessage()));
+                        .param("reason", invalidReason))
+                .andExpect(status().isBadRequest());
     }
 }

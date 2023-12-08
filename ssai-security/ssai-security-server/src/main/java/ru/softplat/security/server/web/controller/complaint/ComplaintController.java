@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.complaint.ComplaintClient;
+import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
 import ru.softplat.security.server.message.LogMessage;
 
 @RestController
@@ -19,7 +20,7 @@ public class ComplaintController {
 
     @Operation(summary = "Получение всех жалоб админом", description = "Доступ админ")
     @PreAuthorize("hasAuthority('admin:write')")
-    @GetMapping("/admin/complaints")
+    @GetMapping
     public ResponseEntity<Object> getComplaintListForAdmin() {
         log.info(LogMessage.TRY_GET_ALL_COMPLAINTS_ADMIN.label);
         return complaintClient.getComplaintListForAdmin();
@@ -31,7 +32,7 @@ public class ComplaintController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createComplaint(@PathVariable Long userId,
                                                   @PathVariable Long productId,
-                                                  @RequestBody String reason) {
+                                                  @RequestParam ComplaintReasonRequest reason) {
         log.info(LogMessage.TRY_ADD_COMPLAINT_BUYER.label);
         return complaintClient.createComplaint(userId, productId, reason);
     }
