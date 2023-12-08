@@ -54,6 +54,6 @@ public class BuyerClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getFavourites(long userId) {
-        return delete("/favorites", userId);
+        return get("/favorites", userId);
     }
 }

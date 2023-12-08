@@ -35,7 +35,9 @@ public enum LogMessage {
     TRY_DElETE_IMAGE("Попытка удаления изображения"),
     TRY_ADD_PRODUCT_IN_BASKET("Попытка добавления в корзину продукта с id {}."),
     TRY_CHECK_BASKET("Попытка просмотра корзины пользователем с id {}."),
-    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаление из корзины продукта с id {}."),
+    TRY_DELETE_PRODUCT_FROM_BASKET("Попытка удаления из корзины продукта с id {}."),
+    TRY_DELETE_BASKET_POSITION("Попытка удаления из корзины позиции с id {}."),
+    TRY_CLEAR_BASKET("Попытка очистки корзины пользователем с id {}."),
     TRY_ADD_ADMIN("Попытка добавить нового админа"),
     TRY_ADD_BUYER("Попытка добавить нового покупателя"),
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
@@ -48,7 +50,11 @@ public enum LogMessage {
     TRY_GET_All_BUYERS("Попытка получения всех покупателей"),
     TRY_GET_STATS_SELLER_ADMIN("Попытка получения статистики по продавцам админом"),
     TRY_GET_STATS_PRODUCT_ADMIN("Попытка получения статистики по продукту админом"),
-    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом");
+    TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом"),
+    TRY_AUTHORIZATION("Попытка авторизации пользователя email:{}"),
+    TRY_LOGOUT("Попытка выйти из приложения"),
+    TRY_REGISTRATION("Попытка зарегистрировать пользователя"),
+    TRY_CHANGE_PASSWORD("Попытка сменить пароль");
 
 
     public final String label;

@@ -8,4 +8,5 @@ import ru.softplat.main.server.model.product.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long>,
         QuerydslPredicateExecutor<Category> {
+    Boolean existsByName(String name);
 }

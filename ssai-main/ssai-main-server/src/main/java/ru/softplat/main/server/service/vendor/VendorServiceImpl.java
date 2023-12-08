@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.main.server.configuration.PageRequestOverride;
+import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
+import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.VendorMapper;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.vendor.QVendor;
@@ -35,6 +37,7 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor createVendor(VendorCreateUpdateDto vendorCreateUpdateDto) {
+        checkIfExistsByName(vendorCreateUpdateDto.getName());
         return repository.save(vendorMapper.vendorDtoToVendor(vendorCreateUpdateDto));
     }
 
@@ -43,9 +46,14 @@ public class VendorServiceImpl implements VendorService {
         Vendor oldVendor = getVendorById(vendorId);
 
         if (vendorUpdateDto.getName() != null) {
+            if (vendorUpdateDto.getName().isBlank())
+                throw new WrongConditionException("Введите корректное название.");
+            checkIfExistsByName(vendorUpdateDto.getName());
             oldVendor.setName(vendorUpdateDto.getName());
         }
         if (vendorUpdateDto.getDescription() != null) {
+            if (vendorUpdateDto.getDescription().isBlank())
+                throw new WrongConditionException("Введите корректное описание.");
             oldVendor.setDescription(vendorUpdateDto.getDescription());
         }
         if (vendorUpdateDto.getCountry() != null) {
@@ -115,5 +123,10 @@ public class VendorServiceImpl implements VendorService {
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
+    }
+
+    private void checkIfExistsByName(String name) {
+        if (repository.existsByName(name))
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
     }
 }

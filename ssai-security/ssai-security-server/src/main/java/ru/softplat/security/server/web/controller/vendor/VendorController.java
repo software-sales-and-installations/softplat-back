@@ -10,19 +10,18 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.vendor.VendorClient;
+import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.security.server.message.LogMessage;
-import ru.softplat.security.server.model.New;
 import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@Validated
 @RequestMapping(path = "/vendor")
 public class VendorController {
     private final VendorClient vendorClient;
@@ -41,7 +40,7 @@ public class VendorController {
     @PreAuthorize("hasAuthority('admin:write')")
     @PatchMapping(path = "/{vendorId}")
     public ResponseEntity<Object> changeVendorById(@PathVariable(name = "vendorId") Long vendorId,
-                                                   @RequestBody @Valid VendorCreateUpdateDto vendorUpdateDto) {
+                                                   @RequestBody @Validated(Update.class) VendorCreateUpdateDto vendorUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_PATCH_VENDOR.label);
 
         return vendorClient.changeVendorById(vendorId, vendorUpdateDto);

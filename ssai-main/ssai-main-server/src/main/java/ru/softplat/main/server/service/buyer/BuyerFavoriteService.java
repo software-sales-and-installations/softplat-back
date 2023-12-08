@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.DuplicateException;
+import ru.softplat.main.server.exception.EntityNotFoundException;
+import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.buyer.Favorite;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.repository.buyer.FavoriteRepository;
@@ -34,8 +36,10 @@ public class BuyerFavoriteService {
     }
 
     public void delete(long userId, Long productId) {
-        Favorite favorite = getFavorite(userId, productId);
-        favoriteRepository.delete(favorite);
+        Favorite favorite = favoriteRepository.findByBuyerIdAndProductId(userId, productId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Favorite.class)));
+        favoriteRepository.deleteById(favorite.getId());
     }
 
     @Transactional(readOnly = true)

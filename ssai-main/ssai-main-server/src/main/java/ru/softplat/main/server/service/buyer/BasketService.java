@@ -142,4 +142,20 @@ public class BasketService {
     public void removeBasketPosition(long basketPositionId) {
         basketPositionRepository.deleteById(basketPositionId);
     }
+
+    public Basket removePositionFromBasket(long userId, long basketPositionId) {
+        basketPositionRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
+                ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(basketPositionId, BasketPosition.class)
+        ));
+        removeBasketPosition(basketPositionId);
+        return getBasketOrThrowException(userId);
+    }
+
+    public void clearBasket(long userId) {
+        Basket basket = getBasketOrThrowException(userId);
+        if (basket.getProductsInBasket() == null || basket.getProductsInBasket().size() == 0)
+            throw new WrongConditionException("Корзина уже пуста");
+        basket.getProductsInBasket()
+                .forEach(p -> basketPositionRepository.deleteById(p.getId()));
+    }
 }

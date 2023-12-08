@@ -8,4 +8,5 @@ import ru.softplat.main.server.model.vendor.Vendor;
 @Repository
 public interface VendorRepository extends JpaRepository<Vendor, Long>,
         QuerydslPredicateExecutor<Vendor> {
+    Boolean existsByName(String name);
 }

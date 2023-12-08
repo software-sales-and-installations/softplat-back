@@ -16,11 +16,11 @@ import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.model.product.QProduct;
 import ru.softplat.main.server.repository.product.ProductRepository;
 import ru.softplat.main.server.util.QPredicates;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -41,7 +41,7 @@ public class SearchProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getProductsByFilter(ProductsSearchRequestDto productsSearchRequestDto, int from, int size, SortBy sort) {
+    public ProductList getProductsByFilter(ProductsSearchRequestDto productsSearchRequestDto, int from, int size, SortBy sort) {
         Sort sortBy = (sort.equals(SortBy.NEWEST)) ?
                 Sort.by("productionTime").descending() : Sort.by("price").ascending();
 
@@ -58,6 +58,7 @@ public class SearchProductService {
 
         Predicate predicate;
         Page<Product> products;
+        long count;
 
         if (productsSearchRequestDto != null) {
             predicate = QPredicates.builder()
@@ -69,19 +70,22 @@ public class SearchProductService {
                     .add(productsSearchRequestDto.getPriceMin(), product.price::goe)
                     .add(productsSearchRequestDto.getPriceMax(), product.price::loe)
                     .add(productsSearchRequestDto.getCountries(), product.vendor.country::in)
-                    .add(productsSearchRequestDto.getLicenses(), product.license::in)
                     .buildAnd();
 
             products = productRepository.findAll(predicate, pageRequest);
+            count = productRepository.count(predicate);
         } else {
             products = productRepository.findAll(pageRequest);
+            count = productRepository.count();
         }
-
-        return new ArrayList<>(products.getContent());
+        return ProductList.builder()
+                .products(products.getContent())
+                .count(count)
+                .build();
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getSimilarProducts(long productId, int from, int size) {
+    public ProductList getSimilarProducts(long productId, int from, int size) {
         Sort sortBy = Sort.by("productionTime").descending();
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
 
@@ -99,7 +103,11 @@ public class SearchProductService {
                 .buildAnd();
 
         Page<Product> products = productRepository.findAll(predicate, pageRequest);
-        return new ArrayList<>(products.getContent());
+
+        return ProductList.builder()
+                .products(products.getContent())
+                .count(productRepository.count(predicate))
+                .build();
     }
 
     @Transactional(readOnly = true)

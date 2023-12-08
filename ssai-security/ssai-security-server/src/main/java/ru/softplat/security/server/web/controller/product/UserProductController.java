@@ -12,19 +12,18 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.product.ProductClient;
 import ru.softplat.main.dto.product.ProductCreateUpdateDto;
 import ru.softplat.main.dto.product.ProductStatus;
+import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.exception.WrongConditionException;
 import ru.softplat.security.server.message.LogMessage;
-import ru.softplat.security.server.model.New;
 import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/product")
 @Slf4j
-@Validated
 public class UserProductController {
 
     private final ProductClient productClient;
@@ -43,7 +42,7 @@ public class UserProductController {
     @PreAuthorize("hasAuthority('seller:write')")
     @PatchMapping(path = "/{productId}")
     public ResponseEntity<Object> updateProduct(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                                @RequestBody @Valid ProductCreateUpdateDto productForUpdate) {
+                                                @RequestBody @Validated(Update.class) ProductCreateUpdateDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, userId);
         return productClient.updateProduct(userId, productId, productForUpdate);
     }

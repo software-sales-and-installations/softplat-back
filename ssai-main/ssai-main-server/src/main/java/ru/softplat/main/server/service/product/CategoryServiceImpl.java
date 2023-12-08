@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.product.Category;
 import ru.softplat.main.server.repository.product.CategoryRepository;
@@ -20,11 +21,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category createCategory(Category category) {
+        checkIfExistsByName(category.getName());
         return repository.save(category);
     }
 
     @Override
     public Category changeCategoryById(Long catId, Category updateRequest) {
+        checkIfExistsByName(updateRequest.getName());
         Category category = getCategoryById(catId);
         category.setName(updateRequest.getName());
         return repository.save(category);
@@ -50,5 +53,11 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(Long catId) {
         getCategoryById(catId);
         repository.deleteById(catId);
+    }
+
+    private void checkIfExistsByName(String name) {
+        if (repository.existsByName(name)) {
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
+        }
     }
 }

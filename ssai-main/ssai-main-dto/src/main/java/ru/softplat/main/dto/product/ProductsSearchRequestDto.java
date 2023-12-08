@@ -23,7 +23,6 @@ public class ProductsSearchRequestDto {
     private List<Long> sellerIds;
     private List<Long> vendorIds;
     private List<Country> countries;
-    private List<License> licenses;
     @PositiveOrZero
     private Float priceMin;
     @PositiveOrZero

@@ -34,10 +34,18 @@ public class BasketClient extends BaseClient {
         Map<String, Object> parameters = Map.of(
                 "installation", installation
         );
-        return delete("/" + productId + "?installation={installation}", userId, parameters);
+        return delete("/product/" + productId + "?installation={installation}", userId, parameters);
     }
 
     public ResponseEntity<Object> getBasket(long userId) {
         return get("", userId);
+    }
+
+    public void clearBasket(long userId) {
+        delete("", userId);
+    }
+
+    public ResponseEntity<Object> removeBasketPosition(long userId, long basketPositionId) {
+        return delete("/" + basketPositionId, userId);
     }
 }
