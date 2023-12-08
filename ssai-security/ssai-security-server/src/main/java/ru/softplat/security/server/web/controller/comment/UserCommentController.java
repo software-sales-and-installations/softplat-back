@@ -1,5 +1,7 @@
 package ru.softplat.security.server.web.controller.comment;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.softplat.main.client.comment.CommentClient;
 import ru.softplat.main.dto.comment.CommentCreateUpdateDto;
+import ru.softplat.main.dto.comment.CommentResponseDto;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.message.LogMessage;
@@ -30,10 +33,11 @@ public class UserCommentController {
 
     private final CommentClient commentClient;
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = CommentResponseDto.class)})
     @Operation(summary = " Создание комментария к продукту", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "/{productId}/create")
+    @PostMapping(path = "/{productId}/create", produces = "application/json")
     public ResponseEntity<Object> createComment(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @PathVariable Long productId,
@@ -43,9 +47,10 @@ public class UserCommentController {
         return commentClient.createComment(createDto, userId, productId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = CommentResponseDto.class)})
     @Operation(summary = " Обновление комментария к продукту", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @PatchMapping(path = "/{commentId}/update")
+    @PatchMapping(path = "/{commentId}/update", produces = "application/json")
     public ResponseEntity<Object> updateCommentByAuthor(
             @RequestHeader("X-Sharer-User-Id") long userId,
             @PathVariable Long commentId,
