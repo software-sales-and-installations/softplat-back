@@ -1,5 +1,7 @@
 package ru.softplat.security.server.web.controller.user;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.user.BuyerClient;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
+import ru.softplat.main.dto.user.response.BuyerResponseDto;
+import ru.softplat.main.dto.user.response.BuyersListResponseDto;
+import ru.softplat.main.dto.user.response.FavoriteResponseDto;
+import ru.softplat.main.dto.user.response.FavouritesListResponseDto;
 import ru.softplat.security.server.message.LogMessage;
 
 import javax.validation.Valid;
@@ -23,34 +29,38 @@ import javax.validation.constraints.Min;
 public class BuyerController {
     private final BuyerClient buyerClient;
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = BuyersListResponseDto.class)})
     @Operation(summary = "Получение списка покупателей", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public ResponseEntity<Object> getAllBuyers(@RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
                                                @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_All_BUYERS.label);
         return buyerClient.getAllBuyers(minId, pageSize);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = BuyerResponseDto.class)})
     @PreAuthorize("hasAuthority('buyer:write') || hasAuthority('admin:write')")
     @Operation(summary = "Получение покупателя по id", description = "Доступ для покупателя и админа")
-    @GetMapping("/{userId}")
+    @GetMapping(path = "/{userId}", produces = "application/json")
     public ResponseEntity<Object> getBuyer(@PathVariable Long userId) {
         log.info(LogMessage.TRY_GET_BUYER.label, userId);
         return buyerClient.getBuyer(userId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = BuyerResponseDto.class)})
     @Operation(summary = "Обновление данных о себе покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @PatchMapping
+    @PatchMapping(produces = "application/json")
     public ResponseEntity<Object> updateBuyer(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid BuyerUpdateDto buyerUpdateDto) {
         log.info(LogMessage.TRY_PATCH_BUYER.label, userId);
         return buyerClient.updateBuyer(userId, buyerUpdateDto);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = FavoriteResponseDto.class)})
     @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @PostMapping("/favorites/{productId}")
+    @PostMapping(path = "/favorites/{productId}", produces = "application/json")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> createFavorite(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
         log.info(LogMessage.TRY_BUYER_ADD_FAVORITE.label, "{}, {}", userId, productId);
@@ -67,9 +77,10 @@ public class BuyerController {
         buyerClient.deleteFavourite(userId, productId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = FavouritesListResponseDto.class)})
     @Operation(summary = "Просмотр избранных товаров", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping("/favorites")
+    @GetMapping(path = "/favorites", produces = "application/json")
     public ResponseEntity<Object> getBuyerFavouriteProducts(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, userId);
         return buyerClient.getFavourites(userId);

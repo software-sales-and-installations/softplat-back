@@ -15,6 +15,7 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Builder
 @Table(name = "\"order\"")
 public class Order {
     @Id
