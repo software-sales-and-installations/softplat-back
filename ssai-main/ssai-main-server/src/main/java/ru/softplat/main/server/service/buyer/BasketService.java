@@ -144,7 +144,7 @@ public class BasketService {
     }
 
     public Basket removePositionFromBasket(long userId, long basketPositionId) {
-        basketPositionRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(
+        basketPositionRepository.findById(basketPositionId).orElseThrow(() -> new EntityNotFoundException(
                 ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(basketPositionId, BasketPosition.class)
         ));
         removeBasketPosition(basketPositionId);
