@@ -1,26 +1,27 @@
 package ru.softplat.main.server.mapper;
 
 import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 import ru.softplat.main.dto.compliant.ComplaintListResponseDto;
-import ru.softplat.main.dto.compliant.CompliantResponseDto;
-import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
+import ru.softplat.main.dto.compliant.ComplaintResponseDto;
 import ru.softplat.main.server.model.complaint.Complaint;
-import ru.softplat.main.server.model.seller.BankRequisites;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Mapper
+@Mapper(uses = {OrderMapper.class, BuyerMapper.class, SellerMapper.class})
+@Component
 public interface ComplaintMapper {
-    CompliantResponseDto complaintToComplaintDto(Complaint complaint);
+    ComplaintResponseDto complaintToComplaintDto(Complaint complaint);
 
-    Complaint complaintDtoToComplaint(CompliantResponseDto complaintDto);
+    Complaint complaintDtoToComplaint(ComplaintResponseDto complaintDto);
 
-    default BankRequisitesResponseDto requisitesToDto(BankRequisites requisites) {
-        if (requisites == null) return null;
-        return new BankRequisitesResponseDto(requisites.getId(), requisites.getAccount());
-    }
+//    default BankRequisitesResponseDto requisitesToDto(BankRequisites requisites) {
+//        if (requisites == null) return null;
+//        return new BankRequisitesResponseDto(requisites.getId(), requisites.getAccount());
+//    }
 
-    default ComplaintListResponseDto toComplaintListResponseDto(List<CompliantResponseDto> complaints) {
+    default ComplaintListResponseDto toComplaintListResponseDto(List<ComplaintResponseDto> complaints) {
         return ComplaintListResponseDto.builder().complaints(complaints).build();
     }
 }

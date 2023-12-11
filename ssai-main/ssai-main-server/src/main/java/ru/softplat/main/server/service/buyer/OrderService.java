@@ -121,4 +121,10 @@ public class OrderService {
             statClient.addStats(mapper.orderPositionToStatDto(orderPosition));
         }
     }
+
+    @Transactional(readOnly = true)
+    public Order getOrderByBuyerIdAndProductId(long buyerId, long productId) {
+        return orderRepository.findOrderByBuyerIdAndProductId(buyerId, productId).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessage.NOT_VALID_COMPLAINT_PRODUCT_EXCEPTION.label));
+    }
 }

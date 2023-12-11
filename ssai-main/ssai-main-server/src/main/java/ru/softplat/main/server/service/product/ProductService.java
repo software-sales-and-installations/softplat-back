@@ -229,4 +229,20 @@ public class ProductService {
         product.setRating(newRating);
         productRepository.save(product);
     }
+
+    public void updateProductComplaintCountOnCreate(long productId) {
+        Product product = getAvailableProduct(productId);
+        product.setComplaintCount(product.getComplaintCount() + 1);
+        if (product.getComplaintCount() >= 10) {
+            product.setProductAvailability(Boolean.FALSE);
+            product.setProductStatus(ProductStatus.DRAFT);
+        }
+        productRepository.save(product);
+    }
+
+    public void updateProductComplaintCountOnDelete(long productId) {
+        Product product = getAvailableProduct(productId);
+        product.setComplaintCount(product.getComplaintCount() - 1);
+        productRepository.save(product);
+    }
 }

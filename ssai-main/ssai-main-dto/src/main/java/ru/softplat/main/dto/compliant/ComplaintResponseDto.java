@@ -15,9 +15,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CompliantResponseDto {
+public class ComplaintResponseDto {
     Long id;
-    ComplaintReasonRequest reason;
+    ComplaintReason reason;
     BuyerResponseDto buyer;
     ProductResponseDto product;
     SellerResponseDto seller;

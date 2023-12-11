@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
-import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
+import ru.softplat.main.dto.compliant.ComplaintReason;
 
 @Service
 public class ComplaintClient extends BaseClient {
@@ -20,7 +20,7 @@ public class ComplaintClient extends BaseClient {
                 .build());
     }
 
-    public ResponseEntity<Object> createComplaint(Long userId, Long productId, ComplaintReasonRequest reason) {
+    public ResponseEntity<Object> createComplaint(Long userId, Long productId, ComplaintReason reason) {
         return post("/buyer/" + userId + "/" + productId + "/complaint&reason={reason}", reason);
     }
 

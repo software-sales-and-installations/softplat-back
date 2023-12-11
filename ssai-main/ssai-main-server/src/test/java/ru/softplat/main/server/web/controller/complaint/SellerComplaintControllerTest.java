@@ -7,8 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
-import ru.softplat.main.dto.compliant.CompliantResponseDto;
+import ru.softplat.main.dto.compliant.ComplaintReason;
+import ru.softplat.main.dto.compliant.ComplaintResponseDto;
 import ru.softplat.main.server.mapper.ComplaintMapper;
 import ru.softplat.main.server.model.complaint.Complaint;
 import ru.softplat.main.server.service.complaint.ComplaintService;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ComplaintControllerTest {
+class SellerComplaintControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,13 +38,13 @@ class ComplaintControllerTest {
     @Test
     @SneakyThrows
     void testCreateComplaint_whenValidReason_thenReturnComplaintDto() {
-        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
-        CompliantResponseDto complaintDto = CompliantResponseDto.builder()
+        ComplaintReason reason = ComplaintReason.SELLER_FRAUD;
+        ComplaintResponseDto complaintDto = ComplaintResponseDto.builder()
                 .reason(reason)
                 .createdAt(LocalDateTime.now())
                 .build();
         Complaint complaint = new Complaint();
-        when(complaintService.createComplaint(anyLong(), anyLong(), any(ComplaintReasonRequest.class))).thenReturn(complaint);
+        when(complaintService.createComplaint(anyLong(), anyLong(), any(ComplaintReason.class))).thenReturn(complaint);
         when(complaintMapper.complaintToComplaintDto(any(Complaint.class))).thenReturn(complaintDto);
 
         mockMvc.perform(post("/complaint/buyer/{userId}/{productId}/complaint", 1L, 1L)

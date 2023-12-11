@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.complaint.ComplaintClient;
-import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
+import ru.softplat.main.dto.compliant.ComplaintReason;
 import ru.softplat.security.server.message.LogMessage;
 
 @RestController
@@ -32,7 +32,7 @@ public class ComplaintController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createComplaint(@PathVariable Long userId,
                                                   @PathVariable Long productId,
-                                                  @RequestParam ComplaintReasonRequest reason) {
+                                                  @RequestParam ComplaintReason reason) {
         log.info(LogMessage.TRY_ADD_COMPLAINT_BUYER.label);
         return complaintClient.createComplaint(userId, productId, reason);
     }

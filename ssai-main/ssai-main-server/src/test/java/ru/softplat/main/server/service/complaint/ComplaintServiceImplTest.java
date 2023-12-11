@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import ru.softplat.main.dto.compliant.ComplaintReasonRequest;
+import ru.softplat.main.dto.compliant.ComplaintReason;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Order;
@@ -38,7 +38,7 @@ class ComplaintServiceImplTest {
     private OrderRepository orderRepository;
 
     @InjectMocks
-    private ComplaintServiceImpl complaintService;
+    private ComplaintService complaintService;
 
     @BeforeEach
     void setUp() {
@@ -68,7 +68,7 @@ class ComplaintServiceImplTest {
     void testGetAllSellerComplaints_whenComplaintsExistForSeller_thenReturnComplaints() {
         Long sellerId = 1L;
         List<Complaint> complaints = List.of(mock(Complaint.class));
-        when(complaintRepository.findAllBySeller_Id(sellerId)).thenReturn(complaints);
+        when(complaintRepository.findAllBySellerId(sellerId)).thenReturn(complaints);
 
         List<Complaint> result = complaintService.getAllSellerComplaints(sellerId);
 
@@ -78,7 +78,7 @@ class ComplaintServiceImplTest {
     @Test
     void testGetAllSellerComplaints_whenNoComplaintsForSeller_thenReturnEmptyList() {
         Long sellerId = 1L;
-        when(complaintRepository.findAllBySeller_Id(sellerId)).thenReturn(Collections.emptyList());
+        when(complaintRepository.findAllBySellerId(sellerId)).thenReturn(Collections.emptyList());
 
         List<Complaint> result = complaintService.getAllSellerComplaints(sellerId);
 
@@ -89,7 +89,7 @@ class ComplaintServiceImplTest {
     void testCreateComplaint_whenEntitiesExist_thenReturnComplaint() {
         Long userId = 1L;
         Long productId = 1L;
-        ComplaintReasonRequest complaintReasonRequest = ComplaintReasonRequest.SELLER_FRAUD;
+        ComplaintReason complaintReasonRequest = ComplaintReason.SELLER_FRAUD;
         Buyer buyer = mock(Buyer.class);
         Product product = mock(Product.class);
         when(buyerRepository.findById(userId)).thenReturn(Optional.of(buyer));
@@ -111,7 +111,7 @@ class ComplaintServiceImplTest {
     void testCreateComplaint_whenUserDoesNotExist_thenThrowEntityNotFoundException() {
         Long userId = 1L;
         Long productId = 1L;
-        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
+        ComplaintReason reason = ComplaintReason.SELLER_FRAUD;
         when(buyerRepository.findById(userId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> complaintService.createComplaint(userId, productId, reason));
@@ -121,7 +121,7 @@ class ComplaintServiceImplTest {
     void testCreateComplaint_whenProductDoesNotExist_thenThrowEntityNotFoundException() {
         Long userId = 1L;
         Long productId = 1L;
-        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
+        ComplaintReason reason = ComplaintReason.SELLER_FRAUD;
         when(buyerRepository.findById(userId)).thenReturn(Optional.of(mock(Buyer.class)));
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
@@ -132,7 +132,7 @@ class ComplaintServiceImplTest {
     void testCreateComplaint_whenOrderDoesNotExist_thenThrowEntityNotFoundException() {
         Long userId = 1L;
         Long productId = 1L;
-        ComplaintReasonRequest reason = ComplaintReasonRequest.SELLER_FRAUD;
+        ComplaintReason reason = ComplaintReason.SELLER_FRAUD;
         when(buyerRepository.findById(userId)).thenReturn(Optional.of(mock(Buyer.class)));
         when(productRepository.findById(productId)).thenReturn(Optional.of(mock(Product.class)));
         when(orderRepository.findOrderByBuyerIdAndProductId(userId, productId)).thenReturn(Optional.empty());
