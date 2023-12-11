@@ -5,6 +5,7 @@ public enum ExceptionMessage {
     DUPLICATE_EXCEPTION("Данная запись уже существует "),
     IMAGE_SERVER_UPLOAD_EXCEPTION("Ошибка сервера при загрузке изображения."),
     NO_RIGHTS_EXCEPTION("Продавец не может корректировать чужой продукт!"),
+    NO_RIGHTS_COMMENT_EXCEPTION("Покупатель не может создавать отзыв на продукт, который не покупал, или корректировать чужой отзыв!"),
     WRONG_CONDITION_EXCEPTION("Введены некорректные данные."),
     UNAUTHORIZED_EXCEPTION("Ошибка авторизации."),
     VALIDATION_EXCEPTION("Ошибка проверки данных."),
