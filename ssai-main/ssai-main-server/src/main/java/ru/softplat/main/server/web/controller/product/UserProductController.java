@@ -26,8 +26,9 @@ public class UserProductController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public ProductResponseDto createProduct(@RequestHeader("X-Sharer-User-Id") long userId,
-                                            @RequestBody ProductCreateUpdateDto productCreateUpdateDto) {
+    public ProductResponseDto createProduct(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestBody ProductCreateUpdateDto productCreateUpdateDto) {
         Product request = productMapper.productDtoToProduct(productCreateUpdateDto);
         long categoryId = productCreateUpdateDto.getCategory();
         long vendorId = productCreateUpdateDto.getVendor();
@@ -36,8 +37,10 @@ public class UserProductController {
     }
 
     @PatchMapping(path = "/{productId}/update")
-    public ProductResponseDto updateProduct(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                            @RequestBody ProductCreateUpdateDto productForUpdate) {
+    public ProductResponseDto updateProduct(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PathVariable Long productId,
+            @RequestBody ProductCreateUpdateDto productForUpdate) {
         productService.checkSellerAccessRights(userId, productId);
         Product updateRequest = productMapper.productDtoToProduct(productForUpdate);
         Product response = productService.update(productId, updateRequest);
@@ -45,14 +48,18 @@ public class UserProductController {
     }
 
     @PatchMapping(path = "/{productId}/send")
-    public ProductResponseDto updateStatusProductOnSent(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
+    public ProductResponseDto updateStatusProductOnSent(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PathVariable Long productId) {
         productService.checkSellerAccessRights(userId, productId);
         Product response = productService.updateStatus(productId, ProductStatus.SHIPPED);
         return productMapper.productToProductResponseDto(response);
     }
 
     @PatchMapping(path = "/{productId}/moderation")
-    public ProductResponseDto updateStatusProductAdmin(@PathVariable Long productId, @RequestParam ProductStatus status) {
+    public ProductResponseDto updateStatusProductAdmin(
+            @PathVariable Long productId,
+            @RequestParam ProductStatus status) {
         Product response = productService.updateStatus(productId, status);
         return productMapper.productToProductResponseDto(response);
     }
@@ -65,15 +72,19 @@ public class UserProductController {
 
     @DeleteMapping(path = "/products/{productId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteProductSeller(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
+    public void deleteProductSeller(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @PathVariable Long productId) {
         productService.checkSellerAccessRights(userId, productId);
         productService.delete(productId);
     }
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/{productId}/image/create")
-    public ProductResponseDto createProductImage(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                                 @RequestParam(value = "image") MultipartFile image) {
+    public ProductResponseDto createProductImage(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @PathVariable Long productId,
+            @RequestParam(value = "image") MultipartFile image) {
         productService.checkSellerAccessRights(userId, productId);
         Product response = productService.createProductImage(productId, image);
         return productMapper.productToProductResponseDto(response);
@@ -87,14 +98,17 @@ public class UserProductController {
 
     @DeleteMapping(path = "/{productId}/image")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteProductImageSeller(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
+    public void deleteProductImageSeller(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @PathVariable Long productId) {
         productService.checkSellerAccessRights(userId, productId);
         productService.deleteProductImage(productId);
     }
 
     @GetMapping(path = "/shipped")
     public ProductsListResponseDto getAllProductsShipped(
-            @RequestParam int minId, @RequestParam int pageSize) {
+            @RequestParam int minId,
+            @RequestParam int pageSize) {
         ProductList productList = productService.getAllProductsShipped(minId, pageSize);
         List<ProductResponseDto> response = productList.getProducts().stream()
                 .map(productMapper::productToProductResponseDto)

@@ -38,4 +38,5 @@ public class Stats {
 
     @Column(name = "amount")
     Double amount;
+
 }

@@ -1,6 +1,5 @@
 package ru.softplat.stats.server.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.stats.dto.SortEnum;
@@ -20,11 +19,20 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class StatsService {
 
     private final StatsRepository statsRepository;
     private final StatBuyerService statBuyerService;
+
+    public StatsService(StatsRepository statsRepository, StatBuyerService statBuyerService, StatProductService statProductService, StatSellerService statSellerService, ApachePOI apachePOI) {
+        this.statsRepository = statsRepository;
+        this.statBuyerService = statBuyerService;
+        this.statProductService = statProductService;
+        this.statSellerService = statSellerService;
+        this.apachePOI = apachePOI;
+    }
+
     private final StatProductService statProductService;
     private final StatSellerService statSellerService;
 
@@ -34,17 +42,21 @@ public class StatsService {
     @Transactional(readOnly = true)
     public SellerReport getSellerReportAdmin(
             StatsFilterAdmin statsFilterAdmin,
-            SortEnum sort) {
+            SortEnum sort) throws IOException {
         List<SellerReportEntry> statsPage = getReportForAdminSellersList(statsFilterAdmin);
-        return getSellerReport(sort, statsPage);
+        SellerReport sellerReport = getSellerReport(sort, statsPage);
+        apachePOI.createFileAdmin(sellerReport);
+        return sellerReport;
     }
 
     @Transactional(readOnly = true)
     public SellerReport getProductReportAdmin(
             StatsFilterSeller statsFilterSeller,
-            SortEnum sort) {
+            SortEnum sort) throws IOException {
         List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, null);
-        return getSellerReport(sort, statsPage);
+        SellerReport sellerReport = getSellerReport(sort, statsPage);
+        apachePOI.createFileAdmin(sellerReport);
+        return sellerReport;
     }
 
     @Transactional(readOnly = true)
@@ -55,7 +67,7 @@ public class StatsService {
         List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, sellerId);
         //apachePOI.createFile(statsPage);
         SellerReport sellerReport = getSellerReport(sort, statsPage);
-        apachePOI.createFile(sellerReport);
+        apachePOI.createFileAdmin(sellerReport);
         return sellerReport;
     }
 
@@ -83,7 +95,7 @@ public class StatsService {
             statsFilterAdmin.setStart(LocalDateTime.now().minusMonths(3).withHour(0).withMinute(0).withSecond(0));
         }
         if (statsFilterAdmin.getEnd() == null) {
-            statsFilterAdmin.setEnd(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+            statsFilterAdmin.setEnd(LocalDateTime.now()/*.withHour(0).withMinute(0).withSecond(0)*/);
         }
         List<SellerReportEntry> statsPage;
         if (statsFilterAdmin.getSellerIds() != null) {
@@ -122,9 +134,9 @@ public class StatsService {
 
     public void createStats(Stats stats) {
         stats.setAmount(COMMISSIONS * stats.getAmount());
-        statsRepository.save(stats);
         statBuyerService.createStatBuyer(stats.getBuyer());
-        statProductService.createStatProduct(stats.getProduct());
         statSellerService.createStatSeller(stats.getProduct().getSeller());
+        statProductService.createStatProduct(stats.getProduct());
+        statsRepository.save(stats);
     }
 }

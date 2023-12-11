@@ -17,15 +17,19 @@ public class BuyerBasketController {
 
     @PostMapping("/{productId}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public BasketResponseDto addProductInBasket(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                                @RequestParam Boolean installation) {
+    public BasketResponseDto addProductInBasket(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PathVariable Long productId,
+            @RequestParam Boolean installation) {
         Basket response = basketService.addProduct(userId, productId, installation);
         return basketMapper.basketToBasketResponseDto(response);
     }
 
     @DeleteMapping("/product/{productId}")
-    public BasketResponseDto removeProductFromBasket(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                                     @RequestParam Boolean installation) {
+    public BasketResponseDto removeProductFromBasket(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @PathVariable Long productId,
+            @RequestParam Boolean installation) {
         Basket response = basketService.removeProduct(userId, productId, installation);
         return basketMapper.basketToBasketResponseDto(response);
     }
@@ -37,8 +41,9 @@ public class BuyerBasketController {
     }
 
     @DeleteMapping("/{basketPositionId}")
-    public BasketResponseDto removeBasketPosition(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                  @PathVariable long basketPositionId) {
+    public BasketResponseDto removeBasketPosition(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @PathVariable long basketPositionId) {
         Basket response = basketService.removePositionFromBasket(userId, basketPositionId);
         return basketMapper.basketToBasketResponseDto(response);
     }

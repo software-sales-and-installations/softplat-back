@@ -14,6 +14,10 @@ import ru.softplat.main.server.repository.buyer.OrderPositionRepository;
 import ru.softplat.main.server.repository.buyer.OrderRepository;
 import ru.softplat.main.server.service.product.ProductService;
 import ru.softplat.stats.client.StatsClient;
+import ru.softplat.stats.dto.StatsCreateDto;
+import ru.softplat.stats.dto.create.StatBuyerDto;
+import ru.softplat.stats.dto.create.StatProductDto;
+import ru.softplat.stats.dto.create.StatSellerDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -75,7 +79,7 @@ public class OrderService {
         order.setProductsOrdered(orderPositionList);
         order.setOrderCost(wholePrice);
         Order orderSave = orderRepository.save(order);
-        createStats(orderSave);
+        createStats(orderSave, order.getBuyer());
         return orderSave;
     }
 
@@ -115,10 +119,25 @@ public class OrderService {
         return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.ofSize(20));
     }
 
-    private void createStats(Order order) {
+    private void createStats(Order order, Buyer buyer) {
         List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
-            statClient.addStats(mapper.orderPositionToStatDto(orderPosition));
+            StatsCreateDto statsCreateDto = new StatsCreateDto(
+                    new StatBuyerDto(
+                            buyer.getId(),
+                            buyer.getName()),
+                    new StatProductDto(
+                            orderPosition.getProduct().getId(),
+                            orderPosition.getProduct().getName(),
+                            new StatSellerDto(
+                                    orderPosition.getProduct().getSeller().getId(),
+                                    orderPosition.getProduct().getSeller().getName())
+                    ),
+                    order.getProductionTime(),
+                    (long) orderPosition.getQuantity(),
+                    (double) orderPosition.getProductCost()
+                    );
+            statClient.addStats(statsCreateDto);
         }
     }
 }

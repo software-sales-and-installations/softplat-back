@@ -26,8 +26,9 @@ public class StatsController {
     private final StatsMapper statsMapper;
 
     @GetMapping(path = "/admin/seller")
-    public StatsResponseDto getSellerReportAdmin(@RequestBody StatsFilterAdmin statsFilterAdmin,
-            @RequestParam(name = "sort", defaultValue = "POPULAR")  SortEnum sort) {
+    public StatsResponseDto getSellerReportAdmin(
+            /*@RequestBody*/ StatsFilterAdmin statsFilterAdmin,
+            @RequestParam(name = "sort", defaultValue = "POPULAR")  SortEnum sort) throws IOException {
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getSellerReportAdmin(
@@ -37,7 +38,7 @@ public class StatsController {
 
     @GetMapping(path = "/admin/product")
     public StatsResponseDto getProductReportAdmin(@RequestBody StatsFilterSeller statsFilterSeller,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) {
+            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getProductReportAdmin(

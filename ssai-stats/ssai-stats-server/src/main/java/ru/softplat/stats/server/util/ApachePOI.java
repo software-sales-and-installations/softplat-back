@@ -12,13 +12,10 @@ import java.time.LocalDate;
 
 public class ApachePOI {
 
-    public void createFile(SellerReport sellerReport) throws IOException {
+    public void createFileAdmin(SellerReport sellerReport) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Лист1");
-        sheet.autoSizeColumn(0);
-        sheet.autoSizeColumn(1);
-        sheet.autoSizeColumn(2);
-        sheet.autoSizeColumn(3);
+
 
         Row rowHeader = sheet.createRow(0); //создание строки
         Cell cell = rowHeader.createCell(0); //создание столбца
@@ -54,7 +51,7 @@ public class ApachePOI {
             Cell cellPrice = rowData.createCell(3);
             cellProductName.setCellValue(sellerReportEntry.getProductName());
             cellQuantity.setCellValue(sellerReportEntry.getQuantity());
-            cellPrice.setCellValue(sellerReportEntry.getQuantity());
+            cellPrice.setCellValue(sellerReportEntry.getRevenue());
             rowCount++;
         }
         Row rowSumRevenue = sheet.createRow(rowCount + 1);
@@ -64,6 +61,11 @@ public class ApachePOI {
         cellSumRevenueValue.setCellValue(sellerReport.getSumRevenue());
         cellSumRevenue.setCellStyle(style);
         cellSumRevenueValue.setCellStyle(style);
+
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
 
         String userHome = System.getProperty("user.home");
         String separator = System.getProperty("file.separator");

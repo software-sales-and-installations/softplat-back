@@ -31,9 +31,9 @@ public class StatsClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getSellerReportAdmin(StatsFilterAdmin statsFilterAdmin, SortEnum sort) {
-    Map<String, Object> parameters = Map.of(
-            "statsFilterAdmin", statsFilterAdmin,
-            "sort", sort
+        Map<String, Object> parameters = Map.of(
+                "statsFilterAdmin", statsFilterAdmin,
+                "sort", sort
         );
 
         return get("/admin/seller", parameters);
