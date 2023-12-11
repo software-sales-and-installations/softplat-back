@@ -62,6 +62,6 @@ public class BuyerClient extends BaseClient {
                 "minId", minId,
                 "pageSize", pageSize
         );
-        return get("/recommendations", userId, parameters);
+        return get("/recommendations?minId={minId}&pageSize={pageSize}", userId, parameters);
     }
 }
