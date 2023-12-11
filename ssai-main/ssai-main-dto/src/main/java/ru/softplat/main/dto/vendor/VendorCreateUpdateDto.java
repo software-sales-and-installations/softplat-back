@@ -16,12 +16,12 @@ import javax.validation.constraints.Pattern;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VendorCreateUpdateDto {
     @NotBlank(groups = {New.class}, message = "Необходимо указать имя")
-    @Pattern(groups = {New.class, Update.class}, regexp = "^[a-zA-Zа-яА-Я-,.\\s]{2,255}$",
+    @Pattern(groups = {New.class, Update.class}, regexp = "^[a-zA-Zа-яёЁА-Я-,.\"'«»\\s]{2,255}$",
             message = "Длина названия компании должна быть от 2 до 255 символов и содержать только русские " +
                     "или латинские буквы.")
     String name;
     @NotBlank(groups = {New.class}, message = "Необходимо указать описание")
-    @Pattern(groups = {New.class, Update.class}, regexp = "^[0-9a-zA-Zа-яА-Я-@#$.,%^&+=!\\s]{2,500}$",
+    @Pattern(groups = {New.class, Update.class}, regexp = "^[0-9a-zA-Zа-яёЁА-Я-@#$.,%^&+=?!\"'«»\\s]{2,500}$",
             message = "Длина описания должна быть от 2 до 500 символов и содержать только русские " +
                     "или латинские буквы.")
     String description;
