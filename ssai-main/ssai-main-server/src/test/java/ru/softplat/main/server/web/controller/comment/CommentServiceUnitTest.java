@@ -1,6 +1,5 @@
 package ru.softplat.main.server.web.controller.comment;
 
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +32,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -89,7 +89,6 @@ class CommentServiceUnitTest {
         // when
         when(buyerService.getBuyer(buyer.getId())).thenReturn(buyer);
         when(productService.getAvailableProduct(product.getId())).thenReturn(product);
-        when(orderService.getAllOrders(buyer.getId())).thenReturn(List.of(order));
         when(commentRepository.save(any())).thenReturn(request);
 
         // then
@@ -106,7 +105,8 @@ class CommentServiceUnitTest {
         // when
         when(buyerService.getBuyer(otherBuyer.getId())).thenReturn(otherBuyer);
         when(productService.getAvailableProduct(product.getId())).thenReturn(product);
-        when(orderService.getAllOrders(otherBuyer.getId())).thenReturn(Lists.emptyList());
+        doThrow(AccessDenialException.class).when(orderService)
+                .checkBuyerAccessRightsToCreateComment(otherBuyer.getId(), product.getId());
 
         // then
         assertThrows(AccessDenialException.class,

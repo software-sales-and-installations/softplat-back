@@ -8,11 +8,9 @@ import ru.softplat.main.dto.compliant.ComplaintReason;
 import ru.softplat.main.dto.compliant.ComplaintResponseDto;
 import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
-import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.complaint.Complaint;
 import ru.softplat.main.server.model.product.Product;
-import ru.softplat.main.server.model.seller.Seller;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -36,7 +34,6 @@ class ComplaintMapperTest {
                 .id(1L)
                 .buyer(Buyer.builder().id(2L).build())
                 .product(Product.builder().id(3L).build())
-                .seller(Seller.builder().id(4L).build())
                 .reason(ComplaintReason.PIRATED_SOFTWARE)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -46,35 +43,20 @@ class ComplaintMapperTest {
         assertEquals(complaint.getReason(), complaintDto.getReason());
     }
 
-//    @Test
-//    void testComplaintDtoToComplaint() {
-//        CompliantResponseDto complaintDto = CompliantResponseDto.builder()
-//                .reason(ComplaintReasonRequest.SELLER_FRAUD)
-//                .buyer(BuyerResponseDto.builder().build())
-//                .product(ProductResponseDto.builder().id(3L).build())
-//                .seller(SellerResponseDto.builder().id(4L).build())
-//                .createdAt(LocalDateTime.now())
-//                .build();
-//
-//        Complaint complaint = complaintMapper.complaintDtoToComplaint(complaintDto);
-//
-//        assertNotNull(complaint);
-//        assertEquals(ComplaintReasonRequest.SELLER_FRAUD, complaint.getReason());
-//    }
+    @Test
+    void testComplaintDtoToComplaint() {
+        ComplaintResponseDto complaintDto = ComplaintResponseDto.builder()
+                .reason(ComplaintReason.SELLER_FRAUD)
+                .buyer(BuyerResponseDto.builder().build())
+                .product(ProductResponseDto.builder().id(3L).build())
+                .createdAt(LocalDateTime.now())
+                .build();
 
-//    @Test
-//    void testRequisitesToDto() {
-//        BankRequisites requisites = BankRequisites.builder()
-//                .id(1L)
-//                .account("1234567890")
-//                .build();
-//
-//        BankRequisitesResponseDto requisitesDto = complaintMapper.requisitesToDto(requisites);
-//
-//        assertNotNull(requisitesDto);
-//        assertEquals(requisites.getId(), requisitesDto.getId());
-//        assertEquals(requisites.getAccount(), requisitesDto.getAccount());
-//    }
+        Complaint complaint = complaintMapper.complaintDtoToComplaint(complaintDto);
+
+        assertNotNull(complaint);
+        assertEquals(ComplaintReason.SELLER_FRAUD, complaint.getReason());
+    }
 
     @Test
     void testToComplaintListResponseDto() {
@@ -83,12 +65,12 @@ class ComplaintMapperTest {
                         .reason(ComplaintReason.SOFTWARE_NOT_WORKING)
                         .buyer(BuyerResponseDto.builder().id(2L).build())
                         .product(ProductResponseDto.builder().id(3L).build())
-                        .seller(SellerResponseDto.builder().id(4L).build())
                         .createdAt(LocalDateTime.now())
                         .build()
         );
+        long count = 1L;
 
-        ComplaintListResponseDto responseDto = complaintMapper.toComplaintListResponseDto(complaints);
+        ComplaintListResponseDto responseDto = complaintMapper.toComplaintListResponseDto(complaints, count);
 
         assertNotNull(responseDto);
         assertEquals(complaints.size(), responseDto.getComplaints().size());

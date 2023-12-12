@@ -9,11 +9,17 @@ import java.util.List;
 
 @Repository
 public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
-    List<Complaint> findAllBySellerId(Long sellerId, Pageable pageable);
+    List<Complaint> findAllByProductSellerId(Long sellerId, Pageable pageable);
 
     boolean existsByBuyerIdAndProductId(long buyerId, long productId);
 
     List<Complaint> findAllByProductId(long productId, Pageable pageable);
 
-    boolean existsByIdAndBuyerId(long id, long buyerId);
+    List<Complaint> findByProductId(long productId);
+
+    boolean existsByIdAndProductSellerId(long id, long sellerId);
+
+    long countAllByProductSellerId(long sellerId);
+
+    long countAllByProductId(long productId);
 }

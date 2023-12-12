@@ -2,9 +2,8 @@ package ru.softplat.main.dto.compliant;
 
 public enum ComplaintStatus {
     OPENED("Жалобу еще не взяли в работу"),
-    CLOSED("Жалоба отработана и закрыта"),
-    REVIEWED_BY_SELLER("Жалоба отработана продавцом"),
-    REVIEWED_BY_ADMIN("Жалоба отработана администратором");
+    REVIEW("Жалоба находится в процессе отработки"),
+    CLOSED("Жалоба отработана и закрыта");
 
     public final String label;
 

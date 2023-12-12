@@ -17,7 +17,6 @@ import ru.softplat.main.server.message.LogMessage;
 import ru.softplat.main.server.model.complaint.Complaint;
 import ru.softplat.main.server.service.complaint.ComplaintService;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,10 +36,11 @@ public class AdminComplaintController {
         List<ComplaintResponseDto> response = complaintList.stream()
                 .map(complaintMapper::complaintToComplaintDto)
                 .collect(Collectors.toList());
-        return complaintMapper.toComplaintListResponseDto(response);
+        long count = complaintService.countAllComplaintsForAdmin();
+        return complaintMapper.toComplaintListResponseDto(response, count);
     }
 
-    @GetMapping("/{productId}")
+    @GetMapping("/{productId}/product")
     public ComplaintListResponseDto getComplaintsForProductByAdmin(@PathVariable long productId,
                                                                    @RequestParam int minId,
                                                                    @RequestParam int pageSize) {
@@ -49,7 +49,8 @@ public class AdminComplaintController {
         List<ComplaintResponseDto> response = complaintList.stream()
                 .map(complaintMapper::complaintToComplaintDto)
                 .collect(Collectors.toList());
-        return complaintMapper.toComplaintListResponseDto(response);
+        long count = complaintService.countAllByProductId(productId);
+        return complaintMapper.toComplaintListResponseDto(response, count);
     }
 
     @GetMapping("/{complaintId}")
@@ -64,7 +65,7 @@ public class AdminComplaintController {
                                                                @RequestParam ComplaintStatus status,
                                                                @RequestBody String comment) {
         log.info(LogMessage.TRY_SEND_PRODUCT_ON_MODERATION_BY_ADMIN.label);
-        Complaint response = complaintService.sendProductOnModerationByAdmin(complaintId, comment, status);
+        Complaint response = complaintService.updateComplaintByAdmin(complaintId, comment, status);
         return complaintMapper.complaintToComplaintDto(response);
     }
 }

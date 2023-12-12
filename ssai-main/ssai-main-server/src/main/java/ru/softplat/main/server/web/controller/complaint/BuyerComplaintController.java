@@ -32,7 +32,6 @@ public class BuyerComplaintController {
                                                 @RequestParam ComplaintReason reason) {
         log.info(LogMessage.TRY_ADD_COMPLAINT_BUYER.label, userId, productId);
         Complaint complaint = complaintService.createComplaint(userId, productId, reason);
-
         return complaintMapper.complaintToComplaintDto(complaint);
     }
 }

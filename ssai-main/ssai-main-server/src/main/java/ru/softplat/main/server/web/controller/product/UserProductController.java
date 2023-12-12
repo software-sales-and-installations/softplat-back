@@ -11,6 +11,7 @@ import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.product.ProductList;
+import ru.softplat.main.server.service.complaint.ComplaintService;
 import ru.softplat.main.server.service.product.ProductService;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class UserProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final ComplaintService complaintService;
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -41,6 +43,7 @@ public class UserProductController {
         productService.checkSellerAccessRights(userId, productId);
         Product updateRequest = productMapper.productDtoToProduct(productForUpdate);
         Product response = productService.update(productId, updateRequest);
+        complaintService.updateProductComplaintsBySeller(productId);
         return productMapper.productToProductResponseDto(response);
     }
 

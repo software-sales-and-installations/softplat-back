@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
 import ru.softplat.main.dto.compliant.ComplaintReason;
+import ru.softplat.main.dto.compliant.ComplaintStatus;
+
+import java.util.Map;
 
 @Service
 public class ComplaintClient extends BaseClient {
@@ -20,15 +23,42 @@ public class ComplaintClient extends BaseClient {
                 .build());
     }
 
+    // ... TODO добавить методы для SellerComplaintController
+    // ...
+    // ...
+
     public ResponseEntity<Object> createComplaint(Long userId, Long productId, ComplaintReason reason) {
-        return post("/buyer/" + userId + "/" + productId + "/complaint&reason={reason}", reason);
+        return post("/" + productId + "?reason={reason}", userId, Map.of("reason", String.valueOf(reason)));
     }
 
-    public ResponseEntity<Object> getComplaintListForAdmin() {
-        return get("");
+    public ResponseEntity<Object> getComplaintListForAdmin(int minId, int pageSize) {
+        Map<String, Object> parameters = getParameters(minId, pageSize);
+        return get("/admin?minId={minId}&pageSize={pageSize}", parameters);
+    }
+
+    public ResponseEntity<Object> getComplaintsForProductByAdmin(long productId, int minId, int pageSize) {
+        Map<String, Object> parameters = getParameters(minId, pageSize);
+        return get("/admin" + productId + "/product?minId={minId}&pageSize={pageSize}", parameters);
+    }
+
+    public ResponseEntity<Object> getComplaintByIdByAdmin(long complaintId) {
+        return get("/admin/" + complaintId);
+    }
+
+
+    public ResponseEntity<Object> sendProductOnModerationByAdmin(long complaintId, ComplaintStatus status, String comment) {
+        // TODO передавать в боди, либо сделать patch(...) с параметрами
+        return null;
     }
 
     public ResponseEntity<Object> getComplaintListForSeller(Long userId) {
-        return get("/seller/" + userId + "/complaints", userId);
+        return get("/seller/", userId);
+    }
+
+    private Map<String, Object> getParameters(int minId, int pageSize) {
+        return Map.of(
+                "minId", minId,
+                "pageSize", pageSize
+        );
     }
 }

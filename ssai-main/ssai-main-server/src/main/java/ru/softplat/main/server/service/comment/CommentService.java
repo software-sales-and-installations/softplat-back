@@ -11,7 +11,6 @@ import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.buyer.Buyer;
-import ru.softplat.main.server.model.buyer.Order;
 import ru.softplat.main.server.model.comment.Comment;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.repository.comment.CommentRepository;
@@ -22,7 +21,6 @@ import ru.softplat.main.server.service.product.ProductService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,7 +36,7 @@ public class CommentService {
         Buyer author = buyerService.getBuyer(authorId);
         Product product = productService.getAvailableProduct(productId);
 
-        checkBuyerAccessRightsToCreateComment(authorId, productId);
+        orderService.checkBuyerAccessRightsToCreateComment(authorId, productId);
         checkIfCommentByAuthorOnProductExists(authorId, productId);
 
         comment.setAuthor(author);
@@ -104,21 +102,6 @@ public class CommentService {
     public void checkBuyerAccessRightsToUpdateComment(long commentId, long authorId) {
         Comment comment = getCommentById(commentId);
         if (!comment.getAuthor().getId().equals(authorId)) {
-            throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_COMMENT_EXCEPTION.label);
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public void checkBuyerAccessRightsToCreateComment(long authorId, long productId) {
-        List<Order> orders = orderService.getAllOrders(authorId);
-        List<Long> productsOrderedIds = orders.stream()
-                .flatMap(o -> o.getProductsOrdered().stream())
-                .filter(op -> op.getProduct().getId() == productId)
-                .map(op -> op.getProduct().getId())
-                .distinct()
-                .collect(Collectors.toList());
-
-        if (productsOrderedIds.isEmpty()) {
             throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_COMMENT_EXCEPTION.label);
         }
     }

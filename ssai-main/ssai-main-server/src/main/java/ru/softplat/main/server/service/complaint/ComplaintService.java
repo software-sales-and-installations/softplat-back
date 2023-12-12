@@ -15,7 +15,6 @@ import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.buyer.Buyer;
-import ru.softplat.main.server.model.buyer.Order;
 import ru.softplat.main.server.model.complaint.Complaint;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.repository.complaint.ComplaintRepository;
@@ -23,10 +22,9 @@ import ru.softplat.main.server.service.buyer.BuyerService;
 import ru.softplat.main.server.service.buyer.OrderService;
 import ru.softplat.main.server.service.product.ProductService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
-import static java.time.LocalDateTime.now;
 
 @Service
 @Transactional
@@ -38,15 +36,11 @@ public class ComplaintService {
     private final OrderService orderService;
 
     public Complaint createComplaint(Long userId, Long productId, ComplaintReason reason) {
+        orderService.checkBuyerAccessRightsToCreateComment(userId, productId);
         checkIfComplaintAlreadyExists(userId, productId);
 
-        Buyer buyer = buyerService.getBuyer(userId);
-        Product product = productService.getAvailableProduct(productId);
-        Order order = orderService.getOrderByBuyerIdAndProductId(userId, productId);
-
-        Complaint newComplaint = initComplaint(buyer, product, order, reason);
+        Complaint newComplaint = initComplaint(userId, productId, reason);
         productService.updateProductComplaintCountOnCreate(productId);
-
         return complaintRepository.save(newComplaint);
     }
 
@@ -58,10 +52,20 @@ public class ComplaintService {
     }
 
     @Transactional(readOnly = true)
+    public long countAllComplaintsForAdmin() {
+        return complaintRepository.count();
+    }
+
+    @Transactional(readOnly = true)
     public List<Complaint> getAllSellerComplaints(long sellerId, int from, int size) {
         Sort sortBy = Sort.by("createdAt").descending();
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
-        return complaintRepository.findAllBySellerId(sellerId, pageRequest);
+        return complaintRepository.findAllByProductSellerId(sellerId, pageRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public long countAllComplaintsBySellerId(long sellerId) {
+        return complaintRepository.countAllByProductSellerId(sellerId);
     }
 
     @Transactional(readOnly = true)
@@ -72,28 +76,35 @@ public class ComplaintService {
     }
 
     @Transactional(readOnly = true)
+    public long countAllByProductId(long productId) {
+        return complaintRepository.countAllByProductId(productId);
+    }
+
+    @Transactional(readOnly = true)
     public Complaint getComplaintById(long complaintId) {
         String message = ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(complaintId, Complaint.class);
         Optional<Complaint> response = complaintRepository.findById(complaintId);
         return response.orElseThrow(() -> new EntityNotFoundException(message));
     }
 
-    private Complaint initComplaint(Buyer buyer, Product product, Order order, ComplaintReason reason) {
+    private Complaint initComplaint(long userId, long productId, ComplaintReason reason) {
+        Buyer buyer = buyerService.getBuyer(userId);
+        Product product = productService.getAvailableProduct(productId);
+
         return Complaint.builder()
-                .seller(product.getSeller())
-                .createdAt(now())
+                .createdAt(LocalDateTime.now())
                 .reason(reason)
+                .complaintStatus(ComplaintStatus.OPENED)
                 .product(product)
-                .order(order)
                 .buyer(buyer)
                 .build();
     }
 
-    public Complaint sendProductOnModerationByAdmin(long complaintId, String adminComment, ComplaintStatus status) {
+    public Complaint updateComplaintByAdmin(long complaintId, String adminComment, ComplaintStatus status) {
         Complaint complaint = getComplaintById(complaintId);
         long productId = complaint.getProduct().getId();
 
-        if (status.equals(ComplaintStatus.REVIEWED_BY_ADMIN)) {
+        if (status.equals(ComplaintStatus.REVIEW)) {
             if (adminComment != null) {
                 complaint.setAdminComment(adminComment);
             }
@@ -108,12 +119,12 @@ public class ComplaintService {
         return complaintRepository.save(complaint);
     }
 
-    public Complaint updateProductDueToComplaint(long complaintId, long productId, Product productForUpdate) {
-        Complaint complaint = getComplaintById(complaintId);
-        productService.checkSellerAccessRights(complaint.getSeller().getId(), productId);
-        productService.update(productId, productForUpdate);
-        complaint.setComplaintStatus(ComplaintStatus.REVIEWED_BY_SELLER);
-        return complaint;
+    public void updateProductComplaintsBySeller(long productId) {
+        List<Complaint> productComplaints = complaintRepository.findByProductId(productId);
+        for (Complaint complaint : productComplaints) {
+            complaint.setComplaintStatus(ComplaintStatus.REVIEW);
+            complaintRepository.save(complaint);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -122,8 +133,8 @@ public class ComplaintService {
     }
 
     @Transactional(readOnly = true)
-    public void checkSellerRightToViewComplaint(long complaintId, long userId) {
-        if (!complaintRepository.existsByIdAndBuyerId(complaintId, userId)) {
+    public void checkSellerRightToViewComplaint(long complaintId, long sellerId) {
+        if (!complaintRepository.existsByIdAndProductSellerId(complaintId, sellerId)) {
             throw new AccessDenialException(ExceptionMessage.COMPLAINT_NO_RIGHTS_EXCEPTION.label);
         }
     }
