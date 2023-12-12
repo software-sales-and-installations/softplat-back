@@ -75,7 +75,7 @@ public class OrderService {
         order.setProductsOrdered(orderPositionList);
         order.setOrderCost(wholePrice);
         Order orderSave = orderRepository.save(order);
-        createStats(orderSave);
+        //createStats(orderSave);
         return orderSave;
     }
 
