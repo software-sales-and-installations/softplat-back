@@ -9,6 +9,7 @@ public enum LogMessage {
     TRY_PATCH_SELLER("Попытка изменения продавца по id: {}"),
     TRY_GET_SELLER("Попытка получения продавца по id: {}"),
     TRY_GET_All_SELLERS("Попытка получения списка продавцов"),
+    TRY_DELETE_SELLER("Попытка удаления продавца"),
     TRY_SELLER_PATCH_REQUISITES("Попытка изменения реквизитов по id: {}"),
     TRY_SELLER_GET_REQUISITES("Попытка получения реквизитов по id продавца: {}"),
     TRY_SELLER_DELETE_REQUISITES("Попытка удаления реквизитов по id: {}"),

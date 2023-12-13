@@ -70,4 +70,10 @@ public class SellerService {
                         ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(userId, Seller.class)
                 ));
     }
+
+    public void deleteSeller(long userId){
+        getSeller(userId);
+
+        sellerRepository.deleteById(userId);
+    }
 }
