@@ -60,7 +60,7 @@ public class BuyerService {
                 ));
     }
 
-    public void deleteBuyer(long userId){
+    public void deleteBuyer(long userId) {
         getBuyer(userId);
 
         buyerRepository.deleteById(userId);
