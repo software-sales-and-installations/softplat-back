@@ -57,6 +57,15 @@ public class BuyerController {
         return buyerClient.updateBuyer(userId, buyerUpdateDto);
     }
 
+    @Operation(summary = "Удаление покупателя админом", description = "Доступ для админа")
+    @PreAuthorize("hasAuthority('admin:write')")
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteBuyer(@PathVariable long userId) {
+        log.info(LogMessage.TRY_DELETE_BUYER.label, userId);
+        buyerClient.deleteBuyer(userId);
+    }
+
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = FavoriteResponseDto.class)})
     @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")

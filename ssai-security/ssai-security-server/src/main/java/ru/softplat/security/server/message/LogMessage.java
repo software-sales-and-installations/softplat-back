@@ -40,6 +40,7 @@ public enum LogMessage {
     TRY_CLEAR_BASKET("Попытка очистки корзины пользователем с id {}."),
     TRY_ADD_ADMIN("Попытка добавить нового админа"),
     TRY_ADD_BUYER("Попытка добавить нового покупателя"),
+    TRY_DELETE_BUYER("Попытка удалить покупателя"),
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
     TRY_BUYER_DELETE_FAVORITE("Попытка удаления данных из избранного"),
     TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}"),
