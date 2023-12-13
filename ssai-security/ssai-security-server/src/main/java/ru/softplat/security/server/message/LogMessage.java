@@ -63,9 +63,10 @@ public enum LogMessage {
     TRY_CHANGE_PASSWORD("Попытка сменить пароль"),
     TRY_GET_ALL_COMPLAINTS_ADMIN("Попытка получения всех жалоб админом"),
     TRY_ADD_COMPLAINT_BUYER("Попытка создания жалобы покупателем"),
-    TRY_GET_LIST_COMPLAINTS_BUYER("Попытка получения списка жалоб покупателем"),
-    TRY_GET_ALL_COMPLAINTS_SELLER("Попытка получения всех жалоб продавцом");
-
+    TRY_GET_ALL_COMPLAINTS_SELLER("Попытка получения всех жалоб продавцом"),
+    TRY_GET_PRODUCT_COMPLAINTS("Попытка получения всех жалоб по продукту"),
+    TRY_GET_COMPLAINT("Попытка получения жалобы по id {}"),
+    TRY_SEND_PRODUCT_ON_MODERATION_BY_ADMIN("Попытка отправить продукт на модерацию админом");
 
     public final String label;
 

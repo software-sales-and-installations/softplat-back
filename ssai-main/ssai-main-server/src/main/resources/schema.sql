@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS product
     status             VARCHAR(30)             NOT NULL,
     availability       BOOLEAN DEFAULT 'TRUE'  NOT NULL,
     average_rating     FLOAT   DEFAULT NULL,
-    complaint_count    BIGINT  DEFAULT 0       NOT NULL,
+    complaint_count    BIGINT  DEFAULT NULL,
     CONSTRAINT pk_product PRIMARY KEY (id),
     CONSTRAINT fk_product_image FOREIGN KEY (image_id) REFERENCES image (id) ON DELETE SET NULL,
     CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category (id),

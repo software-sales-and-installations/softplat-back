@@ -48,7 +48,7 @@ public class ProductClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateProduct(long userId, long productId, ProductCreateUpdateDto productCreateUpdateDto) {
-        return patch("/" + productId, userId, productCreateUpdateDto);
+        return patch("/" + productId + "/update", userId, productCreateUpdateDto);
     }
 
     public ResponseEntity<Object> updateStatusProductOnSent(long userId, long productId) {

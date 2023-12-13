@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
 import ru.softplat.main.dto.compliant.ComplaintReason;
-import ru.softplat.main.dto.compliant.ComplaintStatus;
+import ru.softplat.main.dto.compliant.ComplaintUpdateDto;
 
 import java.util.Map;
 
@@ -23,36 +23,48 @@ public class ComplaintClient extends BaseClient {
                 .build());
     }
 
-    // ... TODO добавить методы для SellerComplaintController
-    // ...
-    // ...
-
+    // OK
     public ResponseEntity<Object> createComplaint(Long userId, Long productId, ComplaintReason reason) {
         return post("/" + productId + "?reason={reason}", userId, Map.of("reason", String.valueOf(reason)));
     }
 
+    // OK
     public ResponseEntity<Object> getComplaintListForAdmin(int minId, int pageSize) {
         Map<String, Object> parameters = getParameters(minId, pageSize);
         return get("/admin?minId={minId}&pageSize={pageSize}", parameters);
     }
 
+    // OK
     public ResponseEntity<Object> getComplaintsForProductByAdmin(long productId, int minId, int pageSize) {
         Map<String, Object> parameters = getParameters(minId, pageSize);
-        return get("/admin" + productId + "/product?minId={minId}&pageSize={pageSize}", parameters);
+        return get("/admin/" + productId + "/product?minId={minId}&pageSize={pageSize}", parameters);
     }
 
+    // OK
     public ResponseEntity<Object> getComplaintByIdByAdmin(long complaintId) {
         return get("/admin/" + complaintId);
     }
 
-
-    public ResponseEntity<Object> sendProductOnModerationByAdmin(long complaintId, ComplaintStatus status, String comment) {
-        // TODO передавать в боди, либо сделать patch(...) с параметрами
-        return null;
+    // TODO
+    public ResponseEntity<Object> sendProductOnModerationByAdmin(long complaintId, ComplaintUpdateDto updateDto) {
+        return patch("/admin/" + complaintId, updateDto);
     }
 
-    public ResponseEntity<Object> getComplaintListForSeller(Long userId) {
-        return get("/seller/", userId);
+    // OK
+    public ResponseEntity<Object> getComplaintListForSeller(long userId, int minId, int pageSize) {
+        Map<String, Object> parameters = getParameters(minId, pageSize);
+        return get("/seller?minId={minId}&pageSize={pageSize}", userId, parameters);
+    }
+
+    // OK
+    public ResponseEntity<Object> getComplaintsForProductBySeller(long userId, long productId, int minId, int pageSize) {
+        Map<String, Object> parameters = getParameters(minId, pageSize);
+        return get("/seller/" + productId + "/product?minId={minId}&pageSize={pageSize}", userId, parameters);
+    }
+
+    // OK
+    public ResponseEntity<Object> getComplaintById(long userId, long complaintId) {
+        return get("/seller/" + complaintId, userId);
     }
 
     private Map<String, Object> getParameters(int minId, int pageSize) {

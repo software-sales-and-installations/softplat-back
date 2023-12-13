@@ -231,8 +231,11 @@ public class ProductService {
     }
 
     public void updateProductComplaintCountOnCreate(long productId) {
-        Product product = getAvailableProduct(productId);
-        product.setComplaintCount(product.getComplaintCount() + 1);
+        Product product = getProductDraftOrPublishedForComplaint(productId);
+
+        if (product.getComplaintCount() == null) product.setComplaintCount(1L);
+        else product.setComplaintCount(product.getComplaintCount() + 1L);
+
         if (product.getComplaintCount() >= 10) {
             product.setProductAvailability(Boolean.FALSE);
             product.setProductStatus(ProductStatus.DRAFT);
@@ -241,8 +244,20 @@ public class ProductService {
     }
 
     public void updateProductComplaintCountOnDelete(long productId) {
-        Product product = getAvailableProduct(productId);
+        Product product = getProductDraftOrPublishedForComplaint(productId);
         product.setComplaintCount(product.getComplaintCount() - 1);
+
+        if (product.getComplaintCount() < 1) {
+            product.setProductStatus(ProductStatus.PUBLISHED);
+        }
         productRepository.save(product);
+    }
+
+    @Transactional(readOnly = true)
+    public Product getProductDraftOrPublishedForComplaint(long productId) {
+        return productRepository.findById(productId).orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, ProductService.class))
+        );
     }
 }

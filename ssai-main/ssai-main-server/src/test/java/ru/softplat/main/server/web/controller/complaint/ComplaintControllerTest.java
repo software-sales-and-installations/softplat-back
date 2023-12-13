@@ -19,6 +19,7 @@ import ru.softplat.main.dto.compliant.ComplaintListResponseDto;
 import ru.softplat.main.dto.compliant.ComplaintReason;
 import ru.softplat.main.dto.compliant.ComplaintResponseDto;
 import ru.softplat.main.dto.compliant.ComplaintStatus;
+import ru.softplat.main.dto.compliant.ComplaintUpdateDto;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.complaint.Complaint;
 import ru.softplat.main.server.model.product.Product;
@@ -29,7 +30,6 @@ import ru.softplat.main.server.web.controller.AbstractControllerTest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -164,26 +164,24 @@ class ComplaintControllerTest extends AbstractControllerTest {
     void sendProductOnModerationByAdmin_shouldUpdateComplaintStatus_whenAdminStatusReview() {
         // given
         initComplaints();
-        ComplaintStatus status = ComplaintStatus.REVIEW;
-        String comment = "comment";
+        ComplaintUpdateDto updateDto = ComplaintUpdateDto.builder().status(ComplaintStatus.REVIEW).comment("comment").build();
 
         // then
-        ComplaintResponseDto response = sendProductOnModerationByAdmin(1L, status, comment);
+        ComplaintResponseDto response = sendProductOnModerationByAdmin(1L, updateDto);
         ComplaintStatus actualStatus = response.getComplaintStatus();
 
-        assertEquals(status, actualStatus);
+        assertEquals(updateDto.getStatus(), actualStatus);
     }
 
     @Test
     void sendProductOnModerationByAdmin_shouldUpdateComplaintStatus_whenAdminStatusClosed() {
         // given
         initComplaints();
-        ComplaintStatus status = ComplaintStatus.CLOSED;
-        String comment = "complaint closed";
+        ComplaintUpdateDto updateDto = ComplaintUpdateDto.builder().status(ComplaintStatus.CLOSED).comment("complaint closed").build();
         long expectedCount = 2L;
 
         // when
-        ComplaintResponseDto response = sendProductOnModerationByAdmin(5L, status, comment);
+        ComplaintResponseDto response = sendProductOnModerationByAdmin(5L, updateDto);
         ComplaintStatus actualStatus = response.getComplaintStatus();
 
         long productId = response.getProduct().getId();
@@ -191,7 +189,7 @@ class ComplaintControllerTest extends AbstractControllerTest {
 
         // then
         assertEquals(expectedCount, actualComplaintCount);
-        assertEquals(status, actualStatus);
+        assertEquals(updateDto.getStatus(), actualStatus);
     }
 
     @Test
@@ -284,10 +282,9 @@ class ComplaintControllerTest extends AbstractControllerTest {
     }
 
     @SneakyThrows
-    public ComplaintResponseDto sendProductOnModerationByAdmin(long complaintId, ComplaintStatus status, String comment) {
+    public ComplaintResponseDto sendProductOnModerationByAdmin(long complaintId, ComplaintUpdateDto updateDto) {
         MvcResult result = mockMvc.perform(patch("/complaint/admin/{complaintId}", complaintId)
-                        .param("status", String.valueOf(status))
-                        .content(String.valueOf(Map.of("comment", comment)))
+                        .content(objectMapper.writeValueAsString(updateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();

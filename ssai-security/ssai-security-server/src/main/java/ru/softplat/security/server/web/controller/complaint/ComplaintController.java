@@ -1,5 +1,7 @@
 package ru.softplat.security.server.web.controller.complaint;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,10 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.complaint.ComplaintClient;
+import ru.softplat.main.dto.compliant.ComplaintListResponseDto;
 import ru.softplat.main.dto.compliant.ComplaintReason;
-import ru.softplat.main.dto.compliant.ComplaintStatus;
+import ru.softplat.main.dto.compliant.ComplaintResponseDto;
+import ru.softplat.main.dto.compliant.ComplaintUpdateDto;
 import ru.softplat.security.server.message.LogMessage;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @RestController
@@ -19,15 +24,12 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/complaint")
 @Slf4j
 public class ComplaintController {
-
-    // TODO перенести сюда логирование из мейна
-    // TODO добавить описание модели данных для сваггера
-
     private final ComplaintClient complaintClient;
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = ComplaintResponseDto.class)})
     @Operation(summary = "Создание жалобы покупателем", description = "Доступ покупатель")
     @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping("/{productId}")
+    @PostMapping(path = "/{productId}", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> createComplaint(@RequestHeader("X-Sharer-User-Id") long userId,
                                                   @PathVariable long productId,
@@ -36,47 +38,76 @@ public class ComplaintController {
         return complaintClient.createComplaint(userId, productId, reason);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintListResponseDto.class)})
     @Operation(summary = "Получение всех жалоб админом", description = "Доступ админ")
     @PreAuthorize("hasAuthority('admin:write')")
-    @GetMapping
-    public ResponseEntity<Object> getComplaintListForAdmin(@RequestParam(defaultValue = "0") int minId,
-                                                           @RequestParam(defaultValue = "20") int pageSize) {
+    @GetMapping(path = "/admin", produces = "application/json")
+    public ResponseEntity<Object> getComplaintListForAdmin(@RequestParam(defaultValue = "0") @Min(0) int minId,
+                                                           @RequestParam(defaultValue = "20") @Min(1) int pageSize) {
         log.info(LogMessage.TRY_GET_ALL_COMPLAINTS_ADMIN.label);
         return complaintClient.getComplaintListForAdmin(minId, pageSize);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintListResponseDto.class)})
     @Operation(summary = "Получение жалоб по продукту админом", description = "Доступ админ")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/admin/{productId}/product", produces = "application/json")
     public ResponseEntity<Object> getComplaintsForProductByAdmin(@PathVariable long productId,
-                                                                 @RequestParam(defaultValue = "0") int minId,
-                                                                 @RequestParam(defaultValue = "20") int pageSize) {
+                                                                 @RequestParam(defaultValue = "0") @Min(0) int minId,
+                                                                 @RequestParam(defaultValue = "20") @Min(1) int pageSize) {
+        log.info(LogMessage.TRY_GET_PRODUCT_COMPLAINTS.label);
         return complaintClient.getComplaintsForProductByAdmin(productId, minId, pageSize);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintResponseDto.class)})
     @Operation(summary = "Получение жалоб по id админом", description = "Доступ админ")
     @PreAuthorize("hasAuthority('admin:write')")
     @GetMapping(path = "/admin/{complaintId}", produces = "application/json")
     public ResponseEntity<Object> getComplaintByIdByAdmin(@PathVariable long complaintId) {
-//        log.info(LogMessage.TRY_GET_COMPLAINT.label, complaintId);
+        log.info(LogMessage.TRY_GET_COMPLAINT.label, complaintId);
         return complaintClient.getComplaintByIdByAdmin(complaintId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintResponseDto.class)})
     @Operation(summary = "Отправка жалобы на модерацию админом", description = "Доступ админ")
     @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping("/admin/{complaintId}")
+    @PatchMapping(path = "/admin/{complaintId}", produces = "application/json")
     public ResponseEntity<Object> sendProductOnModerationByAdmin(@PathVariable long complaintId,
-                                                               @RequestParam ComplaintStatus status,
-                                                               @RequestBody String comment) {
-//        log.info(LogMessage.TRY_SEND_PRODUCT_ON_MODERATION_BY_ADMIN.label);
-        return complaintClient.sendProductOnModerationByAdmin(complaintId, status, comment);
+                                                                 @RequestBody @NotNull ComplaintUpdateDto updateDto) {
+        log.info(LogMessage.TRY_SEND_PRODUCT_ON_MODERATION_BY_ADMIN.label);
+        return complaintClient.sendProductOnModerationByAdmin(complaintId, updateDto);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintListResponseDto.class)})
     @Operation(summary = "Получение всех жалоб продавцом", description = "Доступ продавец")
     @PreAuthorize("hasAuthority('seller:write')")
-    @GetMapping("/seller/{userId}/complaints")
-    public ResponseEntity<Object> getComplaintListForSeller(@PathVariable Long userId) {
+    @GetMapping(path = "/seller", produces = "application/json")
+    public ResponseEntity<Object> getComplaintListForSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                            @RequestParam(defaultValue = "0") @Min(0) int minId,
+                                                            @RequestParam(defaultValue = "20") @Min(1) int pageSize) {
         log.info(LogMessage.TRY_GET_ALL_COMPLAINTS_SELLER.label);
-        return complaintClient.getComplaintListForSeller(userId);
+        return complaintClient.getComplaintListForSeller(userId, minId, pageSize);
+    }
+
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintListResponseDto.class)})
+    @Operation(summary = "Получение жалоб по продукту продавцом", description = "Доступ продавец")
+    @PreAuthorize("hasAuthority('seller:write')")
+    @GetMapping(path = "/seller/{productId}/product", produces = "application/json")
+    public ResponseEntity<Object> getComplaintsForProductBySeller(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                                  @PathVariable long productId,
+                                                                  @RequestParam(defaultValue = "0") @Min(0) int minId,
+                                                                  @RequestParam(defaultValue = "20") @Min(1) int pageSize) {
+        log.info(LogMessage.TRY_GET_PRODUCT_COMPLAINTS.label);
+        return complaintClient.getComplaintsForProductBySeller(userId, productId, minId, pageSize);
+    }
+
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintResponseDto.class)})
+    @Operation(summary = "Получение жалоб по продукту продавцом", description = "Доступ продавец")
+    @PreAuthorize("hasAuthority('seller:write')")
+    @GetMapping(path = "/seller/{complaintId}", produces = "application/json")
+    public ResponseEntity<Object> getComplaintById(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                   @PathVariable long complaintId) {
+        log.info(LogMessage.TRY_GET_COMPLAINT.label, complaintId);
+        return complaintClient.getComplaintById(userId, complaintId);
     }
 }

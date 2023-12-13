@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.dto.compliant.ComplaintReason;
 import ru.softplat.main.dto.compliant.ComplaintStatus;
+import ru.softplat.main.dto.compliant.ComplaintUpdateDto;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.AccessDenialException;
@@ -100,22 +101,20 @@ public class ComplaintService {
                 .build();
     }
 
-    public Complaint updateComplaintByAdmin(long complaintId, String adminComment, ComplaintStatus status) {
+    public Complaint updateComplaintByAdmin(long complaintId, ComplaintUpdateDto updateDto) {
         Complaint complaint = getComplaintById(complaintId);
         long productId = complaint.getProduct().getId();
 
-        if (status.equals(ComplaintStatus.REVIEW)) {
-            if (adminComment != null) {
-                complaint.setAdminComment(adminComment);
-            }
+        if (updateDto.getStatus().equals(ComplaintStatus.REVIEW)) {
+            complaint.setAdminComment(updateDto.getComment());
             productService.updateStatus(productId, ProductStatus.DRAFT);
-        } else if (status.equals(ComplaintStatus.CLOSED)) {
+        } else if (updateDto.getStatus().equals(ComplaintStatus.CLOSED)) {
             productService.updateProductComplaintCountOnDelete(productId);
         } else {
             throw new WrongConditionException(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label);
         }
 
-        complaint.setComplaintStatus(status);
+        complaint.setComplaintStatus(updateDto.getStatus());
         return complaintRepository.save(complaint);
     }
 
