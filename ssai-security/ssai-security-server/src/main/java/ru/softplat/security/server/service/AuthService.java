@@ -78,8 +78,7 @@ public class AuthService {
         return response;
     }
 
-    @Transactional(readOnly = true)
-    public boolean checkIfUserExistsByEmail(String email) {
+    private boolean checkIfUserExistsByEmail(String email) {
         return (repository.findByEmail(email).isPresent());
     }
 }

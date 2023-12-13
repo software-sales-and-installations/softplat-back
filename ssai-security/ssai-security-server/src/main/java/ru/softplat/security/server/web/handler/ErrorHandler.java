@@ -49,6 +49,19 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleWrongRegException(final WrongRegException e) {
+        e.printStackTrace();
+        log.error(String.valueOf(e));
+        return ErrorResponse.builder()
+                .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
+                .status(HttpStatus.FORBIDDEN.toString())
+                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
+                .build();
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final EntityNotFoundException e) {
         e.printStackTrace();

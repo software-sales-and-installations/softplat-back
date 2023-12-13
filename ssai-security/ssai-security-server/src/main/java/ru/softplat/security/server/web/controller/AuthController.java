@@ -10,10 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.config.JwtTokenProvider;
@@ -35,6 +32,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -101,15 +99,16 @@ public class AuthController {
 
     @PostMapping("/forgot/password")
     public void sendEmailToRecoverPassword(@RequestBody RestorePasswordRequestDto requestDto) {
-        if (!authService.checkIfUserExistsByEmail(requestDto.getEmail()))
-            throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label + requestDto.getEmail());
-        emailService.sendRestorePasswordEmail(requestDto.getEmail());
+        String token = userDetailsChangeService.createResetToken(requestDto.getEmail());
+        emailService.sendRestorePasswordEmail(requestDto.getEmail(), token);
     }
 
 
     @PostMapping("/change/pass")
-    public ResponseEntity<Object> recoverPassword(@RequestBody @Validated(New.class) JwtAuthRequest request) {
+    public ResponseEntity<Object> recoverPassword(@RequestParam("t") @NotBlank String confirmationToken,
+                                                  @RequestBody @Validated(New.class) JwtAuthRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
+        userDetailsChangeService.validateResetToken(confirmationToken, request);
         return ResponseEntity.of(
                 Optional.of(userMapper
                         .userToUserResponseDto(userDetailsChangeService

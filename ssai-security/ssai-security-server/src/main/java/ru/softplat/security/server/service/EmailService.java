@@ -23,7 +23,7 @@ public class EmailService {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public void sendRegConfirmationEmail(UserCreateDto userCreateDto) {
-        String text = getRegConfirmEmailText(userCreateDto.getName());
+        String text = getRegConfirmEmailText(userCreateDto);
 
         SimpleMailMessage message = createEmailMessage(userCreateDto.getEmail(), text);
         String emailSubject = String.format(EmailMessage.REG_CONFIRM_SUBJECT.body, userCreateDto.getName());
@@ -32,10 +32,10 @@ public class EmailService {
         emailSender.send(message);
     }
 
-    public void sendRestorePasswordEmail(String email) {
+    public void sendRestorePasswordEmail(String email, String token) {
         String text = String.format(
                 EmailMessage.RESTORE_PASSWORD_EMAIL.body,
-                "https://softplat.ru/change/pass");
+                "https://softplat.ru/change/pass?t=" + token);
 
         SimpleMailMessage message = createEmailMessage(email, text);
         String emailSubject = String.format(EmailMessage.RESTORE_PASSWORD_SUBJECT.body);
@@ -53,10 +53,11 @@ public class EmailService {
         return message;
     }
 
-    private String getRegConfirmEmailText(String name) {
+    private String getRegConfirmEmailText(UserCreateDto userCreateDto) {
         return String.format(
                 EmailMessage.REG_CONFIRM_EMAIL.body,
-                name,
+                userCreateDto.getName(),
+                userCreateDto.getEmail(),
                 LocalDateTime.now().format(formatter));
     }
 }

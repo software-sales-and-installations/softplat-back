@@ -11,6 +11,7 @@ public enum EmailMessage {
     REG_CONFIRM_SUBJECT("Подтверждение регистрации пользователя %s"),
     REG_CONFIRM_EMAIL("Привет, %s,\n\n" +
             "Вы были зарегистрированы на сайте softplat.ru\n\n" +
+            "Ваш логин: %s\n\n" +
             "Дата: %s\n\n" +
             "Спасибо за регистрацию!"),
     RESTORE_PASSWORD_SUBJECT("Восстановление пароля"),
