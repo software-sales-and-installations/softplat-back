@@ -71,7 +71,7 @@ public class SellerService {
                 ));
     }
 
-    public void deleteSeller(long userId){
+    public void deleteSeller(long userId) {
         getSeller(userId);
 
         sellerRepository.deleteById(userId);
