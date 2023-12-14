@@ -4,7 +4,7 @@ Repository of the backend part of SoftPlat2048
 Бекэнд сервиса-площадки по продаже лиценционного ПО.
 
 RESTful API имеет многомодульную архитектуру: 
-основной модуль с главной частью бизнес-логики, модуль сервиса статистики (хранит данные по продажам), модуль gateway (отвечает за работу с персональными данными пользователей).
+основной модуль с главной частью бизнес-логики, модуль сервиса статистики (хранит данные по продажам), модуль security (отвечает за работу с персональными данными пользователей).
 Приложение имеет домен, по которому можно обращаться с запросами "http://softplat.ru". 
 
 ## ER diagram
@@ -45,10 +45,10 @@ Public:
 - Получение списка продуктов/поиск/фильтрация: GET "http://api.softplat.ru/product/search?minId=0&pageSize=10&sort=NEWEST"
 
 ## Стек
-- Java SE 9
+- Java SE 11
 - Spring Boot
-- Spring Data JPA
 - Spring Security
+- Spring Data JPA
 - Spring Mail
 - PostgreSQL 
 - H2
@@ -56,12 +56,13 @@ Public:
 - Query DSL
 - Mapstruct
 - Lombok
-- Gson
 - Swagger
+- JUnit 5
+- Mockito
 
 ### Документация Swagger
 After starting application:
-- http://softplat.acceleratorpracticum.ru/swagger-ui/#/
+- http://api.softplat.ru/swagger-ui/#/
 
 ### Commit rules
 - ```feat```: for new feature additions.
