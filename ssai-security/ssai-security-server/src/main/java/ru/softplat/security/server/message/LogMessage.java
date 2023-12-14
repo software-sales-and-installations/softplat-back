@@ -63,7 +63,8 @@ public enum LogMessage {
     TRY_LOGOUT("Попытка выйти из приложения"),
     TRY_REGISTRATION("Попытка зарегистрировать пользователя"),
     TRY_CHANGE_PASSWORD("Попытка сменить пароль"),
-    TRY_BANNED_USER("Попытка забанить пользователя");
+    TRY_BANNED_USER("Попытка забанить пользователя"),
+    TRY_UNBANNED_USER("Попытка разбанить пользователя");
 
 
     public final String label;

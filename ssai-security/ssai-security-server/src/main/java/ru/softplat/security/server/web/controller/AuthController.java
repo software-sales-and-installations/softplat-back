@@ -111,4 +111,12 @@ public class AuthController {
 
         userDetailsChangeService.bannedUser(userId, role);
     }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PostMapping("/unbanned/{userId}")
+    public void unbannedUser(@PathVariable long userId, @RequestParam Role role) {
+        log.info(LogMessage.TRY_UNBANNED_USER.label);
+
+        userDetailsChangeService.unbannedUser(userId, role);
+    }
 }

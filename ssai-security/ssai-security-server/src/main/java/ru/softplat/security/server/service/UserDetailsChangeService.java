@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.exception.EntityNotFoundException;
 import ru.softplat.security.server.exception.WrongRegException;
-import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
 import ru.softplat.security.server.model.Role;
 import ru.softplat.security.server.model.Status;
@@ -21,7 +20,6 @@ import ru.softplat.security.server.repository.UserRepository;
 @RequiredArgsConstructor
 public class UserDetailsChangeService {
     private final UserRepository repository;
-    private final UserMapper userMapper;
     @Lazy
     private final PasswordEncoder passwordEncoder;
 
@@ -44,16 +42,7 @@ public class UserDetailsChangeService {
     }
 
     public void bannedUser(long userId, Role role) {
-        User user = null;
-
-        switch (role) {
-            case BUYER:
-                user = repository.findByIdMainAndRole(userId, Role.BUYER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-                break;
-            case SELLER:
-                user = repository.findByIdMainAndRole(userId, Role.SELLER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-                break;
-        }
+        User user = findUsers(userId, role);
 
         if (user != null && user.getStatus().equals(Status.ACTIVE)) {
             user.setStatus(Status.BANNED);
@@ -61,5 +50,23 @@ public class UserDetailsChangeService {
         }
     }
 
+    public void unbannedUser(long userId, Role role) {
+        User user = findUsers(userId, role);
 
+        if (user != null && user.getStatus().equals(Status.BANNED)) {
+            user.setStatus(Status.ACTIVE);
+            repository.save(user);
+        }
+    }
+
+    private User findUsers(long userId, Role role) {
+        switch (role) {
+            case BUYER:
+                return repository.findByIdMainAndRole(userId, Role.BUYER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+            case SELLER:
+                return repository.findByIdMainAndRole(userId, Role.SELLER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        }
+
+        return null;
+    }
 }
