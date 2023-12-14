@@ -20,7 +20,6 @@ import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
 import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.model.Role;
-import ru.softplat.security.server.model.Status;
 import ru.softplat.security.server.model.User;
 import ru.softplat.security.server.repository.UserRepository;
 import ru.softplat.security.server.service.AuthService;
@@ -57,11 +56,6 @@ public class AuthController {
             Map<Object, Object> response = new HashMap<>();
             User user = repository.findByEmail(request.getEmail()).orElseThrow(() ->
                     new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
-
-            if (user.getStatus().equals(Status.BANNED)) {
-                throw new WrongConditionException();
-            }
-
             String token = jwtTokenProvider.generateToken(request.getEmail(), user.getRole().name());
             response.put("id", user.getIdMain());
             response.put("email", user.getEmail());
@@ -69,7 +63,7 @@ public class AuthController {
             response.put("role", user.getRole());
 
             return ResponseEntity.ok(response);
-        } catch (AuthenticationException | WrongConditionException e) {
+        } catch (AuthenticationException e) {
             return new ResponseEntity<>(ExceptionMessage.INVALID_AUTHENTICATION.label, HttpStatus.UNAUTHORIZED);
         }
     }
