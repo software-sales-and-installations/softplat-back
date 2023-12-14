@@ -1,5 +1,7 @@
 package ru.softplat.security.server.web.controller.product;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,27 +13,29 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.product.ProductClient;
 import ru.softplat.main.dto.product.ProductCreateUpdateDto;
+import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductStatus;
+import ru.softplat.main.dto.product.ProductsListResponseDto;
+import ru.softplat.main.dto.validation.New;
+import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.exception.WrongConditionException;
 import ru.softplat.security.server.message.LogMessage;
-import ru.softplat.security.server.model.New;
 import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/product")
 @Slf4j
-@Validated
 public class UserProductController {
 
     private final ProductClient productClient;
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = ProductResponseDto.class)})
     @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
-    @PostMapping
+    @PostMapping(produces = "application/json")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> createProduct(@RequestHeader("X-Sharer-User-Id") long userId,
                                                 @RequestBody @Validated(New.class) ProductCreateUpdateDto productCreateUpdateDto) {
@@ -39,26 +43,29 @@ public class UserProductController {
         return productClient.createProduct(userId, productCreateUpdateDto);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductResponseDto.class)})
     @Operation(summary = "Редактирование своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
-    @PatchMapping(path = "/{productId}")
+    @PatchMapping(path = "/{productId}", produces = "application/json")
     public ResponseEntity<Object> updateProduct(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
-                                                @RequestBody @Valid ProductCreateUpdateDto productForUpdate) {
+                                                @RequestBody @Validated(Update.class) ProductCreateUpdateDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, userId);
         return productClient.updateProduct(userId, productId, productForUpdate);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductResponseDto.class)})
     @Operation(summary = "Отправка своего товара на модерацию админом", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
-    @PatchMapping(path = "/{productId}/send")
+    @PatchMapping(path = "/{productId}/send", produces = "application/json")
     public ResponseEntity<Object> updateStatusProductOnSent(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT_ON_SENT.label, productId, userId);
         return productClient.updateStatusProductOnSent(userId, productId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductResponseDto.class)})
     @Operation(summary = "Отклонение/одобрение карточки товара", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @PatchMapping(path = "/{productId}/moderation")
+    @PatchMapping(path = "/{productId}/moderation", produces = "application/json")
     public ResponseEntity<Object> updateStatusProductAdmin(@PathVariable Long productId, @RequestParam ProductStatus status) {
         log.debug(LogMessage.TRY_UPDATE_STATUS_PRODUCT.label, productId);
         if (status != ProductStatus.PUBLISHED && status != ProductStatus.REJECTED)
@@ -84,10 +91,11 @@ public class UserProductController {
         productClient.deleteProductSeller(userId, productId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = ProductResponseDto.class)})
     @Operation(summary = "Добавление/обновление изображения своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(path = "/{productId}/image")
+    @PostMapping(path = "/{productId}/image", produces = "application/json")
     public ResponseEntity<Object> createProductImage(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable @Min(1) Long productId,
                                                      @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
@@ -112,25 +120,14 @@ public class UserProductController {
         productClient.deleteProductImageSeller(userId, productId);
     }
 
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductsListResponseDto.class)})
     @Operation(summary = "Получение списка товаров на модерацию", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @GetMapping(path = "/shipped")
+    @GetMapping(path = "/shipped", produces = "application/json")
     public ResponseEntity<Object> getAllProductsShipped(
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
         log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SHIPPED.label);
         return productClient.getAllProductsShipped(minId, pageSize);
-    }
-
-    @Operation(summary = "Просмотр рекомендаций товаров", description = "Доступ для покупателя")
-    @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping("/recommendations")
-    public ResponseEntity<Object> getProductRecommendations(
-            @RequestHeader("X-Sharer-User-Id") long userId,
-            @RequestParam(name = "minId", defaultValue = "0") int minId,
-            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
-    ) {
-        log.info(LogMessage.TRY_BUYER_GET_RECOMMENDATIONS.label, userId);
-        return productClient.getProductRecommendations(userId, minId, pageSize);
     }
 }

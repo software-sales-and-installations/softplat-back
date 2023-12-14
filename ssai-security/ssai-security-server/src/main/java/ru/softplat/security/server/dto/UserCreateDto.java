@@ -22,7 +22,7 @@ import javax.validation.constraints.Pattern;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreateDto {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
-    @Pattern(regexp = "^([a-zA-Z0-9._-]){2,12}+(@[a-zA-Z]{2,8})+(\\.[a-zA-Z]{2,3})$", message = "Длина почты должна быть от 2 до 30 символов.")
+    @Pattern(regexp = "^([a-zA-Z0-9._-]){2,17}+(@[a-zA-Z]{2,8})+(\\.[a-zA-Z]{2,3})$", message = "Длина почты должна быть от 2 до 30 символов.")
     String email;
     @NotBlank(message = "Необходимо указать пароль")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-@#$%^&+=!])(?=\\S+$).{8,40}$", message = "Пароль должен соответствовать следующим требованиям: " +
@@ -39,10 +39,12 @@ public class UserCreateDto {
     @Pattern(regexp = "^[a-zA-Zа-яА-Я-\\s]{2,20}$", message = "Длина имени пользователя должна быть от 2 до 20 символов. Цифры в имени не допускаются.")
     String name;
     @Pattern(regexp = "[0-9]{10}", message = "Телефонный номер должен начинаться с +7, затем - 10 цифр")
+    @Schema(description = "Обязательный параметр для покупателя и продавца")
     String phone;
     @NotNull(message = "Необходимо выбрать роль пользователя: админ/покупатель/продавец")
     Role role;
     @Schema(description = "Вспомогательный параметр, не указывается в теле запроса")
     Status status;
+    @Schema(description = "Вспомогательный параметр, не указывается в теле запроса")
     Long idMain;
 }

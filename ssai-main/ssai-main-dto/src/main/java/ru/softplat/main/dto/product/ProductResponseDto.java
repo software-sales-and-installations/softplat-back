@@ -34,4 +34,6 @@ public class ProductResponseDto {
     ProductStatus productStatus;
     Boolean productAvailability;
     Float installationPrice;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#.#")
+    Float rating;
 }

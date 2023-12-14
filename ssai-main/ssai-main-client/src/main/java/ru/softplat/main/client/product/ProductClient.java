@@ -44,7 +44,7 @@ public class ProductClient extends BaseClient {
                 "pageSize", pageSize,
                 "sort", sort
         );
-        return get("/search?minId={minId}&pageSize={pageSize}&sort={sort}", parameters, productsSearchRequestDto);
+        return post("/search?minId={minId}&pageSize={pageSize}&sort={sort}", null, parameters, productsSearchRequestDto);
     }
 
     public ResponseEntity<Object> updateProduct(long userId, long productId, ProductCreateUpdateDto productCreateUpdateDto) {
@@ -87,7 +87,7 @@ public class ProductClient extends BaseClient {
                 "minId", minId,
                 "pageSize", pageSize
         );
-        return get("/search?minId={minId}&pageSize={pageSize}", parameters);
+        return get("/shipped?minId={minId}&pageSize={pageSize}", parameters);
     }
 
     public ResponseEntity<Object> getSimilarProducts(long productId, int minId, int pageSize) {
@@ -96,13 +96,5 @@ public class ProductClient extends BaseClient {
                 "pageSize", pageSize
         );
         return get("/" + productId + "/similar?minId={minId}&pageSize={pageSize}", parameters);
-    }
-
-    public ResponseEntity<Object> getProductRecommendations(long userId, int minId, int pageSize) {
-        Map<String, Object> parameters = Map.of(
-                "minId", minId,
-                "pageSize", pageSize
-        );
-        return get("/recommendations?minId={minId}&pageSize={pageSize}", userId, parameters);
     }
 }
