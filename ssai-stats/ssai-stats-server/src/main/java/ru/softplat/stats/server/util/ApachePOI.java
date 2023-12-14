@@ -6,7 +6,6 @@ import ru.softplat.stats.server.dto.SellerReportEntryAdmin;
 import ru.softplat.stats.server.model.SellerReport;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -16,83 +15,60 @@ public class ApachePOI {
     public void createFileAdmin(SellerReport sellerReport) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Лист1");
-        Row rowHeader = sheet.createRow(0); //создание строки
-        Cell cell = rowHeader.createCell(0); //создание столбца
-        Cell cell1 = rowHeader.createCell(1);
-        Cell cell2 = rowHeader.createCell(2);
-        Cell cell3 = rowHeader.createCell(3);
-        Cell cell4 = rowHeader.createCell(4);
-        Cell cell5 = rowHeader.createCell(5);
-        Cell cell6 = rowHeader.createCell(6);
-        Cell cell7 = rowHeader.createCell(7);
-
-        cell.setCellValue("№");
-        cell1.setCellValue("Дата");
-        cell2.setCellValue("Название");
-        cell3.setCellValue("Артикул");
-        cell4.setCellValue("Продавец");
-        cell5.setCellValue("Купили, шт");
-        cell6.setCellValue("Выручка продавцов, руб");
-        cell7.setCellValue("Прибыль, руб");
+        Row rowHeader = sheet.createRow(0);
+        String[] headerTitles = {
+                "№",
+                "Дата",
+                "Название",
+                "Артикул",
+                "Продавец",
+                "Купили, шт",
+                "Выручка продавцов, руб",
+                "Прибыль, руб"};
 
         CellStyle style = styleFile(workbook);
 
-        cell.setCellStyle(style);
-        cell1.setCellStyle(style);
-        cell2.setCellStyle(style);
-        cell3.setCellStyle(style);
-        cell4.setCellStyle(style);
-        cell5.setCellStyle(style);
-        cell6.setCellStyle(style);
-        cell7.setCellStyle(style);
+        for (int i = 0; i < headerTitles.length; i++) {
+            Cell cell = rowHeader.createCell(i);
+            cell.setCellValue(headerTitles[i]);
+            cell.setCellStyle(style);
+        }
 
         int rowCount = 1;
         for (SellerReportEntryAdmin sellerReportEntry : sellerReport.getSellerReportEntryList()) {
             Row rowData = sheet.createRow(rowCount);
-            Cell cellNumber = rowData.createCell(0);
-            Cell cellDate = rowData.createCell(1);
-            Cell cellProductName = rowData.createCell(2);
-            Cell cellArticleNumber = rowData.createCell(3);
-            Cell cellSellerName = rowData.createCell(4);
-            Cell cellQuantity = rowData.createCell(5);
-            Cell cellRevenue = rowData.createCell(6);
-            Cell cellReceiveAmountAdmin = rowData.createCell(7);
+            String[] rowDataValues = {
+                    String.valueOf(rowCount),
+                    sellerReportEntry.getDate().toLocalDate().toString(),
+                    sellerReportEntry.getProductName(),
+                    String.valueOf(sellerReportEntry.getArticleNumber()),
+                    sellerReportEntry.getSellerName(),
+                    String.valueOf(sellerReportEntry.getQuantity()),
+                    String.valueOf(sellerReportEntry.getRevenue()),
+                    String.valueOf(sellerReportEntry.getReceiveAmountAdmin())};
 
-            cellNumber.setCellValue(rowCount);
-            cellDate.setCellValue(sellerReportEntry.getDate().toLocalDate().toString());
-            cellProductName.setCellValue(sellerReportEntry.getProductName());
-            cellArticleNumber.setCellValue(sellerReportEntry.getArticleNumber());
-            cellSellerName.setCellValue(sellerReportEntry.getSellerName());
-            cellQuantity.setCellValue(sellerReportEntry.getQuantity());
-            cellRevenue.setCellValue(sellerReportEntry.getRevenue());
-            cellReceiveAmountAdmin.setCellValue(sellerReportEntry.getReceiveAmountAdmin());
+            for (int i = 0; i < rowDataValues.length; i++) {
+                Cell cell = rowData.createCell(i);
+                cell.setCellValue(rowDataValues[i]);
+            }
             rowCount++;
         }
         Row rowSumRevenue = sheet.createRow(rowCount + 1);
-        Cell cellSumRevenue = rowSumRevenue.createCell(5);
-        Cell cellSumRevenueValue = rowSumRevenue.createCell(6);
-        Cell cellSumRevenueAdminValue = rowSumRevenue.createCell(7);
+        String[] sumRevenueValues = {
+                "Итого за период:",
+                String.valueOf(sellerReport.getSumRevenue()),
+                String.valueOf(sellerReport.getReceiveAmount())};
+        for (int i = 0; i < sumRevenueValues.length; i++) {
+            Cell cell = rowSumRevenue.createCell(5 + i);
+            cell.setCellValue(sumRevenueValues[i]);
+            cell.setCellStyle(style);
+        }
 
-        cellSumRevenue.setCellValue("Итого за период:");
-        cellSumRevenueValue.setCellValue(sellerReport.getSumRevenue());
-        cellSumRevenueAdminValue.setCellValue(sellerReport.getReceiveAmount());
-
-        cellSumRevenue.setCellStyle(style);
-        cellSumRevenueValue.setCellStyle(style);
-        cellSumRevenueAdminValue.setCellStyle(style);
-
-        sheet.autoSizeColumn(0);
-        sheet.autoSizeColumn(1);
-        sheet.autoSizeColumn(2);
-        sheet.autoSizeColumn(3);
-        sheet.autoSizeColumn(4);
-        sheet.autoSizeColumn(5);
-        sheet.autoSizeColumn(6);
-        sheet.autoSizeColumn(7);
-
+        for (int i = 0; i <= headerTitles.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
         FileOutputStream fileOutputStream = getFileOutputStream();
         workbook.write(fileOutputStream);
-        fileOutputStream.close();
     }
 
     private CellStyle styleFile(Workbook workbook) {
