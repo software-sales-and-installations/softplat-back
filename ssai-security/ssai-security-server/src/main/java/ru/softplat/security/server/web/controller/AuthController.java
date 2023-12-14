@@ -9,10 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.config.JwtTokenProvider;
@@ -23,6 +20,7 @@ import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
 import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.model.Role;
+import ru.softplat.security.server.model.Status;
 import ru.softplat.security.server.model.User;
 import ru.softplat.security.server.repository.UserRepository;
 import ru.softplat.security.server.service.AuthService;
@@ -59,6 +57,11 @@ public class AuthController {
             Map<Object, Object> response = new HashMap<>();
             User user = repository.findByEmail(request.getEmail()).orElseThrow(() ->
                     new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+
+            if (user.getStatus().equals(Status.BANNED)) {
+                throw new WrongConditionException();
+            }
+
             String token = jwtTokenProvider.generateToken(request.getEmail(), user.getRole().name());
             response.put("id", user.getIdMain());
             response.put("email", user.getEmail());
@@ -66,7 +69,7 @@ public class AuthController {
             response.put("role", user.getRole());
 
             return ResponseEntity.ok(response);
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException | WrongConditionException e) {
             return new ResponseEntity<>(ExceptionMessage.INVALID_AUTHENTICATION.label, HttpStatus.UNAUTHORIZED);
         }
     }
@@ -99,5 +102,13 @@ public class AuthController {
                 Optional.of(userMapper
                         .userToUserResponseDto(userDetailsChangeService
                                 .changePass(request))));
+    }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PostMapping("/banned/{userId}")
+    public void bannedUser(@PathVariable long userId, @RequestParam Role role) {
+        log.info(LogMessage.TRY_BANNED_USER.label);
+
+        userDetailsChangeService.bannedUser(userId, role);
     }
 }

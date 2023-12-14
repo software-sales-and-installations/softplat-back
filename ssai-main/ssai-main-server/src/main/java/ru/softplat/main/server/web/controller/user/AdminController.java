@@ -26,7 +26,7 @@ public class AdminController {
     }
 
     @PostMapping
-    public AdminResponseDto addAdmin(UserCreateMainDto userCreateMainDto) {
+    public AdminResponseDto addAdmin(@RequestBody UserCreateMainDto userCreateMainDto) {
         Admin response = adminService.addAdmin(adminMapper.adminFromUserCreateMainDto(userCreateMainDto));
         return adminMapper.adminToAdminResponseDto(response);
     }

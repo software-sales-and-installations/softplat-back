@@ -6,9 +6,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.softplat.security.server.dto.JwtAuthRequest;
+import ru.softplat.security.server.exception.EntityNotFoundException;
 import ru.softplat.security.server.exception.WrongRegException;
 import ru.softplat.security.server.mapper.UserMapper;
 import ru.softplat.security.server.message.ExceptionMessage;
+import ru.softplat.security.server.model.Role;
+import ru.softplat.security.server.model.Status;
 import ru.softplat.security.server.model.User;
 import ru.softplat.security.server.repository.UserRepository;
 
@@ -39,4 +42,24 @@ public class UserDetailsChangeService {
         user.setEmail(newEmail);
         repository.save(user);
     }
+
+    public void bannedUser(long userId, Role role) {
+        User user = null;
+
+        switch (role) {
+            case BUYER:
+                user = repository.findByIdMainAndRole(userId, Role.BUYER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                break;
+            case SELLER:
+                user = repository.findByIdMainAndRole(userId, Role.SELLER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                break;
+        }
+
+        if (user != null && user.getStatus().equals(Status.ACTIVE)) {
+            user.setStatus(Status.BANNED);
+            repository.save(user);
+        }
+    }
+
+
 }
