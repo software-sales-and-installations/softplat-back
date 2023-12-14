@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.user.BuyerClient;
+import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
 import ru.softplat.main.dto.user.response.BuyersListResponseDto;
@@ -84,5 +85,18 @@ public class BuyerController {
     public ResponseEntity<Object> getBuyerFavouriteProducts(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, userId);
         return buyerClient.getFavourites(userId);
+    }
+
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductsListResponseDto.class)})
+    @Operation(summary = "Просмотр рекомендаций товаров", description = "Доступ для покупателя")
+    @PreAuthorize("hasAuthority('buyer:write')")
+    @GetMapping(path = "/recommendations", produces = "application/json")
+    public ResponseEntity<Object> getProductRecommendations(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestParam(name = "minId", defaultValue = "0") int minId,
+            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
+    ) {
+        log.info(LogMessage.TRY_BUYER_GET_RECOMMENDATIONS.label, userId);
+        return buyerClient.getRecommendations(userId, minId, pageSize);
     }
 }
