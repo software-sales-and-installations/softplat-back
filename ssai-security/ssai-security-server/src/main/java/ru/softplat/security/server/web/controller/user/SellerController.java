@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.user.SellerClient;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
@@ -19,6 +20,7 @@ import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.dto.user.response.SellersListResponseDto;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
+import ru.softplat.security.server.mapper.MultipartFileMapper;
 import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
@@ -32,6 +34,7 @@ import javax.validation.constraints.Min;
 @Slf4j
 public class SellerController {
     private final SellerClient sellerClient;
+    private final MultipartFileMapper multipartFileMapper;
 
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = SellersListResponseDto.class)})
     @Operation(summary = "Получение списка продавцов", description = "Доступ для всех")
@@ -114,9 +117,10 @@ public class SellerController {
     @PostMapping(path = "/account/image", produces = "application/json")
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<Object> addSellerImage(@RequestHeader("X-Sharer-User-Id") long userId,
-                                                 @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
+                                                 @RequestBody @MultipartFileFormat MultipartFile image) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
-        return sellerClient.addSellerImage(userId, image);
+        ImageCreateDto imageCreateDto = multipartFileMapper.toImageDto(image);
+        return sellerClient.addSellerImage(userId, imageCreateDto);
     }
 
     @Operation(summary = "Удаление изображения своего профиля продавцом", description = "Доступ для продавца")

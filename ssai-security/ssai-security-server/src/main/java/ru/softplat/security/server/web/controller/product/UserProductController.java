@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.client.product.ProductClient;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.product.ProductCreateUpdateDto;
 import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductStatus;
@@ -19,11 +20,13 @@ import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.exception.WrongConditionException;
+import ru.softplat.security.server.mapper.MultipartFileMapper;
 import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.security.server.web.validation.MultipartFileFormat;
 
 import javax.validation.constraints.Min;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/product")
@@ -31,6 +34,7 @@ import javax.validation.constraints.Min;
 public class UserProductController {
 
     private final ProductClient productClient;
+    private final MultipartFileMapper multipartFileMapper;
 
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = ProductResponseDto.class)})
     @Operation(summary = "Создание карточки товара", description = "Доступ для продавца")
@@ -97,9 +101,10 @@ public class UserProductController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(path = "/{productId}/image", produces = "application/json")
     public ResponseEntity<Object> createProductImage(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable @Min(1) Long productId,
-                                                     @RequestParam(value = "image") @MultipartFileFormat MultipartFile image) {
+                                                     @RequestBody @MultipartFileFormat MultipartFile image) {
         log.info(LogMessage.TRY_ADD_IMAGE.label);
-        return productClient.addProductImage(userId, productId, image);
+        ImageCreateDto imageCreateDto = multipartFileMapper.toImageDto(image);
+        return productClient.addProductImage(userId, productId, imageCreateDto);
     }
 
     @Operation(summary = "Удаление изображения карточки товара", description = "Доступ для админа")
