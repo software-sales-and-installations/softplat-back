@@ -6,6 +6,8 @@ import ru.softplat.security.server.model.ResetToken;
 
 @Repository
 public interface ConfirmationTokenRepository extends JpaRepository<ResetToken, Long> {
+
 	ResetToken findByConfirmationToken(String confirmationToken);
+
 	void deleteByConfirmationToken(String confirmationToken);
 }
