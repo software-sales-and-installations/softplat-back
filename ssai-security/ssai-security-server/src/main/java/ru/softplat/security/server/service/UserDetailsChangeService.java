@@ -41,7 +41,7 @@ public class UserDetailsChangeService {
         repository.save(user);
     }
 
-    public void bannedUser(long userId, Role role) {
+    public void banUser(long userId, Role role) {
         User user = findUsers(userId, role);
 
         if (user != null && user.getStatus().equals(Status.ACTIVE)) {
@@ -50,7 +50,7 @@ public class UserDetailsChangeService {
         }
     }
 
-    public void unbannedUser(long userId, Role role) {
+    public void unbanUser(long userId, Role role) {
         User user = findUsers(userId, role);
 
         if (user != null && user.getStatus().equals(Status.BANNED)) {

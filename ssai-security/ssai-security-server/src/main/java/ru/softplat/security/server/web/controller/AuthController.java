@@ -106,17 +106,17 @@ public class AuthController {
 
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/banned/{userId}")
-    public void bannedUser(@PathVariable long userId, @RequestParam Role role) {
+    public void banUser(@PathVariable long userId, @RequestParam Role role) {
         log.info(LogMessage.TRY_BANNED_USER.label);
 
-        userDetailsChangeService.bannedUser(userId, role);
+        userDetailsChangeService.banUser(userId, role);
     }
 
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @PostMapping("/unbanned/{userId}")
-    public void unbannedUser(@PathVariable long userId, @RequestParam Role role) {
+    public void unbanUser(@PathVariable long userId, @RequestParam Role role) {
         log.info(LogMessage.TRY_UNBANNED_USER.label);
 
-        userDetailsChangeService.unbannedUser(userId, role);
+        userDetailsChangeService.unbanUser(userId, role);
     }
 }
