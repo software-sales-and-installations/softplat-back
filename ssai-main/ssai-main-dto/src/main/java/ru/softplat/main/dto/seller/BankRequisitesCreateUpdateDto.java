@@ -2,6 +2,7 @@ package ru.softplat.main.dto.seller;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.softplat.main.dto.validation.BankRequisitesLegalForm;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 
@@ -14,6 +15,7 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@BankRequisitesLegalForm(groups = {New.class})
 public class BankRequisitesCreateUpdateDto {
     @Pattern(groups = {New.class, Update.class}, regexp = "[0-9]{20}",
             message = "Номер счета должен содержать 20 цифр 0-9")
