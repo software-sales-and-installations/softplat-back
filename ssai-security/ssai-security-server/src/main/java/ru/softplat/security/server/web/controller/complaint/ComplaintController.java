@@ -102,7 +102,7 @@ public class ComplaintController {
     }
 
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ComplaintResponseDto.class)})
-    @Operation(summary = "Получение жалоб по продукту продавцом", description = "Доступ продавец")
+    @Operation(summary = "Получение жалобы по id продавцом", description = "Доступ продавец")
     @PreAuthorize("hasAuthority('seller:write')")
     @GetMapping(path = "/seller/{complaintId}", produces = "application/json")
     public ResponseEntity<Object> getComplaintById(@RequestHeader("X-Sharer-User-Id") long userId,

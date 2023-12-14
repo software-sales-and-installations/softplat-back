@@ -82,5 +82,5 @@ public class Product {
     Float rating;
 
     @Column(name = "complaint_count")
-    Long complaintCount;
+    Integer complaintCount;
 }
