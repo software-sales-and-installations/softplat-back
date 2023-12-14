@@ -85,7 +85,7 @@ public class OrderService {
         order.setProductsOrdered(orderPositionList);
         order.setOrderCost(wholePrice);
         Order orderSave = orderRepository.save(order);
-        createStats(orderSave, order.getBuyer());
+        createStats(orderSave, orderSave.getBuyer());
         return orderSave;
     }
 
@@ -140,7 +140,6 @@ public class OrderService {
                                     orderPosition.getProduct().getSeller().getName())
                     ),
                     order.getProductionTime(),
-//                    (long) orderPosition.
                     (long) orderPosition.getQuantity(),
                     (double) orderPosition.getProductCost(),
                     (double) commissionSeller * orderPosition.getProductCost(),

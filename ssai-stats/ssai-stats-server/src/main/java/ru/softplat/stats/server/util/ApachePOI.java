@@ -23,7 +23,7 @@ public class ApachePOI {
                 "Артикул",
                 "Продавец",
                 "Купили, шт",
-                "Выручка продавцов, руб",
+                "Выручка продавца, руб",
                 "Прибыль, руб"};
 
         CellStyle style = styleFile(workbook);
@@ -69,6 +69,7 @@ public class ApachePOI {
         }
         FileOutputStream fileOutputStream = getFileOutputStream();
         workbook.write(fileOutputStream);
+        fileOutputStream.close();
     }
 
     private CellStyle styleFile(Workbook workbook) {
@@ -105,7 +106,6 @@ public class ApachePOI {
             file = new File(newName);
             count++;
         }
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        return fileOutputStream;
+        return new FileOutputStream(file);
     }
 }
