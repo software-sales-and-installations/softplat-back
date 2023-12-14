@@ -1,11 +1,11 @@
 package ru.softplat.stats.server.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.stats.dto.SortEnum;
 import ru.softplat.stats.dto.StatsFilterAdmin;
-import ru.softplat.stats.dto.StatsFilterSeller;
-import ru.softplat.stats.server.dto.SellerReportEntry;
+import ru.softplat.stats.server.dto.SellerReportEntryAdmin;
 import ru.softplat.stats.server.model.SellerReport;
 import ru.softplat.stats.server.model.Stats;
 import ru.softplat.stats.server.repository.StatsRepository;
@@ -13,7 +13,6 @@ import ru.softplat.stats.server.util.ApachePOI;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,42 +36,46 @@ public class StatsService {
     private final StatSellerService statSellerService;
 
     private ApachePOI apachePOI;
-    private static final Float COMMISSIONS = 0.9F;
+
+    @Value("${stats.commissionAdmin}")
+    private Float commissionAdmin;
+    @Value("${stats.commissionSeller}")
+    private Float commissionSeller;
 
     @Transactional(readOnly = true)
     public SellerReport getSellerReportAdmin(
             StatsFilterAdmin statsFilterAdmin,
             SortEnum sort) throws IOException {
-        List<SellerReportEntry> statsPage = getReportForAdminSellersList(statsFilterAdmin);
+        List<SellerReportEntryAdmin> statsPage = getReportForAdminSellersList(statsFilterAdmin);
         SellerReport sellerReport = getSellerReport(sort, statsPage);
         apachePOI.createFileAdmin(sellerReport);
         return sellerReport;
     }
 
-    @Transactional(readOnly = true)
-    public SellerReport getProductReportAdmin(
-            StatsFilterSeller statsFilterSeller,
-            SortEnum sort) throws IOException {
-        List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, null);
-        SellerReport sellerReport = getSellerReport(sort, statsPage);
-        apachePOI.createFileAdmin(sellerReport);
-        return sellerReport;
-    }
+//    @Transactional(readOnly = true)
+//    public SellerReport getProductReportAdmin(
+//            StatsFilterSeller statsFilterSeller,
+//            SortEnum sort) throws IOException {
+//        List<SellerReportEntryAdmin> statsPage = getReportSellerList(statsFilterSeller, null);
+//        SellerReport sellerReport = getSellerReport(sort, statsPage);
+//        apachePOI.createFileAdmin(sellerReport);
+//        return sellerReport;
+//    }
 
-    @Transactional(readOnly = true)
+/*    @Transactional(readOnly = true)
     public SellerReport getProductsReportSeller(
             Long sellerId,
             StatsFilterSeller statsFilterSeller,
             SortEnum sort) throws IOException {
-        List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, sellerId);
+        List<SellerReportEntrySeller> statsPage = getReportSellerList(statsFilterSeller, sellerId);
         //apachePOI.createFile(statsPage);
         SellerReport sellerReport = getSellerReport(sort, statsPage);
         apachePOI.createFileAdmin(sellerReport);
         return sellerReport;
-    }
+    }*/
 
-    private static SellerReport getSellerReport(SortEnum sort, List<SellerReportEntry> statsPage) {
-        List<SellerReportEntry> sellerReportEntryList = statsPage
+    private static SellerReport getSellerReport(SortEnum sort, List<SellerReportEntryAdmin> statsPage) {
+        List<SellerReportEntryAdmin> sellerReportEntryList = statsPage
                 .stream()
                 .sorted((o1, o2) -> {
                     if (SortEnum.POPULAR.equals(sort)) {
@@ -82,24 +85,26 @@ public class StatsService {
                     }
                 })
                 .collect(Collectors.toList());
-
         return new SellerReport(
                 sellerReportEntryList,
                 sellerReportEntryList.stream()
-                        .map(SellerReportEntry::getRevenue)
+                        .map(SellerReportEntryAdmin::getRevenue)
+                        .reduce(0D, Double::sum),
+                sellerReportEntryList.stream()
+                        .map(SellerReportEntryAdmin::getReceiveAmountAdmin)
                         .reduce(0D, Double::sum));
     }
 
-    private List<SellerReportEntry> getReportForAdminSellersList(StatsFilterAdmin statsFilterAdmin) {
+    private List<SellerReportEntryAdmin> getReportForAdminSellersList(StatsFilterAdmin statsFilterAdmin) {
         if (statsFilterAdmin.getStart() == null) {
             statsFilterAdmin.setStart(LocalDateTime.now().minusMonths(3).withHour(0).withMinute(0).withSecond(0));
         }
         if (statsFilterAdmin.getEnd() == null) {
-            statsFilterAdmin.setEnd(LocalDateTime.now()/*.withHour(0).withMinute(0).withSecond(0)*/);
+            statsFilterAdmin.setEnd(LocalDateTime.now());
         }
-        List<SellerReportEntry> statsPage;
+        List<SellerReportEntryAdmin> statsPage;
         if (statsFilterAdmin.getSellerIds() != null) {
-            statsPage = statsRepository.getStatsByProduct(
+            statsPage = statsRepository.getStatsByProductAllSeller(
                     statsFilterAdmin.getSellerIds(),
                     statsFilterAdmin.getStart(),
                     statsFilterAdmin.getEnd());
@@ -111,14 +116,14 @@ public class StatsService {
         return statsPage;
     }
 
-    private List<SellerReportEntry> getReportSellerList(StatsFilterSeller statsFilterSeller, Long sellerId) {
+/*    private List<SellerReportEntrySeller> getReportSellerList(StatsFilterSeller statsFilterSeller, Long sellerId) {
         if (statsFilterSeller.getStart() == null) {
             statsFilterSeller.setStart(LocalDateTime.now().minusMonths(3).withHour(0).withMinute(0).withSecond(0));
         }
         if (statsFilterSeller.getEnd() == null) {
-            statsFilterSeller.setEnd(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
+            statsFilterSeller.setEnd(LocalDateTime.now());
         }
-        List<SellerReportEntry> allStats;
+        List<SellerReportEntryAdmin> allStats;
         if (sellerId == null) {
             allStats = statsRepository.getAllStats(
                     statsFilterSeller.getStart(),
@@ -130,10 +135,12 @@ public class StatsService {
                     statsFilterSeller.getEnd());
         }
         return allStats;
-    }
+    }*/
 
     public void createStats(Stats stats) {
-        stats.setAmount(COMMISSIONS * stats.getAmount());
+        stats.setReceiveAmountAdmin(Math.round(commissionAdmin * stats.getAmount() * 100.0) / 100.0);
+        stats.setReceiveAmountSeller(Math.round(commissionSeller * stats.getAmount() * 100.0) / 100.0);
+        stats.setAmount(stats.getAmount());
         statBuyerService.createStatBuyer(stats.getBuyer());
         statSellerService.createStatSeller(stats.getProduct().getSeller());
         statProductService.createStatProduct(stats.getProduct());

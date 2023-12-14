@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS statistic
     date_buy   TIMESTAMP WITHOUT TIME ZONE,
     quantity   INT    NOT NULL,
     amount     FLOAT  NOT NULL,
+    receive_amount_seller FLOAT  NOT NULL,
+    receive_amount_admin FLOAT  NOT NULL,
     CONSTRAINT pk_statistic PRIMARY KEY (id),
     CONSTRAINT fk_statistic_stat__buyer FOREIGN KEY (buyer_id) REFERENCES stat_buyer (id),
     CONSTRAINT fk_statistic_stat_product FOREIGN KEY (product_id) REFERENCES stat_product (id)

@@ -1,6 +1,7 @@
 package ru.softplat.main.server.service.buyer;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.dto.product.ProductStatus;
@@ -35,6 +36,11 @@ public class OrderService {
     private final OrderPositionMapper mapper;
     private final ProductService productService;
     private final StatsClient statClient;
+
+    @Value("${main.commissionAdmin}")
+    private Float commissionAdmin;
+    @Value("${main.commissionSeller}")
+    private Float commissionSeller;
 
     public Order createOrder(long userId, List<Long> basketPositionIds) {
         Order order = createNewEmptyOrder(userId);
@@ -134,9 +140,11 @@ public class OrderService {
                                     orderPosition.getProduct().getSeller().getName())
                     ),
                     order.getProductionTime(),
+//                    (long) orderPosition.
                     (long) orderPosition.getQuantity(),
-                    (double) orderPosition.getProductCost()
-                    );
+                    (double) orderPosition.getProductCost(),
+                    (double) commissionSeller * orderPosition.getProductCost(),
+                    (double) commissionAdmin * orderPosition.getProductCost());
             statClient.addStats(statsCreateDto);
         }
     }

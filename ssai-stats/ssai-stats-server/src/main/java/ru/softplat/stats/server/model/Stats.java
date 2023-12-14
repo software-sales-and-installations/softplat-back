@@ -33,10 +33,18 @@ public class Stats {
     @Column(name = "date_buy")
     LocalDateTime dateBuy;
 
+//    @Column(name = "demo_quantity")
+//    Long demoQuantity;
+
     @Column(name = "quantity")
     Long quantity;
 
     @Column(name = "amount")
     Double amount;
 
+    @Column(name = "receive_amount_seller")
+    Double receiveAmountSeller;
+
+    @Column(name = "receive_amount_admin")
+    Double receiveAmountAdmin;
 }

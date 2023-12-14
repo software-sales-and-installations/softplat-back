@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.softplat.stats.dto.SortEnum;
 import ru.softplat.stats.dto.StatsCreateDto;
 import ru.softplat.stats.dto.StatsFilterAdmin;
-import ru.softplat.stats.dto.StatsFilterSeller;
 import ru.softplat.stats.server.dto.StatsResponseDto;
 import ru.softplat.stats.server.mapper.StatsMapper;
 import ru.softplat.stats.server.service.StatsService;
@@ -25,10 +24,10 @@ public class StatsController {
     private final StatsService statsService;
     private final StatsMapper statsMapper;
 
-    @GetMapping(path = "/admin/seller")
+    @GetMapping(path = "/admin")
     public StatsResponseDto getSellerReportAdmin(
             /*@RequestBody*/ StatsFilterAdmin statsFilterAdmin,
-            @RequestParam(name = "sort", defaultValue = "POPULAR")  SortEnum sort) throws IOException {
+                             @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService
                         .getSellerReportAdmin(
@@ -36,17 +35,17 @@ public class StatsController {
                                 sort));
     }
 
-    @GetMapping(path = "/admin/product")
-    public StatsResponseDto getProductReportAdmin(@RequestBody StatsFilterSeller statsFilterSeller,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
-        return statsMapper.sellerReportToStatsResponseDto(
-                statsService
-                        .getProductReportAdmin(
-                                statsFilterSeller,
-                                sort));
-    }
+//    @GetMapping(path = "/admin")
+//    public StatsResponseDto getProductReportAdmin(/*@RequestBody*/ StatsFilterSeller statsFilterSeller,
+//            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
+//        return statsMapper.sellerReportToStatsResponseDto(
+//                statsService
+//                        .getProductReportAdmin(
+//                                statsFilterSeller,
+//                                sort));
+//    }
 
-    @GetMapping(path = "/seller")
+/*    @GetMapping(path = "/seller")
     public StatsResponseDto getProductsReportSeller(
             @RequestHeader Long sellerId,
             @RequestBody StatsFilterSeller statsFilterSeller,
@@ -57,11 +56,21 @@ public class StatsController {
                                 sellerId,
                                 statsFilterSeller,
                                 sort));
-    }
+    }*/
 
     @PostMapping
     public void createStat(@RequestBody @Valid StatsCreateDto statsCreateDto) {
         log.debug("Попытка создания статистики");
         statsService.createStats(statsMapper.statsCreateDtoToStats(statsCreateDto));
+    }
+
+    @GetMapping(path = "/admin/file")
+    public boolean saveAdminFile() {
+        return true;
+    }
+
+    @GetMapping(path = "/seller/file")
+    public boolean saveSellerFile() {
+        return true;
     }
 }

@@ -19,6 +19,9 @@ public class StatsCreateDto {
     StatProductDto product;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime dateBuy;
+    //Long demoQuantity;
     Long quantity;
     Double amount;
+    Double receiveAmountSeller;
+    Double receiveAmountAdmin;
 }

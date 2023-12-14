@@ -12,6 +12,7 @@ import java.util.List;
 @Builder
 public class StatsResponseDto {
 
-    List<SellerReportEntry> sellerReportEntryList;
+    List<SellerReportEntryAdmin> sellerReportEntryList;
     Float sumRevenue;
+    Float receiveAmount;
 }

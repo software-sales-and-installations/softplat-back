@@ -2,7 +2,7 @@ package ru.softplat.stats.server.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.softplat.stats.server.dto.SellerReportEntry;
+import ru.softplat.stats.server.dto.SellerReportEntryAdmin;
 
 import java.util.List;
 
@@ -13,6 +13,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SellerReport {
 
-    List<SellerReportEntry> sellerReportEntryList;
+    List<SellerReportEntryAdmin> sellerReportEntryList;
     Double sumRevenue;
+    Double receiveAmount;
 }
