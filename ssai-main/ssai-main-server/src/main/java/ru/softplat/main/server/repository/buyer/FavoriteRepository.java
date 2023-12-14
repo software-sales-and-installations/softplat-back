@@ -32,7 +32,7 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
             "   SELECT f3.product.id " +
             "   FROM Favorite f3 " +
             "   WHERE f3.buyer.id = :userId) " +
-            "GROUP BY f.product.id, f.product.productionTime " +
+            "GROUP BY f.product.id " +
             "ORDER BY count (f.product.id) DESC, " +
             "f.product.productionTime DESC ")
     List<Long> getRecommendations(Long userId, Pageable pageable);
