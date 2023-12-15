@@ -59,4 +59,10 @@ public class BuyerService {
                         ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(userId, Buyer.class)
                 ));
     }
+
+    public void deleteBuyer(long userId) {
+        getBuyer(userId);
+
+        buyerRepository.deleteById(userId);
+    }
 }

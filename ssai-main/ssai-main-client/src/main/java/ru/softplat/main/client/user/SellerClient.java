@@ -47,6 +47,10 @@ public class SellerClient extends BaseClient {
         return patch("", userId, sellerUpdateDto);
     }
 
+    public void deleteSeller(long userId) {
+        delete("/" + userId);
+    }
+
     public ResponseEntity<Object> getRequisitesAdmin(long userId) {
         return get("/bank/" + userId);
     }
