@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.server.configuration.PageRequestOverride;
+import ru.softplat.main.server.exception.AccessDenialException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.OrderPositionMapper;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -119,6 +121,27 @@ public class OrderService {
         List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
             statClient.addStats(mapper.orderPositionToStatDto(orderPosition));
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Order getOrderByBuyerIdAndProductId(long buyerId, long productId) {
+        return orderRepository.findOrderByBuyerIdAndProductId(buyerId, productId).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessage.NOT_VALID_COMPLAINT_PRODUCT_EXCEPTION.label));
+    }
+
+    @Transactional(readOnly = true)
+    public void checkBuyerAccessRightsToCreateComment(long buyerId, long productId) {
+        List<Order> orders = getAllOrders(buyerId);
+        List<Long> productsOrderedIds = orders.stream()
+                .flatMap(o -> o.getProductsOrdered().stream())
+                .filter(op -> op.getProduct().getId() == productId)
+                .map(op -> op.getProduct().getId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (productsOrderedIds.isEmpty()) {
+            throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_COMMENT_EXCEPTION.label);
         }
     }
 }

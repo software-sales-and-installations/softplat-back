@@ -229,4 +229,39 @@ public class ProductService {
         product.setRating(newRating);
         productRepository.save(product);
     }
+
+    public void updateProductComplaintCountOnCreate(long productId) {
+        Product product = getProductByIdForComplaint(productId);
+
+        if (product.getComplaintCount() == null) product.setComplaintCount(1);
+        else product.setComplaintCount(product.getComplaintCount() + 1);
+
+        if (product.getComplaintCount() >= 10) {
+            product.setProductAvailability(Boolean.FALSE);
+            product.setProductStatus(ProductStatus.REJECTED);
+        }
+        productRepository.save(product);
+    }
+
+    public void updateProductComplaintCountOnDelete(long productId) {
+        Product product = getProductByIdForComplaint(productId);
+
+        if (product.getComplaintCount() == null || product.getComplaintCount() == 0) {
+            throw new WrongConditionException(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label);
+        }
+        product.setComplaintCount(product.getComplaintCount() - 1);
+
+        if (product.getComplaintCount() < 1) {
+            product.setProductStatus(ProductStatus.PUBLISHED);
+        }
+        productRepository.save(product);
+    }
+
+    @Transactional(readOnly = true)
+    public Product getProductByIdForComplaint(long productId) {
+        return productRepository.findById(productId).orElseThrow(
+                () -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class))
+        );
+    }
 }

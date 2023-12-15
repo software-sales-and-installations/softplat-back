@@ -46,7 +46,7 @@ public class UserProductController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductResponseDto.class)})
     @Operation(summary = "Редактирование своей карточки товара", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")
-    @PatchMapping(path = "/{productId}", produces = "application/json")
+    @PatchMapping(path = "/{productId}/update", produces = "application/json")
     public ResponseEntity<Object> updateProduct(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId,
                                                 @RequestBody @Validated(Update.class) ProductCreateUpdateDto productForUpdate) {
         log.debug(LogMessage.TRY_UPDATE_PRODUCT.label, productId, userId);
