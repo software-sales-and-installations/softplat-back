@@ -1,6 +1,5 @@
 package ru.softplat.main.dto.category;
 
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;

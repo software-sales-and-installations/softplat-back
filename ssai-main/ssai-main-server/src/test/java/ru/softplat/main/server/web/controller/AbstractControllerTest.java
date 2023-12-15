@@ -12,6 +12,7 @@ import ru.softplat.main.dto.basket.OrderCreateDto;
 import ru.softplat.main.dto.basket.OrderResponseDto;
 import ru.softplat.main.dto.comment.CommentCreateUpdateDto;
 import ru.softplat.main.dto.comment.CommentResponseDto;
+import ru.softplat.main.dto.compliant.ComplaintResponseDto;
 import ru.softplat.main.dto.product.ProductCreateUpdateDto;
 import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductStatus;
@@ -225,5 +226,18 @@ public abstract class AbstractControllerTest {
             assertEquals(expect.get(i).getQuantity(), actual.get(i).getQuantity());
             assertEquals(expect.get(i).getProductStatus(), actual.get(i).getProductStatus());
         }
+    }
+
+    @SneakyThrows
+    public ComplaintResponseDto getComplaintBySeller(long userId, long complaintId) {
+        MvcResult result = mockMvc.perform(get("/complaint/seller/{complaintId}", complaintId)
+                        .header("X-Sharer-User-Id", String.valueOf(userId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                ComplaintResponseDto.class);
     }
 }

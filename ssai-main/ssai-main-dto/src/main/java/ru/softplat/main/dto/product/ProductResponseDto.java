@@ -36,4 +36,5 @@ public class ProductResponseDto {
     Float installationPrice;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#.#")
     Float rating;
+    Integer complaintCount;
 }

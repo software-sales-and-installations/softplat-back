@@ -45,6 +45,10 @@ public class BuyerClient extends BaseClient {
         return patch("", userId, buyerUpdateDto);
     }
 
+    public void deleteBuyer(long userId) {
+        delete("/" + userId);
+    }
+
     public ResponseEntity<Object> createFavourite(long userId, long productId) {
         return post("/favorites/" + productId, userId, null);
     }

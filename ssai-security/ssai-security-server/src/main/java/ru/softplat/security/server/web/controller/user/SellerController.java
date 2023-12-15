@@ -63,6 +63,15 @@ public class SellerController {
         return sellerClient.updateSeller(userId, sellerUpdateDto);
     }
 
+    @Operation(summary = "Удаление продавца админом", description = "Доступ для админа")
+    @PreAuthorize("hasAuthority('admin:write')")
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSeller(@PathVariable long userId) {
+        log.debug(LogMessage.TRY_DELETE_SELLER.label, userId);
+        sellerClient.deleteSeller(userId);
+    }
+
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = BankRequisitesResponseDto.class)})
     @Operation(summary = "Получение банковских реквизитов по id продавца", description = "Доступ для продавца")
     @PreAuthorize("hasAuthority('seller:write')")

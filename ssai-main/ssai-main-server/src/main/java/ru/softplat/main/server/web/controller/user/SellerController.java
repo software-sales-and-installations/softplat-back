@@ -61,6 +61,12 @@ public class SellerController {
         return sellerMapper.sellerToSellerResponseDto(response);
     }
 
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSeller(@PathVariable long userId) {
+        sellerService.deleteSeller(userId);
+    }
+
     @GetMapping("/bank")
     public BankRequisitesResponseDto getRequisitesSeller(@RequestHeader("X-Sharer-User-Id") Long userId) {
         BankRequisites response = bankService.getRequisites(userId);

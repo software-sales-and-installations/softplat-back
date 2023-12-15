@@ -9,10 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.config.JwtTokenProvider;
@@ -99,5 +96,21 @@ public class AuthController {
                 Optional.of(userMapper
                         .userToUserResponseDto(userDetailsChangeService
                                 .changePass(request))));
+    }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PostMapping("/banned/{userId}")
+    public void banUser(@PathVariable long userId, @RequestParam Role role) {
+        log.info(LogMessage.TRY_BANNED_USER.label);
+
+        userDetailsChangeService.banUser(userId, role);
+    }
+
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @PostMapping("/unbanned/{userId}")
+    public void unbanUser(@PathVariable long userId, @RequestParam Role role) {
+        log.info(LogMessage.TRY_UNBANNED_USER.label);
+
+        userDetailsChangeService.unbanUser(userId, role);
     }
 }
