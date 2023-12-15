@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.main.server.configuration.PageRequestOverride;
-import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.VendorMapper;
@@ -37,7 +36,6 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public Vendor createVendor(VendorCreateUpdateDto vendorCreateUpdateDto) {
-        checkIfExistsByName(vendorCreateUpdateDto.getName());
         return repository.save(vendorMapper.vendorDtoToVendor(vendorCreateUpdateDto));
     }
 
@@ -48,7 +46,6 @@ public class VendorServiceImpl implements VendorService {
         if (vendorUpdateDto.getName() != null) {
             if (vendorUpdateDto.getName().isBlank())
                 throw new WrongConditionException("Введите корректное название.");
-            checkIfExistsByName(vendorUpdateDto.getName());
             oldVendor.setName(vendorUpdateDto.getName());
         }
         if (vendorUpdateDto.getDescription() != null) {
@@ -123,10 +120,5 @@ public class VendorServiceImpl implements VendorService {
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
-    }
-
-    private void checkIfExistsByName(String name) {
-        if (repository.existsByName(name))
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
     }
 }
