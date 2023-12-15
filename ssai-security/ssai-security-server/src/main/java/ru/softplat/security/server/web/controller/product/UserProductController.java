@@ -130,16 +130,4 @@ public class UserProductController {
         log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SHIPPED.label);
         return productClient.getAllProductsShipped(minId, pageSize);
     }
-
-    @Operation(summary = "Просмотр рекомендаций товаров", description = "Доступ для покупателя")
-    @PreAuthorize("hasAuthority('buyer:write')")
-    @GetMapping("/recommendations")
-    public ResponseEntity<Object> getProductRecommendations(
-            @RequestHeader("X-Sharer-User-Id") long userId,
-            @RequestParam(name = "minId", defaultValue = "0") int minId,
-            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
-    ) {
-        log.info(LogMessage.TRY_BUYER_GET_RECOMMENDATIONS.label, userId);
-        return productClient.getProductRecommendations(userId, minId, pageSize);
-    }
 }
