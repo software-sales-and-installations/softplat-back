@@ -122,7 +122,7 @@ class ComplaintControllerTest extends AbstractControllerTest {
 
         // then
         assertEquals(expectCount, actualCount);
-        performAssertions(expect, actual);
+        performComplaintAssertions(expect, actual);
     }
 
     @ParameterizedTest
@@ -224,7 +224,7 @@ class ComplaintControllerTest extends AbstractControllerTest {
         complaint5 = complaintService.createComplaint(buyer1.getId(), product1.getId(), ComplaintReason.SELLER_FRAUD);
     }
 
-    void performAssertions(List<Complaint> actual, List<Complaint> expect) {
+    void performComplaintAssertions(List<Complaint> actual, List<Complaint> expect) {
         assertEquals(expect.size(), actual.size());
 
         for (int i = 0; i < expect.size(); i++) {
