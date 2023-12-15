@@ -22,7 +22,7 @@ import javax.validation.constraints.Pattern;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreateDto {
     @NotBlank(message = "Необходимо указать адрес электронной почты")
-    @Pattern(regexp = "^([a-zA-Z0-9._-]){2,17}+(@[a-zA-Z]{2,8})+(\\.[a-zA-Z]{2,3})$", message = "Длина почты должна быть от 2 до 30 символов.")
+    @Pattern(regexp = "^([a-zA-Z0-9._-]){2,17}+(@[a-zA-Z]{2,8})+(\\.[a-zA-Z]{2,3})$", message = "Длина почты должна быть от 8 до 30 символов.")
     String email;
     @NotBlank(message = "Необходимо указать пароль")
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[-@#$%^&+=!])(?=\\S+$).{8,40}$", message = "Пароль должен соответствовать следующим требованиям: " +

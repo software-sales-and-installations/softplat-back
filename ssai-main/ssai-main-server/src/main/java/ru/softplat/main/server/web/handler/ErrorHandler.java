@@ -14,6 +14,7 @@ import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 
+import javax.mail.SendFailedException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -104,6 +105,19 @@ public class ErrorHandler {
                 .message(e.getMessage())
                 .error(e.getClass().getSimpleName())
                 .status(HttpStatus.BAD_REQUEST.toString())
+                .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
+                .build();
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.GATEWAY_TIMEOUT)
+    public ErrorResponse handleEmailException(final SendFailedException e) {
+      e.printStackTrace();
+        log.error(String.valueOf(e));
+        return ErrorResponse.builder()
+                .message(e.getMessage())
+                .error(e.getClass().getSimpleName())
+                .status(HttpStatus.GATEWAY_TIMEOUT.toString())
                 .timestamp(LocalDateTime.parse(LocalDateTime.now().format(formatter), formatter))
                 .build();
     }

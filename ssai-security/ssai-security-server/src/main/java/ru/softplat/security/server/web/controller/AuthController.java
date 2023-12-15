@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -14,6 +15,7 @@ import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.config.JwtTokenProvider;
 import ru.softplat.security.server.dto.JwtAuthRequest;
+import ru.softplat.security.server.dto.RestorePasswordRequestDto;
 import ru.softplat.security.server.dto.UserCreateDto;
 import ru.softplat.security.server.exception.WrongConditionException;
 import ru.softplat.security.server.mapper.UserMapper;
@@ -23,12 +25,14 @@ import ru.softplat.security.server.model.Role;
 import ru.softplat.security.server.model.User;
 import ru.softplat.security.server.repository.UserRepository;
 import ru.softplat.security.server.service.AuthService;
+import ru.softplat.security.server.service.EmailService;
 import ru.softplat.security.server.service.UserDetailsChangeService;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -44,6 +48,7 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository repository;
     private final UserMapper userMapper;
+    private final EmailService emailService;
 
 
     @PostMapping("/auth/login")
@@ -86,10 +91,32 @@ public class AuthController {
             throw new WrongConditionException("Необходимо указать номер телефона. " +
                     "Телефонный номер должен начинаться с +7, затем - 10 цифр.");
 
-        return authService.createNewUser(userCreateDto);
+        ResponseEntity<Object> response = authService.createNewUser(userCreateDto);
+        if (response.getStatusCode() == HttpStatus.OK)
+            emailService.sendRegConfirmationEmail(userCreateDto);
+        return response;
     }
 
+    @PostMapping("/forgot/password")
+    public void sendEmailToRecoverPassword(@RequestBody RestorePasswordRequestDto requestDto) {
+        String token = userDetailsChangeService.createResetToken(requestDto.getEmail());
+        emailService.sendRestorePasswordEmail(requestDto.getEmail(), token);
+    }
+
+
     @PostMapping("/change/pass")
+    public ResponseEntity<Object> recoverPassword(@RequestParam("t") @NotBlank String confirmationToken,
+                                                  @RequestBody @Validated(New.class) JwtAuthRequest request) {
+        log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
+        userDetailsChangeService.validateResetToken(confirmationToken, request);
+        return ResponseEntity.of(
+                Optional.of(userMapper
+                        .userToUserResponseDto(userDetailsChangeService
+                                .changePass(request))));
+    }
+
+    @PreAuthorize("hasAuthority('buyer:write') || hasAuthority('seller:write')")
+    @PostMapping("/user/change/pass")
     public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtAuthRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
         return ResponseEntity.of(

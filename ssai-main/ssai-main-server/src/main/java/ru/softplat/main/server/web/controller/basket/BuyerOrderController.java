@@ -10,6 +10,7 @@ import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.OrderMapper;
 import ru.softplat.main.server.model.buyer.Order;
 import ru.softplat.main.server.service.buyer.OrderService;
+import ru.softplat.main.server.service.email.EmailService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +21,13 @@ import java.util.stream.Collectors;
 public class BuyerOrderController {
     private final OrderService orderService;
     private final OrderMapper orderMapper;
+    private final EmailService emailService;
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
     public OrderResponseDto addOrder(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody OrderCreateDto orderCreateDto) {
         Order response = orderService.createOrder(userId, orderCreateDto.getBasketPositionIds());
+        emailService.sendOrderConfirmationEmails(response);
         return orderMapper.orderToOrderDto(response);
     }
 
