@@ -107,7 +107,7 @@ public class ComplaintService {
 
         if (updateDto.getStatus().equals(ComplaintStatus.REVIEW)) {
             complaint.setAdminComment(updateDto.getComment());
-            productService.updateStatus(productId, ProductStatus.DRAFT);
+            productService.updateStatus(productId, ProductStatus.REJECTED);
         } else if (updateDto.getStatus().equals(ComplaintStatus.CLOSED)) {
             productService.updateProductComplaintCountOnDelete(productId);
         } else {

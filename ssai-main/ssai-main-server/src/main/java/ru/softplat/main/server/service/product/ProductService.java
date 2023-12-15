@@ -137,9 +137,6 @@ public class ProductService {
             case SHIPPED:
                 product.setProductStatus(ProductStatus.SHIPPED);
                 break;
-            default:
-                product.setProductStatus(ProductStatus.DRAFT);
-                break;
         }
 
         return productRepository.save(product);
@@ -234,20 +231,20 @@ public class ProductService {
     }
 
     public void updateProductComplaintCountOnCreate(long productId) {
-        Product product = getProductDraftOrPublishedForComplaint(productId);
+        Product product = getProductByIdForComplaint(productId);
 
         if (product.getComplaintCount() == null) product.setComplaintCount(1);
         else product.setComplaintCount(product.getComplaintCount() + 1);
 
         if (product.getComplaintCount() >= 10) {
             product.setProductAvailability(Boolean.FALSE);
-            product.setProductStatus(ProductStatus.DRAFT);
+            product.setProductStatus(ProductStatus.REJECTED);
         }
         productRepository.save(product);
     }
 
     public void updateProductComplaintCountOnDelete(long productId) {
-        Product product = getProductDraftOrPublishedForComplaint(productId);
+        Product product = getProductByIdForComplaint(productId);
 
         if (product.getComplaintCount() == null || product.getComplaintCount() == 0) {
             throw new WrongConditionException(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label);
@@ -261,7 +258,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Product getProductDraftOrPublishedForComplaint(long productId) {
+    public Product getProductByIdForComplaint(long productId) {
         return productRepository.findById(productId).orElseThrow(
                 () -> new EntityNotFoundException(
                         ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class))
