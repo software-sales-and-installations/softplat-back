@@ -61,6 +61,12 @@ public class BuyerController {
         return buyerMapper.buyerToBuyerResponseDto(response);
     }
 
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteBuyer(@PathVariable long userId) {
+        buyerService.deleteBuyer(userId);
+    }
+
     @PostMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.CREATED)
     public FavoriteResponseDto createFavorite(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {

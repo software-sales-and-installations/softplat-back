@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.seller.Seller;
 import ru.softplat.main.server.repository.seller.SellerRepository;
 import ru.softplat.main.server.service.image.ImageService;
@@ -41,12 +41,12 @@ public class SellerService {
         return sellerRepository.save(seller);
     }
 
-    public Seller addSellerImage(Long userId, MultipartFile file) {
+    public Seller addSellerImage(Long userId, Image image) {
         Seller seller = getSeller(userId);
         if (seller.getImage() != null) {
             imageService.deleteImageById(seller.getImage().getId());
         }
-        seller.setImage(imageService.addNewImage(file));
+        seller.setImage(imageService.addNewImage(image));
         return seller;
     }
 
@@ -69,5 +69,11 @@ public class SellerService {
                 () -> new EntityNotFoundException(
                         ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(userId, Seller.class)
                 ));
+    }
+
+    public void deleteSeller(long userId) {
+        getSeller(userId);
+
+        sellerRepository.deleteById(userId);
     }
 }

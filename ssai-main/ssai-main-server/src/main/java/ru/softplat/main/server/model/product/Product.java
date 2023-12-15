@@ -80,4 +80,7 @@ public class Product {
 
     @Column(name = "average_rating")
     Float rating;
+
+    @Column(name = "complaint_count")
+    Integer complaintCount;
 }

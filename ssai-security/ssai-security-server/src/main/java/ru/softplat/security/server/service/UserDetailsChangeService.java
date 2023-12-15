@@ -7,9 +7,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.security.server.dto.JwtAuthRequest;
+import ru.softplat.security.server.exception.EntityNotFoundException;
 import ru.softplat.security.server.exception.WrongRegException;
 import ru.softplat.security.server.message.ExceptionMessage;
 import ru.softplat.security.server.model.ResetToken;
+import ru.softplat.security.server.model.Role;
+import ru.softplat.security.server.model.Status;
 import ru.softplat.security.server.model.User;
 import ru.softplat.security.server.repository.ConfirmationTokenRepository;
 import ru.softplat.security.server.repository.UserRepository;
@@ -60,5 +63,34 @@ public class UserDetailsChangeService {
     private User getUser(String email) {
         return repository.findByEmail(email).orElseThrow(() ->
                 new WrongRegException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+    }
+
+    public void banUser(long userId, Role role) {
+        User user = findUsers(userId, role);
+
+        if (user != null && user.getStatus().equals(Status.ACTIVE)) {
+            user.setStatus(Status.BANNED);
+            repository.save(user);
+        }
+    }
+
+    public void unbanUser(long userId, Role role) {
+        User user = findUsers(userId, role);
+
+        if (user != null && user.getStatus().equals(Status.BANNED)) {
+            user.setStatus(Status.ACTIVE);
+            repository.save(user);
+        }
+    }
+
+    private User findUsers(long userId, Role role) {
+        switch (role) {
+            case BUYER:
+                return repository.findByIdMainAndRole(userId, Role.BUYER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+            case SELLER:
+                return repository.findByIdMainAndRole(userId, Role.SELLER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+        }
+
+        return null;
     }
 }

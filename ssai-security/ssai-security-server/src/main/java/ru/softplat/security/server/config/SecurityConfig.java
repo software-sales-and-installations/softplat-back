@@ -35,6 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth/logout").authenticated()
                 .antMatchers("/auth/login").permitAll()
+                .antMatchers("/banned").hasAnyAuthority("admin:write")
+                .antMatchers("/unbanned").hasAnyAuthority("admin:write")
                 .antMatchers("/**").permitAll()
                 .anyRequest()
                 .authenticated()

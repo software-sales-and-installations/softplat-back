@@ -4,13 +4,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorResponseDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.main.dto.vendor.VendorsListResponseDto;
+import ru.softplat.main.server.mapper.ImageMapper;
 import ru.softplat.main.server.mapper.VendorMapper;
 import ru.softplat.main.server.message.LogMessage;
+import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.vendor.Vendor;
 import ru.softplat.main.server.service.vendor.VendorService;
 
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class VendorController {
     private final VendorService service;
     private final VendorMapper vendorMapper;
+    private final ImageMapper imageMapper;
 
     @PostMapping
     public VendorResponseDto createVendor(@RequestBody VendorCreateUpdateDto vendorCreateUpdateDto) {
@@ -69,8 +72,9 @@ public class VendorController {
     @PostMapping(path = "/{vendorId}/image")
     @ResponseStatus(value = HttpStatus.CREATED)
     public VendorResponseDto createVendorImage(@PathVariable(name = "vendorId") Long vendorId,
-                                               @RequestParam(value = "image") MultipartFile image) {
+                                               @RequestBody ImageCreateDto imageCreateDto) {
         log.debug(LogMessage.TRY_ADD_IMAGE.label);
+        Image image = imageMapper.toImage(imageCreateDto);
         Vendor response = service.addVendorImage(vendorId, image);
         return vendorMapper.vendorToVendorResponseDto(response);
     }

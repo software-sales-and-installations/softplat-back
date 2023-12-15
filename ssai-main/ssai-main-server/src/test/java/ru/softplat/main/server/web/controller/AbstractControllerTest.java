@@ -12,6 +12,7 @@ import ru.softplat.main.dto.basket.OrderCreateDto;
 import ru.softplat.main.dto.basket.OrderResponseDto;
 import ru.softplat.main.dto.comment.CommentCreateUpdateDto;
 import ru.softplat.main.dto.comment.CommentResponseDto;
+import ru.softplat.main.dto.compliant.ComplaintResponseDto;
 import ru.softplat.main.dto.product.ProductCreateUpdateDto;
 import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductStatus;
@@ -21,7 +22,10 @@ import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorResponseDto;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -199,5 +203,41 @@ public abstract class AbstractControllerTest {
         return objectMapper.readValue(
                 result.getResponse().getContentAsString(),
                 CommentResponseDto.class);
+    }
+
+    public List<ProductResponseDto> getProductsByIds(List<Long> productIds) {
+        List<ProductResponseDto> response = new ArrayList<>();
+        for (Long id : productIds) response.add(getProductResponseDto(id));
+        return response;
+    }
+
+    public void performAssertions(List<ProductResponseDto> expect, List<ProductResponseDto> actual) {
+        assertEquals(expect.size(), actual.size());
+
+        for (int i = 0; i < expect.size(); i++) {
+            assertEquals(expect.get(i).getName(), actual.get(i).getName());
+            assertEquals(expect.get(i).getDescription(), actual.get(i).getDescription());
+            assertEquals(expect.get(i).getVersion(), actual.get(i).getVersion());
+            assertEquals(expect.get(i).getProductionTime(), actual.get(i).getProductionTime());
+            assertEquals(expect.get(i).getCategory().getId(), actual.get(i).getCategory().getId());
+            assertEquals(expect.get(i).getVendor().getId(), actual.get(i).getVendor().getId());
+            assertEquals(expect.get(i).getSeller().getId(), actual.get(i).getSeller().getId());
+            assertEquals(expect.get(i).getPrice(), actual.get(i).getPrice());
+            assertEquals(expect.get(i).getQuantity(), actual.get(i).getQuantity());
+            assertEquals(expect.get(i).getProductStatus(), actual.get(i).getProductStatus());
+        }
+    }
+
+    @SneakyThrows
+    public ComplaintResponseDto getComplaintBySeller(long userId, long complaintId) {
+        MvcResult result = mockMvc.perform(get("/complaint/seller/{complaintId}", complaintId)
+                        .header("X-Sharer-User-Id", String.valueOf(userId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        return objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                ComplaintResponseDto.class);
     }
 }

@@ -60,15 +60,7 @@ public class AuthService {
                     break;
             }
 
-            if (response.getStatusCode().equals(HttpStatus.OK) && Objects.requireNonNull(response.getBody()).toString().contains("id")) {
-                userCreateDto.setIdMain(Long.parseLong(response
-                        .getBody()
-                        .toString()
-                        .substring(response.getBody().toString().indexOf("id=") + 3,
-                                response.getBody().toString().indexOf(","))));
-            } else {
-                throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
-            }
+            userCreateDto.setIdMain(getIdFromMainService(response));
 
             repository.save(userMapper.userDtoToUser(userCreateDto));
         } catch (DataIntegrityViolationException | UnexpectedRollbackException | DuplicateException e) {
@@ -80,5 +72,17 @@ public class AuthService {
 
     private boolean checkIfUserExistsByEmail(String email) {
         return (repository.findByEmail(email).isPresent());
+    }
+
+    private long getIdFromMainService(ResponseEntity<Object> response) {
+        if (response.getStatusCode().equals(HttpStatus.OK) && Objects.requireNonNull(response.getBody()).toString().contains("id")) {
+            return Long.parseLong(response
+                    .getBody()
+                    .toString()
+                    .substring(response.getBody().toString().indexOf("id=") + 3,
+                            response.getBody().toString().indexOf(",")));
+        } else {
+            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label);
+        }
     }
 }

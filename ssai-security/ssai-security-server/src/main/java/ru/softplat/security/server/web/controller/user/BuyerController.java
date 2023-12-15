@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.user.BuyerClient;
+import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
 import ru.softplat.main.dto.user.response.BuyersListResponseDto;
@@ -57,6 +58,15 @@ public class BuyerController {
         return buyerClient.updateBuyer(userId, buyerUpdateDto);
     }
 
+    @Operation(summary = "Удаление покупателя админом", description = "Доступ для админа")
+    @PreAuthorize("hasAuthority('admin:write')")
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteBuyer(@PathVariable long userId) {
+        log.info(LogMessage.TRY_DELETE_BUYER.label, userId);
+        buyerClient.deleteBuyer(userId);
+    }
+
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = FavoriteResponseDto.class)})
     @Operation(summary = "Добавление товара в избранное", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
@@ -84,5 +94,18 @@ public class BuyerController {
     public ResponseEntity<Object> getBuyerFavouriteProducts(@RequestHeader("X-Sharer-User-Id") long userId) {
         log.info(LogMessage.TRY_BUYER_GET_FAVORITE.label, userId);
         return buyerClient.getFavourites(userId);
+    }
+
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductsListResponseDto.class)})
+    @Operation(summary = "Просмотр рекомендаций товаров", description = "Доступ для покупателя")
+    @PreAuthorize("hasAuthority('buyer:write')")
+    @GetMapping(path = "/recommendations", produces = "application/json")
+    public ResponseEntity<Object> getProductRecommendations(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestParam(name = "minId", defaultValue = "0") int minId,
+            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
+    ) {
+        log.info(LogMessage.TRY_BUYER_GET_RECOMMENDATIONS.label, userId);
+        return buyerClient.getRecommendations(userId, minId, pageSize);
     }
 }
