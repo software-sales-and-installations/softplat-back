@@ -6,9 +6,9 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.product.ProductCreateUpdateDto;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.dto.product.ProductsSearchRequestDto;
@@ -70,8 +70,8 @@ public class ProductClient extends BaseClient {
         delete("/" + productId, userId);
     }
 
-    public ResponseEntity<Object> addProductImage(long userId, long productId, MultipartFile image) {
-        return post("/" + productId + "/image", userId, image);
+    public ResponseEntity<Object> addProductImage(long userId, long productId, ImageCreateDto image) {
+        return post("/" + productId + "/image/create", userId, image);
     }
 
     public void deleteProductImageAdmin(long productId) {

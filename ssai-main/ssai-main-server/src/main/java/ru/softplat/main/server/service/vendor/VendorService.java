@@ -1,8 +1,8 @@
 package ru.softplat.main.server.service.vendor;
 
-import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
+import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.vendor.Vendor;
 
 
@@ -19,7 +19,7 @@ public interface VendorService {
 
     void deleteVendor(Long vendorId);
 
-    Vendor addVendorImage(Long vendorId, MultipartFile file);
+    Vendor addVendorImage(Long vendorId, Image image);
 
     void deleteVendorImage(Long vendorId);
 }

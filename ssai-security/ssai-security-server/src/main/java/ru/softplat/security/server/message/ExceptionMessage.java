@@ -10,7 +10,8 @@ public enum ExceptionMessage {
     IMAGE_FORMAT_EXCEPTION("Формат изображения должен быть jpeg или png."),
     NO_IMAGE_CONTENT_EXCEPTION("Необходимо загрузить изображение."),
     DUPLICATE_EXCEPTION("Пользователь с указанным логином уже существует."),
-    COMPLAINT_REASON_EXCEPTION("Неверно указана причина жалобы.");
+    COMPLAINT_REASON_EXCEPTION("Неверно указана причина жалобы."),
+    IMAGE_SERVER_UPLOAD_EXCEPTION("Ошибка сервера при загрузке изображения.");
 
     public final String label;
 

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.AccessDenialException;
@@ -12,6 +11,7 @@ import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.product.Category;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.product.ProductList;
@@ -100,12 +100,12 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public Product createProductImage(Long productId, MultipartFile file) {
+    public Product createProductImage(Long productId, Image image) {
         Product product = getProductOrThrowException(productId);
         if (product.getImage() != null) {
             imageService.deleteImageById(product.getImage().getId());
         }
-        product.setImage(imageService.addNewImage(file));
+        product.setImage(imageService.addNewImage(image));
         return product;
     }
 

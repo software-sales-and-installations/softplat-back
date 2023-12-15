@@ -3,14 +3,16 @@ package ru.softplat.main.server.web.controller.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.dto.user.response.SellersListResponseDto;
 import ru.softplat.main.server.mapper.BankRequisitesMapper;
+import ru.softplat.main.server.mapper.ImageMapper;
 import ru.softplat.main.server.mapper.SellerMapper;
+import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.seller.BankRequisites;
 import ru.softplat.main.server.model.seller.Seller;
 import ru.softplat.main.server.service.seller.SellerBankService;
@@ -28,6 +30,7 @@ public class SellerController {
     private final SellerBankService bankService;
     private final SellerMapper sellerMapper;
     private final BankRequisitesMapper requisitesMapper;
+    private final ImageMapper imageMapper;
 
     @PostMapping
     public SellerResponseDto addSeller(@RequestBody UserCreateMainDto userCreateMainDto) {
@@ -102,7 +105,8 @@ public class SellerController {
     @PostMapping("/account/image")
     @ResponseStatus(value = HttpStatus.CREATED)
     public SellerResponseDto addSellerImage(@RequestHeader("X-Sharer-User-Id") long userId,
-                                            @RequestParam(value = "image") MultipartFile image) {
+                                            @RequestBody ImageCreateDto imageCreateDto) {
+        Image image = imageMapper.toImage(imageCreateDto);
         Seller response = sellerService.addSellerImage(userId, image);
         return sellerMapper.sellerToSellerResponseDto(response);
     }

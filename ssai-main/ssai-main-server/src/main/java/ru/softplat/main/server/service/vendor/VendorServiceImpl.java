@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 import ru.softplat.main.server.configuration.PageRequestOverride;
@@ -16,6 +15,7 @@ import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.VendorMapper;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.vendor.QVendor;
 import ru.softplat.main.server.model.vendor.Vendor;
 import ru.softplat.main.server.repository.vendor.VendorRepository;
@@ -108,12 +108,12 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
-    public Vendor addVendorImage(Long vendorId, MultipartFile file) {
+    public Vendor addVendorImage(Long vendorId, Image image) {
         Vendor vendor = getVendorById(vendorId);
         if (vendor.getImage() != null) {
             imageService.deleteImageById(vendor.getImage().getId());
         }
-        vendor.setImage(imageService.addNewImage(file));
+        vendor.setImage(imageService.addNewImage(image));
         return vendor;
     }
 
