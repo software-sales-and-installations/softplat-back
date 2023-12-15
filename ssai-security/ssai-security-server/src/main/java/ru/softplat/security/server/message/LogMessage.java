@@ -9,6 +9,7 @@ public enum LogMessage {
     TRY_PATCH_SELLER("Попытка изменения продавца по id: {}"),
     TRY_GET_SELLER("Попытка получения продавца по id: {}"),
     TRY_GET_All_SELLERS("Попытка получения списка продавцов"),
+    TRY_DELETE_SELLER("Попытка удаления продавца"),
     TRY_SELLER_PATCH_REQUISITES("Попытка изменения реквизитов по id: {}"),
     TRY_SELLER_GET_REQUISITES("Попытка получения реквизитов по id продавца: {}"),
     TRY_SELLER_DELETE_REQUISITES("Попытка удаления реквизитов по id: {}"),
@@ -40,6 +41,7 @@ public enum LogMessage {
     TRY_CLEAR_BASKET("Попытка очистки корзины пользователем с id {}."),
     TRY_ADD_ADMIN("Попытка добавить нового админа"),
     TRY_ADD_BUYER("Попытка добавить нового покупателя"),
+    TRY_DELETE_BUYER("Попытка удалить покупателя"),
     TRY_BUYER_ADD_FAVORITE("Попытка добавления данных в избранное"),
     TRY_BUYER_DELETE_FAVORITE("Попытка удаления данных из избранного"),
     TRY_BUYER_GET_FAVORITE("Попытка получения данных избранного по id покупателя: {}"),
@@ -60,7 +62,9 @@ public enum LogMessage {
     TRY_AUTHORIZATION("Попытка авторизации пользователя email:{}"),
     TRY_LOGOUT("Попытка выйти из приложения"),
     TRY_REGISTRATION("Попытка зарегистрировать пользователя"),
-    TRY_CHANGE_PASSWORD("Попытка сменить пароль");
+    TRY_CHANGE_PASSWORD("Попытка сменить пароль"),
+    TRY_BANNED_USER("Попытка забанить пользователя"),
+    TRY_UNBANNED_USER("Попытка разбанить пользователя");
 
 
     public final String label;

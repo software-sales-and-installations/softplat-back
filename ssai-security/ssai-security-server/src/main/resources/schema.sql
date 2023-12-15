@@ -11,3 +11,6 @@ CREATE TABLE IF NOT EXISTS users
     CONSTRAINT pk_users PRIMARY KEY (id),
     CONSTRAINT uq_users_email UNIQUE (email)
 );
+
+insert into users(email, password, role, status, id_main)
+values ('admin@admin.ru', '$2y$12$rm81Q25xrn1KmDHz2dsAq.lE5yLGXQxi/Zly/TBytl4S.Ge.zSup.', 'ADMIN', 'ACTIVE', 1);
