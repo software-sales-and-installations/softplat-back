@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.dto.validation.New;
 import ru.softplat.main.dto.validation.Update;
 import ru.softplat.security.server.config.JwtTokenProvider;
+import ru.softplat.security.server.dto.ChangePassRequest;
 import ru.softplat.security.server.dto.JwtAuthRequest;
 import ru.softplat.security.server.dto.RestorePasswordRequestDto;
 import ru.softplat.security.server.dto.UserCreateDto;
@@ -52,7 +53,7 @@ public class AuthController {
 
 
     @PostMapping("/auth/login")
-    public ResponseEntity<Object> authorization(@RequestBody @Validated(Update.class) JwtAuthRequest request) {
+    public ResponseEntity<Object> authorization(@RequestBody @Valid JwtAuthRequest request) {
         log.info(LogMessage.TRY_AUTHORIZATION.label, request.getEmail());
 
         try {
@@ -60,7 +61,7 @@ public class AuthController {
 
             Map<Object, Object> response = new HashMap<>();
             User user = repository.findByEmail(request.getEmail()).orElseThrow(() ->
-                    new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                    new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(request.getEmail())));
             String token = jwtTokenProvider.generateToken(request.getEmail(), user.getRole().name());
             response.put("id", user.getIdMain());
             response.put("email", user.getEmail());
@@ -106,9 +107,9 @@ public class AuthController {
 
     @PostMapping("/change/pass")
     public ResponseEntity<Object> recoverPassword(@RequestParam("t") @NotBlank String confirmationToken,
-                                                  @RequestBody @Validated(New.class) JwtAuthRequest request) {
+                                                  @RequestBody @Validated(New.class) ChangePassRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
-        userDetailsChangeService.validateResetToken(confirmationToken, request);
+        userDetailsChangeService.confirmResetToken(confirmationToken, request);
         return ResponseEntity.of(
                 Optional.of(userMapper
                         .userToUserResponseDto(userDetailsChangeService
@@ -117,8 +118,9 @@ public class AuthController {
 
     @PreAuthorize("hasAuthority('buyer:write') || hasAuthority('seller:write')")
     @PostMapping("/user/change/pass")
-    public ResponseEntity<Object> changePassword(@RequestBody @Validated(New.class) JwtAuthRequest request) {
+    public ResponseEntity<Object> changePassword(@RequestBody @Validated(Update.class) ChangePassRequest request) {
         log.info(LogMessage.TRY_CHANGE_PASSWORD.label);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getOldPass()));
         return ResponseEntity.of(
                 Optional.of(userMapper
                         .userToUserResponseDto(userDetailsChangeService

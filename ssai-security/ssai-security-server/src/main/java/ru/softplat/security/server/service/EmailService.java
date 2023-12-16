@@ -18,7 +18,7 @@ import java.util.Date;
 public class EmailService {
 
     @Value("${spring.mail.username}")
-    private String email;
+    private String shopEmail;
     private final JavaMailSender emailSender;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -46,7 +46,7 @@ public class EmailService {
 
     private SimpleMailMessage createEmailMessage(String to, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(email);
+        message.setFrom(shopEmail);
         message.setTo(to);
         message.setText(text);
         message.setSentDate(Date.from(Instant.now()));
