@@ -143,12 +143,22 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductList getAllProductsShipped(int from, int size) {
-        List<Product> products = productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.SHIPPED,
+    public ProductList getAllProductsAdminByStatus(int from, int size, ProductStatus status) {
+        List<Product> products = productRepository.findAllByProductStatusOrderByProductionTimeDesc(status,
                 PageRequestOverride.of(from, size));
         return ProductList.builder()
                 .products(products)
-                .count(productRepository.countAllByProductStatus(ProductStatus.SHIPPED))
+                .count(productRepository.countAllByProductStatus(status))
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public ProductList getAllProductsSellerByStatus(long sellerId, int minId, int pageSize, ProductStatus status) {
+        List<Product> products = productRepository.findAllByProductStatusAndSellerIdOrderByProductionTimeDesc(
+                status, sellerId, PageRequestOverride.of(minId, pageSize));
+        return ProductList.builder()
+                .products(products)
+                .count(productRepository.countAllByProductStatusAndSellerId(status, sellerId))
                 .build();
     }
 

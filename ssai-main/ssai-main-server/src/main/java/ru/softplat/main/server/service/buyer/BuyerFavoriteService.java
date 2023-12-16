@@ -10,7 +10,7 @@ import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.buyer.Favorite;
-import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.repository.buyer.FavoriteRepository;
 import ru.softplat.main.server.service.product.ProductService;
 import ru.softplat.main.server.service.product.SearchProductService;
@@ -56,10 +56,10 @@ public class BuyerFavoriteService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getRecommendations(long userId, int from, int size) {
+    public ProductList getRecommendations(long userId, int from, int size) {
         PageRequest page = PageRequestOverride.of(from, size);
         buyerService.getBuyer(userId);
         List<Long> recommendations = favoriteRepository.getRecommendations(userId, page);
-        return searchProductService.getProductsByIds(recommendations);
+        return new ProductList(searchProductService.getProductsByIds(recommendations), (long) size);
     }
 }

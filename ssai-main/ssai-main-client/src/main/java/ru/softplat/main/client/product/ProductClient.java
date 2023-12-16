@@ -82,12 +82,22 @@ public class ProductClient extends BaseClient {
         delete("/" + productId + "/image", userId);
     }
 
-    public ResponseEntity<Object> getAllProductsShipped(int minId, int pageSize) {
+    public ResponseEntity<Object> getAllProductsAdmin(int minId, int pageSize, ProductStatus status) {
         Map<String, Object> parameters = Map.of(
                 "minId", minId,
-                "pageSize", pageSize
+                "pageSize", pageSize,
+                "status", status
         );
-        return get("/shipped?minId={minId}&pageSize={pageSize}", parameters);
+        return get("/admin?minId={minId}&pageSize={pageSize}&status={status}", parameters);
+    }
+
+    public ResponseEntity<Object> getAllProductsSeller(long userId, int minId, int pageSize, ProductStatus status) {
+        Map<String, Object> parameters = Map.of(
+                "minId", minId,
+                "pageSize", pageSize,
+                "status", status
+        );
+        return get("/seller?minId={minId}&pageSize={pageSize}&status={status}", userId, parameters);
     }
 
     public ResponseEntity<Object> getSimilarProducts(long productId, int minId, int pageSize) {

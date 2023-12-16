@@ -1,7 +1,6 @@
 package ru.softplat.main.server.repository.product;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
@@ -17,5 +16,10 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
     List<Product> findAllByProductStatusOrderByProductionTimeDesc(ProductStatus productStatus,
                                                                   Pageable pageRequest);
 
+    List<Product> findAllByProductStatusAndSellerIdOrderByProductionTimeDesc(ProductStatus productStatus,
+                                                                  Long sellerId, Pageable pageRequest);
+
     long countAllByProductStatus(ProductStatus status);
+
+    long countAllByProductStatusAndSellerId(ProductStatus status, long sellerId);
 }

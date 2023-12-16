@@ -126,13 +126,24 @@ public class UserProductController {
     }
 
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductsListResponseDto.class)})
-    @Operation(summary = "Получение списка товаров на модерацию", description = "Доступ для админа")
+    @Operation(summary = "Получение списка товаров с сортировкой по статусу", description = "Доступ для админа")
     @PreAuthorize("hasAuthority('admin:write')")
-    @GetMapping(path = "/shipped", produces = "application/json")
-    public ResponseEntity<Object> getAllProductsShipped(
+    @GetMapping(path = "/admin", produces = "application/json")
+    public ResponseEntity<Object> getAllProductsAdmin(
             @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
-            @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize) {
-        log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SHIPPED.label);
-        return productClient.getAllProductsShipped(minId, pageSize);
+            @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize, @RequestParam ProductStatus status) {
+        log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_ADMIN.label);
+        return productClient.getAllProductsAdmin(minId, pageSize, status);
+    }
+
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductsListResponseDto.class)})
+    @Operation(summary = "Получение списка товаров с сортировкой по статусу", description = "Доступ для продавца")
+    @PreAuthorize("hasAuthority('seller:write')")
+    @GetMapping(path = "/seller", produces = "application/json")
+    public ResponseEntity<Object> getAllProductsSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
+            @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize, @RequestParam ProductStatus status) {
+        log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SELLER.label);
+        return productClient.getAllProductsSeller(userId, minId, pageSize, status);
     }
 }

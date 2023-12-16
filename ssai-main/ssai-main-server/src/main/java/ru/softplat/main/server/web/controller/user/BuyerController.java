@@ -3,7 +3,6 @@ package ru.softplat.main.server.web.controller.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
@@ -15,7 +14,7 @@ import ru.softplat.main.server.mapper.FavoriteMapper;
 import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Favorite;
-import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.buyer.BuyerFavoriteService;
 import ru.softplat.main.server.service.buyer.BuyerService;
 import ru.softplat.security.dto.UserCreateMainDto;
@@ -96,10 +95,7 @@ public class BuyerController {
             @RequestParam(name = "minId", defaultValue = "0") int minId,
             @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
     ) {
-        List<Product> productList = favoriteService.getRecommendations(userId, minId, pageSize);
-        List<ProductResponseDto> response = productList.stream()
-                .map(productMapper::productToProductResponseDto)
-                .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response, pageSize);
+        ProductList productList = favoriteService.getRecommendations(userId, minId, pageSize);
+        return productMapper.toProductsListResponseDto(productList);
     }
 }
