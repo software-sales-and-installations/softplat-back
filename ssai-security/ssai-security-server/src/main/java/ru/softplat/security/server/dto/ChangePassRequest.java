@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChangePassRequest {
-    @NotBlank(groups = {New.class, Update.class}, message = "Необходимо указать адрес электронной почты")
+    @NotBlank(groups = {Update.class}, message = "Необходимо указать адрес электронной почты")
     String email;
     @NotBlank(groups = {Update.class}, message = "Необходимо указать пароль")
     String oldPass;

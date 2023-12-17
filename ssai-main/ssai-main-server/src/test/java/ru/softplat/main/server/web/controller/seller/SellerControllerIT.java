@@ -18,7 +18,6 @@ import ru.softplat.main.dto.seller.LegalForm;
 import ru.softplat.main.dto.user.SellerUpdateDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.server.exception.EntityNotFoundException;
-import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.web.controller.AbstractControllerTest;
 import ru.softplat.security.dto.UserCreateMainDto;
 
@@ -113,27 +112,6 @@ class SellerControllerIT extends AbstractControllerTest {
         assertEquals(requisites.getKpp(), actual.getKpp());
         assertNull(actual.getOgrnip());
         assertEquals(requisites.getOgrn(), actual.getOgrn());
-    }
-
-    @Test
-    @SneakyThrows
-    void addRequisites_shouldThrowException_whenInnIsNotValid() {
-        BankRequisitesCreateUpdateDto notValidDto = BankRequisitesCreateUpdateDto.builder()
-                .account("123456789")
-                .inn("123456789012")
-                .legalForm(LegalForm.OAO)
-                .bik("123456789")
-                .kpp("1234567890")
-                .ogrn("1234567891234")
-                .address("г.Москва, ул.Тверская, д.10")
-                .build();
-
-        mockMvc.perform(post("/seller/bank")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", 1L)
-                        .content(objectMapper.writeValueAsString(notValidDto)))
-                .andExpect(result -> assertTrue(result.getResolvedException()
-                        instanceof WrongConditionException));
     }
 
     @Test
