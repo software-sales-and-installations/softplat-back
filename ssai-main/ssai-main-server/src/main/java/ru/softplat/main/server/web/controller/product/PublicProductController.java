@@ -11,9 +11,6 @@ import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.product.SearchProductService;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/product")
@@ -32,10 +29,7 @@ public class PublicProductController {
             @RequestBody(required = false) ProductsSearchRequestDto productsSearchRequestDto,
             @RequestParam int minId, @RequestParam int pageSize, @RequestParam SortBy sort) {
         ProductList productList = productService.getProductsByFilter(productsSearchRequestDto, minId, pageSize, sort);
-        List<ProductResponseDto> response = productList.getProducts().stream()
-                .map(productMapper::productToProductResponseDto)
-                .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response, productList.getCount());
+        return productMapper.toProductsListResponseDto(productList);
     }
 
     @GetMapping(path = "/{productId}/similar")
@@ -45,9 +39,6 @@ public class PublicProductController {
             @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
     ) {
         ProductList productList = productService.getSimilarProducts(productId, minId, pageSize);
-        List<ProductResponseDto> response = productList.getProducts().stream()
-                .map(productMapper::productToProductResponseDto)
-                .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response, productList.getCount());
+        return productMapper.toProductsListResponseDto(productList);
     }
 }

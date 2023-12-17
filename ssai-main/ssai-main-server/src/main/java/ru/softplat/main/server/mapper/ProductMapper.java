@@ -7,8 +7,7 @@ import ru.softplat.main.dto.product.ProductCreateUpdateDto;
 import ru.softplat.main.dto.product.ProductResponseDto;
 import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.server.model.product.Product;
-
-import java.util.List;
+import ru.softplat.main.server.model.product.ProductList;
 
 @Mapper(uses = {ImageMapper.class, SellerMapper.class, VendorMapper.class})
 @Component
@@ -20,7 +19,6 @@ public interface ProductMapper {
 
     ProductResponseDto productToProductResponseDto(Product product);
 
-    default ProductsListResponseDto toProductsListResponseDto(List<ProductResponseDto> products, long count) {
-        return ProductsListResponseDto.builder().products(products).totalProducts(count).build();
-    }
+    @Mapping(source = "count", target = "totalProducts")
+    ProductsListResponseDto toProductsListResponseDto(ProductList products);
 }

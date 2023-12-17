@@ -16,9 +16,6 @@ import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.complaint.ComplaintService;
 import ru.softplat.main.server.service.product.ProductService;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/product")
@@ -51,7 +48,8 @@ public class UserProductController {
     }
 
     @PatchMapping(path = "/{productId}/send")
-    public ProductResponseDto updateStatusProductOnSent(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
+    public ProductResponseDto updateStatusProductOnSent(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                        @PathVariable Long productId) {
         productService.checkSellerAccessRights(userId, productId);
         Product response = productService.updateStatus(productId, ProductStatus.SHIPPED);
         return productMapper.productToProductResponseDto(response);
@@ -99,13 +97,17 @@ public class UserProductController {
         productService.deleteProductImage(productId);
     }
 
-    @GetMapping(path = "/shipped")
-    public ProductsListResponseDto getAllProductsShipped(
-            @RequestParam int minId, @RequestParam int pageSize) {
-        ProductList productList = productService.getAllProductsShipped(minId, pageSize);
-        List<ProductResponseDto> response = productList.getProducts().stream()
-                .map(productMapper::productToProductResponseDto)
-                .collect(Collectors.toList());
-        return productMapper.toProductsListResponseDto(response, productList.getCount());
+    @GetMapping(path = "/admin")
+    public ProductsListResponseDto getAllProductsAdmin(
+            @RequestParam int minId, @RequestParam int pageSize, @RequestParam ProductStatus status) {
+        ProductList productList = productService.getAllProductsAdminByStatus(minId, pageSize, status);
+        return productMapper.toProductsListResponseDto(productList);
+    }
+
+    @GetMapping(path = "/seller")
+    public ProductsListResponseDto getAllProductsSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestParam int minId, @RequestParam int pageSize, @RequestParam ProductStatus status) {
+        ProductList productList = productService.getAllProductsSellerByStatus(userId, minId, pageSize, status);
+        return productMapper.toProductsListResponseDto(productList);
     }
 }
