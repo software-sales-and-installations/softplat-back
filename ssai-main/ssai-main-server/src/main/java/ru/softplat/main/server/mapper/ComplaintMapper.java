@@ -8,7 +8,7 @@ import ru.softplat.main.server.model.complaint.Complaint;
 
 import java.util.List;
 
-@Mapper
+@Mapper(uses = {ProductMapper.class})
 @Component
 public interface ComplaintMapper {
     ComplaintResponseDto complaintToComplaintDto(Complaint complaint);
