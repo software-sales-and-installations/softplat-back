@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import ru.softplat.main.dto.email.EmailMessage;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Order;
+import ru.softplat.main.server.model.buyer.OrderPosition;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ import java.util.*;
 public class EmailService {
 
     @Value("${spring.mail.username}")
-    private String email;
+    private String shopEmail;
     private final JavaMailSender emailSender;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -27,20 +28,14 @@ public class EmailService {
         long id = order.getId();
         Buyer buyer = order.getBuyer();
         LocalDateTime time = order.getProductionTime();
-        Map<String, List<String>> sellerEmailsAndText = new HashMap<>();
+        Map<String, List<String>> sellerEmailsAndText = composeConfirmationEmailsToSellers(order);
+        sendAll(id, buyer, time, sellerEmailsAndText);
+    }
 
-        for (var orderPosition : order.getProductsOrdered()) {
-            String details = orderPosition.toString();
-            String email = orderPosition.getProduct().getSeller().getEmail();
-
-            List<String> textParts = sellerEmailsAndText.getOrDefault(email, new ArrayList<>());
-            textParts.add(details);
-            sellerEmailsAndText.put(email, textParts);
-        }
-
+    private void sendAll(long id, Buyer buyer, LocalDateTime time, Map<String, List<String>> sellerEmailsAndText) {
         for (var entry : sellerEmailsAndText.entrySet()) {
             String sellerEmail = entry.getKey();
-            String orderDescription = combineOrderPartsInSingleText(entry.getValue());
+            String orderDescription = String.join("\n", entry.getValue());
             String text = getOrderConfirmEmailText(id, orderDescription, time, buyer);
 
             SimpleMailMessage message = createEmailMessage(sellerEmail, text);
@@ -51,9 +46,23 @@ public class EmailService {
         }
     }
 
+    private static Map<String, List<String>> composeConfirmationEmailsToSellers(Order order) {
+        Map<String, List<String>> sellerEmailsAndText = new HashMap<>();
+
+        for (var orderPosition : order.getProductsOrdered()) {
+            String details = orderPositionToString(orderPosition);
+            String email = orderPosition.getProduct().getSeller().getEmail();
+
+            List<String> textParts = sellerEmailsAndText.getOrDefault(email, new ArrayList<>());
+            textParts.add(details);
+            sellerEmailsAndText.put(email, textParts);
+        }
+        return sellerEmailsAndText;
+    }
+
     private SimpleMailMessage createEmailMessage(String to, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(email);
+        message.setFrom(shopEmail);
         message.setTo(to);
         message.setText(text);
         message.setSentDate(Date.from(Instant.now()));
@@ -75,11 +84,12 @@ public class EmailService {
                 buyer.getEmail());
     }
 
-    private String combineOrderPartsInSingleText(List<String> orderPositions) {
-        StringBuilder sb = new StringBuilder();
-        for (String positionDescription : orderPositions) {
-            sb.append(positionDescription).append("\n");
-        }
-        return sb.toString();
+    private static String orderPositionToString(OrderPosition orderPosition) {
+        String installString = orderPosition.getInstallation() ? "Да" : "Нет";
+        return  "\n" +
+                "Название товара: " + orderPosition.getProduct().getName() + "\n" +
+                "Количество товара: " + orderPosition.getQuantity() + " шт.\n" +
+                "Стоимость 1 единицы товара: " + orderPosition.getProductCost() + " руб.\n" +
+                "Установка: " + installString + "\n";
     }
 }

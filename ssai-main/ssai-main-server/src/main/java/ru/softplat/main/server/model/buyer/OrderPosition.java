@@ -28,14 +28,4 @@ public class OrderPosition {
     @Column(name = "amount")
     Float productCost;
     Boolean installation;
-
-    @Override
-    public String toString() {
-        String installString = installation ? "Да" : "Нет";
-        return  "\n" +
-                "Название товара: " + product.getName() + "\n" +
-                "Количество товара: " + quantity + " шт.\n" +
-                "Стоимость 1 единицы товара: " + productCost + " руб.\n" +
-                "Установка: " + installString + "\n";
-    }
 }

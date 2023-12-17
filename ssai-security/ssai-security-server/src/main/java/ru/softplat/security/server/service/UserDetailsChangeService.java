@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.security.server.dto.JwtAuthRequest;
+import ru.softplat.security.server.dto.ChangePassRequest;
 import ru.softplat.security.server.exception.EntityNotFoundException;
 import ru.softplat.security.server.exception.WrongRegException;
 import ru.softplat.security.server.message.ExceptionMessage;
@@ -31,7 +31,7 @@ public class UserDetailsChangeService {
     @Lazy
     private final PasswordEncoder passwordEncoder;
 
-    public User changePass(JwtAuthRequest request) {
+    public User changePass(ChangePassRequest request) {
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new WrongRegException(ExceptionMessage.CONFIRMED_PASSWORD_EXCEPTION.label);
         }
@@ -42,7 +42,7 @@ public class UserDetailsChangeService {
         return repository.save(user);
     }
 
-    public void validateResetToken(String token, JwtAuthRequest authRequest) {
+    public void confirmResetToken(String token, ChangePassRequest authRequest) {
         ResetToken resetToken = confirmationTokenRepository.findByConfirmationToken(token);
 
         if (!resetToken.getUser().getEmail().equals(authRequest.getEmail()))
@@ -62,13 +62,13 @@ public class UserDetailsChangeService {
 
     private User getUser(String email) {
         return repository.findByEmail(email).orElseThrow(() ->
-                new WrongRegException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                new WrongRegException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(email)));
     }
 
     public void banUser(long userId, Role role) {
         User user = findUsers(userId, role);
 
-        if (user != null && user.getStatus().equals(Status.ACTIVE)) {
+        if (user.getStatus().equals(Status.ACTIVE)) {
             user.setStatus(Status.BANNED);
             repository.save(user);
         }
@@ -77,7 +77,7 @@ public class UserDetailsChangeService {
     public void unbanUser(long userId, Role role) {
         User user = findUsers(userId, role);
 
-        if (user != null && user.getStatus().equals(Status.BANNED)) {
+        if (user.getStatus().equals(Status.BANNED)) {
             user.setStatus(Status.ACTIVE);
             repository.save(user);
         }
@@ -86,11 +86,13 @@ public class UserDetailsChangeService {
     private User findUsers(long userId, Role role) {
         switch (role) {
             case BUYER:
-                return repository.findByIdMainAndRole(userId, Role.BUYER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                return repository.findByIdMainAndRole(userId, Role.BUYER).orElseThrow(() -> new EntityNotFoundException(
+                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(role.toString())));
             case SELLER:
-                return repository.findByIdMainAndRole(userId, Role.SELLER).orElseThrow(() -> new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.label));
+                return repository.findByIdMainAndRole(userId, Role.SELLER).orElseThrow(() ->
+                        new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(role.toString())));
+            default:
+                throw new EntityNotFoundException(ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(role.toString()));
         }
-
-        return null;
     }
 }
