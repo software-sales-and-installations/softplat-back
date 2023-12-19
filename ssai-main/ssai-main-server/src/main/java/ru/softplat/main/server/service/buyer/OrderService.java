@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -114,7 +113,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<Order> getAllOrders(long userId) {
         Buyer buyer = buyerService.getBuyer(userId);
-        return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.ofSize(20));
+        return orderRepository.findAllByBuyerId(buyer.getId(), PageRequestOverride.ofSize(20));
     }
 
     private void createStats(Order order) {
@@ -125,22 +124,15 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public Order getOrderByBuyerIdAndProductId(long buyerId, long productId) {
-        return orderRepository.findOrderByBuyerIdAndProductId(buyerId, productId).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessage.NOT_VALID_COMPLAINT_PRODUCT_EXCEPTION.label));
+    public List<Order> getOrderByBuyerIdAndProductId(long buyerId, long productId) {
+        return orderRepository.findOrdersByBuyerIdAndProductId(buyerId, productId);
     }
 
     @Transactional(readOnly = true)
     public void checkBuyerAccessRightsToCreateComment(long buyerId, long productId) {
-        List<Order> orders = getAllOrders(buyerId);
-        List<Long> productsOrderedIds = orders.stream()
-                .flatMap(o -> o.getProductsOrdered().stream())
-                .filter(op -> op.getProduct().getId() == productId)
-                .map(op -> op.getProduct().getId())
-                .distinct()
-                .collect(Collectors.toList());
+        List<Order> orders = getOrderByBuyerIdAndProductId(buyerId, productId);
 
-        if (productsOrderedIds.isEmpty()) {
+        if (orders.isEmpty()) {
             throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_COMMENT_EXCEPTION.label);
         }
     }

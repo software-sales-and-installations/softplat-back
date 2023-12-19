@@ -9,7 +9,7 @@ import ru.softplat.main.server.model.buyer.Order;
 import ru.softplat.main.server.model.buyer.OrderPosition;
 import ru.softplat.main.server.model.product.Product;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -37,12 +37,12 @@ public class OrderRepositoryTest {
         order.setBuyer(buyer);
         order.getProductsOrdered().add(orderPosition);
 
-        when(orderRepository.findOrderByBuyerIdAndProductId(1L, 1L)).thenReturn(Optional.of(order));
+        when(orderRepository.findOrdersByBuyerIdAndProductId(1L, 1L)).thenReturn(List.of(order));
 
-        Optional<Order> result = orderRepository.findOrderByBuyerIdAndProductId(1L, 1L);
+        List<Order> result = orderRepository.findOrdersByBuyerIdAndProductId(1L, 1L);
 
-        assertEquals(Optional.of(order), result);
+        assertEquals(order, result.get(0));
 
-        verify(orderRepository, times(1)).findOrderByBuyerIdAndProductId(1L, 1L);
+        verify(orderRepository, times(1)).findOrdersByBuyerIdAndProductId(1L, 1L);
     }
 }
