@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import ru.softplat.main.dto.basket.BasketCreateDto;
 import ru.softplat.main.dto.basket.BasketResponseDto;
 import ru.softplat.main.dto.basket.OrderCreateDto;
 import ru.softplat.main.dto.basket.OrderResponseDto;
@@ -145,7 +146,8 @@ public abstract class AbstractControllerTest {
 
     @SneakyThrows
     public BasketResponseDto addProductInBasket(long productId, boolean installation) {
-        MvcResult result = mockMvc.perform(post("/buyer/basket/{productId}", productId)
+        MvcResult result = mockMvc.perform(post("/basket/{productId}", productId)
+                        .header("X-Sharer-User-Id", 1L)
                         .param("installation", String.valueOf(installation))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -157,8 +159,23 @@ public abstract class AbstractControllerTest {
     }
 
     @SneakyThrows
+    public BasketResponseDto saveBasket(long userId, BasketCreateDto basketCreateDto) {
+        MvcResult result = mockMvc.perform(post("/basket")
+                        .header("X-Sharer-User-Id", userId)
+                        .content(objectMapper.writeValueAsString(basketCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        return objectMapper.readValue(
+                result.getResponse().getContentAsString(),
+                BasketResponseDto.class);
+    }
+
+    @SneakyThrows
     public BasketResponseDto getBasket() {
-        MvcResult result = mockMvc.perform(get("/buyer/basket"))
+        MvcResult result = mockMvc.perform(get("/basket")
+                .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andReturn();
 
