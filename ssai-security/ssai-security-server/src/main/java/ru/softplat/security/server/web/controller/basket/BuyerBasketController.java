@@ -9,12 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.main.client.basket.BasketClient;
+import ru.softplat.main.dto.basket.BasketCreateDto;
 import ru.softplat.main.dto.basket.BasketResponseDto;
 import ru.softplat.security.server.message.LogMessage;
 
+import javax.validation.Valid;
+
 @Slf4j
+@Validated
 @RestController
 @RequestMapping(path = "/basket")
 @RequiredArgsConstructor
@@ -30,6 +35,17 @@ public class BuyerBasketController {
                                                      @RequestParam(defaultValue = "false") Boolean installation) {
         log.debug(LogMessage.TRY_ADD_PRODUCT_IN_BASKET.label, productId);
         return basketClient.addProductInBasket(userId, productId, installation);
+    }
+
+    @Operation(summary = "Сохранение корзины при авторизации покупателя", description = "Доступ для покупателя")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Created", response = BasketResponseDto.class)})
+    @PreAuthorize("hasAuthority('buyer:write')")
+    @PostMapping(produces = "application/json")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public ResponseEntity<Object> saveBasket(@RequestHeader("X-Sharer-User-Id") long userId,
+                                             @RequestBody @Valid BasketCreateDto basketCreateDto) {
+        log.debug(LogMessage.TRY_SAVE_BASKET.label, userId);
+        return basketClient.saveBasket(userId, basketCreateDto);
     }
 
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = BasketResponseDto.class)})

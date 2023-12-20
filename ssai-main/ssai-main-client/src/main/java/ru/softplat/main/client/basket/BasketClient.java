@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
+import ru.softplat.main.dto.basket.BasketCreateDto;
 
 import java.util.Map;
 
@@ -28,6 +29,10 @@ public class BasketClient extends BaseClient {
                 "installation", installation
         );
         return post("/" + productId + "?installation={installation}", userId, parameters);
+    }
+
+    public ResponseEntity<Object> saveBasket(long userId, BasketCreateDto basketCreateDto) {
+        return post("", userId, basketCreateDto);
     }
 
     public ResponseEntity<Object> removeProductFromBasket(long userId, long productId, boolean installation) {

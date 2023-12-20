@@ -71,7 +71,8 @@ public enum LogMessage {
     TRY_GET_ALL_COMPLAINTS_SELLER("Попытка получения всех жалоб продавцом"),
     TRY_GET_PRODUCT_COMPLAINTS("Попытка получения всех жалоб по продукту"),
     TRY_GET_COMPLAINT("Попытка получения жалобы по id {}"),
-    TRY_SEND_PRODUCT_ON_MODERATION_BY_ADMIN("Попытка отправить продукт на модерацию админом");
+    TRY_SEND_PRODUCT_ON_MODERATION_BY_ADMIN("Попытка отправить продукт на модерацию админом"),
+    TRY_SAVE_BASKET("Попытка сохранения корзины при авторизации покупателя с id {}");
 
     public final String label;
 
