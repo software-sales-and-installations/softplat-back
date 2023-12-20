@@ -19,7 +19,7 @@ public class ImageController {
 
     @Operation(summary = "Получение изображения по id", description = "Доступ для всех")
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getImage(@Parameter(description = "Идентификатор уникален для всех изображений на сайте")
+    public ResponseEntity<byte[]> getImage(@Parameter(description = "Идентификатор уникален для всех изображений на сайте")
                                            @PathVariable Long id) {
         return imageClient.getImage(id);
     }

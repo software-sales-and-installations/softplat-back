@@ -21,7 +21,7 @@ public class ImageClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getImage(long id) {
-        return get("/" + id);
+    public ResponseEntity<byte[]> getImage(long id) {
+        return getImage("/" + id);
     }
 }
