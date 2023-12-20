@@ -16,6 +16,5 @@ public class ImageResponseDto {
     Long id;
     String name;
     Long size;
-    String url;
     String contentType;
 }

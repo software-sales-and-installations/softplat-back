@@ -15,6 +15,10 @@ public class BaseClient {
         this.rest = rest;
     }
 
+    protected ResponseEntity<byte[]> getImage(String path) {
+        return makeAndSendGetRequest(path);
+    }
+
     protected ResponseEntity<Object> get(String path) {
         return makeAndSendRequest(HttpMethod.GET, path, null, null, null);
     }
@@ -101,6 +105,29 @@ public class BaseClient {
             return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
         }
         return prepareGatewayResponse(shareitServerResponse);
+    }
+
+    private ResponseEntity<byte[]> makeAndSendGetRequest(String path) {
+        HttpEntity<Void> requestEntity = new HttpEntity<>(defaultHeaders(null));
+
+        ResponseEntity<byte[]> response;
+        try {
+            response = rest.exchange(path, HttpMethod.GET, requestEntity, byte[].class);
+        } catch (HttpStatusCodeException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
+        }
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response;
+        }
+
+        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
+
+        if (response.hasBody()) {
+            return responseBuilder.body(response.getBody());
+        }
+
+        return responseBuilder.build();
     }
 
     private HttpHeaders defaultHeaders(Long userId) {
