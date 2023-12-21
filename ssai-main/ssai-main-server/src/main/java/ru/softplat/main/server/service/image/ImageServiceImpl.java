@@ -30,7 +30,7 @@ public class ImageServiceImpl implements ImageService {
     public ResponseEntity<byte[]> getImageAsByteArray(Long imageId) {
         Image image = getImageById(imageId);
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + image.getName() + "\"")
                 .contentType(MediaType.valueOf(image.getContentType()))
                 .body(image.getBytes());
     }
