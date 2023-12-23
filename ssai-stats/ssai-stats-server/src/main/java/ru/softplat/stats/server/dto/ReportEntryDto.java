@@ -21,4 +21,6 @@ public class ReportEntryDto {
     Double commonProfit;
 
     Double profit;
+
+    int demo;
 }

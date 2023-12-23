@@ -7,8 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.stats.dto.SortEnum;
-import ru.softplat.stats.dto.StatsFilterAdmin;
+import ru.softplat.stats.dto.StatsFilter;
 import ru.softplat.stats.dto.StatsFilterSeller;
+import ru.softplat.stats.dto.create.StatsCreateDemoDto;
 import ru.softplat.stats.dto.create.StatsCreateDto;
 
 import java.util.Map;
@@ -29,16 +30,17 @@ public class StatsClient extends BaseClient {
     public void addStats(StatsCreateDto statsCreateDto) {
         post("", statsCreateDto);
     }
-    public void addDemoStats(long userId, long productId) {
-        post("/demo/" + productId, userId, null);
+
+    public void addDemoStats(StatsCreateDemoDto statsCreateDemoDto) {
+        post("/demo", statsCreateDemoDto);
     }
 
-    public ResponseEntity<Object> getSellerReportAdmin(StatsFilterAdmin statsFilterAdmin, SortEnum sort) {
+    public ResponseEntity<Object> getSellerReportAdmin(StatsFilter statsFilter, SortEnum sort) {
         Map<String, Object> parameters = Map.of(
                 "sort", sort
         );
 
-        return post("/admin?sort={sort}", null, parameters, statsFilterAdmin);
+        return post("/admin?sort={sort}", null, parameters, statsFilter);
     }
 
     public ResponseEntity<Object> getProductReportSeller(Long sellerId, StatsFilterSeller statsFilterSeller, SortEnum sort) {

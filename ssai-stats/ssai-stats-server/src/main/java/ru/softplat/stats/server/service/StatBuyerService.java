@@ -16,5 +16,4 @@ public class StatBuyerService {
     public void createStatBuyer(StatBuyer buyer) {
         statBuyerRepository.save(buyer);
     }
-
 }

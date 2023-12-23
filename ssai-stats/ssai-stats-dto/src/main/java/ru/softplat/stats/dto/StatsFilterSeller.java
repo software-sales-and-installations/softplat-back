@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
@@ -24,6 +23,5 @@ public class StatsFilterSeller {
     LocalDateTime start;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @NotNull(message = "Введите корректную дату")
-    @FutureOrPresent(message = "Введите корректную дату")
     LocalDateTime end;
 }

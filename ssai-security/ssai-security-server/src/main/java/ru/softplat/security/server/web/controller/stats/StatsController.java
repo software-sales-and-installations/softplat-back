@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.softplat.security.server.message.LogMessage;
 import ru.softplat.stats.client.StatsClient;
 import ru.softplat.stats.dto.SortEnum;
-import ru.softplat.stats.dto.StatsFilterAdmin;
+import ru.softplat.stats.dto.StatsFilter;
 import ru.softplat.stats.dto.StatsFilterSeller;
 
 import javax.validation.Valid;
@@ -31,12 +31,12 @@ public class StatsController {
     @GetMapping(path = "/admin")
     public ResponseEntity<Object> getSellerReportAdmin(
             @Parameter(description = "Фильтрация для получения статистики: по категории/продавцу/производителю/дате")
-            @RequestBody @Valid StatsFilterAdmin statsFilterAdmin,
+            @RequestBody @Valid StatsFilter statsFilter,
             @RequestParam(name = "sort", defaultValue = "POPULAR")
             @Parameter(description = "Условие сортировки для статистики: " +
                     "по количеству продаж/по стоимости") SortEnum sort) {
         log.debug(LogMessage.TRY_GET_STATS_SELLER_ADMIN.label);
-        return statsClient.getSellerReportAdmin(statsFilterAdmin, sort);
+        return statsClient.getSellerReportAdmin(statsFilter, sort);
     }
 
     @Operation(summary = "Получение статистики по продажам продуктов продавца", description = "Доступ для продавца")
