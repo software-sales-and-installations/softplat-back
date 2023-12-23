@@ -6,10 +6,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.softplat.stats.dto.SortEnum;
-import ru.softplat.stats.dto.StatsCreateDto;
-import ru.softplat.stats.dto.StatsFilterAdmin;
-import ru.softplat.stats.dto.StatsFilterSeller;
+import ru.softplat.stats.dto.*;
 
 import java.util.Map;
 
@@ -28,6 +25,9 @@ public class StatsClient extends BaseClient {
 
     public void addStats(StatsCreateDto statsCreateDto) {
         post("", statsCreateDto);
+    }
+    public void addDemoStats(StatsDemoDto statsDemoDto) {
+        post("/demo/{productId}", statsDemoDto);
     }
 
     public ResponseEntity<Object> getSellerReportAdmin(StatsFilterAdmin statsFilterAdmin, SortEnum sort) {

@@ -38,9 +38,9 @@ public class OrderService {
     private final StatsClient statClient;
 
     @Value("${main.commissionAdmin}")
-    private Float commissionAdmin;
+    private Double commissionAdmin;
     @Value("${main.commissionSeller}")
-    private Float commissionSeller;
+    private Double commissionSeller;
 
     public Order createOrder(long userId, List<Long> basketPositionIds) {
         Order order = createNewEmptyOrder(userId);
@@ -85,7 +85,7 @@ public class OrderService {
         order.setProductsOrdered(orderPositionList);
         order.setOrderCost(wholePrice);
         Order orderSave = orderRepository.save(order);
-        createStats(orderSave, orderSave.getBuyer());
+        createStats(orderSave);
         return orderSave;
     }
 
@@ -122,16 +122,16 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<Order> getAllOrders(long userId) {
         Buyer buyer = buyerService.getBuyer(userId);
-        return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.ofSize(20));
+        return orderRepository.findAllByBuyerId(buyer.getId(), PageRequestOverride.ofSize(20));
     }
 
-    private void createStats(Order order, Buyer buyer) {
+    private void createStats(Order order) {
         List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
             StatsCreateDto statsCreateDto = new StatsCreateDto(
                     new StatBuyerDto(
-                            buyer.getId(),
-                            buyer.getName()),
+                            order.getBuyer().getId(),
+                            order.getBuyer().getName()),
                     new StatProductDto(
                             orderPosition.getProduct().getId(),
                             orderPosition.getProduct().getName(),
@@ -142,8 +142,8 @@ public class OrderService {
                     order.getProductionTime(),
                     (long) orderPosition.getQuantity(),
                     (double) orderPosition.getProductCost(),
-                    (double) commissionSeller * orderPosition.getProductCost(),
-                    (double) commissionAdmin * orderPosition.getProductCost());
+                    commissionSeller * orderPosition.getProductCost(),
+                    commissionAdmin * orderPosition.getProductCost());
             statClient.addStats(statsCreateDto);
         }
     }

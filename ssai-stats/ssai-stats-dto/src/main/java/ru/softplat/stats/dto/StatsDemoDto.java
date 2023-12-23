@@ -14,11 +14,12 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatsCreateDto {
+public class StatsDemoDto {
     StatBuyerDto buyer;
     StatProductDto product;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime dateBuy;
+    Long demoQuantity;
     Long quantity;
     Double amount;
     Double profitSeller;

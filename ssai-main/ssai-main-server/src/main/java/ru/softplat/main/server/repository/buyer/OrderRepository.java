@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findAllByBuyer_Id(Long buyerId, Pageable pageRequest);
+    List<Order> findAllByBuyerId(Long buyerId, Pageable pageRequest);
 }

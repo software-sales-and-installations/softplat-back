@@ -1,15 +1,13 @@
 package ru.softplat.stats.server;
 
-import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
+@ComponentScan(basePackages = {"ru.softplat.main.client", "ru.softplat.stats"})
 @SpringBootApplication
 public class StatsApp {
-    @SneakyThrows
     public static void main(String[] args) {
         SpringApplication.run(StatsApp.class, args);
-//        ApachePOI apachePOI = new ApachePOI();
-//        apachePOI.createFile();
     }
 }

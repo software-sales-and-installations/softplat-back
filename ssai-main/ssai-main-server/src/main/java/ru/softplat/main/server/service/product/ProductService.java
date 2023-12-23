@@ -12,6 +12,7 @@ import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.product.Category;
 import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.product.ProductList;
@@ -21,6 +22,11 @@ import ru.softplat.main.server.repository.product.ProductRepository;
 import ru.softplat.main.server.service.image.ImageService;
 import ru.softplat.main.server.service.seller.SellerService;
 import ru.softplat.main.server.service.vendor.VendorService;
+import ru.softplat.stats.client.StatsClient;
+import ru.softplat.stats.dto.StatsDemoDto;
+import ru.softplat.stats.dto.create.StatBuyerDto;
+import ru.softplat.stats.dto.create.StatProductDto;
+import ru.softplat.stats.dto.create.StatSellerDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,6 +42,7 @@ public class ProductService {
     private final CategoryService categoryService;
     private final VendorService vendorService;
     private final ImageService imageService;
+    private final StatsClient statClient;
 
     public Product create(long sellerId, Product product, Long categoryId, Long vendorId) {
         if (product.getInstallation() != null && product.getInstallation()

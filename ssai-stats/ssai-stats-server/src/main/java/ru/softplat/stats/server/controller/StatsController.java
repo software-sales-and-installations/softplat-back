@@ -58,6 +58,11 @@ public class StatsController {
                                 sort));
     }*/
 
+    @PostMapping(path = "/demo")
+    public void downloadDemo (@RequestHeader("X-Sharer-User-Id") Long productId) {
+        statsService.downloadDemo(productId);
+    }
+
     @PostMapping
     public void createStat(@RequestBody @Valid StatsCreateDto statsCreateDto) {
         log.debug("Попытка создания статистики");
@@ -66,11 +71,11 @@ public class StatsController {
 
     @GetMapping(path = "/admin/file")
     public boolean saveAdminFile() {
-        return true;
+        return statsService.saveAdminFile();
     }
 
     @GetMapping(path = "/seller/file")
     public boolean saveSellerFile() {
-        return true;
+        return statsService.saveSellerFile();
     }
 }

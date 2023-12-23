@@ -1,5 +1,6 @@
 package ru.softplat.stats.server.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,12 +36,12 @@ public class StatsService {
     private final StatProductService statProductService;
     private final StatSellerService statSellerService;
 
-    private ApachePOI apachePOI;
+    private final ApachePOI apachePOI;
 
     @Value("${stats.commissionAdmin}")
-    private Float commissionAdmin;
+    private Double commissionAdmin;
     @Value("${stats.commissionSeller}")
-    private Float commissionSeller;
+    private Double commissionSeller;
 
     @Transactional(readOnly = true)
     public SellerReport getSellerReportAdmin(
@@ -138,12 +139,24 @@ public class StatsService {
     }*/
 
     public void createStats(Stats stats) {
-        stats.setReceiveAmountAdmin(Math.round(commissionAdmin * stats.getAmount() * 100.0) / 100.0);
-        stats.setReceiveAmountSeller(Math.round(commissionSeller * stats.getAmount() * 100.0) / 100.0);
+        stats.setReceiveAmountAdmin((double) Math.round(commissionAdmin * stats.getAmount()));
+        stats.setReceiveAmountSeller((double) Math.round(commissionSeller * stats.getAmount()));
         stats.setAmount(stats.getAmount());
         statBuyerService.createStatBuyer(stats.getBuyer());
         statSellerService.createStatSeller(stats.getProduct().getSeller());
         statProductService.createStatProduct(stats.getProduct());
         statsRepository.save(stats);
+    }
+
+    public boolean saveAdminFile() {
+        return false;
+    }
+
+    public boolean saveSellerFile() {
+        return false;
+    }
+
+    public void downloadDemo(Long productId) {
+
     }
 }
