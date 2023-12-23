@@ -1,0 +1,78 @@
+version: '3.1'
+services:
+  security-db:
+    image: postgres:14-alpine
+    container_name: db_security_container
+    ports:
+      - "6543:5432"
+    environment:
+      - POSTGRES_DB=softplat-security
+      - POSTGRES_USER=softplat-security
+      - POSTGRES_PASSWORD=softplat-security
+
+  security-service:
+    build:
+      context: ssai-security/ssai-security-server
+      dockerfile: Dockerfile
+    image: security_image
+    container_name: security_container
+    ports:
+      - "7070:7070"
+    depends_on:
+      - security-db
+      - main-server
+      - stats-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://security-db:5432/softplat-security
+      - SECURITY_POSTGRES_USER=softplat-security
+      - SECURITY_POSTGRES_PASSWORD=softplat-security
+      - STATS_SERVER_URL=http://stats-server:9090
+      - MAIN_SERVER_URL=http://main-server:8080
+
+  stats-db:
+    image: postgres:14-alpine
+    container_name: db_stats_container
+    ports:
+      - "6541:5432"
+    environment:
+      - POSTGRES_DB=softplat-stats
+      - POSTGRES_USER=softplat-stats
+      - POSTGRES_PASSWORD=softplat-stats
+
+  stats-server:
+    build: /ssai-stats/ssai-stats-server
+    image: stats_server_image
+    container_name: stats_server_container
+    ports:
+      - "9090:9090"
+    depends_on:
+      - stats-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/softplat-stats
+      - STATS_POSTGRES_USER=softplat-stats
+      - STATS_POSTGRES_PASSWORD=softplat-stats
+
+  main-db:
+    image: postgres:14-alpine
+    container_name: db_main_container
+    ports:
+      - "6545:5432"
+    environment:
+      - POSTGRES_DB=softplat-main
+      - POSTGRES_USER=softplat-main
+      - POSTGRES_PASSWORD=softplat-main
+
+  main-server:
+    build: /ssai-main/ssai-main-server
+    image: main_image
+    container_name: main_container
+    ports:
+      - "8080:8080"
+    depends_on:
+      - main-db
+      - stats-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/softplat-main
+      - MAIN_POSTGRES_USER=softplat-main
+      - MAIN_POSTGRES_PASSWORD=softplat-main
+      - STATS_SERVER_URL=http://stats-server:9090
