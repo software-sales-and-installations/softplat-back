@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.softplat.stats.dto.SortEnum;
 import ru.softplat.stats.dto.StatsFilter;
 import ru.softplat.stats.dto.StatsFilterSeller;
+import ru.softplat.stats.dto.StatsResponseDto;
 import ru.softplat.stats.dto.create.StatsCreateDto;
-import ru.softplat.stats.server.dto.StatsResponseDto;
 import ru.softplat.stats.server.mapper.StatsMapper;
 import ru.softplat.stats.server.service.StatsService;
 
@@ -25,8 +25,8 @@ public class StatsController {
 
     @PostMapping(path = "/admin")
     public StatsResponseDto getSellerReportAdmin(
-            @RequestBody(required = false) StatsFilter statsFilter,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) {
+            @RequestBody StatsFilter statsFilter,
+            @RequestParam SortEnum sort) {
         return statsMapper.sellerReportToStatsResponseDto(
                 statsService.getSellerReportAdmin(statsFilter, sort));
     }
@@ -34,8 +34,8 @@ public class StatsController {
     @PostMapping(path = "/seller")
     public StatsResponseDto getProductReportSeller(
             @RequestHeader("X-Sharer-User-Id") Long sellerId,
-            @RequestBody(required = false) StatsFilterSeller statsFilterSeller,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) {
+            @RequestBody StatsFilterSeller statsFilterSeller,
+            @RequestParam SortEnum sort) {
         StatsFilter filter = StatsFilter.builder()
                 .start(statsFilterSeller.getStart())
                 .end(statsFilterSeller.getEnd())
@@ -56,18 +56,18 @@ public class StatsController {
         statsService.createStats(statsMapper.statsCreateDtoToStats(statsCreateDto));
     }
 
-    @GetMapping(path = "/admin/file")
+    @PostMapping(path = "/admin/file")
     public boolean saveAdminFile(
-            @RequestBody(required = false) StatsFilter statsFilter,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
+            @RequestBody StatsFilter statsFilter,
+            @RequestParam SortEnum sort) throws IOException {
         return statsService.saveAdminFile(statsFilter, sort);
     }
 
-    @GetMapping(path = "/seller/file")
+    @PostMapping(path = "/seller/file")
     public boolean saveSellerFile(
             @RequestHeader("X-Sharer-User-Id") Long sellerId,
-            @RequestBody(required = false) StatsFilter statsFilter,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
+            @RequestBody StatsFilter statsFilter,
+            @RequestParam SortEnum sort) throws IOException {
         StatsFilter filter = StatsFilter.builder()
                 .start(statsFilter.getStart())
                 .end(statsFilter.getEnd())

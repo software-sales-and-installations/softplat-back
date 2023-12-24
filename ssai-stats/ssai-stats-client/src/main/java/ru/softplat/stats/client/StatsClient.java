@@ -50,4 +50,20 @@ public class StatsClient extends BaseClient {
 
         return post("/seller?sort={sort}", sellerId, parameters, statsFilterSeller);
     }
+
+    public ResponseEntity<Object> getFileReportAdmin(StatsFilter statsFilter, SortEnum sort) {
+        Map<String, Object> parameters = Map.of(
+                "sort", sort
+        );
+
+        return post("/admin/file?sort={sort}", null, parameters, statsFilter);
+    }
+
+    public ResponseEntity<Object> getFileReportSeller(Long sellerId, StatsFilterSeller statsFilterSeller, SortEnum sort) {
+        Map<String, Object> parameters = Map.of(
+                "sort", sort
+        );
+
+        return post("/seller/file?sort={sort}", sellerId, parameters, statsFilterSeller);
+    }
 }

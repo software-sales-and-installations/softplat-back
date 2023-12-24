@@ -2,10 +2,9 @@ package ru.softplat.stats.server.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -29,9 +28,8 @@ public class Stats {
     @JoinColumn(name = "product_id")
     StatProduct product;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @Column(name = "date_buy")
-    LocalDateTime dateBuy;
+    LocalDate dateBuy;
 
     @Column(name = "quantity")
     Integer quantity;

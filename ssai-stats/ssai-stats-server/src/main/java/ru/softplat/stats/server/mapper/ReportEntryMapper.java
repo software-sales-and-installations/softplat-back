@@ -3,7 +3,7 @@ package ru.softplat.stats.server.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
-import ru.softplat.stats.server.dto.ReportEntryDto;
+import ru.softplat.stats.dto.ReportEntryDto;
 import ru.softplat.stats.server.model.ReportEntry;
 
 @Mapper

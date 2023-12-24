@@ -2,7 +2,7 @@ package ru.softplat.stats.server.util;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import ru.softplat.stats.server.dto.ReportEntryDto;
+import ru.softplat.stats.dto.ReportEntryDto;
 import ru.softplat.stats.server.model.Report;
 
 import java.io.File;
@@ -25,13 +25,7 @@ public class ApachePOI {
                 "Выручка продавца, руб",
                 "Прибыль, руб"};
 
-        CellStyle style = styleFile(workbook);
-
-        for (int i = 0; i < headerTitles.length; i++) {
-            Cell cell = rowHeader.createCell(i);
-            cell.setCellValue(headerTitles[i]);
-            cell.setCellStyle(style);
-        }
+        CellStyle style = getCellStyle(workbook, rowHeader, headerTitles);
 
         int rowCount = 1;
         for (ReportEntryDto reportEntry : report.getReportEntryList()) {
@@ -51,23 +45,7 @@ public class ApachePOI {
             }
             rowCount++;
         }
-        Row rowSumRevenue = sheet.createRow(rowCount + 1);
-        String[] sumRevenueValues = {
-                "Итого за период:",
-                String.valueOf(report.getSumRevenue()),
-                String.valueOf(report.getReceiveAmount())};
-        for (int i = 0; i < sumRevenueValues.length; i++) {
-            Cell cell = rowSumRevenue.createCell(4 + i);
-            cell.setCellValue(sumRevenueValues[i]);
-            cell.setCellStyle(style);
-        }
-
-        for (int i = 0; i <= headerTitles.length; i++) {
-            sheet.autoSizeColumn(i);
-        }
-        FileOutputStream fileOutputStream = getFileOutputStream();
-        workbook.write(fileOutputStream);
-        fileOutputStream.close();
+        sumRevenueValues(report, workbook, sheet, headerTitles, style, rowCount);
     }
 
     public void createFileSeller(Report report) throws IOException {
@@ -83,13 +61,8 @@ public class ApachePOI {
                 "Выручка продавца, руб",
                 "Прибыль, руб"};
 
-        CellStyle style = styleFile(workbook);
+        CellStyle style = getCellStyle(workbook, rowHeader, headerTitles);
 
-        for (int i = 0; i < headerTitles.length; i++) {
-            Cell cell = rowHeader.createCell(i);
-            cell.setCellValue(headerTitles[i]);
-            cell.setCellStyle(style);
-        }
         int rowCount = 1;
         for (ReportEntryDto reportEntry : report.getReportEntryList()) {
             Row rowData = sheet.createRow(rowCount);
@@ -107,6 +80,21 @@ public class ApachePOI {
             }
             rowCount++;
         }
+        sumRevenueValues(report, workbook, sheet, headerTitles, style, rowCount);
+    }
+
+    private CellStyle getCellStyle(Workbook workbook, Row rowHeader, String[] headerTitles) {
+        CellStyle style = styleFile(workbook);
+
+        for (int i = 0; i < headerTitles.length; i++) {
+            Cell cell = rowHeader.createCell(i);
+            cell.setCellValue(headerTitles[i]);
+            cell.setCellStyle(style);
+        }
+        return style;
+    }
+
+    private void sumRevenueValues(Report report, Workbook workbook, Sheet sheet, String[] headerTitles, CellStyle style, int rowCount) throws IOException {
         Row rowSumRevenue = sheet.createRow(rowCount + 1);
         String[] sumRevenueValues = {
                 "Итого за период:",

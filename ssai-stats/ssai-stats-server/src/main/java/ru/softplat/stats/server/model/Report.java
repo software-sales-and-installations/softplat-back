@@ -2,7 +2,7 @@ package ru.softplat.stats.server.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.softplat.stats.server.dto.ReportEntryDto;
+import ru.softplat.stats.dto.ReportEntryDto;
 
 import java.util.List;
 

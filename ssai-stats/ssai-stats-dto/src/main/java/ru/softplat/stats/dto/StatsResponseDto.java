@@ -1,4 +1,4 @@
-package ru.softplat.stats.server.dto;
+package ru.softplat.stats.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

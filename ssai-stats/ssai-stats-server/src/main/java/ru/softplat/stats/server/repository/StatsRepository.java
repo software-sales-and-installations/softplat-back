@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.softplat.stats.server.model.ReportEntry;
 import ru.softplat.stats.server.model.Stats;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -20,8 +20,8 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
             "GROUP BY s.product.seller.id, s.product.id, s.product.name, s.product.seller.name " +
             "ORDER BY sum(s.quantity) desc ")
     List<ReportEntry> getAllStatsOrderByQuantity(
-            LocalDateTime start,
-            LocalDateTime end);
+            LocalDate start,
+            LocalDate end);
 
     @Query("SELECT new ru.softplat.stats.server.model.ReportEntry( " +
             "s.product.name, s.product.id, s.product.seller.name, " +
@@ -31,8 +31,8 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
             "GROUP BY s.product.seller.id, s.product.id, s.product.name, s.product.seller.name " +
             "ORDER BY sum(s.profit) desc ")
     List<ReportEntry> getAllStatsOrderByPrice(
-            LocalDateTime start,
-            LocalDateTime end);
+            LocalDate start,
+            LocalDate end);
 
     @Query("SELECT new ru.softplat.stats.server.model.ReportEntry( " +
             "s.product.name, s.product.id, s.product.seller.name, " +
@@ -44,8 +44,8 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
             "ORDER BY sum(s.profit) desc ")
     List<ReportEntry> getStatsBySellerIdsOrderByPrice(
             List<Long> sellerIds,
-            LocalDateTime start,
-            LocalDateTime end); //TODO pageable?
+            LocalDate start,
+            LocalDate end); //TODO pageable?
 
     @Query("SELECT new ru.softplat.stats.server.model.ReportEntry( " +
             "s.product.name, s.product.id, s.product.seller.name, " +
@@ -57,6 +57,6 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
             "ORDER BY sum(s.quantity) desc ")
     List<ReportEntry> getStatsBySellerIdsOrderByQuantity(
             List<Long> sellerIds,
-            LocalDateTime start,
-            LocalDateTime end);
+            LocalDate start,
+            LocalDate end);
 }

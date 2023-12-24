@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.softplat.stats.dto.ReportEntryDto;
 import ru.softplat.stats.dto.SortEnum;
 import ru.softplat.stats.dto.StatsFilter;
-import ru.softplat.stats.server.dto.ReportEntryDto;
 import ru.softplat.stats.server.mapper.ReportEntryMapper;
 import ru.softplat.stats.server.mapper.StatsMapper;
 import ru.softplat.stats.server.model.Report;
@@ -114,7 +114,7 @@ public class StatsService {
 
     public boolean saveSellerFile(StatsFilter filter, SortEnum sort) throws IOException {
         List<ReportEntry> statsPage = getStatPage(filter, sort);
-        Report reportSeller = getReportAdmin(statsPage);
+        Report reportSeller = getReportSeller(statsPage);
         if (reportSeller != null) {
             apachePOI.createFileSeller(reportSeller);
             return true;

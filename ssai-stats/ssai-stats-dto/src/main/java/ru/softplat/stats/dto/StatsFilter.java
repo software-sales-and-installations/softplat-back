@@ -2,11 +2,10 @@ package ru.softplat.stats.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -17,10 +16,9 @@ import java.util.List;
 public class StatsFilter {
 
     List<Long> sellerIds;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
-    @NotNull(message = "Введите корректную дату")
-    @Past(message = "Введите корректную дату")
-    LocalDateTime start;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
-    LocalDateTime end;
+    @NotNull(message = "Введите корректную дату начала")
+    @Past(message = "Введите корректную дату начала")
+    LocalDate start;
+    @NotNull(message = "Введите корректную дату конца")
+    LocalDate end;
 }
