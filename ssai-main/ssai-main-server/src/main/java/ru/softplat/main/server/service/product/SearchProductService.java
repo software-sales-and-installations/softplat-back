@@ -73,8 +73,9 @@ public class SearchProductService {
             products = productRepository.findAll(predicate, pageRequest);
             count = productRepository.count(predicate);
         } else {
-            products = productRepository.findAll(pageRequest);
-            count = productRepository.count();
+            products = productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.PUBLISHED,
+                    pageRequest);
+            count = productRepository.countAllByProductStatus(ProductStatus.PUBLISHED);
         }
         return ProductList.builder()
                 .products(products.getContent())

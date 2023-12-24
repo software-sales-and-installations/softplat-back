@@ -2,6 +2,7 @@ package ru.softplat.main.server.service.product;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.dto.product.ProductStatus;
@@ -144,10 +145,10 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public ProductList getAllProductsAdminByStatus(int from, int size, ProductStatus status) {
-        List<Product> products = productRepository.findAllByProductStatusOrderByProductionTimeDesc(status,
+        Page<Product> products = productRepository.findAllByProductStatusOrderByProductionTimeDesc(status,
                 PageRequestOverride.of(from, size));
         return ProductList.builder()
-                .products(products)
+                .products(products.getContent())
                 .count(productRepository.countAllByProductStatus(status))
                 .build();
     }
