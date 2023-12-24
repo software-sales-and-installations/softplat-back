@@ -4,14 +4,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.softplat.stats.dto.SortEnum;
-import ru.softplat.stats.dto.StatsFilterAdmin;
+import ru.softplat.stats.dto.StatsFilter;
 import ru.softplat.stats.dto.StatsFilterSeller;
 import ru.softplat.stats.dto.create.StatsCreateDto;
 import ru.softplat.stats.server.dto.StatsResponseDto;
 import ru.softplat.stats.server.mapper.StatsMapper;
 import ru.softplat.stats.server.service.StatsService;
 
-import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,42 +24,29 @@ public class StatsController {
 
     @PostMapping(path = "/admin")
     public StatsResponseDto getSellerReportAdmin(
-            @RequestBody(required = false) StatsFilterAdmin statsFilterAdmin,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
+            @RequestBody(required = false) StatsFilter statsFilter,
+            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) {
         return statsMapper.sellerReportToStatsResponseDto(
-                statsService
-                        .getSellerReportAdmin(
-
-                                statsFilterAdmin,
-                                sort));
+                statsService.getSellerReportAdmin(statsFilter, sort));
     }
-
-//    @GetMapping(path = "/admin")
-//    public StatsResponseDto getProductReportAdmin(/*@RequestBody*/ StatsFilterSeller statsFilterSeller,
-//            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
-//        return statsMapper.sellerReportToStatsResponseDto(
-//                statsService
-//                        .getProductReportAdmin(
-//                                statsFilterSeller,
-//                                sort));
-//    }
 
     @PostMapping(path = "/seller")
     public StatsResponseDto getProductReportSeller(
             @RequestHeader("X-Sharer-User-Id") Long sellerId,
             @RequestBody(required = false) StatsFilterSeller statsFilterSeller,
-            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
+            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) {
+        StatsFilter filter = StatsFilter.builder()
+                .start(statsFilterSeller.getStart())
+                .end(statsFilterSeller.getEnd())
+                .sellerIds(List.of(sellerId))
+                .build();
         return statsMapper.sellerReportToStatsResponseDto(
-                statsService
-                        .getProductReportSeller(
-                                sellerId,
-                                statsFilterSeller,
-                                sort));
+                statsService.getProductReportSeller(filter, sort));
     }
 
     @PostMapping(path = "/demo")
-    public void downloadDemo(@RequestHeader("X-Sharer-User-Id") Long productId) {
-        statsService.downloadDemo(productId);
+    public void downloadDemo(@RequestBody StatsCreateDto statsCreateDto) {
+        statsService.downloadDemo(statsMapper.statsDemoDtoToStatDemo(statsCreateDto));
     }
 
     @PostMapping

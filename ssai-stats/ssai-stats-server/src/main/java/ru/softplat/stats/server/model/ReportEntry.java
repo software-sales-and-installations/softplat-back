@@ -1,4 +1,4 @@
-package ru.softplat.stats.server.dto;
+package ru.softplat.stats.server.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,5 +20,7 @@ public class ReportEntry {
 
     Double commonProfit;
 
-    Double profit;
+    Double profitAdmin;
+
+    Double profitSeller;
 }

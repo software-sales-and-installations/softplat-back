@@ -2,8 +2,8 @@ package ru.softplat.stats.server.util;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import ru.softplat.stats.server.dto.ReportEntry;
-import ru.softplat.stats.server.model.SellerReport;
+import ru.softplat.stats.server.dto.ReportEntryDto;
+import ru.softplat.stats.server.model.Report;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 public class ApachePOI {
 
-    public void createFileAdmin(SellerReport sellerReport) throws IOException {
+    public void createFileAdmin(Report report) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Лист1");
         Row rowHeader = sheet.createRow(0);
@@ -35,7 +35,7 @@ public class ApachePOI {
         }
 
         int rowCount = 1;
-        for (ReportEntry reportEntry : sellerReport.getReportEntryList()) {
+        for (ReportEntryDto reportEntry : report.getReportEntryList()) {
             Row rowData = sheet.createRow(rowCount);
             String[] rowDataValues = {
                     String.valueOf(rowCount),
@@ -55,8 +55,8 @@ public class ApachePOI {
         Row rowSumRevenue = sheet.createRow(rowCount + 1);
         String[] sumRevenueValues = {
                 "Итого за период:",
-                String.valueOf(sellerReport.getSumRevenue()),
-                String.valueOf(sellerReport.getReceiveAmount())};
+                String.valueOf(report.getSumRevenue()),
+                String.valueOf(report.getReceiveAmount())};
         for (int i = 0; i < sumRevenueValues.length; i++) {
             Cell cell = rowSumRevenue.createCell(5 + i);
             cell.setCellValue(sumRevenueValues[i]);

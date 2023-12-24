@@ -4,9 +4,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.stereotype.Component;
 import ru.softplat.stats.dto.create.StatsCreateDto;
-import ru.softplat.stats.server.dto.ReportEntry;
+import ru.softplat.stats.server.dto.ReportEntryDto;
 import ru.softplat.stats.server.dto.StatsResponseDto;
-import ru.softplat.stats.server.model.SellerReport;
+import ru.softplat.stats.server.model.Report;
+import ru.softplat.stats.server.model.StatDemo;
 import ru.softplat.stats.server.model.Stats;
 
 import java.util.List;
@@ -17,27 +18,29 @@ public interface StatsMapper {
 
     @Mapping(target = "reportEntryDtoList", source = "reportEntryList")
     @Mapping(target = "profit", source = "receiveAmount")
-    StatsResponseDto sellerReportToStatsResponseDto(SellerReport sellerReport);
+    StatsResponseDto sellerReportToStatsResponseDto(Report report);
 
     Stats statsCreateDtoToStats(StatsCreateDto statsCreateDto);
 
+    StatDemo statsDemoDtoToStatDemo(StatsCreateDto statsCreateDto);
+
     @Mapping(target = "sumRevenue", expression = "java(getSumRevenue(reportEntryList))")
     @Mapping(target = "receiveAmount", expression = "java(getReceiveAmount(reportEntryList))")
-    default SellerReport listEntriesToSellerReport(List<ReportEntry> reportEntryList) {
-        return new SellerReport(reportEntryList,
+    default Report listEntriesToReport(List<ReportEntryDto> reportEntryList) {
+        return new Report(reportEntryList,
                 getSumRevenue(reportEntryList),
                 getReceiveAmount(reportEntryList));
     }
 
-    default double getSumRevenue(List<ReportEntry> reportEntries) {
+    default double getSumRevenue(List<ReportEntryDto> reportEntries) {
         return reportEntries.stream()
-                .map(ReportEntry::getCommonProfit)
+                .map(ReportEntryDto::getCommonProfit)
                 .reduce(0D, Double::sum);
     }
 
-    default double getReceiveAmount(List<ReportEntry> reportEntries) {
+    default double getReceiveAmount(List<ReportEntryDto> reportEntries) {
         return reportEntries.stream()
-                .map(ReportEntry::getProfit)
+                .map(ReportEntryDto::getProfit)
                 .reduce(0D, Double::sum);
     }
 }

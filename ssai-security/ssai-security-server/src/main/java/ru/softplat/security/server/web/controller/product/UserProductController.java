@@ -146,4 +146,12 @@ public class UserProductController {
         log.debug(LogMessage.TRY_GET_ALL_PRODUCTS_SELLER.label);
         return productClient.getAllProductsSeller(userId, minId, pageSize, status);
     }
+
+    @Operation(summary = "Скачивание демо (только для статистики)", description = "Доступ для покупателя")
+    @PreAuthorize("hasAuthority('buyer:write')")
+    @PostMapping("/{productId}/demo")
+    public void loadDemo(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable @Min(1) long productId) {
+        log.debug(LogMessage.TRY_SAVE_DEMO.label);
+        productClient.downloadDemo(userId, productId);
+    }
 }

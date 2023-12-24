@@ -107,4 +107,8 @@ public class ProductClient extends BaseClient {
         );
         return get("/" + productId + "/similar?minId={minId}&pageSize={pageSize}", parameters);
     }
+
+    public void downloadDemo(long userId, long productId) {
+        post("/" + productId + "/demo", userId, null);
+    }
 }
