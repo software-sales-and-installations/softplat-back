@@ -11,6 +11,7 @@ import ru.softplat.stats.server.dto.StatsResponseDto;
 import ru.softplat.stats.server.mapper.StatsMapper;
 import ru.softplat.stats.server.service.StatsService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -56,12 +57,22 @@ public class StatsController {
     }
 
     @GetMapping(path = "/admin/file")
-    public boolean saveAdminFile() {
-        return statsService.saveAdminFile();
+    public boolean saveAdminFile(
+            @RequestBody(required = false) StatsFilter statsFilter,
+            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
+        return statsService.saveAdminFile(statsFilter, sort);
     }
 
     @GetMapping(path = "/seller/file")
-    public boolean saveSellerFile() {
-        return statsService.saveSellerFile();
+    public boolean saveSellerFile(
+            @RequestHeader("X-Sharer-User-Id") Long sellerId,
+            @RequestBody(required = false) StatsFilter statsFilter,
+            @RequestParam(name = "sort", defaultValue = "POPULAR") SortEnum sort) throws IOException {
+        StatsFilter filter = StatsFilter.builder()
+                .start(statsFilter.getStart())
+                .end(statsFilter.getEnd())
+                .sellerIds(List.of(sellerId))
+                .build();
+        return statsService.saveSellerFile(filter, sort);
     }
 }

@@ -130,8 +130,11 @@ public class OrderService {
         for (OrderPosition orderPosition : orderPositionList) {
             double profitSeller = commissionSeller * orderPosition.getProductCost() * orderPosition.getQuantity();
             double profitAdmin = commissionAdmin * orderPosition.getProductCost() * orderPosition.getQuantity();
-            StatsCreateDto statsCreateDto = statsMapper.orderToStatsCreateDto(order, orderPosition,
-                    profitSeller, profitAdmin);
+            StatsCreateDto statsCreateDto = statsMapper.orderToStatsCreateDto(
+                    order,
+                    orderPosition,
+                    profitSeller,
+                    profitAdmin);
             statsCreateDto.setProfit(profitSeller + profitAdmin);
             statClient.addStats(statsCreateDto);
         }

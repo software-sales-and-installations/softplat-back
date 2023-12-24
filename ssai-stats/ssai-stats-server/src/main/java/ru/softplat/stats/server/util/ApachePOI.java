@@ -18,7 +18,6 @@ public class ApachePOI {
         Row rowHeader = sheet.createRow(0);
         String[] headerTitles = {
                 "№",
-                "Дата",
                 "Название",
                 "Артикул",
                 "Продавец",
@@ -44,7 +43,7 @@ public class ApachePOI {
                     reportEntry.getSellerName(),
                     String.valueOf(reportEntry.getQuantity()),
                     String.valueOf(reportEntry.getCommonProfit()),
-                    String.valueOf(reportEntry.getCommonProfit())};
+                    String.valueOf(reportEntry.getProfit())};
 
             for (int i = 0; i < rowDataValues.length; i++) {
                 Cell cell = rowData.createCell(i);
@@ -58,7 +57,7 @@ public class ApachePOI {
                 String.valueOf(report.getSumRevenue()),
                 String.valueOf(report.getReceiveAmount())};
         for (int i = 0; i < sumRevenueValues.length; i++) {
-            Cell cell = rowSumRevenue.createCell(5 + i);
+            Cell cell = rowSumRevenue.createCell(4 + i);
             cell.setCellValue(sumRevenueValues[i]);
             cell.setCellStyle(style);
         }
@@ -70,6 +69,62 @@ public class ApachePOI {
         workbook.write(fileOutputStream);
         fileOutputStream.close();
     }
+
+    public void createFileSeller(Report report) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Лист1");
+        Row rowHeader = sheet.createRow(0);
+        String[] headerTitles = {
+                "№",
+                "Название",
+                "Артикул",
+                "Демо, шт",
+                "Купили, шт",
+                "Выручка продавца, руб",
+                "Прибыль, руб"};
+
+        CellStyle style = styleFile(workbook);
+
+        for (int i = 0; i < headerTitles.length; i++) {
+            Cell cell = rowHeader.createCell(i);
+            cell.setCellValue(headerTitles[i]);
+            cell.setCellStyle(style);
+        }
+        int rowCount = 1;
+        for (ReportEntryDto reportEntry : report.getReportEntryList()) {
+            Row rowData = sheet.createRow(rowCount);
+            String[] rowDataValues = {
+                    String.valueOf(rowCount),
+                    reportEntry.getProductName(),
+                    String.valueOf(reportEntry.getArticleNumber()),
+                    String.valueOf(reportEntry.getDemo()),
+                    String.valueOf(reportEntry.getQuantity()),
+                    String.valueOf(reportEntry.getCommonProfit()),
+                    String.valueOf(reportEntry.getProfit())};
+            for (int i = 0; i < rowDataValues.length; i++) {
+                Cell cell = rowData.createCell(i);
+                cell.setCellValue(rowDataValues[i]);
+            }
+            rowCount++;
+        }
+        Row rowSumRevenue = sheet.createRow(rowCount + 1);
+        String[] sumRevenueValues = {
+                "Итого за период:",
+                String.valueOf(report.getSumRevenue()),
+                String.valueOf(report.getReceiveAmount())};
+        for (int i = 0; i < sumRevenueValues.length; i++) {
+            Cell cell = rowSumRevenue.createCell(4 + i);
+            cell.setCellValue(sumRevenueValues[i]);
+            cell.setCellStyle(style);
+        }
+        for (int i = 0; i <= headerTitles.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+        FileOutputStream fileOutputStream = getFileOutputStream();
+        workbook.write(fileOutputStream);
+        fileOutputStream.close();
+    }
+
 
     private CellStyle styleFile(Workbook workbook) {
         Font font = workbook.createFont();

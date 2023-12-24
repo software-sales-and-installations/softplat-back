@@ -17,6 +17,7 @@ import ru.softplat.stats.server.repository.StatDemoRepository;
 import ru.softplat.stats.server.repository.StatsRepository;
 import ru.softplat.stats.server.util.ApachePOI;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,15 +39,12 @@ public class StatsService {
     @Transactional(readOnly = true)
     public Report getSellerReportAdmin(StatsFilter filter, SortEnum sort) {
         List<ReportEntry> statsPage = getStatPage(filter, sort);
-        //apachePOI.createFileAdmin(sellerReport);
         return getReportAdmin(statsPage);
     }
 
     @Transactional(readOnly = true)
     public Report getProductReportSeller(StatsFilter filter, SortEnum sort) {
         List<ReportEntry> statsPage = getStatPage(filter, sort);
-        //apachePOI.createFile(statsPage);
-        //apachePOI.createFileAdmin(sellerReport);
         return getReportSeller(statsPage);
     }
 
@@ -103,17 +101,33 @@ public class StatsService {
         statsRepository.save(stats);
     }
 
-    public boolean saveAdminFile() {
-        return false;
+    public boolean saveAdminFile(StatsFilter filter, SortEnum sort) throws IOException {
+        List<ReportEntry> statsPage = getStatPage(filter, sort);
+        Report reportAdmin = getReportAdmin(statsPage);
+        if (reportAdmin != null) {
+            apachePOI.createFileAdmin(reportAdmin);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public boolean saveSellerFile() {
-        return false;
+    public boolean saveSellerFile(StatsFilter filter, SortEnum sort) throws IOException {
+        List<ReportEntry> statsPage = getStatPage(filter, sort);
+        Report reportSeller = getReportAdmin(statsPage);
+        if (reportSeller != null) {
+            apachePOI.createFileSeller(reportSeller);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void downloadDemo(StatDemo statDemo) {
         Optional<StatDemo> savedDemo = demoRepository.findByBuyerNameAndProductNameAndProductSellerName(
-                statDemo.getBuyer().getName(), statDemo.getProduct().getName(), statDemo.getProduct().getSeller().getName());
+                statDemo.getBuyer().getName(),
+                statDemo.getProduct().getName(),
+                statDemo.getProduct().getSeller().getName());
         if (savedDemo.isEmpty()) {
             statDemo.setQuantity(1);
             statBuyerService.createStatBuyer(statDemo.getBuyer());
