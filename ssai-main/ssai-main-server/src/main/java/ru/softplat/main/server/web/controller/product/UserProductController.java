@@ -106,8 +106,14 @@ public class UserProductController {
 
     @GetMapping(path = "/seller")
     public ProductsListResponseDto getAllProductsSeller(@RequestHeader("X-Sharer-User-Id") long userId,
-            @RequestParam int minId, @RequestParam int pageSize, @RequestParam ProductStatus status) {
+                                                        @RequestParam int minId, @RequestParam int pageSize,
+                                                        @RequestParam ProductStatus status) {
         ProductList productList = productService.getAllProductsSellerByStatus(userId, minId, pageSize, status);
         return productMapper.toProductsListResponseDto(productList);
+    }
+
+    @PostMapping("/{productId}/demo")
+    public void loadDemo(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long productId) {
+        productService.downloadDemo(userId, productId);
     }
 }

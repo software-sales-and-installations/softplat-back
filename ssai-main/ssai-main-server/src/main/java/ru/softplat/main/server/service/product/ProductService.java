@@ -11,7 +11,9 @@ import ru.softplat.main.server.exception.AccessDenialException;
 import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
+import ru.softplat.main.server.mapper.StatsMapper;
 import ru.softplat.main.server.message.ExceptionMessage;
+import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.product.Category;
 import ru.softplat.main.server.model.product.Product;
@@ -19,9 +21,11 @@ import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.model.seller.Seller;
 import ru.softplat.main.server.model.vendor.Vendor;
 import ru.softplat.main.server.repository.product.ProductRepository;
+import ru.softplat.main.server.service.buyer.BuyerService;
 import ru.softplat.main.server.service.image.ImageService;
 import ru.softplat.main.server.service.seller.SellerService;
 import ru.softplat.main.server.service.vendor.VendorService;
+import ru.softplat.stats.client.StatsClient;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +41,9 @@ public class ProductService {
     private final CategoryService categoryService;
     private final VendorService vendorService;
     private final ImageService imageService;
+    private final BuyerService buyerService;
+    private final StatsClient statsClient;
+    private final StatsMapper statsMapper;
 
     public Product create(long sellerId, Product product, Long categoryId, Long vendorId) {
         if (product.getInstallation() != null && product.getInstallation()
@@ -242,7 +249,7 @@ public class ProductService {
     }
 
     public void updateProductComplaintCountOnCreate(long productId) {
-        Product product = getProductByIdForComplaint(productId);
+        Product product = getProductOrThrowException(productId);
 
         if (product.getComplaintCount() == null) product.setComplaintCount(1);
         else product.setComplaintCount(product.getComplaintCount() + 1);
@@ -255,7 +262,7 @@ public class ProductService {
     }
 
     public void updateProductComplaintCountOnDelete(long productId) {
-        Product product = getProductByIdForComplaint(productId);
+        Product product = getProductOrThrowException(productId);
 
         if (product.getComplaintCount() == null || product.getComplaintCount() == 0) {
             throw new WrongConditionException(ExceptionMessage.WRONG_CONDITION_EXCEPTION.label);
@@ -268,11 +275,11 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    @Transactional(readOnly = true)
-    public Product getProductByIdForComplaint(long productId) {
-        return productRepository.findById(productId).orElseThrow(
-                () -> new EntityNotFoundException(
-                        ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class))
-        );
+    public void downloadDemo(long userId, long productId) {
+        Product product = getAvailableProduct(productId);
+        if (!product.getHasDemo()) throw new WrongConditionException("Скачивание демо не предусмотрено");
+        Buyer buyer = buyerService.getBuyer(userId);
+
+        statsClient.addDemoStats(statsMapper.mapToDemoDto(buyer, product));
     }
 }

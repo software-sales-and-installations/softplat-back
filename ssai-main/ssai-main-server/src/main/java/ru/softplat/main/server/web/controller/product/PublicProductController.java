@@ -27,8 +27,10 @@ public class PublicProductController {
     @PostMapping(path = "/search")
     public ProductsListResponseDto searchProducts(
             @RequestBody(required = false) ProductsSearchRequestDto productsSearchRequestDto,
-            @RequestParam int minId, @RequestParam int pageSize, @RequestParam SortBy sort) {
-        ProductList productList = productService.getProductsByFilter(productsSearchRequestDto, minId, pageSize, sort);
+            @RequestParam(name = "pageFrom", defaultValue = "0") int pageFrom,
+            @RequestParam(name = "pageSize", defaultValue = "20") int pageSize,
+            @RequestParam SortBy sort) {
+        ProductList productList = productService.getProductsByFilter(productsSearchRequestDto, pageFrom, pageSize, sort);
         return productMapper.toProductsListResponseDto(productList);
     }
 

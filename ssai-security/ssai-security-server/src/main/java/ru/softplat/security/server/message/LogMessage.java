@@ -52,8 +52,9 @@ public enum LogMessage {
     TRY_BUYER_GET_RECOMMENDATIONS("Попытка получения рекомендаций по id покупателя: {}"),
     TRY_GET_All_BUYERS("Попытка получения всех покупателей"),
     TRY_GET_STATS_SELLER_ADMIN("Попытка получения статистики по продавцам админом"),
-    TRY_GET_STATS_PRODUCT_ADMIN("Попытка получения статистики по продукту админом"),
     TRY_GET_STATS_PRODUCT_SELLER("Попытка получения статистики по продукту продавцом"),
+    TRY_GET_STATS_SELLER_ADMIN_FILE("Попытка выгрузки в файл статистики по продавцам админом"),
+    TRY_GET_STATS_PRODUCT_SELLER_FILE("Попытка выгрузки в файл статистики по продукту продавцом"),
     TRY_CREATE_COMMENT("Попытка опубликовать комментарий к товару покупателем: {}"),
     TRY_UPDATE_COMMENT("Попытка обновления комментария к товару покупателем: {}"),
     TRY_DELETE_COMMENT_BUYER("Попытка удаления комментария к товару покупателем"),
@@ -72,7 +73,8 @@ public enum LogMessage {
     TRY_GET_PRODUCT_COMPLAINTS("Попытка получения всех жалоб по продукту"),
     TRY_GET_COMPLAINT("Попытка получения жалобы по id {}"),
     TRY_SEND_PRODUCT_ON_MODERATION_BY_ADMIN("Попытка отправить продукт на модерацию админом"),
-    TRY_SAVE_BASKET("Попытка сохранения корзины при авторизации покупателя с id {}");
+    TRY_SAVE_BASKET("Попытка сохранения корзины при авторизации покупателя с id {}"),
+    TRY_SAVE_DEMO("Попытка скачивания демо");
 
     public final String label;
 

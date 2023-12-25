@@ -25,7 +25,9 @@ public class BuyerOrderController {
 
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    public OrderResponseDto addOrder(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody OrderCreateDto orderCreateDto) {
+    public OrderResponseDto addOrder(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestBody OrderCreateDto orderCreateDto) {
         Order response = orderService.createOrder(userId, orderCreateDto.getBasketPositionIds());
         emailService.sendOrderConfirmationEmails(response);
         return orderMapper.orderToOrderDto(response);
@@ -40,7 +42,9 @@ public class BuyerOrderController {
     }
 
     @GetMapping("/{orderId}")
-    public OrderResponseDto getOrder(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long orderId) {
+    public OrderResponseDto getOrder(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @PathVariable Long orderId) {
         Order response = orderService.getOrder(orderId);
         if (!response.getBuyer().getId().equals(userId))
             throw new WrongConditionException("Ошибка при выполнении запроса. Попробуйте ввести корректный orderId");

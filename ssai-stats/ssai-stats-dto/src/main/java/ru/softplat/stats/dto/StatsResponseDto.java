@@ -1,4 +1,4 @@
-package ru.softplat.stats.server.dto;
+package ru.softplat.stats.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -11,7 +11,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
 public class StatsResponseDto {
-
-    List<SellerReportEntry> sellerReportEntryList;
+    List<ReportEntryDto> reportEntryDtoList;
     Float sumRevenue;
+    Float profit;
 }

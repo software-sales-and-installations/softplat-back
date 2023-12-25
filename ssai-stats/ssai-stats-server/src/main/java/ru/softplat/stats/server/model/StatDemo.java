@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -12,34 +11,16 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "statistic_product")
-public class Stats {
-
+@Table(name = "statistic_demo")
+public class StatDemo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     Long id;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "buyer_id")
     StatBuyer buyer;
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "product_id")
     StatProduct product;
-
-    @Column(name = "date_buy")
-    LocalDate dateBuy;
-
-    @Column(name = "quantity")
     Integer quantity;
-
-    @Column(name = "profit")
-    Double profit;
-
-    @Column(name = "profit_seller")
-    Double profitSeller;
-
-    @Column(name = "profit_admin")
-    Double profitAdmin;
 }
