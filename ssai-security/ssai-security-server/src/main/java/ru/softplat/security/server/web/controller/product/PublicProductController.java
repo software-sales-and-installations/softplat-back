@@ -39,11 +39,11 @@ public class PublicProductController {
     @GetMapping(path = "/search", produces = "application/json")
     public ResponseEntity<Object> searchProducts(
             @RequestBody(required = false) @Valid ProductsSearchRequestDto productsSearchRequestDto,
-            @RequestParam(name = "minId", defaultValue = "0") @Min(0) int minId,
+            @RequestParam(name = "pageFrom", defaultValue = "0") @Min(0) int pageFrom,
             @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize,
             @RequestParam(name = "sort", defaultValue = "NEWEST") SortBy sort) {
         log.debug(LogMessage.TRY_GET_PRODUCTS_FILTER.label);
-        return productClient.searchProducts(productsSearchRequestDto, minId, pageSize, sort);
+        return productClient.searchProducts(productsSearchRequestDto, pageFrom, pageSize, sort);
     }
 
     @ApiResponses(value = {@ApiResponse(code = 200, message = "OK", response = ProductsListResponseDto.class)})

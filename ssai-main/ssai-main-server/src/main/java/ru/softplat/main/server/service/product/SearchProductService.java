@@ -41,7 +41,11 @@ public class SearchProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductList getProductsByFilter(ProductsSearchRequestDto productsSearchRequestDto, int from, int size, SortBy sort) {
+    public ProductList getProductsByFilter(
+            ProductsSearchRequestDto productsSearchRequestDto,
+            int from,
+            int size,
+            SortBy sort) {
         Sort sortBy = getSort(sort);
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
 

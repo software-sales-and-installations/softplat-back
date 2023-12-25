@@ -5,10 +5,8 @@ import lombok.experimental.FieldDefaults;
 import ru.softplat.stats.dto.create.StatBuyerDto;
 import ru.softplat.stats.dto.create.StatProductDto;
 
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@Getter
-@Setter
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StatsDemoDto {

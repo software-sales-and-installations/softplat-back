@@ -11,6 +11,8 @@ import ru.softplat.main.server.model.product.Product;
 import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.product.SearchProductService;
 
+import javax.validation.constraints.Min;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/product")
@@ -27,8 +29,10 @@ public class PublicProductController {
     @PostMapping(path = "/search")
     public ProductsListResponseDto searchProducts(
             @RequestBody(required = false) ProductsSearchRequestDto productsSearchRequestDto,
-            @RequestParam int minId, @RequestParam int pageSize, @RequestParam SortBy sort) {
-        ProductList productList = productService.getProductsByFilter(productsSearchRequestDto, minId, pageSize, sort);
+            @RequestParam(name = "pageFrom", defaultValue = "0") @Min(0) int pageFrom,
+            @RequestParam(name = "pageSize", defaultValue = "20") @Min(1) int pageSize,
+            @RequestParam SortBy sort) {
+        ProductList productList = productService.getProductsByFilter(productsSearchRequestDto, pageFrom, pageSize, sort);
         return productMapper.toProductsListResponseDto(productList);
     }
 
