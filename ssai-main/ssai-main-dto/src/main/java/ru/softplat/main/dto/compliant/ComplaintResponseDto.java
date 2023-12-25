@@ -25,4 +25,5 @@ public class ComplaintResponseDto {
     LocalDateTime createdAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     ComplaintStatus complaintStatus;
+    String adminComment;
 }
