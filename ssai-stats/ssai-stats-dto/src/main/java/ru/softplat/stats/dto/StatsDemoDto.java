@@ -6,6 +6,7 @@ import ru.softplat.stats.dto.create.StatBuyerDto;
 import ru.softplat.stats.dto.create.StatProductDto;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
