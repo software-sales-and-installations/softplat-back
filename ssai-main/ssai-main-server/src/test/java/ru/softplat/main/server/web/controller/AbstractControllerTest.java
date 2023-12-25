@@ -56,6 +56,7 @@ public abstract class AbstractControllerTest {
     @SneakyThrows
     public ProductResponseDto createProduct(ProductCreateUpdateDto productCreateUpdateDto) {
         MvcResult result = mockMvc.perform(post("/product")
+                        .header("X-Sharer-User-Id", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(productCreateUpdateDto)))
                 .andExpect(status().isCreated())
@@ -69,6 +70,7 @@ public abstract class AbstractControllerTest {
     @SneakyThrows
     public BuyerResponseDto getBuyerResponseDto(long userId) {
         MvcResult result = mockMvc.perform(get("/buyer/{userId}", userId)
+                        .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -133,7 +135,7 @@ public abstract class AbstractControllerTest {
     public ProductResponseDto updateProductStatusBySeller(long productId) {
         MvcResult result = mockMvc.perform(patch("/product/{productId}/send", productId)
                         .characterEncoding(StandardCharsets.UTF_8)
-                        .param("status", ProductStatus.SHIPPED.toString())
+                        .header("X-Sharer-User-Id", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -187,6 +189,7 @@ public abstract class AbstractControllerTest {
     @SneakyThrows
     public OrderResponseDto addOrder(OrderCreateDto orderCreateDto) {
         MvcResult result = mockMvc.perform(post("/orders")
+                        .header("X-Sharer-User-Id", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderCreateDto)))
                 .andExpect(status().isCreated())
@@ -199,7 +202,8 @@ public abstract class AbstractControllerTest {
 
     @SneakyThrows
     public OrderResponseDto getOrder(long orderId) {
-        MvcResult result = mockMvc.perform(get("/orders/{orderId}", orderId))
+        MvcResult result = mockMvc.perform(get("/orders/{orderId}", orderId)
+                        .header("X-Sharer-User-Id", 1L))
                 .andExpect(status().isOk())
                 .andReturn();
 

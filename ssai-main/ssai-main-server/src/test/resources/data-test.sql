@@ -27,7 +27,7 @@ values (TIMESTAMP '2023-12-05 12:00:00', 1, 1),
        (TIMESTAMP '2023-12-05 10:00:00', 1, 3);
 
 insert into order_position(order_id, product_id, quantity, amount)
-values (1, 1, 1, 1),
+values (1, 1, 2, 1),
        (2, 1, 1, 1),
        (3, 1, 1, 1),
        (3, 2, 1, 1),

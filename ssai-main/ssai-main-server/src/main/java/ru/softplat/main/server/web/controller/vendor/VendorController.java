@@ -29,6 +29,7 @@ public class VendorController {
     private final ImageMapper imageMapper;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public VendorResponseDto createVendor(@RequestBody VendorCreateUpdateDto vendorCreateUpdateDto) {
         log.debug(LogMessage.TRY_ADMIN_ADD_VENDOR.label);
         Vendor vendor = service.createVendor(vendorCreateUpdateDto);
