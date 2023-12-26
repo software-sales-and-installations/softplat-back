@@ -9,12 +9,15 @@ RESTful API имеет многомодульную архитектуру:
 
 ## ER diagram
 Security:
+
 ![SCHEME](https://github.com/software-sales-and-installations/softplat-back/blob/dev-microservices/er-diagram-db/softplat-security.jpg)
 
 Main:
+
 ![SCHEME](https://github.com/software-sales-and-installations/softplat-back/blob/dev-microservices/er-diagram-db/softplat-main.jpg)
 
 Stats:
+
 ![SCHEME](https://github.com/software-sales-and-installations/softplat-back/blob/dev-microservices/er-diagram-db/softplat-stats.jpg)
 
 ## Пример взаимодействия с БД
