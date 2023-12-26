@@ -25,7 +25,7 @@ public class ProductResponseDto {
     LocalDateTime productionTime;
     ImageResponseDto image;
     CategoryResponseDto category;
-    License license;
+    Boolean hasDemo;
     VendorResponseDto vendor;
     SellerResponseDto seller;
     Float price;
@@ -34,4 +34,7 @@ public class ProductResponseDto {
     ProductStatus productStatus;
     Boolean productAvailability;
     Float installationPrice;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "#.#")
+    Float rating;
+    Integer complaintCount;
 }

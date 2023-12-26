@@ -3,6 +3,7 @@ package ru.softplat.main.server.web.controller.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.softplat.main.dto.product.ProductsListResponseDto;
 import ru.softplat.main.dto.user.BuyerUpdateDto;
 import ru.softplat.main.dto.user.response.BuyerResponseDto;
 import ru.softplat.main.dto.user.response.BuyersListResponseDto;
@@ -10,8 +11,10 @@ import ru.softplat.main.dto.user.response.FavoriteResponseDto;
 import ru.softplat.main.dto.user.response.FavouritesListResponseDto;
 import ru.softplat.main.server.mapper.BuyerMapper;
 import ru.softplat.main.server.mapper.FavoriteMapper;
+import ru.softplat.main.server.mapper.ProductMapper;
 import ru.softplat.main.server.model.buyer.Buyer;
 import ru.softplat.main.server.model.buyer.Favorite;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.service.buyer.BuyerFavoriteService;
 import ru.softplat.main.server.service.buyer.BuyerService;
 import ru.softplat.security.dto.UserCreateMainDto;
@@ -27,6 +30,7 @@ public class BuyerController {
     private final BuyerFavoriteService favoriteService;
     private final BuyerMapper buyerMapper;
     private final FavoriteMapper favoriteMapper;
+    private final ProductMapper productMapper;
 
     @PostMapping
     public BuyerResponseDto createBuyer(@RequestBody UserCreateMainDto userCreateMainDto) {
@@ -56,6 +60,12 @@ public class BuyerController {
         return buyerMapper.buyerToBuyerResponseDto(response);
     }
 
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteBuyer(@PathVariable long userId) {
+        buyerService.deleteBuyer(userId);
+    }
+
     @PostMapping("/favorites/{productId}")
     @ResponseStatus(value = HttpStatus.CREATED)
     public FavoriteResponseDto createFavorite(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable Long productId) {
@@ -77,5 +87,15 @@ public class BuyerController {
                 .map(favoriteMapper::toFavouriteDto)
                 .collect(Collectors.toList());
         return favoriteMapper.toFavouritesListResponseDto(response);
+    }
+
+    @GetMapping("/recommendations")
+    public ProductsListResponseDto getProductRecommendations(
+            @RequestHeader("X-Sharer-User-Id") long userId,
+            @RequestParam(name = "minId", defaultValue = "0") int minId,
+            @RequestParam(name = "pageSize", defaultValue = "5") int pageSize
+    ) {
+        ProductList productList = favoriteService.getRecommendations(userId, minId, pageSize);
+        return productMapper.toProductsListResponseDto(productList);
     }
 }

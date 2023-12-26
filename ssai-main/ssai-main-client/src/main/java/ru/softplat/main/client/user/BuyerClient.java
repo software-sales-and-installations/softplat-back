@@ -45,6 +45,10 @@ public class BuyerClient extends BaseClient {
         return patch("", userId, buyerUpdateDto);
     }
 
+    public void deleteBuyer(long userId) {
+        delete("/" + userId);
+    }
+
     public ResponseEntity<Object> createFavourite(long userId, long productId) {
         return post("/favorites/" + productId, userId, null);
     }
@@ -54,6 +58,14 @@ public class BuyerClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getFavourites(long userId) {
-        return delete("/favorites", userId);
+        return get("/favorites", userId);
+    }
+
+    public ResponseEntity<Object> getRecommendations(long userId, int minId, int pageSize) {
+        Map<String, Object> parameters = Map.of(
+                "minId", minId,
+                "pageSize", pageSize
+        );
+        return get("/recommendations?minId={minId}&pageSize={pageSize}", userId, parameters);
     }
 }

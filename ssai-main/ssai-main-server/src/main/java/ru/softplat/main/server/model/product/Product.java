@@ -4,7 +4,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.Cascade;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.softplat.main.dto.product.License;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.seller.Seller;
@@ -49,9 +48,8 @@ public class Product {
     @JoinColumn(name = "category_id")
     Category category;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "license")
-    License license;
+    @Column(name = "has_demo")
+    Boolean hasDemo;
 
     @OneToOne
     @JoinColumn(name = "vendor_id")
@@ -79,4 +77,10 @@ public class Product {
 
     @Column(name = "installation_price")
     Float installationPrice;
+
+    @Column(name = "average_rating")
+    Float rating;
+
+    @Column(name = "complaint_count")
+    Integer complaintCount;
 }

@@ -1,117 +1,145 @@
 package ru.softplat.stats.server.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.softplat.stats.server.repository.StatsRepository;
-import ru.softplat.stats.server.dto.SellerReportEntry;
-import ru.softplat.stats.dto.StatsFilterAdmin;
-import ru.softplat.stats.dto.StatsFilterSeller;
-import ru.softplat.stats.server.model.SellerReport;
+import ru.softplat.stats.dto.ReportEntryDto;
 import ru.softplat.stats.dto.SortEnum;
+import ru.softplat.stats.dto.StatsFilter;
+import ru.softplat.stats.server.mapper.ReportEntryMapper;
+import ru.softplat.stats.server.mapper.StatsMapper;
+import ru.softplat.stats.server.model.Report;
+import ru.softplat.stats.server.model.ReportEntry;
+import ru.softplat.stats.server.model.StatDemo;
 import ru.softplat.stats.server.model.Stats;
+import ru.softplat.stats.server.repository.StatDemoRepository;
+import ru.softplat.stats.server.repository.StatsRepository;
+import ru.softplat.stats.server.util.ApachePOI;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class StatsService {
 
     private final StatsRepository statsRepository;
-    private static final Float COMMISSIONS = 0.9F;
+    private final StatDemoRepository demoRepository;
+    private final StatBuyerService statBuyerService;
+    private final StatProductService statProductService;
+    private final StatsMapper statsMapper;
+    private final ReportEntryMapper reportEntryMapper;
+    private final ApachePOI apachePOI;
 
     @Transactional(readOnly = true)
-    public SellerReport getSellerReportAdmin(
-            StatsFilterAdmin statsFilterAdmin,
-            SortEnum sort) {
-        List<SellerReportEntry> statsPage = getReportForAdminSellersList(statsFilterAdmin);
-        return getSellerReport(sort, statsPage);
+    public Report getSellerReportAdmin(StatsFilter filter, SortEnum sort) {
+        List<ReportEntry> statsPage = getStatPage(filter, sort);
+        return getReportAdmin(statsPage);
     }
 
     @Transactional(readOnly = true)
-    public SellerReport getProductReportAdmin(
-            StatsFilterSeller statsFilterSeller,
-            SortEnum sort) {
-        List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, null);
-        return getSellerReport(sort, statsPage);
+    public Report getProductReportSeller(StatsFilter filter, SortEnum sort) {
+        List<ReportEntry> statsPage = getStatPage(filter, sort);
+        return getReportSeller(statsPage);
     }
 
-    @Transactional(readOnly = true)
-    public SellerReport getProductsReportSeller(
-            Long sellerId,
-            StatsFilterSeller statsFilterSeller,
-            SortEnum sort) {
-        List<SellerReportEntry> statsPage = getReportSellerList(statsFilterSeller, sellerId);
-        return getSellerReport(sort, statsPage);
-    }
-
-    private static SellerReport getSellerReport(SortEnum sort, List<SellerReportEntry> statsPage) {
-        List<SellerReportEntry> sellerReportEntryList = statsPage
+    private Report getReportAdmin(List<ReportEntry> statsPage) {
+        List<ReportEntryDto> reportEntryList = statsPage
                 .stream()
-                .sorted((o1, o2) -> {
-                    if (SortEnum.POPULAR.equals(sort)) {
-                        return Long.compare(o2.getQuantity(), o1.getQuantity());
-                    } else {
-                        return Double.compare(o2.getRevenue(), o1.getRevenue());
-                    }
-                })
+                .map(reportEntryMapper::reportEntryToAdminDto)
                 .collect(Collectors.toList());
 
-        return new SellerReport(
-                sellerReportEntryList,
-                sellerReportEntryList.stream()
-                        .map(SellerReportEntry::getRevenue)
-                        .reduce(0D, Double::sum));
+        return statsMapper.listEntriesToReport(reportEntryList);
     }
 
-    private List<SellerReportEntry> getReportForAdminSellersList(StatsFilterAdmin statsFilterAdmin) {
-        if (statsFilterAdmin.getStart() == null) {
-            statsFilterAdmin.setStart(LocalDateTime.now().minusMonths(3).withHour(0).withMinute(0).withSecond(0));
-        }
-        if (statsFilterAdmin.getEnd() == null) {
-            statsFilterAdmin.setEnd(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-        }
-        List<SellerReportEntry> statsPage;
-        if (statsFilterAdmin.getSellerIds() != null) {
-            statsPage = statsRepository.getStatsByProduct(
-                    statsFilterAdmin.getSellerIds(),
-                    statsFilterAdmin.getStart(),
-                    statsFilterAdmin.getEnd());
-        } else {
-            statsPage = statsRepository.getAllStats(
-                    statsFilterAdmin.getStart(),
-                    statsFilterAdmin.getEnd());
-        }
-        return statsPage;
+    private Report getReportSeller(List<ReportEntry> statsPage) {
+        List<ReportEntryDto> reportEntryList = statsPage
+                .stream()
+                .map(r -> reportEntryMapper.reportEntryToSellerDto(r, countDemo(r.getProductName())))
+                .collect(Collectors.toList());//TODO почему-то не показывает больше 1 демо
+
+        return statsMapper.listEntriesToReport(reportEntryList);
     }
 
-    private List<SellerReportEntry> getReportSellerList(StatsFilterSeller statsFilterSeller, Long sellerId) {
-        if (statsFilterSeller.getStart() == null) {
-            statsFilterSeller.setStart(LocalDateTime.now().minusMonths(3).withHour(0).withMinute(0).withSecond(0));
-        }
-        if (statsFilterSeller.getEnd() == null) {
-            statsFilterSeller.setEnd(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0));
-        }
-        List<SellerReportEntry> allStats;
-        if (sellerId == null) {
-            allStats = statsRepository.getAllStats(
-                    statsFilterSeller.getStart(),
-                    statsFilterSeller.getEnd());
+    private List<ReportEntry> getStatPage(StatsFilter statsFilter, SortEnum sort) {
+        if (statsFilter.getSellerIds() != null) {
+            switch (sort) {
+                case POPULAR:
+                    return statsRepository.getStatsBySellerIdsOrderByQuantity(
+                            statsFilter.getSellerIds(),
+                            statsFilter.getStart(),
+                            statsFilter.getEnd());
+                case PRICE:
+                    return statsRepository.getStatsBySellerIdsOrderByPrice(
+                            statsFilter.getSellerIds(),
+                            statsFilter.getStart(),
+                            statsFilter.getEnd());
+            }
         } else {
-            allStats = statsRepository.getStatsByProduct(
-                    Collections.singletonList(sellerId),
-                    statsFilterSeller.getStart(),
-                    statsFilterSeller.getEnd());
+            switch (sort) {
+                case POPULAR:
+                    return statsRepository.getAllStatsOrderByQuantity(
+                            statsFilter.getStart(),
+                            statsFilter.getEnd());
+                case PRICE:
+                    return statsRepository.getAllStatsOrderByPrice(
+                            statsFilter.getStart(),
+                            statsFilter.getEnd());
+            }
         }
-        return allStats;
+        throw new NullPointerException("Некорректные данные для отчета");
     }
 
     public void createStats(Stats stats) {
-        stats.setAmount(COMMISSIONS * stats.getAmount());
-        statsRepository.save(stats); //TODO настроить сохранение с учетом новых сущностей
+        statBuyerService.createStatBuyer(stats.getBuyer());
+        statProductService.createStatProduct(stats.getProduct());
+        statsRepository.save(stats);
+    }
+
+    public boolean saveAdminFile(StatsFilter filter, SortEnum sort) throws IOException {
+        List<ReportEntry> statsPage = getStatPage(filter, sort);
+        Report reportAdmin = getReportAdmin(statsPage);
+        if (reportAdmin != null) {
+            apachePOI.createFileAdmin(reportAdmin);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean saveSellerFile(StatsFilter filter, SortEnum sort) throws IOException {
+        List<ReportEntry> statsPage = getStatPage(filter, sort);
+        Report reportSeller = getReportSeller(statsPage);
+        if (reportSeller != null) {
+            apachePOI.createFileSeller(reportSeller);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void downloadDemo(StatDemo statDemo) {
+        Optional<StatDemo> savedDemo = demoRepository.findByBuyerNameAndProductNameAndProductSellerName(
+                statDemo.getBuyer().getName(),
+                statDemo.getProduct().getName(),
+                statDemo.getProduct().getSeller().getName());
+        if (savedDemo.isEmpty()) {
+            statDemo.setQuantity(1);
+            statBuyerService.createStatBuyer(statDemo.getBuyer());
+            statProductService.createStatProduct(statDemo.getProduct());
+            demoRepository.save(statDemo);
+        } else {
+            savedDemo.get().setQuantity(savedDemo.get().getQuantity() + 1);
+            demoRepository.save(savedDemo.get());
+        }
+    }
+
+    private int countDemo(String productName) {
+        return demoRepository.countAllByProductName(productName);
     }
 }

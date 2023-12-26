@@ -16,11 +16,11 @@ import ru.softplat.main.server.configuration.PageRequestOverride;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.product.Product;
+import ru.softplat.main.server.model.product.ProductList;
 import ru.softplat.main.server.model.product.QProduct;
 import ru.softplat.main.server.repository.product.ProductRepository;
 import ru.softplat.main.server.util.QPredicates;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -41,10 +41,12 @@ public class SearchProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<Product> getProductsByFilter(ProductsSearchRequestDto productsSearchRequestDto, int from, int size, SortBy sort) {
-        Sort sortBy = (sort.equals(SortBy.NEWEST)) ?
-                Sort.by("productionTime").descending() : Sort.by("price").ascending();
-
+    public ProductList getProductsByFilter(
+            ProductsSearchRequestDto productsSearchRequestDto,
+            int from,
+            int size,
+            SortBy sort) {
+        Sort sortBy = getSort(sort);
         PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
 
         QProduct product = QProduct.product;
@@ -58,6 +60,7 @@ public class SearchProductService {
 
         Predicate predicate;
         Page<Product> products;
+        long count;
 
         if (productsSearchRequestDto != null) {
             predicate = QPredicates.builder()
@@ -69,14 +72,60 @@ public class SearchProductService {
                     .add(productsSearchRequestDto.getPriceMin(), product.price::goe)
                     .add(productsSearchRequestDto.getPriceMax(), product.price::loe)
                     .add(productsSearchRequestDto.getCountries(), product.vendor.country::in)
-                    .add(productsSearchRequestDto.getLicenses(), product.license::in)
                     .buildAnd();
 
             products = productRepository.findAll(predicate, pageRequest);
+            count = productRepository.count(predicate);
         } else {
-            products = productRepository.findAll(pageRequest);
+            predicate = QPredicates.builder().add(statusPublishedExpression).buildAnd();
+            products = productRepository.findAll(predicate, pageRequest);
+            count = productRepository.count(predicate);
         }
+        return ProductList.builder()
+                .products(products.getContent())
+                .count(count)
+                .build();
+    }
 
-        return new ArrayList<>(products.getContent());
+    @Transactional(readOnly = true)
+    public ProductList getSimilarProducts(long productId, int from, int size) {
+        Sort sortBy = Sort.by("productionTime").descending();
+        PageRequest pageRequest = PageRequestOverride.of(from, size, sortBy);
+
+        Product product = getProductById(productId);
+        QProduct qProduct = QProduct.product;
+        BooleanExpression statusPublishedExpression = qProduct.productStatus.eq(ProductStatus.PUBLISHED);
+
+        Predicate predicate = QPredicates.builder()
+                .add(statusPublishedExpression)
+                .add(productId, qProduct.id::ne)
+                .add(QPredicates.builder()
+                        .add(product.getVendor().getId(), qProduct.vendor.id::eq)
+                        .add(product.getCategory().getId(), qProduct.category.id::eq)
+                        .buildOr())
+                .buildAnd();
+
+        Page<Product> products = productRepository.findAll(predicate, pageRequest);
+
+        return ProductList.builder()
+                .products(products.getContent())
+                .count(productRepository.count(predicate))
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Product> getProductsByIds(List<Long> productIds) {
+        return productRepository.findAllById(productIds);
+    }
+
+    private Sort getSort(SortBy sort) {
+        switch (sort) {
+            case PRICE:
+                return Sort.by("price").ascending();
+            case RATING:
+                return Sort.by("rating").descending();
+            default:
+                return Sort.by("productionTime").descending();
+        }
     }
 }

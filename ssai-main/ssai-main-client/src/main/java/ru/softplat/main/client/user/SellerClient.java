@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
 import ru.softplat.security.dto.UserCreateMainDto;
@@ -47,6 +47,10 @@ public class SellerClient extends BaseClient {
         return patch("", userId, sellerUpdateDto);
     }
 
+    public void deleteSeller(long userId) {
+        delete("/" + userId);
+    }
+
     public ResponseEntity<Object> getRequisitesAdmin(long userId) {
         return get("/bank/" + userId);
     }
@@ -59,11 +63,15 @@ public class SellerClient extends BaseClient {
         delete("/bank", userId);
     }
 
+    public ResponseEntity<Object> addRequisites(long userId, BankRequisitesCreateUpdateDto requisites) {
+        return post("/bank", userId, requisites);
+    }
+
     public ResponseEntity<Object> updateRequisites(long userId, BankRequisitesCreateUpdateDto requisites) {
         return patch("/bank", userId, requisites);
     }
 
-    public ResponseEntity<Object> addSellerImage(long userId, MultipartFile image) {
+    public ResponseEntity<Object> addSellerImage(long userId, ImageCreateDto image) {
         return post("/account/image", userId, image);
     }
 

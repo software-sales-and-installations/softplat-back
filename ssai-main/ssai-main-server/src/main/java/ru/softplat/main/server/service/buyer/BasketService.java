@@ -38,7 +38,7 @@ public class BasketService {
         List<BasketPosition> productsInBasket = basket.getProductsInBasket();
 
         Optional<BasketPosition> optionalBasketPosition
-                = getOptionalBasketPosition(productsInBasket, productId, installation);
+                = getOptionalBasketPosition(basket.getId(), productId, installation);
 
         BasketPosition basketPosition;
         if (optionalBasketPosition.isPresent()) {
@@ -89,31 +89,27 @@ public class BasketService {
         }
     }
 
-    private Optional<BasketPosition> getOptionalBasketPosition(List<BasketPosition> productsInBasket,
+    private Optional<BasketPosition> getOptionalBasketPosition(Long basketId,
                                                                Long productId,
                                                                Boolean installation) {
-        return productsInBasket.stream()
-                .filter(bp -> Objects.equals(bp.getProduct().getId(), productId))
-                .filter(bp -> Objects.equals(bp.getInstallation(), installation))
-                .findFirst();
+        return basketPositionRepository.findByBasketIdAndProductIdAndInstallation(basketId, productId, installation);
     }
 
     public Basket removeProduct(Long buyerId, Long productId, Boolean installation) {
-        Basket basket = getOrCreateBasket(buyerId);
+        Basket basket = getBasketOrThrowException(buyerId);
         Optional<BasketPosition> optionalBasketPosition
-                = getOptionalBasketPosition(basket.getProductsInBasket(), productId, installation);
+                = getOptionalBasketPosition(basket.getId(), productId, installation);
 
-        if (optionalBasketPosition.isPresent()) {
-            BasketPosition productInBasket = optionalBasketPosition.get();
-            if (productInBasket.getQuantity() == 1) {
-                basketPositionRepository.deleteById(productInBasket.getId());
-                return getBasketOrThrowException(buyerId);
-            } else {
-                for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
-                    if (Objects.equals(basket.getProductsInBasket().get(i).getId(), productInBasket.getId())) {
-                        basket.getProductsInBasket().get(i).setQuantity(productInBasket.getQuantity() - 1);
-                        return basketRepository.save(basket);
-                    }
+        BasketPosition productInBasket = optionalBasketPosition.orElseThrow(() -> new EntityNotFoundException(
+                ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(productId, Product.class)));
+        if (productInBasket.getQuantity() == 1) {
+            removeBasketPosition(productInBasket.getId());
+            return getBasketOrThrowException(buyerId);
+        } else {
+            for (int i = 0; i < basket.getProductsInBasket().size(); i++) {
+                if (Objects.equals(basket.getProductsInBasket().get(i).getId(), productInBasket.getId())) {
+                    basket.getProductsInBasket().get(i).setQuantity(productInBasket.getQuantity() - 1);
+                    return basketRepository.save(basket);
                 }
             }
         }
@@ -141,5 +137,47 @@ public class BasketService {
 
     public void removeBasketPosition(long basketPositionId) {
         basketPositionRepository.deleteById(basketPositionId);
+    }
+
+    public Basket removePositionFromBasket(long userId, long basketPositionId) {
+        basketPositionRepository.findById(basketPositionId).orElseThrow(() -> new EntityNotFoundException(
+                ExceptionMessage.ENTITY_NOT_FOUND_EXCEPTION.getMessage(basketPositionId, BasketPosition.class)
+        ));
+        removeBasketPosition(basketPositionId);
+        return getBasketOrThrowException(userId);
+    }
+
+    public void clearBasket(long userId) {
+        Basket basket = getBasketOrThrowException(userId);
+        if (basket.getProductsInBasket() == null || basket.getProductsInBasket().size() == 0)
+            throw new WrongConditionException("Корзина уже пуста");
+        basket.getProductsInBasket()
+                .forEach(p -> basketPositionRepository.deleteById(p.getId()));
+    }
+
+    public Basket saveBasket(long userId, List<BasketPosition> basketPositions) {
+        Basket basket = getOrCreateBasket(userId);
+        if (basket.getProductsInBasket() == null || basket.getProductsInBasket().size() == 0) {
+            for (BasketPosition basketPosition : basketPositions) {
+                basketPosition.setBasketId(basket.getId());
+                basket.getProductsInBasket().add(basketPosition);
+                basketPositionRepository.save(basketPosition);
+            }
+        } else {
+            for (BasketPosition basketPosition : basketPositions) {
+                Optional<BasketPosition> oldPosition = getOptionalBasketPosition(basket.getId(),
+                        basketPosition.getProduct().getId(), basketPosition.getInstallation());
+                if (oldPosition.isEmpty()) {
+                    basketPosition.setBasketId(basket.getId());
+                    basket.getProductsInBasket().add(basketPosition);
+                    basketPositionRepository.save(basketPosition);
+                } else {
+                    oldPosition.get().setQuantity(oldPosition.get().getQuantity() + basketPosition.getQuantity());
+                    updateBasketPosition(basket.getProductsInBasket(), oldPosition.get());
+                    basketPositionRepository.save(oldPosition.get());
+                }
+            }
+        }
+        return basketRepository.save(basket);
     }
 }

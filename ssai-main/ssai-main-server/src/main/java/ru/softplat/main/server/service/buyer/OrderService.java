@@ -1,19 +1,23 @@
 package ru.softplat.main.server.service.buyer;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.dto.product.ProductStatus;
 import ru.softplat.main.server.configuration.PageRequestOverride;
+import ru.softplat.main.server.exception.AccessDenialException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.exception.WrongConditionException;
 import ru.softplat.main.server.mapper.OrderPositionMapper;
+import ru.softplat.main.server.mapper.StatsMapper;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.buyer.*;
 import ru.softplat.main.server.repository.buyer.OrderPositionRepository;
 import ru.softplat.main.server.repository.buyer.OrderRepository;
 import ru.softplat.main.server.service.product.ProductService;
 import ru.softplat.stats.client.StatsClient;
+import ru.softplat.stats.dto.create.StatsCreateDto;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,9 +32,15 @@ public class OrderService {
     private final BuyerService buyerService;
     private final BasketService basketService;
     private final OrderPositionRepository orderPositionRepository;
-    private final OrderPositionMapper mapper;
+    private final OrderPositionMapper orderPositionMapper;
     private final ProductService productService;
     private final StatsClient statClient;
+    private final StatsMapper statsMapper;
+
+    @Value("${main.commissionAdmin}")
+    private Double commissionAdmin;
+    @Value("${main.commissionSeller}")
+    private Double commissionSeller;
 
     public Order createOrder(long userId, List<Long> basketPositionIds) {
         Order order = createNewEmptyOrder(userId);
@@ -48,7 +58,7 @@ public class OrderService {
                 BasketPosition positionInBasket = basket.getProductsInBasket().get(i);
                 if (Objects.equals(positionInBasket.getId(), productBasketId)) {
                     checkIfAvailable(positionInBasket);
-                    OrderPosition orderPosition = mapper.basketPositionToOrderPosition(positionInBasket);
+                    OrderPosition orderPosition = orderPositionMapper.basketPositionToOrderPosition(positionInBasket);
                     orderPosition.setProductCost(countCost(orderPosition));
                     wholePrice += orderPosition.getProductCost() * orderPosition.getQuantity();
                     orderPosition.setOrderId(order.getId());
@@ -112,13 +122,35 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<Order> getAllOrders(long userId) {
         Buyer buyer = buyerService.getBuyer(userId);
-        return orderRepository.findAllByBuyer_Id(buyer.getId(), PageRequestOverride.ofSize(20));
+        return orderRepository.findAllByBuyerId(buyer.getId(), PageRequestOverride.ofSize(20));
     }
 
     private void createStats(Order order) {
         List<OrderPosition> orderPositionList = order.getProductsOrdered();
         for (OrderPosition orderPosition : orderPositionList) {
-            statClient.addStats(mapper.orderPositionToStatDto(orderPosition));
+            double profitSeller = commissionSeller * orderPosition.getProductCost() * orderPosition.getQuantity();
+            double profitAdmin = commissionAdmin * orderPosition.getProductCost() * orderPosition.getQuantity();
+            StatsCreateDto statsCreateDto = statsMapper.orderToStatsCreateDto(
+                    order,
+                    orderPosition,
+                    profitSeller,
+                    profitAdmin);
+            statsCreateDto.setProfit(profitSeller + profitAdmin);
+            statClient.addStats(statsCreateDto);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Order> getOrderByBuyerIdAndProductId(long buyerId, long productId) {
+        return orderRepository.findOrdersByBuyerIdAndProductId(buyerId, productId);
+    }
+
+    @Transactional(readOnly = true)
+    public void checkBuyerAccessRightsToCreateComment(long buyerId, long productId) {
+        List<Order> orders = getOrderByBuyerIdAndProductId(buyerId, productId);
+
+        if (orders.isEmpty()) {
+            throw new AccessDenialException(ExceptionMessage.NO_RIGHTS_COMMENT_EXCEPTION.label);
         }
     }
 }

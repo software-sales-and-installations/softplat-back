@@ -3,13 +3,16 @@ package ru.softplat.main.server.web.controller.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.seller.BankRequisitesCreateUpdateDto;
 import ru.softplat.main.dto.seller.BankRequisitesResponseDto;
 import ru.softplat.main.dto.user.SellerUpdateDto;
 import ru.softplat.main.dto.user.response.SellerResponseDto;
 import ru.softplat.main.dto.user.response.SellersListResponseDto;
+import ru.softplat.main.server.mapper.BankRequisitesMapper;
+import ru.softplat.main.server.mapper.ImageMapper;
 import ru.softplat.main.server.mapper.SellerMapper;
+import ru.softplat.main.server.model.image.Image;
 import ru.softplat.main.server.model.seller.BankRequisites;
 import ru.softplat.main.server.model.seller.Seller;
 import ru.softplat.main.server.service.seller.SellerBankService;
@@ -26,6 +29,8 @@ public class SellerController {
     private final SellerService sellerService;
     private final SellerBankService bankService;
     private final SellerMapper sellerMapper;
+    private final BankRequisitesMapper requisitesMapper;
+    private final ImageMapper imageMapper;
 
     @PostMapping
     public SellerResponseDto addSeller(@RequestBody UserCreateMainDto userCreateMainDto) {
@@ -49,25 +54,46 @@ public class SellerController {
     }
 
     @PatchMapping
-    public SellerResponseDto updateSeller(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody SellerUpdateDto sellerUpdateDto) {
+    public SellerResponseDto updateSeller(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @RequestBody SellerUpdateDto sellerUpdateDto) {
         Seller updateRequest = sellerMapper.sellerDtoToSeller(sellerUpdateDto);
         Seller response = sellerService.updateSeller(userId, updateRequest);
         return sellerMapper.sellerToSellerResponseDto(response);
     }
 
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSeller(@PathVariable long userId) {
+        sellerService.deleteSeller(userId);
+    }
+
     @GetMapping("/bank")
-    public BankRequisitesResponseDto getRequisites(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public BankRequisitesResponseDto getRequisitesSeller(@RequestHeader("X-Sharer-User-Id") Long userId) {
         BankRequisites response = bankService.getRequisites(userId);
-        return sellerMapper.requisitesToDto(response);
-    } //TODO разделить логику админа и продавца
+        return requisitesMapper.requisitesToDto(response);
+    }
+
+    @GetMapping("/bank/{userId}")
+    public BankRequisitesResponseDto getRequisitesAdmin(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        BankRequisites response = bankService.getRequisites(userId);
+        return requisitesMapper.requisitesToDto(response);
+    }
+
+    @PostMapping("/bank")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public BankRequisitesResponseDto addRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
+                                                      @RequestBody BankRequisitesCreateUpdateDto requisites) {
+        BankRequisites response = bankService.addRequisites(userId,
+                requisitesMapper.createUpdateDtoToRequisites(requisites));
+        return requisitesMapper.requisitesToDto(response);
+    }
 
     @PatchMapping("/bank")
-    @ResponseStatus(value = HttpStatus.CREATED)
     public BankRequisitesResponseDto updateRequisites(@RequestHeader("X-Sharer-User-Id") long userId,
                                                       @RequestBody BankRequisitesCreateUpdateDto requisites) {
-        BankRequisites response = bankService.updateRequisites(userId, new BankRequisites(null,
-                requisites.getAccount()));
-        return sellerMapper.requisitesToDto(response);
+        BankRequisites response = bankService.updateRequisites(userId,
+                requisitesMapper.createUpdateDtoToRequisites(requisites));
+        return requisitesMapper.requisitesToDto(response);
     }
 
     @DeleteMapping("/bank")
@@ -79,7 +105,8 @@ public class SellerController {
     @PostMapping("/account/image")
     @ResponseStatus(value = HttpStatus.CREATED)
     public SellerResponseDto addSellerImage(@RequestHeader("X-Sharer-User-Id") long userId,
-                                            @RequestParam(value = "image") MultipartFile image) {
+                                            @RequestBody ImageCreateDto imageCreateDto) {
+        Image image = imageMapper.toImage(imageCreateDto);
         Seller response = sellerService.addSellerImage(userId, image);
         return sellerMapper.sellerToSellerResponseDto(response);
     }

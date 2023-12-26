@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.softplat.main.server.configuration.PageRequestOverride;
-import ru.softplat.main.server.exception.DuplicateException;
 import ru.softplat.main.server.exception.EntityNotFoundException;
 import ru.softplat.main.server.message.ExceptionMessage;
 import ru.softplat.main.server.model.buyer.Buyer;
@@ -20,9 +19,7 @@ import java.util.stream.Collectors;
 @Transactional
 @Slf4j
 public class BuyerService {
-
     private final BuyerRepository buyerRepository;
-    //private final UserDetailsChangeService userDetailsChangeService;
 
     @Transactional(readOnly = true)
     public List<Buyer> getAllBuyers(int from, int size) {
@@ -31,10 +28,6 @@ public class BuyerService {
     }
 
     public Buyer addBuyer(Buyer buyer) {
-        if (checkIfBuyerExistsByEmail(buyer.getEmail()))
-            throw new DuplicateException(ExceptionMessage.DUPLICATE_EXCEPTION.label + buyer.getEmail());
-        //TODO должно быть в секьюрити только, можно удалить дублирование
-
         buyer.setRegistrationTime(LocalDateTime.now());
 
         return buyerRepository.save(buyer);
@@ -67,7 +60,9 @@ public class BuyerService {
                 ));
     }
 
-    private boolean checkIfBuyerExistsByEmail(String email) {
-        return buyerRepository.findByEmail(email).isPresent();
+    public void deleteBuyer(long userId) {
+        getBuyer(userId);
+
+        buyerRepository.deleteById(userId);
     }
 }

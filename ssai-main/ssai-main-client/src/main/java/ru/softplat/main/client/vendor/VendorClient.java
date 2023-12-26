@@ -5,9 +5,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.softplat.main.client.BaseClient;
+import ru.softplat.main.dto.image.ImageCreateDto;
 import ru.softplat.main.dto.vendor.VendorCreateUpdateDto;
 import ru.softplat.main.dto.vendor.VendorSearchRequestDto;
 
@@ -51,7 +51,7 @@ public class VendorClient extends BaseClient {
         delete("/" + vendorId);
     }
 
-    public ResponseEntity<Object> createVendorImage(Long vendorId, MultipartFile image) {
+    public ResponseEntity<Object> createVendorImage(Long vendorId, ImageCreateDto image) {
         return post("/" + vendorId + "/image", image);
     }
 
