@@ -77,9 +77,9 @@ public class SearchProductService {
             products = productRepository.findAll(predicate, pageRequest);
             count = productRepository.count(predicate);
         } else {
-            products = productRepository.findAllByProductStatusOrderByProductionTimeDesc(ProductStatus.PUBLISHED,
-                    pageRequest);
-            count = productRepository.countAllByProductStatus(ProductStatus.PUBLISHED);
+            predicate = QPredicates.builder().add(statusPublishedExpression).buildAnd();
+            products = productRepository.findAll(predicate, pageRequest);
+            count = productRepository.count(predicate);
         }
         return ProductList.builder()
                 .products(products.getContent())
