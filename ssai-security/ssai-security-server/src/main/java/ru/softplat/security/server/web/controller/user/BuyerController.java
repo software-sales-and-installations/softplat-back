@@ -53,7 +53,8 @@ public class BuyerController {
     @Operation(summary = "Обновление данных о себе покупателем", description = "Доступ для покупателя")
     @PreAuthorize("hasAuthority('buyer:write')")
     @PatchMapping(produces = "application/json")
-    public ResponseEntity<Object> updateBuyer(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid BuyerUpdateDto buyerUpdateDto) {
+    public ResponseEntity<Object> updateBuyer(@RequestHeader("X-Sharer-User-Id") long userId,
+                                              @RequestBody @Valid BuyerUpdateDto buyerUpdateDto) {
         log.info(LogMessage.TRY_PATCH_BUYER.label, userId);
         return buyerClient.updateBuyer(userId, buyerUpdateDto);
     }
