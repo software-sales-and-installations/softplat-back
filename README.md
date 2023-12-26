@@ -8,11 +8,14 @@ RESTful API имеет многомодульную архитектуру:
 Приложение имеет домен, по которому можно обращаться с запросами "http://softplat.ru". 
 
 ## ER diagram
+Security:
+![SCHEME](https://github.com/software-sales-and-installations/softplat-back/blob/dev-microservices/er-diagram-db/softplat-security.jpg)
+
 Main:
+![SCHEME](https://github.com/software-sales-and-installations/softplat-back/blob/dev-microservices/er-diagram-db/softplat-main.jpg)
 
 Stats:
-
-Gateway:
+![SCHEME](https://github.com/software-sales-and-installations/softplat-back/blob/dev-microservices/er-diagram-db/softplat-stats.jpg)
 
 ## Пример взаимодействия с БД
 ```
