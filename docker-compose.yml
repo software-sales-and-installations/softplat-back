@@ -1,14 +1,13 @@
 version: '3.1'
 services:
   security-db:
-    image: postgres:14-alpine
-    container_name: db_security_container
+    image: redis:7.2.1-alpine
+    container_name: redis
     ports:
-      - "6543:5432"
+      - "6379:6379"
     environment:
-      - POSTGRES_DB=softplat-security
-      - POSTGRES_USER=softplat-security
-      - POSTGRES_PASSWORD=softplat-security
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=root
 
   security-service:
     build:
@@ -23,9 +22,7 @@ services:
       - main-server
       - stats-server
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://security-db:5432/softplat-security
-      - SECURITY_POSTGRES_USER=softplat-security
-      - SECURITY_POSTGRES_PASSWORD=softplat-security
+      - API_REDIS_HOST=redis
       - STATS_SERVER_URL=http://stats-server:9090
       - MAIN_SERVER_URL=http://main-server:8080
 
@@ -36,8 +33,8 @@ services:
       - "6541:5432"
     environment:
       - POSTGRES_DB=softplat-stats
-      - POSTGRES_USER=softplat-stats
-      - POSTGRES_PASSWORD=softplat-stats
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=password
 
   stats-server:
     build: /ssai-stats/ssai-stats-server
@@ -49,8 +46,8 @@ services:
       - stats-db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/softplat-stats
-      - STATS_POSTGRES_USER=softplat-stats
-      - STATS_POSTGRES_PASSWORD=softplat-stats
+      - POSTGRES_USER=sa
+      - POSTGRES_PASSWORD=password
 
   main-db:
     image: postgres:14-alpine
@@ -58,9 +55,9 @@ services:
     ports:
       - "6545:5432"
     environment:
-      - POSTGRES_DB=softplat-main
-      - POSTGRES_USER=softplat-main
-      - POSTGRES_PASSWORD=softplat-main
+      - POSTGRES_DB=softmain
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   main-server:
     build: /ssai-main/ssai-main-server
@@ -72,7 +69,7 @@ services:
       - main-db
       - stats-server
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/softplat-main
-      - MAIN_POSTGRES_USER=softplat-main
-      - MAIN_POSTGRES_PASSWORD=softplat-main
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://main-db:5432/softmain
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - STATS_SERVER_URL=http://stats-server:9090
